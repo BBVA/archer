@@ -15,7 +15,6 @@
         <kafka.scala.version>2.11</kafka.scala.version>
         <scala.version>${kafka.scala.version}.8</scala.version>
         <confluent.version>5.0.0</confluent.version>
-        <scalatest.version>2.2.6</scalatest.version>
         <avro.version>1.8.2</avro.version>
         <jersey.version>2.25</jersey.version>
         <jetty.version>9.2.24.v20180105</jetty.version>
@@ -76,6 +75,7 @@
         </extensions>
         
         <plugins>
+            <!-- run mvn formatter:format -->
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
