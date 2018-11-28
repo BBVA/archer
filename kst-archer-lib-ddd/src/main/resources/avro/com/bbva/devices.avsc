@@ -1,0 +1,32 @@
+{
+  "type": "record",
+  "name": "Devices",
+  "namespace": "com.bbva.avro",
+  "doc": "Structure of devices event values.",
+  "fields": [
+    {
+      "name": "uuid",
+      "doc": "Record key",
+      "default": null,
+      "type": [ "null", "string" ]
+    },
+    {
+      "name": "userUuid",
+      "doc": "Device legal owner. It must be a platform user, either a legal person or a natural person.",
+      "default": null,
+      "type": [ "null", "string" ]
+    },
+    {
+      "name": "alias",
+      "doc": "Device alias",
+      "default": null,
+      "type": [ "null", "string" ]
+    },
+    {
+        "name": "publicUuid",
+      "doc": "Universal ID",
+      "default": null,
+      "type": [ "null", "string" ]
+    }
+  ]
+}

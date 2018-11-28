@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "Wallets",
+  "namespace": "com.bbva.avro",
+  "doc": "Structure of wallets event values.",
+  "fields": [
+    {
+      "name": "uuid",
+      "doc": "Record key",
+      "default": null,
+      "type": [ "null", "string" ]
+    },
+    {
+      "name": "deviceUuid",
+      "doc": "Device uuid to which it is associated.",
+      "default": null,
+      "type": [ "null", "string" ]
+    },
+    {
+      "name": "address",
+      "doc": "Blockchain address",
+      "default": null,
+      "type": [ "null", "string" ]
+    }
+  ]
+}
