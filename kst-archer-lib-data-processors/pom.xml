@@ -7,14 +7,13 @@
     <parent>
         <groupId>bbva.ndb</groupId>
         <artifactId>archer-lib</artifactId>
-        <version>${lib.revision}</version>
+        <version>3.0.0</version>
     </parent>
-
     <artifactId>lib-data-processors</artifactId>
     <packaging>jar</packaging>
 
     <properties>
-        <lib.commons>${lib.revision}</lib.commons>
+        <lib.commons>${revision}</lib.commons>
     </properties>
 
     <dependencies>
