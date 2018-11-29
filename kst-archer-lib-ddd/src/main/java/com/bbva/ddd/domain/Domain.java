@@ -17,15 +17,14 @@ import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
 import com.bbva.ddd.domain.changelogs.read.ChangelogConsumer;
 import com.bbva.ddd.domain.commands.read.CommandConsumer;
 import com.bbva.ddd.domain.events.read.EventConsumer;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,7 +38,7 @@ public final class Domain {
     private final Handler handler;
     private ApplicationConfig applicationConfig;
     private Map<String, Class<? extends AggregateBase>> aggregatesMap = new HashedMap();
-    private static final Logger logger = Logger.getLogger(Domain.class);
+    private static final LoggerGen logger = LoggerGenesis.getLogger(Domain.class.getName());
 
     /**
      * @param handler

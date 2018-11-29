@@ -2,19 +2,20 @@ package com.bbva.dataprocessors.builders.sql;
 
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContext;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.log4j.Logger;
 
 public class QueryProcessorBuilder implements ProcessorBuilder {
 
-    private final Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(QueryProcessorBuilder.class.getName());
     private final QueryBuilder queryBuilder;
+    //TODO never setted
     private KafkaStreams streams;
     private SQLProcessorContext context;
 
     public QueryProcessorBuilder(QueryBuilder queryBuilder) {
         this.queryBuilder = queryBuilder;
-        logger = Logger.getLogger(QueryProcessorBuilder.class);
     }
 
     public void init(SQLProcessorContext context) {
@@ -38,7 +39,7 @@ public class QueryProcessorBuilder implements ProcessorBuilder {
             // QueryMetadata queryMetadata = queryMetadataIterator.next();
             // streams = queryMetadata.getKafkaStreams();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
     }
 

@@ -14,22 +14,6 @@ public class CommandRecordMetadata extends PRecordMetadata {
         this.entityId = entityId;
     }
 
-    // public String topic() {
-    // return this.recordMetadata.topic();
-    // }
-    //
-    // public int partition() {
-    // return this.recordMetadata.partition();
-    // }
-    //
-    // public long offset() {
-    // return this.recordMetadata.offset();
-    // }
-    //
-    // public long timestamp() {
-    // return this.recordMetadata.timestamp();
-    // }
-
     public String commandId() {
         return this.commandId;
     }

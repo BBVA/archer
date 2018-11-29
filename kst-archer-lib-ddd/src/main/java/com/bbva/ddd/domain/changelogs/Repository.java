@@ -16,9 +16,10 @@ import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;
 import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.changelogs.write.ChangelogRecordMetadata;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,7 @@ import java.util.concurrent.Future;
 
 public final class Repository<K, V extends SpecificRecordBase> {
 
-    private static final Logger logger = Logger.getLogger(Repository.class);
+    private static final LoggerGen logger = LoggerGenesis.getLogger(Repository.class.getName());
 
     private final Class<? extends AggregateBase> aggregateClass;
     private final CachedProducer producer;

@@ -5,9 +5,10 @@ import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
 import io.confluent.ksql.KsqlContext;
 import io.confluent.ksql.metastore.StructuredDataSource;
 import io.confluent.ksql.util.KsqlConfig;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.streams.StreamsConfig;
-import org.apache.log4j.Logger;
 
 import java.util.Map;
 import java.util.Properties;
@@ -19,10 +20,9 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
     private final CustomCachedSchemaRegistryClient schemaRegistry;
     private final String name;
     private final KsqlContext ksqlContext;
-    private final Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(SQLProcessorContextSupplier.class.getName());
 
     public SQLProcessorContextSupplier(String name, ApplicationConfig config) {
-        logger = Logger.getLogger(SQLProcessorContextSupplier.class);
 
         this.name = name;
 

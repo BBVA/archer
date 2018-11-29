@@ -1,5 +1,7 @@
 package com.bbva.dataprocessors.processors;
 
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
@@ -12,6 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class EntityProcessor<K, V> implements Processor<K, V> {
 
+    private static final LoggerGen logger = LoggerGenesis.getLogger(EntityProcessor.class.getName());
+    //TODO nerver used
     private ProcessorContext context;
     private KeyValueStore<K, V> stateStore;
     private String stateStoreName;
@@ -82,15 +86,15 @@ public class EntityProcessor<K, V> implements Processor<K, V> {
                                 pd.getWriteMethod().invoke(result, newValue);
                             }
                         } catch (NullPointerException | IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
+                            logger.error(e);
                         }
                     }
                 }
             } catch (IntrospectionException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error(e);
             result = lastObject;
         }
 

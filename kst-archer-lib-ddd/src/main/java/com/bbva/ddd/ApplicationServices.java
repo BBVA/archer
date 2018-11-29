@@ -5,15 +5,16 @@ import com.bbva.ddd.domain.commands.write.Command;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.States;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ApplicationServices {
 
-    private static final Logger logger = Logger.getLogger(ApplicationServices.class);
+    private static final LoggerGen logger = LoggerGenesis.getLogger(ApplicationServices.class.getName());
 
     private ApplicationConfig applicationConfig;
     private static ApplicationServices instance;
