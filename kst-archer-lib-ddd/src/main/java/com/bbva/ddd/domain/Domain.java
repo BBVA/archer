@@ -19,7 +19,6 @@ import com.bbva.ddd.domain.commands.read.CommandConsumer;
 import com.bbva.ddd.domain.events.read.EventConsumer;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.kafka.common.KafkaException;
 import org.apache.log4j.Logger;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
@@ -40,13 +39,13 @@ public final class Domain {
     private final Handler handler;
     private ApplicationConfig applicationConfig;
     private Map<String, Class<? extends AggregateBase>> aggregatesMap = new HashedMap();
-    private final static Logger logger = Logger.getLogger(Domain.class);
+    private static final Logger logger = Logger.getLogger(Domain.class);
 
     /**
      * @param handler
      * @param applicationConfig
      */
-    public Domain(Handler handler, ApplicationConfig applicationConfig) throws RepositoryException, KafkaException {
+    public Domain(Handler handler, ApplicationConfig applicationConfig) throws RepositoryException {
 
         this.mapAggregates(handler);
 
@@ -65,10 +64,6 @@ public final class Domain {
     }
 
     public Domain addDataProcessorBuilder(QueryBuilder queryBuilder) {
-        // String sourceName = ApplicationConfig.INTERNAL_NAME_PREFIX + ApplicationConfig.KSQL_PREFIX + name +
-        // ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
-        // GlobalTableProcessorStateBuilder tableProcessorStateBuilder = new
-        // GlobalTableProcessorStateBuilder<V>(sourceName);
         DataProcessor.get().add(queryBuilder);
 
         return this;
@@ -83,8 +78,7 @@ public final class Domain {
      * @param <V>
      * @return Domain
      */
-    public <K, V extends SpecificRecordBase> Domain addEntityAsLocalState(String baseName, GenericClass<K> keyClass)
-            throws IllegalArgumentException {
+    public <K, V extends SpecificRecordBase> Domain addEntityAsLocalState(String baseName, GenericClass<K> keyClass) {
         String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
                 + "_" + baseName;
         DataProcessor.get().add(baseName, new EntityStateBuilder<K, V>(snapshotTopicName, keyClass));
@@ -101,8 +95,7 @@ public final class Domain {
      * @throws IllegalArgumentException
      */
     public <K, V extends SpecificRecordBase, K1> Domain indexFieldAsLocalState(String targetBaseName,
-            String originTopicName, String fieldPath, GenericClass<K> keyClass, GenericClass<K1> key1Class)
-            throws IllegalArgumentException {
+            String originTopicName, String fieldPath, GenericClass<K> keyClass, GenericClass<K1> key1Class) {
         DataProcessor.get().add(targetBaseName,
                 new UniqueFieldStateBuilder<K, V, K1>(originTopicName, fieldPath, keyClass, key1Class));
         logger.info("Local state for index field " + fieldPath + " added");
@@ -113,7 +106,7 @@ public final class Domain {
      * @return
      * @throws NullPointerException
      */
-    public synchronized ApplicationServices start() throws NullPointerException {
+    public synchronized ApplicationServices start() {
 
         initHandlers();
 
@@ -138,10 +131,10 @@ public final class Domain {
             executor.shutdown();
             try {
                 executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException  e) {
+                logger.warn("InterruptedException starting the application", e);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Problems starting the application", e);
             }
         }));
 
@@ -192,16 +185,7 @@ public final class Domain {
             }
             try {
                 repositories.put(baseName, new Repository(baseName, aggregateClass, applicationConfig));
-
             } catch (AggregateDependenciesException e) {
-                logger.error(e.getMessage(), e);
-            } catch (InvocationTargetException e) {
-                logger.error(e.getMessage(), e);
-            } catch (NoSuchMethodException e) {
-                logger.error(e.getMessage(), e);
-            } catch (InstantiationException e) {
-                logger.error(e.getMessage(), e);
-            } catch (IllegalAccessException e) {
                 logger.error(e.getMessage(), e);
             }
 
@@ -212,10 +196,6 @@ public final class Domain {
             throw new RepositoryException("Error initializing repositories");
         }
         Repositories.getInstance().setRepositories(repositories);
-
-        // for(String baseName : aggregatesMap.keySet()) {
-        // addEntityAsLocalState(baseName, new GenericClass<>(String.class));
-        // }
 
         logger.info("Repositories initialized with Aggregates");
     }

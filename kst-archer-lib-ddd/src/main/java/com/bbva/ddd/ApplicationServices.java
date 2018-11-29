@@ -1,7 +1,6 @@
 package com.bbva.ddd;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.ddd.domain.Domain;
 import com.bbva.ddd.domain.commands.write.Command;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.dataprocessors.ReadableStore;
@@ -14,16 +13,17 @@ import java.util.Map;
 
 public class ApplicationServices {
 
+    private static final Logger logger = Logger.getLogger(ApplicationServices.class);
+
     private ApplicationConfig applicationConfig;
-    private static ApplicationServices instance = null;
-    private final Logger logger;
+    private static ApplicationServices instance;
     private Map<String, Command> cacheCommandPersistance;
     private Map<String, Event> cacheEventLog;
     private boolean replayMode;
 
+
     public ApplicationServices(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
-        logger = Logger.getLogger(Domain.class);
         cacheCommandPersistance = new HashMap<>();
         cacheEventLog = new HashMap<>();
         instance = this;
@@ -52,23 +52,27 @@ public class ApplicationServices {
      * @param <V>
      * @return
      */
-    public <K, V> ReadableStore<K, V> getStore(String store) throws NullPointerException, InterruptedException {
+    public <K, V> ReadableStore<K, V> getStore(String store) {
         while (true) {
             try {
                 return States.get().getStore(store);
             } catch (InvalidStateStoreException ignored) {
                 // store not yet ready for querying
-                Thread.sleep(500);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    logger.error("Problems sleeping the execution", e);
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
 
     /**
-     *
+     * This method is empty
      * @param sql
-     * @throws Exception
      */
-    public void query(String sql) throws Exception {
+    public void query(String sql) {
 
     }
 
