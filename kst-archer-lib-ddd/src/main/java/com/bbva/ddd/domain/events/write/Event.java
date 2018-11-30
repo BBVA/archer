@@ -8,11 +8,11 @@ import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.GenericValue;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.ApplicationServices;
-import com.bbva.ddd.domain.Domain;
 import com.bbva.ddd.domain.events.read.EventRecord;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.log4j.Logger;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -22,13 +22,12 @@ public class Event {
 
     private static final String TYPE_EVENT_VALUE = "event";
 
-    private final Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(Event.class.getName());
     private final CachedProducer producer;
     private final String topic;
 
     public Event(String topicBaseName, ApplicationConfig applicationConfig) {
         this.topic = topicBaseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX;
-        logger = Logger.getLogger(Domain.class);
         producer = new CachedProducer(applicationConfig);
     }
 

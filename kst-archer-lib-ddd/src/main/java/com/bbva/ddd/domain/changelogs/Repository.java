@@ -16,9 +16,10 @@ import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;
 import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.changelogs.write.ChangelogRecordMetadata;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,22 +31,21 @@ import java.util.concurrent.Future;
 
 public final class Repository<K, V extends SpecificRecordBase> {
 
+    private static final LoggerGen logger = LoggerGenesis.getLogger(Repository.class.getName());
+
     private final Class<? extends AggregateBase> aggregateClass;
     private final CachedProducer producer;
     private final String changelogName;
     private final String baseName;
     private final String aggregateUUID;
-    private final Logger logger;
 
     private String parentChangelogName = null;
     private Field expectedParentField = null;
     private Class<? extends SpecificRecordBase> parentValueClass = null;
 
     public Repository(String baseName, Class<? extends AggregateBase> aggregateClass,
-            ApplicationConfig applicationConfig) throws AggregateDependenciesException, InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException {
+            ApplicationConfig applicationConfig) throws AggregateDependenciesException {
         aggregateUUID = UUID.randomUUID().toString();
-        logger = Logger.getLogger(Repository.class);
         this.aggregateClass = aggregateClass;
         producer = new CachedProducer(applicationConfig);
         this.baseName = baseName;
@@ -83,7 +83,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
     @SuppressWarnings("unchecked")
     public AggregateBase loadFromStore(String key) throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException, InterruptedException {
+            InvocationTargetException, InstantiationException {
         logger.debug("Loading from store " + baseName);
 
         V value;
@@ -156,14 +156,8 @@ public final class Repository<K, V extends SpecificRecordBase> {
                                 propagate(changelogName, key, value, headers(method, record), callback);
                             }
                         });
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                logger.error("Problems saving the object", e);
             }
         } else {
             changelogMessageMetadata = propagate(changelogName, key, value, headers(method, record), callback);
@@ -181,10 +175,8 @@ public final class Repository<K, V extends SpecificRecordBase> {
             Future<RecordMetadata> result = producer.add(record, callback);
             changelogMessageMetadata = new ChangelogRecordMetadata(result.get());
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Problems propagating the object", e);
         }
 
         return changelogMessageMetadata;
@@ -200,10 +192,8 @@ public final class Repository<K, V extends SpecificRecordBase> {
             Future<RecordMetadata> result = producer.remove(record, valueClass, callback);
             changelogMessageMetadata = new ChangelogRecordMetadata(result.get());
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Problems deleting the object", e);
         }
 
         return changelogMessageMetadata;

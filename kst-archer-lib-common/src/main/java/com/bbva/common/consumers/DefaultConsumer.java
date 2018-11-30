@@ -4,6 +4,8 @@ import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -13,7 +15,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,12 +28,10 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     protected final int id;
     protected Consumer<T> callback;
     private final ApplicationConfig applicationConfig;
-    // private final GenericAvroSerde genericSerde;
     private final SpecificAvroSerde<V> specificSerde;
-    private Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(DefaultConsumer.class.getName());
 
     public DefaultConsumer(int id, List<String> topics, Consumer<T> callback, ApplicationConfig applicationConfig) {
-        logger = Logger.getLogger(DefaultConsumer.class);
         this.id = id;
         this.topics = topics;
         this.callback = callback;
@@ -141,9 +140,9 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
         } catch (WakeupException e) {
             // ignore for shutdown
             if (!closed.get())
-                e.printStackTrace();
+                logger.error(e);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         } finally {
             consumer.close();
         }

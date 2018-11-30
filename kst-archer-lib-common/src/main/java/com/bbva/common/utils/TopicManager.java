@@ -1,9 +1,10 @@
 package com.bbva.common.utils;
 
 import com.bbva.common.config.ApplicationConfig;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -12,7 +13,7 @@ public class TopicManager {
     public static final int DEFAULT_PARTITIONS = 2;
     public static final short DEFAULT_REPLICATION = 3;
 
-    private static final Logger logger = Logger.getLogger(TopicManager.class);
+    private static final LoggerGen logger = LoggerGenesis.getLogger(TopicManager.class.getName());
 
     public static void createTopics(String topicName, Map<String, String> topicConfig, ApplicationConfig config) {
         NewTopic newTopic = new NewTopic(topicName, getPartitions(config), getReplicationFactor(config));

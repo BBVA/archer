@@ -9,11 +9,11 @@ import com.bbva.common.utils.GenericValue;
 import com.bbva.common.utils.OptionalRecordHeaders;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.ApplicationServices;
-import com.bbva.ddd.domain.Domain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
@@ -26,14 +26,13 @@ public class Command {
     public static final String DELETE_ACTION = "delete";
     private static final String TYPE_COMMAND_VALUE = "command";
 
-    private final Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(Command.class.getName());
     private final CachedProducer producer;
     private final String topic;
     private final boolean persistent;
 
     public Command(String topic, ApplicationConfig applicationConfig, boolean persistent) {
         this.topic = topic + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX;
-        logger = Logger.getLogger(Domain.class);
         producer = new CachedProducer(applicationConfig);
         this.persistent = persistent;
     }

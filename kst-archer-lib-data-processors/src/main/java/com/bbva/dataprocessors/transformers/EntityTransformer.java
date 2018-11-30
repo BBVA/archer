@@ -1,5 +1,7 @@
 package com.bbva.dataprocessors.transformers;
 
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
@@ -13,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
 
 public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>> {
 
+    private static final LoggerGen logger = LoggerGenesis.getLogger(EntityTransformer.class.getName());
+    //TODO nerver used
     private ProcessorContext context;
     private KeyValueStore<K, V> stateStore;
     private String stateStoreName;
@@ -80,15 +84,15 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
                                 pd.getWriteMethod().invoke(result, newValue);
                             }
                         } catch (NullPointerException | IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
+                            logger.error(e);
                         }
                     }
                 }
             } catch (IntrospectionException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error(e);
             result = lastObject;
         }
 

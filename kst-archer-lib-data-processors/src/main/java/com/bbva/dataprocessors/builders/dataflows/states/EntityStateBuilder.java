@@ -17,26 +17,22 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EntityStateBuilder<K, V extends SpecificRecordBase> implements StateDataflowBuilder {
-    private final Logger logger;
     private DataflowProcessorContext context;
     private final GenericClass<K> keyClass;
     private final String snapshotTopicName;
 
     public EntityStateBuilder(GenericClass<K> keyClass) {
-        logger = Logger.getLogger(EntityStateBuilder.class);
         this.keyClass = keyClass;
         snapshotTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
                 + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
     }
 
     public EntityStateBuilder(String snapshotTopicName, GenericClass<K> keyClass) {
-        logger = Logger.getLogger(EntityStateBuilder.class);
         this.keyClass = keyClass;
         this.snapshotTopicName = snapshotTopicName;
     }

@@ -2,21 +2,21 @@ package com.bbva.dataprocessors.builders.dataflows;
 
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyDescription;
-import org.apache.log4j.Logger;
 
 public class DataflowProcessorBuilder implements ProcessorBuilder {
 
-    private final Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(DataflowProcessorBuilder.class.getName());
     private final DataflowBuilder stateBuilder;
     private DataflowProcessorContext context;
     private KafkaStreams streams;
 
     public DataflowProcessorBuilder(DataflowBuilder stateBuilder) {
         this.stateBuilder = stateBuilder;
-        logger = Logger.getLogger(DataflowProcessorBuilder.class);
     }
 
     public void init(DataflowProcessorContext context) {

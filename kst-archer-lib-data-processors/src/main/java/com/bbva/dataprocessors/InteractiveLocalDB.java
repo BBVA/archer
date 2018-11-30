@@ -1,32 +1,21 @@
 package com.bbva.dataprocessors;
 
-import com.bbva.common.utils.interactivequeries.HostStoreInfo;
-import com.bbva.common.utils.interactivequeries.MetadataService;
-import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
-import org.glassfish.jersey.jackson.JacksonFeature;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InteractiveLocalDB {
 
     private final KafkaStreams streams;
-    private final MetadataService metadataService;
-    private final HostInfo hostInfo;
-    private final Client client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
     private final Map<String, ReadableStore> readableStores;
 
+    //TODO remove host info require remove in news
     public InteractiveLocalDB(final KafkaStreams streams, final HostInfo hostInfo) {
         this.streams = streams;
-        this.metadataService = new MetadataService(streams);
-        this.hostInfo = hostInfo;
         this.readableStores = new HashMap<>();
     }
 
@@ -47,22 +36,6 @@ public class InteractiveLocalDB {
 
         ReadableStore(String storeName) {
             store = streams.store(storeName, QueryableStoreTypes.<K, V> keyValueStore());
-        }
-
-        private void check(String storeName, K key, Serde<K> keySerde) {
-            final HostStoreInfo host = metadataService.streamsMetadataForStoreAndKey(storeName, key,
-                    keySerde.serializer());
-
-            if (!thisHost(host)) {
-                // client.target(String.format("http://%s:%d/%s", host.getHost(), host.getPort(), path))
-                // .request(MediaType.APPLICATION_JSON_TYPE)
-                // .get(new GenericType<List<SongPlayCountBean>>() {
-                // });
-            }
-        }
-
-        private boolean thisHost(final HostStoreInfo host) {
-            return host.getHost().equals(hostInfo.host()) && host.getPort() == hostInfo.port();
         }
 
         /**

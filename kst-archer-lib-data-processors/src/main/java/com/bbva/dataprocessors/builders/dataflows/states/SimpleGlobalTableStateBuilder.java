@@ -11,18 +11,15 @@ import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
-    private final Logger logger;
     private final String sourceTopicName;
     private DataflowProcessorContext context;
 
     public SimpleGlobalTableStateBuilder(String sourceTopicName) {
-        logger = Logger.getLogger(SimpleGlobalTableStateBuilder.class);
         this.sourceTopicName = sourceTopicName;
     }
 

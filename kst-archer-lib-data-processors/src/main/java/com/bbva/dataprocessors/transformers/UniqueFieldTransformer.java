@@ -1,5 +1,7 @@
 package com.bbva.dataprocessors.transformers;
 
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
@@ -8,7 +10,7 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 
 public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> implements Transformer<K, V, KeyValue<K1, K>> {
-
+    private static final LoggerGen logger = LoggerGenesis.getLogger(UniqueFieldTransformer.class.getName());
     private KeyValueStore<K1, K> stateStore;
     private String stateStoreName;
     private String fieldPath;
@@ -55,7 +57,7 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
             } catch (NullPointerException e) {
                 // ignored
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
 

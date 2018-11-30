@@ -35,7 +35,4 @@ public interface Handler {
         return Arrays.asList();
     }
 
-    // Map<String, Class<? extends Aggregate>> aggregates();
-    // List<Class<? extends Aggregate>> aggregates();
-
 }

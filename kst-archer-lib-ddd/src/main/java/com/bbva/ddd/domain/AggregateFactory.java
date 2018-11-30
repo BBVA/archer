@@ -5,31 +5,19 @@ import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.changelogs.Repository;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
 
 import java.lang.reflect.InvocationTargetException;
 
 public class AggregateFactory {
 
+    private static final LoggerGen logger = LoggerGenesis.getLogger(AggregateFactory.class.getName());
+
     public static <V extends SpecificRecordBase, T extends AggregateBase> T create(Class<T> aggregateClass, V record,
             CommandRecord commandMessage, ProducerCallback callback) {
-        // String key;
-        // boolean isReplayMode;
-        //
-        // if (trigger.getMode().equalsIgnoreCase("replay")) {
-        // key = (trigger instanceof CommandRecord) ?
-        // ((CommandRecord) trigger).entityId() :
-        // ApplicationServices
-        // .get()
-        // .getStore(ApplicationConfig.GLOBAL_NAME_PREFIX + "reference-key-map")
-        // .findById(trigger.uuid()).toString();
-        //
-        // isReplayMode = true;
-        // } else {
-        // key = (trigger instanceof CommandRecord) ? ((CommandRecord) trigger).entityId() :
-        // UUID.randomUUID().toString();
-        // isReplayMode = false;
-        // }
+
         return create(aggregateClass, null, record, commandMessage, callback);
     }
 
@@ -45,18 +33,10 @@ public class AggregateFactory {
         try {
             if (repository != null) {
                 aggregateBaseInstance = repository.create(key, value, commandMessage, callback);
-            } else {
-
             }
 
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            logger.error("Problems found in create factory", e);
         }
 
         return aggregateClass.cast(aggregateBaseInstance);
@@ -79,20 +59,10 @@ public class AggregateFactory {
             try {
                 if (repository != null) {
                     return (T) repository.loadFromStore(id);
-                } else {
-
                 }
 
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                logger.error("Problems found in load factory", e);
             }
         }
 

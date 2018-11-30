@@ -4,13 +4,14 @@ import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
 import com.bbva.common.utils.serdes.GenericAvroSerializer;
 import com.bbva.common.utils.serdes.SpecificAvroSerializer;
+import kst.logging.LoggerGen;
+import kst.logging.LoggerGenesis;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.utils.Bytes;
-import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -25,11 +26,10 @@ public class CachedProducer {
     private final ApplicationConfig applicationConfig;
     private final CustomCachedSchemaRegistryClient schemaRegistry;
     private final String schemaRegistryUrl;
-    private final Logger logger;
+    private static final LoggerGen logger = LoggerGenesis.getLogger(CachedProducer.class.getName());
 
     public CachedProducer(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
-        logger = Logger.getLogger(CachedProducer.class);
 
         schemaRegistryUrl = applicationConfig.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString(); // "http://localhost:8081";
 
