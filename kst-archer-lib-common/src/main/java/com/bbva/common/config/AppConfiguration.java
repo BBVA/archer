@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
-public class Configuration {
-    private static final LoggerGen logger = LoggerGenesis.getLogger(Configuration.class.getName());
+public class AppConfiguration {
+    private static final LoggerGen logger = LoggerGenesis.getLogger(AppConfiguration.class.getName());
 
     private ApplicationConfig applicationConfig;
-    private static Configuration instance;
+    private static AppConfiguration instance;
 
-    public static Configuration get() {
+    public static AppConfiguration get() {
         return instance;
     }
 
@@ -61,7 +61,7 @@ public class Configuration {
 
     private static Map<String, Object> getConfig(final Config extraConfig) {
         final Yaml yaml = new Yaml();
-        final ClassLoader classLoader = Configuration.class.getClassLoader();
+        final ClassLoader classLoader = AppConfiguration.class.getClassLoader();
         Map<String, Object> properties = getConfigFromFile(yaml, classLoader, "common-config.yml");
         if (extraConfig != null && !extraConfig.file().isEmpty()) {
             properties = mergeProperties(properties, getConfigFromFile(yaml, classLoader, extraConfig.file()));
@@ -126,7 +126,7 @@ public class Configuration {
 
     public static Config getConfigAnnotation() {
         final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(Configuration.class.getPackage().getName().split("\\.")[0],
+                .setUrls(ClasspathHelper.forPackage(AppConfiguration.class.getPackage().getName().split("\\.")[0],
                         ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
         Config configAnnotation = null;

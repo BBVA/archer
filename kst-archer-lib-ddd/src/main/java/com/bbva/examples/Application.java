@@ -3,9 +3,9 @@ package com.bbva.examples;
 import com.bbva.avro.Devices;
 import com.bbva.avro.Users;
 import com.bbva.avro.users.FiscalData;
+import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.config.Config;
-import com.bbva.common.config.Configuration;
 import com.bbva.common.utils.GenericClass;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.builders.dataflows.states.SimpleGlobalTableStateBuilder;
@@ -38,7 +38,7 @@ public class Application {
 
     public static void main(final String[] args) {
 
-        final ApplicationConfig applicationConfig = new Configuration().init();
+        final ApplicationConfig applicationConfig = new AppConfiguration().init();
 
         try {
             final Map<String, String> usersColumns = new HashMap<>();
