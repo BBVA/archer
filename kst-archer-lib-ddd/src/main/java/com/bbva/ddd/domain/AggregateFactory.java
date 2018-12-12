@@ -35,7 +35,8 @@ public class AggregateFactory {
                 aggregateBaseInstance = repository.create(key, value, commandMessage, callback);
             }
 
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+                | InvocationTargetException e) {
             logger.error("Problems found in create factory", e);
         }
 
@@ -61,7 +62,8 @@ public class AggregateFactory {
                     return (T) repository.loadFromStore(id);
                 }
 
-            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+                    | InvocationTargetException e) {
                 logger.error("Problems found in load factory", e);
             }
         }

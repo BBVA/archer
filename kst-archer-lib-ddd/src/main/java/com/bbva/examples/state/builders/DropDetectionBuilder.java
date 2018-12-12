@@ -9,27 +9,26 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Serialized;
-import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
 public class DropDetectionBuilder implements DataflowBuilder {
-    private final Logger logger;
+
     private DataflowProcessorContext context;
 
     public DropDetectionBuilder() {
-        logger = Logger.getLogger(DropDetectionBuilder.class);
+        
     }
 
     @Override
-    public void init(DataflowProcessorContext context) {
+    public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
     @Override
     public void build() {
-        String topic = context.name();
-        String store = topic + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String topic = context.name();
+        final String store = topic + ApplicationConfig.STORE_NAME_SUFFIX;
 
         TopicManager.createTopics(Arrays.asList(topic), context.configs());
 

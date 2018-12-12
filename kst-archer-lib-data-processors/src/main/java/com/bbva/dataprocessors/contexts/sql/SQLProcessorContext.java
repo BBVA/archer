@@ -6,4 +6,6 @@ import io.confluent.ksql.KsqlContext;
 public interface SQLProcessorContext extends ProcessorContext {
 
     KsqlContext ksqlContext();
+
+    void printDataSources();
 }

@@ -12,15 +12,11 @@ import java.util.concurrent.Future;
 
 public class DefaultProducer<K, V> {
 
-    //TODO private variable never used
-    private final ApplicationConfig applicationConfig;
     private static final LoggerGen logger = LoggerGenesis.getLogger(DefaultProducer.class.getName());
     private final Producer<K, V> producer;
 
     public DefaultProducer(ApplicationConfig applicationConfig, Serializer<K> serializedKey,
             Serializer<V> serializedValue) {
-
-        this.applicationConfig = applicationConfig;
 
         producer = new KafkaProducer<>(applicationConfig.producer().get(), serializedKey, serializedValue);
     }

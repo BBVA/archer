@@ -6,38 +6,27 @@ import org.apache.kafka.streams.StreamsBuilder;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.UUID;
 
 public class DataflowProcessorContextSupplier implements DataflowProcessorContext {
 
-    private ApplicationConfig config;
+    private final ApplicationConfig config;
     private final StreamsBuilder builder;
     private final CustomCachedSchemaRegistryClient schemaRegistry;
     private final Map<String, String> serdeProps;
-    private String name;
+    private final String name;
 
-    public DataflowProcessorContextSupplier(String name, ApplicationConfig config) {
+    public DataflowProcessorContextSupplier(final String name, final ApplicationConfig config) {
         this.name = name;
 
-        String clientId = UUID.randomUUID().toString();
         this.config = new ApplicationConfig();
         this.config.put(config.get());
         this.config.consumer().put(config.consumer().get());
         this.config.producer().put(config.producer().get());
         this.config.streams().put(config.streams().get());
+        this.config.streams().get().putAll(config.dataflow().get());
 
-        this.config.streams().put(ApplicationConfig.StreamsProperties.MAX_POLL_INTERVAL_MS, 300000);
-        this.config.streams().put(ApplicationConfig.StreamsProperties.MAX_POLL_RECORDS, 500);
-        this.config.streams().put(ApplicationConfig.StreamsProperties.SESSION_TIMEOUT_MS, 10000);
-
-        Object stateDir = config.streams().get(ApplicationConfig.StreamsProperties.STATE_DIR);
-        this.config.streams().put(ApplicationConfig.StreamsProperties.STATE_DIR,
-                (stateDir != null ? stateDir.toString() : "/tmp/kafka-streams-") + clientId);
-
-        String applicationName = config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME).toString();
+        final String applicationName = config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME).toString();
         this.config.streams().put(ApplicationConfig.StreamsProperties.APPLICATION_ID, applicationName + "_" + name);
-
-        config.streams().put(ApplicationConfig.StreamsProperties.STREAMS_CLIENT_ID, clientId);
 
         final String schemaRegistryUrl = this.config.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
@@ -48,26 +37,32 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
         builder = new StreamsBuilder();
     }
 
+    @Override
     public CustomCachedSchemaRegistryClient schemaRegistryClient() {
         return schemaRegistry;
-    };
+    }
 
+    @Override
     public Map<String, String> serdeProperties() {
         return serdeProps;
     }
 
+    @Override
     public ApplicationConfig configs() {
         return config;
     }
 
+    @Override
     public StreamsBuilder streamsBuilder() {
         return builder;
     }
 
+    @Override
     public String name() {
         return name;
     }
 
+    @Override
     public String applicationId() {
         return config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_ID).toString();
     }

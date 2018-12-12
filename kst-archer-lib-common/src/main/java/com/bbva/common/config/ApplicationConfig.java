@@ -16,32 +16,31 @@ public class ApplicationConfig implements Cloneable {
 
     public static final String CHANGELOG_RECORD_NAME_SUFFIX = "_data_changelog";
     public static final String COMMANDS_RECORD_NAME_SUFFIX = "_commands";
-    public static final String TRANSACTIONS_RECORD_NAME_SUFFIX = "_transaction_log";
     public static final String EVENTS_RECORD_NAME_SUFFIX = "_events";
-    public static final String SNAPSHOT_RECORD_NAME_SUFFIX = "";
     public static final String STORE_NAME_SUFFIX = "_store";
-    public static final String GLOBAL_NAME_PREFIX = "global_";
     public static final String INTERNAL_NAME_PREFIX = "internal_";
-    public static final String KSQL_PREFIX = "ksql_";
-    public static final String KSQL_SUFFIX = "_ksql";
-    public static final String KSQL_TABLE_SUFFIX = KSQL_SUFFIX + "_table";
-    public static final String KSQL_STREAM_SUFFIX = KSQL_SUFFIX + "_stream";
 
     private Properties applicationProperties = new Properties();
-    private ProducerProperties producerProperties = new ProducerProperties();
-    private ConsumerProperties consumerProperties = new ConsumerProperties();
-    private StreamsProperties streamsProperties = new StreamsProperties();
+    private final ProducerProperties producerProperties = new ProducerProperties();
+    private final ConsumerProperties consumerProperties = new ConsumerProperties();
+    private final StreamsProperties streamsProperties = new StreamsProperties();
+    private final KsqlProperties ksqlProperties = new KsqlProperties();
+    private final DataflowProperties dataflowProperties = new DataflowProperties();
 
-    public <V> void put(Properties applicationProperties) {
+    public void put(final Properties applicationProperties) {
         this.applicationProperties = (Properties) applicationProperties.clone();
     }
 
-    public <V> void put(String key, V value) {
+    public <V> void put(final String key, final V value) {
         applicationProperties.put(key, value);
     }
 
-    public Object get(String key) {
+    public Object get(final String key) {
         return applicationProperties.getProperty(key);
+    }
+
+    public Integer getInteger(final String key) {
+        return Integer.valueOf(applicationProperties.getProperty(key));
     }
 
     public Properties get() {
@@ -60,34 +59,24 @@ public class ApplicationConfig implements Cloneable {
         return streamsProperties;
     }
 
-    final public class ProducerProperties {
+    public KsqlProperties ksql() {
+        return ksqlProperties;
+    }
+
+    public DataflowProperties dataflow() {
+        return dataflowProperties;
+    }
+
+    final public class ProducerProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
         public static final String PRODUCER_ACKS = ProducerConfig.ACKS_CONFIG;
         public static final String PRODUCER_RETRIES = ProducerConfig.RETRIES_CONFIG;
         public static final String INTERCEPTOR_CLASSES = ProducerConfig.INTERCEPTOR_CLASSES_CONFIG;
 
-        private Properties producerProperties = new Properties();
-
-        public <V> void put(Properties producerProperties) {
-            this.producerProperties = (Properties) producerProperties.clone();
-        }
-
-        public <V> void put(String key, V value) {
-            producerProperties.put(key, value);
-        }
-
-        public Properties get() {
-            return producerProperties;
-        }
-
-        public Object get(String property) {
-            return producerProperties.get(property);
-        }
-
     }
 
-    final public class ConsumerProperties {
+    final public class ConsumerProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
         public static final String CONSUMER_GROUP_ID = ConsumerConfig.GROUP_ID_CONFIG;
@@ -98,27 +87,9 @@ public class ApplicationConfig implements Cloneable {
         public static final String SESSION_TIMEOUT_MS = ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG;
         public static final String INTERCEPTOR_CLASSES = ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG;
 
-        private Properties consumerProperties = new Properties();
-
-        public <V> void put(Properties consumerProperties) {
-            this.consumerProperties = (Properties) consumerProperties.clone();
-        }
-
-        public <V> void put(String key, V value) {
-            consumerProperties.put(key, value);
-        }
-
-        public Properties get() {
-            return consumerProperties;
-        }
-
-        public Object get(String property) {
-            return consumerProperties.get(property);
-        }
-
     }
 
-    final public class StreamsProperties {
+    final public class StreamsProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
         public static final String CONSUMER_GROUP_ID = ConsumerConfig.GROUP_ID_CONFIG;
@@ -138,22 +109,39 @@ public class ApplicationConfig implements Cloneable {
         public static final String CONSUMER_INTERCEPTOR_CLASSES = StreamsConfig.CONSUMER_PREFIX
                 + ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG;
 
-        private Properties streamsProperties = new Properties();
+    }
 
-        public <V> void put(Properties streamsProperties) {
-            this.streamsProperties = (Properties) streamsProperties.clone();
+    final public class KsqlProperties extends PropertiesClass {
+
+        public static final String KSQL_PREFIX = "ksql_";
+        public static final String KSQL_SUFFIX = "_ksql";
+        public static final String KSQL_TABLE_SUFFIX = KSQL_SUFFIX + "_table";
+        public static final String KSQL_STREAM_SUFFIX = KSQL_SUFFIX + "_stream";
+
+    }
+
+    final public class DataflowProperties extends PropertiesClass {
+
+    }
+
+    public class PropertiesClass {
+
+        private Properties properties = new Properties();
+
+        public void put(final Properties properties) {
+            this.properties = (Properties) properties.clone();
         }
 
-        public <V> void put(String key, V value) {
-            streamsProperties.put(key, value);
+        public <V> void put(final String key, final V value) {
+            properties.put(key, value);
         }
 
         public Properties get() {
-            return streamsProperties;
+            return properties;
         }
 
-        public Object get(String property) {
-            return streamsProperties.get(property);
+        public Object get(final String property) {
+            return properties.get(property);
         }
 
     }

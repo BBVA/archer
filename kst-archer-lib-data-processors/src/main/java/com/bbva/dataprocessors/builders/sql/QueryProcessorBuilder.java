@@ -10,15 +10,15 @@ public class QueryProcessorBuilder implements ProcessorBuilder {
 
     private static final LoggerGen logger = LoggerGenesis.getLogger(QueryProcessorBuilder.class.getName());
     private final QueryBuilder queryBuilder;
-    //TODO never setted
+    // TODO never setted
     private KafkaStreams streams;
     private SQLProcessorContext context;
 
-    public QueryProcessorBuilder(QueryBuilder queryBuilder) {
+    public QueryProcessorBuilder(final QueryBuilder queryBuilder) {
         this.queryBuilder = queryBuilder;
     }
 
-    public void init(SQLProcessorContext context) {
+    public void init(final SQLProcessorContext context) {
         this.context = context;
     }
 
@@ -32,13 +32,7 @@ public class QueryProcessorBuilder implements ProcessorBuilder {
         try {
             logger.info("Launching query: " + queryBuilder.query());
             context.ksqlContext().sql(queryBuilder.query());
-
-            // Set<QueryMetadata> queryMetadataSet = context.ksqlContext().getRunningQueries();
-            //
-            // Iterator<QueryMetadata> queryMetadataIterator = queryMetadataSet.iterator();
-            // QueryMetadata queryMetadata = queryMetadataIterator.next();
-            // streams = queryMetadata.getKafkaStreams();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e);
         }
     }

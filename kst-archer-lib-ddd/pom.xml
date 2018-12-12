@@ -7,7 +7,7 @@
     <parent>
         <groupId>bbva.ndb</groupId>
         <artifactId>archer-lib</artifactId>
-        <version>3.0.0</version>
+        <version>4.0.0</version>
     </parent>
     <artifactId>lib-ddd</artifactId>
     <packaging>jar</packaging>
@@ -52,11 +52,6 @@
             <groupId>bbva.ndb</groupId>
             <artifactId>lib-data-processors</artifactId>
             <version>${lib.commons}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
