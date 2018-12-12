@@ -9,9 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Config {
 
-    String file();
-
-    String extra() default "";
+    String file() default "";
 
     boolean ksql() default false;
 

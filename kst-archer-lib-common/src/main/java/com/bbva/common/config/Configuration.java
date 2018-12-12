@@ -63,7 +63,7 @@ public class Configuration {
         final Yaml yaml = new Yaml();
         final ClassLoader classLoader = Configuration.class.getClassLoader();
         Map<String, Object> properties = getConfigFromFile(yaml, classLoader, "common-config.yml");
-        if (extraConfig != null) {
+        if (extraConfig != null && !extraConfig.file().isEmpty()) {
             properties = mergeProperties(properties, getConfigFromFile(yaml, classLoader, extraConfig.file()));
         }
 
