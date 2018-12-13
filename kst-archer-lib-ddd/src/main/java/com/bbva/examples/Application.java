@@ -5,7 +5,6 @@ import com.bbva.avro.Users;
 import com.bbva.avro.users.FiscalData;
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.config.Config;
 import com.bbva.common.utils.GenericClass;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.builders.dataflows.states.SimpleGlobalTableStateBuilder;
@@ -25,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Config(file = "examples/config.yml", dataflow = true, ksql = true)
+// TODO can affect to main services @Config(file = "examples/config.yml", dataflow = true, ksql = true)
 public class Application {
 
     public static final String EMAIL_TOPIC_SOURCE = FiscalDataAggregate.baseName()

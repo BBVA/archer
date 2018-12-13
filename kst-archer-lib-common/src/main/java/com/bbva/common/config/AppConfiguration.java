@@ -30,6 +30,10 @@ public class AppConfiguration {
 
     public ApplicationConfig init() {
         final Config extraConfig = getConfigAnnotation();
+        return init(extraConfig);
+    }
+
+    public ApplicationConfig init(final Config extraConfig) {
         final Map<String, Object> config = getConfig(extraConfig);
 
         applicationConfig = new ApplicationConfig();
