@@ -25,7 +25,11 @@ import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -36,15 +40,15 @@ public final class Domain {
 
     private final List<RunnableConsumer> consumers = new ArrayList<>();
     private final Handler handler;
-    private ApplicationConfig applicationConfig;
-    private Map<String, Class<? extends AggregateBase>> aggregatesMap = new HashedMap();
+    private final ApplicationConfig applicationConfig;
+    private final Map<String, Class<? extends AggregateBase>> aggregatesMap = new HashedMap();
     private static final LoggerGen logger = LoggerGenesis.getLogger(Domain.class.getName());
 
     /**
      * @param handler
      * @param applicationConfig
      */
-    public Domain(Handler handler, ApplicationConfig applicationConfig) throws RepositoryException {
+    public Domain(final Handler handler, final ApplicationConfig applicationConfig) throws RepositoryException {
 
         this.mapAggregates(handler);
 
@@ -57,12 +61,12 @@ public final class Domain {
         initRepositories();
     }
 
-    public Domain addDataProcessorBuilder(String name, DataflowBuilder builder) {
+    public Domain addDataProcessorBuilder(final String name, final DataflowBuilder builder) {
         DataProcessor.get().add(name, builder);
         return this;
     }
 
-    public Domain addDataProcessorBuilder(QueryBuilder queryBuilder) {
+    public Domain addDataProcessorBuilder(final QueryBuilder queryBuilder) {
         DataProcessor.get().add(queryBuilder);
 
         return this;
@@ -77,8 +81,8 @@ public final class Domain {
      * @param <V>
      * @return Domain
      */
-    public <K, V extends SpecificRecordBase> Domain addEntityAsLocalState(String baseName, GenericClass<K> keyClass) {
-        String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
+    public <K, V extends SpecificRecordBase> Domain addEntityAsLocalState(final String baseName, final GenericClass<K> keyClass) {
+        final String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
                 + "_" + baseName;
         DataProcessor.get().add(baseName, new EntityStateBuilder<K, V>(snapshotTopicName, keyClass));
         logger.info("Local state " + baseName + " added");
@@ -93,8 +97,8 @@ public final class Domain {
      * @param <V>
      * @throws IllegalArgumentException
      */
-    public <K, V extends SpecificRecordBase, K1> Domain indexFieldAsLocalState(String targetBaseName,
-            String originTopicName, String fieldPath, GenericClass<K> keyClass, GenericClass<K1> key1Class) {
+    public <K, V extends SpecificRecordBase, K1> Domain indexFieldAsLocalState(final String targetBaseName,
+                                                                               final String originTopicName, final String fieldPath, final GenericClass<K> keyClass, final GenericClass<K1> key1Class) {
         DataProcessor.get().add(targetBaseName,
                 new UniqueFieldStateBuilder<K, V, K1>(originTopicName, fieldPath, keyClass, key1Class));
         logger.info("Local state for index field " + fieldPath + " added");
@@ -112,11 +116,11 @@ public final class Domain {
         DataProcessor.get().start();
         logger.info("States have been started");
 
-        ApplicationServices app = new ApplicationServices(applicationConfig);
+        final ApplicationServices app = new ApplicationServices(applicationConfig);
 
-        ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
+        final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
 
-        for (RunnableConsumer consumer : consumers) {
+        for (final RunnableConsumer consumer : consumers) {
             executor.submit(consumer);
         }
 
@@ -124,15 +128,15 @@ public final class Domain {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 
-            for (RunnableConsumer consumer : consumers) {
+            for (final RunnableConsumer consumer : consumers) {
                 consumer.shutdown();
             }
             executor.shutdown();
             try {
                 executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException  e) {
+            } catch (final InterruptedException e) {
                 logger.warn("InterruptedException starting the application", e);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 logger.error("Problems starting the application", e);
             }
         }));
@@ -140,8 +144,8 @@ public final class Domain {
         return app;
     }
 
-    private void mapAggregates(Handler handler) {
-        String mainPackage = handler.getClass().getCanonicalName().split("\\.")[0];
+    private void mapAggregates(final Handler handler) {
+        final String mainPackage = handler.getClass().getCanonicalName().split("\\.")[0];
         aggregatesByPackage(mainPackage);
 
         if (aggregatesMap.size() == 0) {
@@ -152,8 +156,8 @@ public final class Domain {
     }
 
     private void mapAllPackagesAggregates() {
-        Package[] packages = Package.getPackages();
-        for (Package packageLoaded : packages) {
+        final Package[] packages = Package.getPackages();
+        for (final Package packageLoaded : packages) {
             // Exclude unnecesary packages
             if (!packageLoaded.getName().matches("^(org|sun|java|jdk).*")) {
                 aggregatesByPackage(packageLoaded.getName());
@@ -162,21 +166,21 @@ public final class Domain {
         }
     }
 
-    private void aggregatesByPackage(String mainPackage) {
-        Reflections ref = new Reflections(new ConfigurationBuilder()
+    private void aggregatesByPackage(final String mainPackage) {
+        final Reflections ref = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(mainPackage, ClasspathHelper.contextClassLoader(),
                         ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
 
-        for (Class<?> aggregateClass : ref.getTypesAnnotatedWith(Aggregate.class)) {
-            Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
-            String baseName = aggregateAnnotation.baseName();
+        for (final Class<?> aggregateClass : ref.getTypesAnnotatedWith(Aggregate.class)) {
+            final Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
+            final String baseName = aggregateAnnotation.baseName();
             aggregatesMap.put(baseName, aggregateClass.asSubclass(AggregateBase.class));
         }
     }
 
     private void initRepositories() throws RepositoryException {
-        Map<String, Repository> repositories = new HashMap<>();
+        final Map<String, Repository> repositories = new HashMap<>();
 
         aggregatesMap.forEach((baseName, aggregateClass) -> {
             if (aggregateClass == null) {
@@ -184,7 +188,7 @@ public final class Domain {
             }
             try {
                 repositories.put(baseName, new Repository(baseName, aggregateClass, applicationConfig));
-            } catch (AggregateDependenciesException e) {
+            } catch (final AggregateDependenciesException e) {
                 logger.error(e.getMessage(), e);
             }
 
@@ -203,9 +207,9 @@ public final class Domain {
      *
      */
     private void initHandlers() {
-        int numConsumers = 1;
+        final int numConsumers = 1;
 
-        List<String> consumerTopics = Stream
+        final List<String> consumerTopics = Stream
                 .concat(Stream.concat(handler.commandsSubscribed().stream(), handler.eventsSubscribed().stream()),
                         handler.dataChangelogsSubscribed().stream())
                 .collect(Collectors.toList());
@@ -214,21 +218,21 @@ public final class Domain {
 
         logger.info("Necessary consumer topics created");
 
-        if (handler.commandsSubscribed().size() > 0) {
+        if (!handler.commandsSubscribed().isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(new CommandConsumer<>(i, handler.commandsSubscribed(), handler::processCommand,
                         applicationConfig));
             }
         }
 
-        if (handler.eventsSubscribed().size() > 0) {
+        if (!handler.eventsSubscribed().isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(
                         new EventConsumer<>(i, handler.eventsSubscribed(), handler::processEvent, applicationConfig));
             }
         }
 
-        if (handler.dataChangelogsSubscribed().size() > 0) {
+        if (!handler.dataChangelogsSubscribed().isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(new ChangelogConsumer<>(i, handler.dataChangelogsSubscribed(),
                         handler::processDataChangelog, applicationConfig));

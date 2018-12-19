@@ -3,10 +3,10 @@ package com.bbva.examples.api.users;
 import com.bbva.avro.Users;
 import com.bbva.avro.users.Settings;
 import com.bbva.ddd.ApplicationServices;
-import com.bbva.examples.ResultsBean;
 import com.bbva.examples.MainHandler;
-import com.bbva.examples.aggregates.user.SettingsAggregate;
+import com.bbva.examples.ResultsBean;
 import com.bbva.examples.aggregates.UserAggregate;
+import com.bbva.examples.aggregates.user.SettingsAggregate;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,18 +20,18 @@ public class SettingsServices {
 
     private final ApplicationServices app;
 
-    public SettingsServices(ApplicationServices app) {
+    public SettingsServices(final ApplicationServices app) {
         this.app = app;
     }
 
     @POST
     @Path("/{id}/settings")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResultsBean createUser(@PathParam("id") final String id, Settings settings)
+    public ResultsBean createUser(@PathParam("id") final String id, final Settings settings)
             throws InterruptedException, ExecutionException {
         ResultsBean result;
         try {
-            if (app.<String, Users> getStore(UserAggregate.baseName()).exists(id)) {
+            if (ApplicationServices.<String, Users> getStore(UserAggregate.baseName()).exists(id)) {
                 app.sendCommandTo(SettingsAggregate.baseName()).processAction(MainHandler.ADD_SETTINGS_ACTION, id,
                         settings, (key, e) -> {
                             if (e != null)
@@ -41,7 +41,7 @@ public class SettingsServices {
             } else {
                 result = new ResultsBean(404, "Not Found");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             result = new ResultsBean(500, "Internal Server Error");
         }
         return result;

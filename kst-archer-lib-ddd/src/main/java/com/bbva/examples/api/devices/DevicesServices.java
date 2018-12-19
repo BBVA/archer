@@ -20,29 +20,29 @@ public class DevicesServices {
 
     private final ApplicationServices app;
 
-    public DevicesServices(ApplicationServices app) {
+    public DevicesServices(final ApplicationServices app) {
         this.app = app;
     }
 
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResultsBean createDevice(Devices device) throws InterruptedException, ExecutionException {
+    public ResultsBean createDevice(final Devices device) throws InterruptedException, ExecutionException {
         ResultsBean result;
         ReadableStore<String, String> publicUuidStore = null;
 
         try {
-            publicUuidStore = app.getStore(Application.PUBLIC_UUID_STORE_BASENAME);
+            publicUuidStore = ApplicationServices.getStore(Application.PUBLIC_UUID_STORE_BASENAME);
 
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
         }
 
         try {
             if (publicUuidStore == null || !publicUuidStore.exists(device.getPublicUuid())) {
-                OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
+                final OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
                         .addAck("adsgfawghah");
 
-                CommandRecordMetadata metadata = app.persistsCommandTo(DeviceAggregate.baseName()).create(device,
+                final CommandRecordMetadata metadata = app.persistsCommandTo(DeviceAggregate.baseName()).create(device,
                         optionalHeaders, (key, e) -> {
                             if (e != null)
                                 e.printStackTrace();
@@ -52,7 +52,7 @@ public class DevicesServices {
             } else {
                 result = new ResultsBean(409, "Conflict");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             result = new ResultsBean(500, "Internal Server Error");
         }
@@ -62,12 +62,12 @@ public class DevicesServices {
     @POST
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResultsBean updateDevice(@PathParam("id") final String id, Devices devices)
+    public ResultsBean updateDevice(@PathParam("id") final String id, final Devices devices)
             throws InterruptedException, ExecutionException {
         ResultsBean result;
         try {
-            if (app.<String, Devices> getStore(DeviceAggregate.baseName()).exists(id)) {
-                OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
+            if (ApplicationServices.<String, Devices> getStore(DeviceAggregate.baseName()).exists(id)) {
+                final OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
                         .addAck("adsgfawghah");
 
                 app.persistsCommandTo(DeviceAggregate.baseName()).processAction(MainHandler.UPDATE_DEVICE_ACTION, id,
@@ -79,7 +79,7 @@ public class DevicesServices {
             } else {
                 result = new ResultsBean(404, "Not Found");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             result = new ResultsBean(500, "Internal Server Error");
         }
@@ -89,20 +89,21 @@ public class DevicesServices {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResultsBean getDevice(@PathParam("id") final String id) throws InterruptedException, ExecutionException {
+    public static ResultsBean getDevice(@PathParam("id") final String id)
+            throws InterruptedException, ExecutionException {
         ResultsBean result;
         try {
             // GenericRecord test = app.<String,
             // GenericRecord>getStore(Application.TEST_QUERY_STORE_BASENAME).findById(id);
-            GenericRecord test2 = app.<String, GenericRecord> getStore(Application.TEST_QUERY_STORE_BASENAME + "2")
-                    .findById(id);
+            final GenericRecord test2 = ApplicationServices
+                    .<String, GenericRecord> getStore(Application.TEST_QUERY_STORE_BASENAME + "2").findById(id);
             // Devices devices = app.<String, Devices>getStore(DeviceAggregate.baseName()).findById(id);
             if (/* test != null && */test2 != null) {
                 result = new ResultsBean(202, "Accepted", /* test.toString() + */test2.toString());
             } else {
                 result = new ResultsBean(404, "Not Found");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             result = new ResultsBean(500, "Internal Server Error");
         }
@@ -115,8 +116,8 @@ public class DevicesServices {
     public ResultsBean deleteDevice(@PathParam("id") final String id) throws InterruptedException, ExecutionException {
         ResultsBean result;
         try {
-            if (app.<String, Devices> getStore(DeviceAggregate.baseName()).exists(id)) {
-                OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
+            if (ApplicationServices.<String, Devices> getStore(DeviceAggregate.baseName()).exists(id)) {
+                final OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
                         .addAck("adsgfawghah");
 
                 app.persistsCommandTo(DeviceAggregate.baseName()).delete(id, Devices.class, optionalHeaders,
@@ -128,7 +129,7 @@ public class DevicesServices {
             } else {
                 result = new ResultsBean(404, "Not Found");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             result = new ResultsBean(500, "Internal Server Error");
         }

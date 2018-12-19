@@ -18,13 +18,11 @@ import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.apache.kafka.streams.state.StoreBuilder;
 import org.apache.kafka.streams.state.Stores;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implements StateDataflowBuilder {
-    private final Logger logger;
     private DataflowProcessorContext context;
 
     private final GenericClass<K> keyClass;
@@ -32,9 +30,8 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
     private final String fieldPath;
     private final String sourceTopicName;
 
-    public UniqueFieldStateBuilder(String sourceTopicName, String fieldPath, GenericClass<K> keyClass,
-            GenericClass<K1> key1Class) {
-        logger = Logger.getLogger(UniqueFieldStateBuilder.class);
+    public UniqueFieldStateBuilder(final String sourceTopicName, final String fieldPath, final GenericClass<K> keyClass,
+                                   final GenericClass<K1> key1Class) {
         this.sourceTopicName = sourceTopicName;
         this.fieldPath = fieldPath;
         this.keyClass = keyClass;
@@ -42,27 +39,27 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
     }
 
     @Override
-    public void init(DataflowProcessorContext context) {
+    public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
     @Override
     public void build() {
 
-        Serde<K1> key1Serde = Serdes.serdeFrom(key1Class.getType());
-        Serde<K> keySerde = Serdes.serdeFrom(keyClass.getType());
+        final Serde<K1> key1Serde = Serdes.serdeFrom(key1Class.getType());
+        final Serde<K> keySerde = Serdes.serdeFrom(keyClass.getType());
         final SpecificAvroSerde<V> valueSerde = new SpecificAvroSerde<>(context.schemaRegistryClient(),
                 context.serdeProperties());
         valueSerde.configure(context.serdeProperties(), false);
 
-        String sinkInternalChangelogTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+        final String sinkInternalChangelogTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
                 + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
-        String internalLocalStoreName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+        final String internalLocalStoreName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
                 + ApplicationConfig.STORE_NAME_SUFFIX;
-        String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
 
-        Map<String, Map<String, String>> topics = new HashMap<>();
-        Map<String, String> sinkInternalChangelogTopicNameConfig = new HashMap<>();
+        final Map<String, Map<String, String>> topics = new HashMap<>();
+        final Map<String, String> sinkInternalChangelogTopicNameConfig = new HashMap<>();
         sinkInternalChangelogTopicNameConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
         sinkInternalChangelogTopicNameConfig.put(TopicConfig.MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0");
         sinkInternalChangelogTopicNameConfig.put(TopicConfig.MIN_COMPACTION_LAG_MS_CONFIG, "0");
@@ -70,11 +67,11 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
         topics.put(sourceTopicName, new HashMap<>());
         TopicManager.createTopics(topics, context.configs());
 
-        StoreBuilder<KeyValueStore<K1, K>> localUniqueFieldStore = Stores
+        final StoreBuilder<KeyValueStore<K1, K>> localUniqueFieldStore = Stores
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalLocalStoreName), key1Serde, keySerde)
                 .withLoggingDisabled();
 
-        StreamsBuilder builder = context.streamsBuilder();
+        final StreamsBuilder builder = context.streamsBuilder();
 
         builder.addStateStore(localUniqueFieldStore).stream(sourceTopicName, Consumed.with(keySerde, valueSerde))
                 .transform(() -> new UniqueFieldTransformer<K, V, K1>(localUniqueFieldStore.name(), fieldPath),
@@ -82,7 +79,7 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
                 .to(sinkInternalChangelogTopicName, Produced.with(key1Serde, keySerde));
 
         builder.globalTable(sinkInternalChangelogTopicName,
-                Materialized.<K1, K, KeyValueStore<Bytes, byte[]>> as(applicationGlobalStoreName)
+                Materialized.<K1, K, KeyValueStore<Bytes, byte[]>>as(applicationGlobalStoreName)
                         .withKeySerde(key1Serde).withValueSerde(keySerde));
     }
 }

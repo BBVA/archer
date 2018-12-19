@@ -16,12 +16,8 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     private ApplyRecordCallback applyRecordCallback;
     private DeleteRecordCallback<K, V> deleteRecordCallback;
 
-    public AbstractAggregateBase(K id, V data) {
-        // if (id != null) {
+    public AbstractAggregateBase(final K id, final V data) {
         this.id = id;
-        // } else {
-        // this.id = UUID.randomUUID().toString();
-        // }
         this.data = data;
     }
 
@@ -36,21 +32,22 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     }
 
     @Override
-    public void apply(String method, V record, CommandRecord commandMessage, ProducerCallback callback) {
+    public void apply(final String method, final V record, final CommandRecord commandMessage,
+            final ProducerCallback callback) {
         applyRecordCallback.apply(method, record, commandMessage, callback);
     }
 
-    public void apply(String method, CRecord record, ProducerCallback callback)
+    public void apply(final String method, final CRecord record, final ProducerCallback callback)
             throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         deleteRecordCallback.apply(method, (Class<V>) data.getClass(), record, callback);
     }
 
     @Override
-    public final void setApplyRecordCallback(ApplyRecordCallback apply) {
+    public final void setApplyRecordCallback(final ApplyRecordCallback apply) {
         this.applyRecordCallback = apply;
     }
 
-    public final void setDeleteRecordCallback(DeleteRecordCallback apply) {
+    public final void setDeleteRecordCallback(final DeleteRecordCallback apply) {
         this.deleteRecordCallback = apply;
     }
 

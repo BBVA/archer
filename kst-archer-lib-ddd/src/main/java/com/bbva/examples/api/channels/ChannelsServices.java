@@ -21,27 +21,27 @@ public class ChannelsServices {
 
     private final ApplicationServices app;
 
-    public ChannelsServices(ApplicationServices app) {
+    public ChannelsServices(final ApplicationServices app) {
         this.app = app;
     }
 
     @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResultsBean create(Channels channels) throws InterruptedException, ExecutionException {
+    public ResultsBean create(final Channels channels) throws InterruptedException, ExecutionException {
         ResultsBean result;
         try {
-            OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
+            final OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
                     .addAck("adsgfawghah");
 
-            CommandRecordMetadata metadata = app.persistsCommandTo(ChannelsAggregate.baseName()).create(channels,
+            final CommandRecordMetadata metadata = app.persistsCommandTo(ChannelsAggregate.baseName()).create(channels,
                     optionalHeaders, (key, e) -> {
                         if (e != null)
                             e.printStackTrace();
                     });
             result = new ResultsBean(202, "Accepted", "{\"entityId\":\"" + metadata.entityId() + "\"}");
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             result = new ResultsBean(500, "Internal Server Error");
         }
@@ -51,12 +51,12 @@ public class ChannelsServices {
     @POST
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ResultsBean update(@PathParam("id") final String id, Channels channels)
+    public ResultsBean update(@PathParam("id") final String id, final Channels channels)
             throws InterruptedException, ExecutionException {
         ResultsBean result;
         try {
-            if (app.<String, Devices> getStore(ChannelsAggregate.baseName()).exists(id)) {
-                OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
+            if (ApplicationServices.<String, Devices> getStore(ChannelsAggregate.baseName()).exists(id)) {
+                final OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders().addOrigin("aegewy445y")
                         .addAck("adsgfawghah");
 
                 app.persistsCommandTo(ChannelsAggregate.baseName()).processAction(MainHandler.UPDATE_CHANNEL_ACTION, id,
@@ -68,7 +68,7 @@ public class ChannelsServices {
             } else {
                 result = new ResultsBean(404, "Not Found");
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             result = new ResultsBean(500, "Internal Server Error");
         }

@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>> {
 
     private static final LoggerGen logger = LoggerGenesis.getLogger(EntityTransformer.class.getName());
-    //TODO nerver used
+    // TODO nerver used
     private ProcessorContext context;
     private KeyValueStore<K, V> stateStore;
     private String stateStoreName;

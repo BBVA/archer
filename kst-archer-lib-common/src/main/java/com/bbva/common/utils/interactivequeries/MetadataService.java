@@ -17,7 +17,7 @@ public class MetadataService {
 
     private final KafkaStreams streams;
 
-    public MetadataService(final KafkaStreams streams) {
+    public MetadataService(KafkaStreams streams) {
         this.streams = streams;
     }
 
@@ -28,7 +28,7 @@ public class MetadataService {
      */
     public List<HostStoreInfo> streamsMetadata() {
         // Get metadata for all of the instances of this Kafka Streams application
-        final Collection<StreamsMetadata> metadata = streams.allMetadata();
+        Collection<StreamsMetadata> metadata = streams.allMetadata();
         return mapInstancesToHostStoreInfo(metadata);
     }
 
@@ -39,9 +39,9 @@ public class MetadataService {
      *            The store to locate
      * @return List of {@link HostStoreInfo}
      */
-    public List<HostStoreInfo> streamsMetadataForStore(final String store) {
+    public List<HostStoreInfo> streamsMetadataForStore(String store) {
         // Get metadata for all of the instances of this Kafka Streams application hosting the store
-        final Collection<StreamsMetadata> metadata = streams.allMetadataForStore(store);
+        Collection<StreamsMetadata> metadata = streams.allMetadataForStore(store);
         return mapInstancesToHostStoreInfo(metadata);
     }
 
@@ -55,11 +55,10 @@ public class MetadataService {
      *            The key to find
      * @return {@link HostStoreInfo}
      */
-    public <K> HostStoreInfo streamsMetadataForStoreAndKey(final String store, final K key,
-            final Serializer<K> serializer) {
+    public <K> HostStoreInfo streamsMetadataForStoreAndKey(String store, K key, Serializer<K> serializer) {
         // Get metadata for the instances of this Kafka Streams application hosting the store and
         // potentially the value for key
-        final StreamsMetadata metadata = streams.metadataForKey(store, key, serializer);
+        StreamsMetadata metadata = streams.metadataForKey(store, key, serializer);
         if (metadata == null) {
             throw new NotFoundException();
         }
@@ -67,10 +66,9 @@ public class MetadataService {
         return new HostStoreInfo(metadata.host(), metadata.port(), metadata.stateStoreNames());
     }
 
-    private List<HostStoreInfo> mapInstancesToHostStoreInfo(final Collection<StreamsMetadata> metadatas) {
+    private static List<HostStoreInfo> mapInstancesToHostStoreInfo(Collection<StreamsMetadata> metadatas) {
         return metadatas.stream()
                 .map(metadata -> new HostStoreInfo(metadata.host(), metadata.port(), metadata.stateStoreNames()))
                 .collect(Collectors.toList());
     }
-
 }

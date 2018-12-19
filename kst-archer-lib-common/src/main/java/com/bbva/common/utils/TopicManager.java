@@ -15,18 +15,19 @@ public class TopicManager {
 
     private static final LoggerGen logger = LoggerGenesis.getLogger(TopicManager.class.getName());
 
-    public static void createTopics(String topicName, Map<String, String> topicConfig, ApplicationConfig config) {
-        NewTopic newTopic = new NewTopic(topicName, getPartitions(config), getReplicationFactor(config));
+    public static void createTopics(final String topicName, final Map<String, String> topicConfig,
+            final ApplicationConfig config) {
+        final NewTopic newTopic = new NewTopic(topicName, getPartitions(config), getReplicationFactor(config));
         if (!topicConfig.isEmpty()) {
             newTopic.configs(topicConfig);
         }
         createAdminClient(Arrays.asList(newTopic), config);
     }
 
-    public static void createTopics(Collection<String> topicNames, ApplicationConfig config) {
-        Collection<NewTopic> topics = new ArrayList<>();
+    public static void createTopics(final Collection<String> topicNames, final ApplicationConfig config) {
+        final Collection<NewTopic> topics = new ArrayList<>();
         NewTopic newTopic;
-        for (String topicName : topicNames) {
+        for (final String topicName : topicNames) {
             newTopic = new NewTopic(topicName, getPartitions(config), getReplicationFactor(config));
             topics.add(newTopic);
         }
@@ -34,12 +35,12 @@ public class TopicManager {
         createAdminClient(topics, config);
     }
 
-    public static void createTopics(Map<String, Map<String, String>> topicNames, ApplicationConfig config) {
-        Collection<NewTopic> topics = new ArrayList<>();
+    public static void createTopics(final Map<String, Map<String, String>> topicNames, final ApplicationConfig config) {
+        final Collection<NewTopic> topics = new ArrayList<>();
         NewTopic newTopic;
-        for (String topicName : topicNames.keySet()) {
+        for (final String topicName : topicNames.keySet()) {
             newTopic = new NewTopic(topicName, getPartitions(config), getReplicationFactor(config));
-            Map<String, String> newTopicConfig = topicNames.get(topicName);
+            final Map<String, String> newTopicConfig = topicNames.get(topicName);
             if (!newTopicConfig.isEmpty()) {
                 newTopic.configs(newTopicConfig);
             }
@@ -49,33 +50,32 @@ public class TopicManager {
         createAdminClient(topics, config);
     }
 
-    private static void createAdminClient(Collection<NewTopic> topics, ApplicationConfig config) {
-        Properties props = new Properties();
+    private static void createAdminClient(final Collection<NewTopic> topics, final ApplicationConfig config) {
+        final Properties props = new Properties();
         props.setProperty(ApplicationConfig.StreamsProperties.BOOTSTRAP_SERVERS,
                 config.streams().get(ApplicationConfig.StreamsProperties.BOOTSTRAP_SERVERS).toString());
-        AdminClient adminClient = AdminClient.create(props);
+        final AdminClient adminClient = AdminClient.create(props);
         adminClient.createTopics(topics);
         adminClient.close();
     }
 
-    private static int getPartitions(ApplicationConfig config) {
+    private static int getPartitions(final ApplicationConfig config) {
         int partitions;
         try {
             partitions = new Integer(config.get(ApplicationConfig.PARTITIONS).toString());
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             partitions = TopicManager.DEFAULT_PARTITIONS;
         }
         return partitions;
     }
 
-    private static short getReplicationFactor(ApplicationConfig config) {
+    private static short getReplicationFactor(final ApplicationConfig config) {
         short replication;
         try {
             replication = new Integer(config.get(ApplicationConfig.REPLICATION_FACTOR).toString()).shortValue();
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             replication = TopicManager.DEFAULT_REPLICATION;
         }
         return replication;
     }
-
 }

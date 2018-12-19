@@ -21,17 +21,17 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 public class CachedProducer {
+    private static final LoggerGen logger = LoggerGenesis.getLogger(CachedProducer.class.getName());
 
-    private Map<String, DefaultProducer> cachedProducers = new HashMap<>();
+    private final Map<String, DefaultProducer> cachedProducers = new HashMap<>();
     private final ApplicationConfig applicationConfig;
     private final CustomCachedSchemaRegistryClient schemaRegistry;
     private final String schemaRegistryUrl;
-    private static final LoggerGen logger = LoggerGenesis.getLogger(CachedProducer.class.getName());
 
     public CachedProducer(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
 
-        schemaRegistryUrl = applicationConfig.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString(); // "http://localhost:8081";
+        schemaRegistryUrl = applicationConfig.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
         schemaRegistry = new CustomCachedSchemaRegistryClient(schemaRegistryUrl, 1000);
     }
@@ -46,7 +46,7 @@ public class CachedProducer {
 
         } else {
             logger.info("Cached producer not found for topic " + record.topic());
-            final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
+            Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
                     schemaRegistryUrl);
 
             Serializer<K> serializedKey = serializeFrom(record.key());
@@ -74,7 +74,7 @@ public class CachedProducer {
 
         } else {
             logger.info("Cached producer not found for topic " + record.topic());
-            final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
+            Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
                     schemaRegistryUrl);
 
             Serializer<K> serializedKey = serializeFrom(record.key());
@@ -86,7 +86,7 @@ public class CachedProducer {
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to " + serializedValue.toString());
 
-            producer = new DefaultProducer<K, V>(applicationConfig, serializedKey, serializedValue);
+            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
             cachedProducers.put(record.topic(), producer);
         }
 

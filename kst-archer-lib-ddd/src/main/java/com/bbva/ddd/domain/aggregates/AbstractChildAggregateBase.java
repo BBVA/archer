@@ -11,14 +11,9 @@ public abstract class AbstractChildAggregateBase<K, V extends SpecificRecordBase
     private final V data;
     private final K id;
     private ApplyRecordCallback applyRecordCallback;
-    // private DeleteRecordCallback deleteRecordCallback;
 
-    public AbstractChildAggregateBase(K id, V data) {
-        // if (id != null) {
+    public AbstractChildAggregateBase(final K id, final V data) {
         this.id = id;
-        // } else {
-        // this.id = UUID.randomUUID().toString();
-        // }
         this.data = data;
     }
 
@@ -33,12 +28,13 @@ public abstract class AbstractChildAggregateBase<K, V extends SpecificRecordBase
     }
 
     @Override
-    public void apply(String method, V record, CommandRecord commandMessage, ProducerCallback callback) {
+    public void apply(final String method, final V record, final CommandRecord commandMessage,
+            final ProducerCallback callback) {
         applyRecordCallback.apply(method, record, commandMessage, callback);
     }
 
     @Override
-    public final void setApplyRecordCallback(ApplyRecordCallback apply) {
+    public final void setApplyRecordCallback(final ApplyRecordCallback apply) {
         this.applyRecordCallback = apply;
     }
 

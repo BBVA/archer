@@ -43,8 +43,8 @@ public final class Repository<K, V extends SpecificRecordBase> {
     private Field expectedParentField = null;
     private Class<? extends SpecificRecordBase> parentValueClass = null;
 
-    public Repository(String baseName, Class<? extends AggregateBase> aggregateClass,
-            ApplicationConfig applicationConfig) throws AggregateDependenciesException {
+    public Repository(final String baseName, final Class<? extends AggregateBase> aggregateClass,
+                      final ApplicationConfig applicationConfig) throws AggregateDependenciesException {
         aggregateUUID = UUID.randomUUID().toString();
         this.aggregateClass = aggregateClass;
         producer = new CachedProducer(applicationConfig);
@@ -60,14 +60,14 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return baseName;
     }
 
-    @SuppressWarnings("unchecked")
-    public AggregateBase create(String key, V value, CommandRecord commandMessage, ProducerCallback callback)
+    public AggregateBase create(String key, final V value, final CommandRecord commandMessage,
+                                final ProducerCallback callback)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         key = (key == null) ? commandMessage.entityId() : key;
 
         try {
             value.put("uuid", key);
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             logger.warn("Schema has not field uuid");
         }
 
@@ -81,17 +81,16 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return aggregateBaseInstance;
     }
 
-    @SuppressWarnings("unchecked")
-    public AggregateBase loadFromStore(String key) throws NoSuchMethodException, IllegalAccessException,
-            InvocationTargetException, InstantiationException {
+    public AggregateBase loadFromStore(final String key)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         logger.debug("Loading from store " + baseName);
 
         V value;
 
         try {
-            value = ApplicationServices.get().<String, V> getStore(baseName).findById(key);
+            value = ApplicationServices.<String, V>getStore(baseName).findById(key);
 
-        } catch (NullPointerException e) {
+        } catch (final NullPointerException e) {
             value = null;
         }
 
@@ -105,19 +104,18 @@ public final class Repository<K, V extends SpecificRecordBase> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void setDependencies() throws AggregateDependenciesException {
 
         if (aggregateClass.isAnnotationPresent(AggregateParent.class)) {
 
-            Class<? extends SpecificRecordBase> childValueClass = getValueClass(aggregateClass);
+            final Class<? extends SpecificRecordBase> childValueClass = getValueClass(aggregateClass);
 
-            Class<? extends AbstractAggregateBase> parentClass = aggregateClass.getAnnotation(AggregateParent.class)
-                    .value();
+            final Class<? extends AbstractAggregateBase> parentClass = aggregateClass
+                    .getAnnotation(AggregateParent.class).value();
             parentValueClass = getValueClass(parentClass);
 
-            Field[] parentFields = parentValueClass.getDeclaredFields();
-            for (Field parentField : parentFields) {
+            final Field[] parentFields = parentValueClass.getDeclaredFields();
+            for (final Field parentField : parentFields) {
                 if (Modifier.isPublic(parentField.getModifiers())
                         && childValueClass.isAssignableFrom(parentField.getType())) {
                     parentChangelogName = parentClass.getAnnotation(Aggregate.class).baseName()
@@ -127,36 +125,36 @@ public final class Repository<K, V extends SpecificRecordBase> {
                 }
             }
             if (expectedParentField == null) {
-                String errorMessage = "Something rare happened: Parent has not field for child";
+                final String errorMessage = "Something rare happened: Parent has not field for child";
                 logger.error(errorMessage);
                 throw new AggregateDependenciesException(errorMessage);
             }
         }
     }
 
-    private Class getValueClass(Class anotatedClass) {
+    private static Class getValueClass(final Class anotatedClass) {
         return (Class) ((ParameterizedType) anotatedClass.getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
-    @SuppressWarnings("unchecked")
-    private ChangelogRecordMetadata save(String key, V value, CRecord record, String method,
-            ProducerCallback callback) {
+    private ChangelogRecordMetadata save(final String key, final V value, final CRecord record, final String method,
+                                         final ProducerCallback callback) {
         ChangelogRecordMetadata changelogMessageMetadata = null;
 
         if (parentValueClass != null && expectedParentField != null) {
             try {
-                SpecificRecordBase parentValue = parentValueClass.getConstructor().newInstance();
+                final SpecificRecordBase parentValue = parentValueClass.getConstructor().newInstance();
                 expectedParentField.set(parentValue, value);
                 changelogMessageMetadata = propagate(parentChangelogName, key, parentValue, headers(method, record),
                         (id, e) -> {
                             if (e != null) {
-                                e.printStackTrace();
+                                logger.error(e);
                             } else {
                                 logger.info("Parent updated");
                                 propagate(changelogName, key, value, headers(method, record), callback);
                             }
                         });
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException
+                    | NoSuchMethodException e) {
                 logger.error("Problems saving the object", e);
             }
         } else {
@@ -165,50 +163,50 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return changelogMessageMetadata;
     }
 
-    private ChangelogRecordMetadata propagate(String changelogName, String key, SpecificRecordBase value,
-            RecordHeaders headers, ProducerCallback callback) {
+    private ChangelogRecordMetadata propagate(final String changelogName, final String key,
+                                              final SpecificRecordBase value, final RecordHeaders headers, final ProducerCallback callback) {
         logger.info("Propagate PRecord for key: " + key);
         ChangelogRecordMetadata changelogMessageMetadata = null;
-        PRecord<String, SpecificRecordBase> record = new PRecord<>(changelogName, key, value, headers);
+        final PRecord<String, SpecificRecordBase> record = new PRecord<>(changelogName, key, value, headers);
 
         try {
-            Future<RecordMetadata> result = producer.add(record, callback);
+            final Future<RecordMetadata> result = producer.add(record, callback);
             changelogMessageMetadata = new ChangelogRecordMetadata(result.get());
 
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (final InterruptedException | ExecutionException e) {
             logger.error("Problems propagating the object", e);
         }
 
         return changelogMessageMetadata;
     }
 
-    private ChangelogRecordMetadata delete(K key, Class<V> valueClass, RecordHeaders headers, ProducerCallback callback)
+    private ChangelogRecordMetadata delete(final K key, final Class<V> valueClass, final RecordHeaders headers,
+                                           final ProducerCallback callback)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         logger.info("Delete PRecord for key: " + key);
         ChangelogRecordMetadata changelogMessageMetadata = null;
-        PRecord<K, V> record = new PRecord<>(changelogName, key, null, headers);
+        final PRecord<K, V> record = new PRecord<>(changelogName, key, null, headers);
 
         try {
-            Future<RecordMetadata> result = producer.remove(record, valueClass, callback);
+            final Future<RecordMetadata> result = producer.remove(record, valueClass, callback);
             changelogMessageMetadata = new ChangelogRecordMetadata(result.get());
 
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (final InterruptedException | ExecutionException e) {
             logger.error("Problems deleting the object", e);
         }
 
         return changelogMessageMetadata;
     }
 
-    @SuppressWarnings("unchecked")
-    private AggregateBase getAggregateIntance(String key, V value)
+    private AggregateBase getAggregateIntance(final String key, final V value)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        AggregateBase aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
+        final AggregateBase aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
                 .newInstance(key, value);
 
         logger.info("Aggregate loaded");
 
         aggregateBaseInstance.setApplyRecordCallback((method, record, message,
-                callback) -> save((String) aggregateBaseInstance.getId(), (V) record, message, method, callback));
+                                                      callback) -> save((String) aggregateBaseInstance.getId(), (V) record, message, method, callback));
 
         if (AbstractAggregateBase.class.isInstance(aggregateBaseInstance)) {
             ((AbstractAggregateBase) aggregateBaseInstance).setDeleteRecordCallback(
@@ -221,13 +219,13 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return aggregateBaseInstance;
     }
 
-    private RecordHeaders headers(String aggregateMethod, CRecord record) {
+    private RecordHeaders headers(final String aggregateMethod, final CRecord record) {
 
-        RecordHeaders recordHeaders = new RecordHeaders();
+        final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CRecord.TYPE_KEY, new GenericValue(ChangelogRecord.TYPE_CHANGELOG_VALUE));
         recordHeaders.add(ChangelogRecord.UUID_KEY, new GenericValue(UUID.randomUUID().toString()));
         recordHeaders.add(ChangelogRecord.TRIGGER_REFERENCE_KEY,
-                new GenericValue(record != null ? (String) record.key() : ""));
+                new GenericValue(record != null ? record.key() : ""));
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new GenericValue(
                 (record != null && record.isReplayMode()) || ApplicationServices.get().isReplayMode()));
         recordHeaders.add(ChangelogRecord.AGGREGATE_UUID_KEY, new GenericValue(aggregateUUID));
