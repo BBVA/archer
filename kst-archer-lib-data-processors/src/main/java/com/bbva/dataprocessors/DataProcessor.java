@@ -21,7 +21,7 @@ public final class DataProcessor {
     private final Map<String, ProcessorBuilder> processors = new LinkedHashMap<>();
     private final SQLProcessorContext sqlProcessorContext;
     private final ApplicationConfig config;
-    private static DataProcessor instance = null;
+    private static DataProcessor instance;
     private final static String KSQL_STATE_NAME = "ksql_processor";
 
     private DataProcessor(final ApplicationConfig config) {

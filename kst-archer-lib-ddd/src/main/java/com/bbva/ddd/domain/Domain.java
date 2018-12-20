@@ -148,7 +148,7 @@ public final class Domain {
         final String mainPackage = handler.getClass().getCanonicalName().split("\\.")[0];
         aggregatesByPackage(mainPackage);
 
-        if (aggregatesMap.size() == 0) {
+        if (aggregatesMap.isEmpty()) {
             mapAllPackagesAggregates();
         }
 

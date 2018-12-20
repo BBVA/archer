@@ -97,6 +97,7 @@
 
     <modules>
         <module>kst-archer-lib-common</module>
+        <module>kst-archer-lib-common-test</module>
         <module>kst-archer-lib-data-processors</module>
         <module>kst-archer-lib-ddd</module>
     </modules>

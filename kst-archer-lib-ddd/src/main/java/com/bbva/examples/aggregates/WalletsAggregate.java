@@ -5,16 +5,14 @@ import com.bbva.ddd.domain.aggregates.AbstractAggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 
-import java.util.logging.Logger;
-
 @Aggregate(baseName = "test_wallets")
 public class WalletsAggregate extends AbstractAggregateBase<String, Wallets> {
 
-    public WalletsAggregate(String id, Wallets wallet) {
+    public WalletsAggregate(final String id, final Wallets wallet) {
         super(id, wallet);
     }
 
-    public void update(Wallets modifiedData, CommandRecord commandMessage) {
+    public void update(final Wallets modifiedData, final CommandRecord commandMessage) {
         apply("update", modifiedData, commandMessage, (id, e) -> {
             if (e != null) {
                 e.printStackTrace();
