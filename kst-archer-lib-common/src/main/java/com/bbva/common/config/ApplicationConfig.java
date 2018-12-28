@@ -92,11 +92,11 @@ public class ApplicationConfig implements Cloneable {
     final public class StreamsProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
-        public static final String CONSUMER_GROUP_ID = ConsumerConfig.GROUP_ID_CONFIG;
+        public static final String GROUP_ID = ConsumerConfig.GROUP_ID_CONFIG;
         public static final String APPLICATION_ID = StreamsConfig.APPLICATION_ID_CONFIG;
         public static final String APPLICATION_NAME = "application.name";
         public static final String APPLICATION_SERVER = StreamsConfig.APPLICATION_SERVER_CONFIG;
-        public static final String STREAMS_CLIENT_ID = ConsumerConfig.CLIENT_ID_CONFIG;
+        public static final String CLIENT_ID = ConsumerConfig.CLIENT_ID_CONFIG;
         public static final String STREAMS_AUTO_OFFSET_RESET = ConsumerConfig.AUTO_OFFSET_RESET_CONFIG;
         public static final String COMMIT_INTERVAL_MS = StreamsConfig.COMMIT_INTERVAL_MS_CONFIG;
         public static final String INTERNAL_REPLICATION_FACTOR = StreamsConfig.REPLICATION_FACTOR_CONFIG;

@@ -5,6 +5,7 @@ import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,8 +20,8 @@ public class InteractiveLocalDB {
         this.readableStores = new HashMap<>();
     }
 
-    public <K, V> ReadableStore<K, V> getStore(String storeName) {
-        ReadableStore<K, V> store;
+    public <K, V> ReadableStore<K, V> getStore(final String storeName) {
+        final ReadableStore<K, V> store;
         if (readableStores.containsKey(storeName)) {
             store = readableStores.get(storeName);
         } else {
@@ -34,25 +35,23 @@ public class InteractiveLocalDB {
 
         private final ReadOnlyKeyValueStore<K, V> store;
 
-        ReadableStore(String storeName) {
-            store = streams.store(storeName, QueryableStoreTypes.<K, V> keyValueStore());
+        ReadableStore(final String storeName) {
+            store = streams.store(storeName, QueryableStoreTypes.<K, V>keyValueStore());
         }
 
         /**
-         * @param key
-         *            to look for in store
+         * @param key to look for in store
          * @return true if exists key, false otherwise
          */
-        public boolean exists(K key) {
-            return (findById(key) != null);
+        public boolean exists(final K key) {
+            return findById(key) != null;
         }
 
         /**
-         * @param key
-         *            to look for in store
+         * @param key to look for in store
          * @return value V binded with the key param or null
          */
-        public V findById(K key) {
+        public V findById(final K key) {
             return store.get(key);
         }
 
@@ -64,13 +63,11 @@ public class InteractiveLocalDB {
         }
 
         /**
-         * @param from
-         *            key
-         * @param to
-         *            key
+         * @param from key
+         * @param to   key
          * @return Iterator with all values in range
          */
-        public KeyValueIterator<K, V> range(K from, K to) {
+        public KeyValueIterator<K, V> range(final K from, final K to) {
             return store.range(from, to);
         }
 
