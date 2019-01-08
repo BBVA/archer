@@ -31,7 +31,7 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     private final SpecificAvroSerde<V> specificSerde;
     private static final LoggerGen logger = LoggerGenesis.getLogger(DefaultConsumer.class.getName());
 
-    public DefaultConsumer(int id, List<String> topics, Consumer<T> callback, ApplicationConfig applicationConfig) {
+    public DefaultConsumer(final int id, final List<String> topics, final Consumer<T> callback, final ApplicationConfig applicationConfig) {
         this.id = id;
         this.topics = topics;
         this.callback = callback;
@@ -49,17 +49,17 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     }
 
     public abstract T message(String topic, int partition, long offset, long timestamp, TimestampType timestampType,
-            String key, V value, RecordHeaders headers);
+                              String key, V value, RecordHeaders headers);
 
     @SuppressWarnings("unchecked")
-    public void replay(List<String> topics) {
+    public void replay(final List<String> topics) {
         logger.info("Consumer started in mode replay");
 
-        Properties props = applicationConfig.consumer().get();
+        final Properties props = applicationConfig.consumer().get();
         props.put(ApplicationConfig.ConsumerProperties.ENABLE_AUTO_COMMIT, false);
         props.put(ApplicationConfig.ConsumerProperties.SESSION_TIMEOUT_MS, "30000");
 
-        KafkaConsumer<String, V> replayConsumer = new KafkaConsumer<>(props, Serdes.String().deserializer(),
+        final KafkaConsumer<String, V> replayConsumer = new KafkaConsumer<>(props, Serdes.String().deserializer(),
                 specificSerde.deserializer());
 
         try {
@@ -68,20 +68,20 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
             logger.debug("Topics subscribed: " + topics.toString());
 
             replayConsumer.poll(0L);
-            Set<TopicPartition> topicPartitionSet = replayConsumer.assignment();
+            final Set<TopicPartition> topicPartitionSet = replayConsumer.assignment();
 
             logger.debug("Partitions assigned " + topicPartitionSet.toString());
 
-            if (topicPartitionSet.size() == 0) {
+            if (topicPartitionSet.isEmpty()) {
                 logger.error("Replay failed. Not assigment detected");
 
             } else {
 
-                for (TopicPartition topicPartition : topicPartitionSet) {
+                for (final TopicPartition topicPartition : topicPartitionSet) {
                     logger.debug("Start replay on topic " + topicPartition.topic() + " partition "
                             + topicPartition.partition());
 
-                    long lastOffset = replayConsumer.position(topicPartition);
+                    final long lastOffset = replayConsumer.position(topicPartition);
 
                     if (lastOffset > 0) {
 
@@ -92,15 +92,15 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
                         boolean stop = false;
 
                         while (!stop) {
-                            ConsumerRecords<String, V> records = replayConsumer.poll(Long.MAX_VALUE);
-                            for (ConsumerRecord<String, V> record : records) {
+                            final ConsumerRecords<String, V> records = replayConsumer.poll(Long.MAX_VALUE);
+                            for (final ConsumerRecord<String, V> record : records) {
                                 currentOffset = record.offset();
                                 if (currentOffset <= lastOffset - 1) {
                                     callback.accept(message(record.topic(), record.partition(), record.offset(),
                                             record.timestamp(), record.timestampType(), record.key(), record.value(),
                                             new RecordHeaders(record.headers())));
                                     if (currentOffset == lastOffset - 1) {
-                                        Map<TopicPartition, OffsetAndMetadata> offset = new HashMap<>();
+                                        final Map<TopicPartition, OffsetAndMetadata> offset = new HashMap<>();
                                         offset.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
                                         replayConsumer.commitAsync(offset, null);
                                         stop = true;
@@ -115,7 +115,7 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
                 }
             }
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error("Exception: " + e.getLocalizedMessage());
         } finally {
             logger.info("End replay");
@@ -131,17 +131,17 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
             consumer.subscribe(topics);
 
             while (!closed.get()) {
-                ConsumerRecords<String, V> records = consumer.poll(Long.MAX_VALUE);
-                for (ConsumerRecord<String, V> record : records) {
+                final ConsumerRecords<String, V> records = consumer.poll(Long.MAX_VALUE);
+                for (final ConsumerRecord<String, V> record : records) {
                     callback.accept(message(record.topic(), record.partition(), record.offset(), record.timestamp(),
                             record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers())));
                 }
             }
-        } catch (WakeupException e) {
+        } catch (final WakeupException e) {
             // ignore for shutdown
             if (!closed.get())
                 logger.error(e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             logger.error(e);
         } finally {
             consumer.close();

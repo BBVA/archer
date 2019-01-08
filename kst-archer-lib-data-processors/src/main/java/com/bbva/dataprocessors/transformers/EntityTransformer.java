@@ -19,20 +19,16 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
     // TODO nerver used
     private ProcessorContext context;
     private KeyValueStore<K, V> stateStore;
-    private String stateStoreName;
+    private final String stateStoreName;
 
-    public EntityTransformer(String stateStoreName) {
+    public EntityTransformer(final String stateStoreName) {
         this.stateStoreName = stateStoreName;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void init(ProcessorContext context) {
-        // keep the processor context locally because we need it in punctuate() and commit()
+    public void init(final ProcessorContext context) {
         this.context = context;
-
-        // call this processor's punctuate() method every 1000 time units.
-        // this.context.schedule(1000);
 
         stateStore = (KeyValueStore<K, V>) context.getStateStore(stateStoreName);
     }
@@ -40,8 +36,8 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
     @Override
     @SuppressWarnings("unchecked")
     public KeyValue<K, V> transform(final K key, final V value) {
-        V oldValue = stateStore.get(key);
-        V newValue;
+        final V oldValue = stateStore.get(key);
+        final V newValue;
         if (oldValue == null || value == null) {
             newValue = value;
         } else {
@@ -53,17 +49,15 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
 
     @Override
     public void close() {
-        // close the key-value store
-        // stateStore.close();
     }
 
-    private Object merge(Object lastObject, Object newObject) {
+    private static Object merge(final Object lastObject, final Object newObject) {
         Object result;
         try {
             result = newObject.getClass().newInstance();
 
             try {
-                for (PropertyDescriptor pd : Introspector.getBeanInfo(result.getClass()).getPropertyDescriptors()) {
+                for (final PropertyDescriptor pd : Introspector.getBeanInfo(result.getClass()).getPropertyDescriptors()) {
                     if (pd.getReadMethod() != null && !"class".equals(pd.getName()) && !"schema".equals(pd.getName())) {
                         Object newValue = null;
                         Object lastValue = null;
@@ -71,7 +65,7 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
                         try {
                             newValue = pd.getReadMethod().invoke(newObject);
                             lastValue = pd.getReadMethod().invoke(lastObject);
-                        } catch (NullPointerException | IllegalAccessException | InvocationTargetException e) {
+                        } catch (final NullPointerException | IllegalAccessException | InvocationTargetException e) {
                             // ignore
                         }
 
@@ -83,15 +77,15 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
                             } else {
                                 pd.getWriteMethod().invoke(result, newValue);
                             }
-                        } catch (NullPointerException | IllegalAccessException | InvocationTargetException e) {
+                        } catch (final NullPointerException | IllegalAccessException | InvocationTargetException e) {
                             logger.error(e);
                         }
                     }
                 }
-            } catch (IntrospectionException e) {
+            } catch (final IntrospectionException e) {
                 logger.error(e);
             }
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (final InstantiationException | IllegalAccessException e) {
             logger.error(e);
             result = lastObject;
         }

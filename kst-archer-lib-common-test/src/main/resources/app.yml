@@ -1,0 +1,28 @@
+app:
+    common:
+        bootstrap.servers: ${ARCHER_BOOTSTRAP_SERVERS_TEST}
+    application:
+        schema.registry.url: ${ARCHER_SCHEMA_REGISTRY_URL}
+        replication.factor: 1
+    consumer:
+        group.id: test-consumer-group
+        client.id: $UUID
+        auto.offset.reset: earliest
+    producer:
+        acks: all
+        retries: 1
+    streams:
+        application.server: localhost:8080
+        client.id: $UUID
+        application.name: test
+        application.id: test-stream-app
+        auto.offset.reset: earliest
+        commit.interval.ms: 500
+        replication.factor: 1
+        group.id: test-stream-group
+        max.poll.interval.ms: 300000
+        max.poll.records: 500
+        session.timeout.ms: 10000
+        state.dir: /tmp/kafka-streams-XXX
+        num.standby.replicas: 0
+    topicName: test-gateway

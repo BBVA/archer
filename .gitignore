@@ -1,6 +1,7 @@
 kst-archer-lib-ddd/target/*
 kst-archer-lib-data-processors/target/*
 kst-archer-lib-common/target/*
+kst-archer-lib-common-test/target/*
 .idea
 *.iml
 

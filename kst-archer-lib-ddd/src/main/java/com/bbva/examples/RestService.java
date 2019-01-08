@@ -13,20 +13,16 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-
 public class RestService {
 
-    private final Client client = ClientBuilder.newBuilder().register(JacksonFeature.class).build();
     private Server jettyServer;
-    private FiscalDataServices fiscalDataServices;
-    private SettingsServices settingsServices;
-    private DevicesServices devicesServices;
-    private WalletsServices walletsServices;
-    private ChannelsServices channelsServices;
+    private final FiscalDataServices fiscalDataServices;
+    private final SettingsServices settingsServices;
+    private final DevicesServices devicesServices;
+    private final WalletsServices walletsServices;
+    private final ChannelsServices channelsServices;
 
-    RestService(ApplicationServices app) {
+    RestService(final ApplicationServices app) {
         fiscalDataServices = new FiscalDataServices(app);
         settingsServices = new SettingsServices(app);
         devicesServices = new DevicesServices(app);
@@ -39,14 +35,14 @@ public class RestService {
      *
      * @throws Exception
      */
-    void start(Integer hostPort) throws Exception {
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+    void start(final Integer hostPort) throws Exception {
+        final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
         jettyServer = new Server(hostPort);
         jettyServer.setHandler(context);
 
-        ResourceConfig rc = new ResourceConfig();
+        final ResourceConfig rc = new ResourceConfig();
         rc.register(fiscalDataServices);
         rc.register(settingsServices);
         rc.register(devicesServices);
@@ -54,8 +50,8 @@ public class RestService {
         rc.register(channelsServices);
         rc.register(JacksonFeature.class);
 
-        ServletContainer sc = new ServletContainer(rc);
-        ServletHolder holder = new ServletHolder(sc);
+        final ServletContainer sc = new ServletContainer(rc);
+        final ServletHolder holder = new ServletHolder(sc);
         context.addServlet(holder, "/*");
 
         jettyServer.start();

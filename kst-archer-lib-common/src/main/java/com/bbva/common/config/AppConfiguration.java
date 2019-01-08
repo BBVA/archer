@@ -75,8 +75,8 @@ public class AppConfiguration {
         return properties;
     }
 
-    private static Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
-                                                         final String filename) {
+    public static Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
+                                                        final String filename) {
         Map<String, Object> properties = null;
         try (final InputStream in = classLoader.getResourceAsStream(filename)) {
             properties = (Map<String, Object>) yaml.load(in);
@@ -87,27 +87,11 @@ public class AppConfiguration {
         return properties;
     }
 
-    private static Map<String, Object> replaceEnvVariables(final Map<String, Object> properties) {
+    public static Map<String, Object> replaceEnvVariables(final Map<String, Object> properties) {
         for (final Map.Entry property : properties.entrySet()) {
             if (property.getValue() instanceof String) {
                 final String value = (String) property.getValue();
-                if (value.startsWith("${")) {
-                    final String[] envVariable = value.replace("${", "").replace("}", "").split(":", 2);
-                    final String envValue = System.getenv(envVariable[0]);
-                    final String defaultValue = envVariable.length > 1 ? envVariable[1] : "";
-                    property.setValue(envValue != null ? envValue : defaultValue);
-                } else if (value.equals("$UUID")) {
-                    property.setValue(UUID.randomUUID().toString());
-                } else if (value.indexOf('#') > -1) {
-                    String fieldValue = (String) property.getValue();
-                    final String subField = fieldValue.substring(fieldValue.indexOf('#') + 1,
-                            fieldValue.indexOf('#', fieldValue.indexOf('#') + 1));
-
-                    fieldValue = properties.get(subField) != null
-                            ? fieldValue.replaceAll("#.*#", (String) properties.get(subField)) : fieldValue;
-
-                    property.setValue(fieldValue);
-                }
+                getStringProperty(properties, property, value);
             } else if (property.getValue() instanceof Integer) {
                 property.setValue(String.valueOf(property.getValue()));
             } else if (property.getValue() instanceof Map) {
@@ -117,7 +101,27 @@ public class AppConfiguration {
         return properties;
     }
 
-    private static Map mergeProperties(final Map common, final Map specific) {
+    public static void getStringProperty(final Map<String, Object> properties, final Map.Entry property, final String value) {
+        if (value.startsWith("${")) {
+            final String[] envVariable = value.replace("${", "").replace("}", "").split(":", 2);
+            final String envValue = System.getenv(envVariable[0]);
+            final String defaultValue = envVariable.length > 1 ? envVariable[1] : "";
+            property.setValue(envValue != null ? envValue : defaultValue);
+        } else if ("$UUID".equals(value)) {
+            property.setValue(UUID.randomUUID().toString());
+        } else if (value.indexOf('#') > -1) {
+            String fieldValue = (String) property.getValue();
+            final String subField = fieldValue.substring(fieldValue.indexOf('#') + 1,
+                    fieldValue.indexOf('#', fieldValue.indexOf('#') + 1));
+
+            fieldValue = properties.get(subField) != null
+                    ? fieldValue.replaceAll("#.*#", (String) properties.get(subField)) : fieldValue;
+
+            property.setValue(fieldValue);
+        }
+    }
+
+    public static Map mergeProperties(final Map common, final Map specific) {
         for (final Object key : specific.keySet()) {
             if (specific.get(key) instanceof Map && common.get(key) instanceof Map) {
                 common.put(key, mergeProperties((Map) common.get(key), (Map) specific.get(key)));

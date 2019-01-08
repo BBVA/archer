@@ -39,8 +39,8 @@ public final class Repository<K, V extends SpecificRecordBase> {
     private final String baseName;
     private final String aggregateUUID;
 
-    private String parentChangelogName = null;
-    private Field expectedParentField = null;
+    private String parentChangelogName;
+    private Field expectedParentField;
     private Class<? extends SpecificRecordBase> parentValueClass = null;
 
     public Repository(final String baseName, final Class<? extends AggregateBase> aggregateClass,
