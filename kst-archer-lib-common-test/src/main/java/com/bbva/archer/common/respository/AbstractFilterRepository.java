@@ -23,19 +23,19 @@ import java.util.Collections;
 import java.util.Date;
 
 
-public abstract class AbstractFilterRepository<T extends SpecificRecord> {
+public abstract class AbstractFilterRepository<V extends SpecificRecord> {
 
     private static final LoggerGen LOGGER = LoggerGenesis.getLogger(AbstractFilterRepository.class.getName());
 
     private final KafkaStreams streams;
-    private final KTable<String, T> table;
+    private final KTable<String, V> table;
 
     public AbstractFilterRepository(final ApplicationConfig appConfig, final String topicName) {
 
         final StreamsBuilder builder = new StreamsBuilder();
 
         final String schemaUri = (String) appConfig.get().get(ApplicationConfig.SCHEMA_REGISTRY_URL);
-        final SpecificAvroSerde<T> valueSerde = new SpecificAvroSerde(
+        final SpecificAvroSerde<V> valueSerde = new SpecificAvroSerde(
                 new CustomCachedSchemaRegistryClient(schemaUri, 100));
         valueSerde.configure(Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL, schemaUri), false);
 
@@ -55,17 +55,17 @@ public abstract class AbstractFilterRepository<T extends SpecificRecord> {
         Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
     }
 
-    public T findByKey(final String hashKey) {
+    public V findByKey(final String hashKey) {
 
-        ReadOnlyKeyValueStore<String, T> view;
+        ReadOnlyKeyValueStore<String, V> view;
         boolean retry = true;
         while (retry) {
             try {
                 if (streams != null && streams.state() == KafkaStreams.State.RUNNING) {
                     view = streams.store(table.queryableStoreName(), QueryableStoreTypes.keyValueStore());
-                    final KeyValueIterator<String, T> range = view.all();
+                    final KeyValueIterator<String, V> range = view.all();
                     while (range.hasNext()) {
-                        final KeyValue<String, T> next = range.next();
+                        final KeyValue<String, V> next = range.next();
                         if (compareKey(next.value, hashKey)) {
                             return next.value;
                         }
@@ -84,7 +84,7 @@ public abstract class AbstractFilterRepository<T extends SpecificRecord> {
         return null;
     }
 
-    protected abstract boolean compareKey(T value, String key);
+    protected abstract boolean compareKey(V value, String key);
 
     public void close() {
         streams.close();
