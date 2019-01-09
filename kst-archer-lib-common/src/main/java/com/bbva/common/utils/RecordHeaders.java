@@ -22,19 +22,19 @@ public class RecordHeaders {
         this.headers = headers;
     }
 
-    public GenericValue find(String key) {
-        GenericValue value = null;
+    public ByteArrayValue find(String key) {
+        ByteArrayValue value = null;
         for (Header header : headers) {
             if (header.key().equals(key)) {
-                value = new GenericValue(header.value());
+                value = new ByteArrayValue(header.value());
                 break;
             }
         }
         return value;
     }
 
-    public void add(String key, GenericValue value) {
-        headers.add(new RecordHeader(key, value));
+    public void add(String key, ByteArrayValue value) {
+        headers.add(new RecordHeader(key, value.getBytes()));
     }
 
     public void add(RecordHeader recordHeader) {
@@ -51,11 +51,11 @@ public class RecordHeaders {
 
     @Override
     public String toString() {
-        String value = "[";
+        StringBuilder value = new StringBuilder("[");
         for (Header header : headers) {
-            value += "{key: " + header.key() + ", value: " + new GenericValue(header.value()).asString() + "}";
+            value.append("{key: ").append(header.key()).append(", value: ").append(ByteArrayValue.Serde.deserializeAs(String.class, header.value())).append("}");
         }
-        value += "]";
-        return value;
+        value.append("]");
+        return value.toString();
     }
 }
