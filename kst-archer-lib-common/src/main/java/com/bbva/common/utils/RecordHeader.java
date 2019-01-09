@@ -16,11 +16,6 @@ public class RecordHeader implements Header {
         this.value = value;
     }
 
-    public RecordHeader(String key, GenericValue value) {
-        this.key = key;
-        this.value = value.asByteArray();
-    }
-
     @Override
     public String key() {
         return key;

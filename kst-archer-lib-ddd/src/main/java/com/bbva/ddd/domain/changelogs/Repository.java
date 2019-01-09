@@ -5,7 +5,7 @@ import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
-import com.bbva.common.utils.GenericValue;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.ApplicationServices;
 import com.bbva.ddd.domain.aggregates.AbstractAggregateBase;
@@ -60,6 +60,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return baseName;
     }
 
+    @SuppressWarnings("unchecked")
     public AggregateBase create(String key, final V value, final CommandRecord commandMessage,
                                 final ProducerCallback callback)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -104,6 +105,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void setDependencies() throws AggregateDependenciesException {
 
         if (aggregateClass.isAnnotationPresent(AggregateParent.class)) {
@@ -198,6 +200,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return changelogMessageMetadata;
     }
 
+    @SuppressWarnings("unchecked")
     private AggregateBase getAggregateIntance(final String key, final V value)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final AggregateBase aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
@@ -208,7 +211,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         aggregateBaseInstance.setApplyRecordCallback((method, record, message,
                                                       callback) -> save((String) aggregateBaseInstance.getId(), (V) record, message, method, callback));
 
-        if (AbstractAggregateBase.class.isInstance(aggregateBaseInstance)) {
+        if (aggregateBaseInstance instanceof AbstractAggregateBase) {
             ((AbstractAggregateBase) aggregateBaseInstance).setDeleteRecordCallback(
                     (method, recordClass, message, callback) -> delete((K) aggregateBaseInstance.getId(), recordClass,
                             headers(method, message), callback));
@@ -222,15 +225,15 @@ public final class Repository<K, V extends SpecificRecordBase> {
     private RecordHeaders headers(final String aggregateMethod, final CRecord record) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CRecord.TYPE_KEY, new GenericValue(ChangelogRecord.TYPE_CHANGELOG_VALUE));
-        recordHeaders.add(ChangelogRecord.UUID_KEY, new GenericValue(UUID.randomUUID().toString()));
+        recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(ChangelogRecord.TYPE_CHANGELOG_VALUE));
+        recordHeaders.add(ChangelogRecord.UUID_KEY, new ByteArrayValue(UUID.randomUUID().toString()));
         recordHeaders.add(ChangelogRecord.TRIGGER_REFERENCE_KEY,
-                new GenericValue(record != null ? record.key() : ""));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new GenericValue(
+                new ByteArrayValue(record != null ? record.key() : ""));
+        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(
                 (record != null && record.isReplayMode()) || ApplicationServices.get().isReplayMode()));
-        recordHeaders.add(ChangelogRecord.AGGREGATE_UUID_KEY, new GenericValue(aggregateUUID));
-        recordHeaders.add(ChangelogRecord.AGGREGATE_NAME_KEY, new GenericValue(this.aggregateClass.getName()));
-        recordHeaders.add(ChangelogRecord.AGGREGATE_METHOD_KEY, new GenericValue(aggregateMethod));
+        recordHeaders.add(ChangelogRecord.AGGREGATE_UUID_KEY, new ByteArrayValue(aggregateUUID));
+        recordHeaders.add(ChangelogRecord.AGGREGATE_NAME_KEY, new ByteArrayValue(this.aggregateClass.getName()));
+        recordHeaders.add(ChangelogRecord.AGGREGATE_METHOD_KEY, new ByteArrayValue(aggregateMethod));
 
         logger.debug("CRecord getList: " + recordHeaders.toString());
 

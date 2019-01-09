@@ -5,7 +5,7 @@ import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
-import com.bbva.common.utils.GenericValue;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.ApplicationServices;
 import com.bbva.ddd.domain.events.read.EventRecord;
@@ -81,9 +81,9 @@ public class Event {
     private RecordHeaders headers(String productorName) {
 
         RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CRecord.TYPE_KEY, new GenericValue(Event.TYPE_EVENT_VALUE));
-        recordHeaders.add(EventRecord.PRODUCTOR_NAME_KEY, new GenericValue(productorName));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new GenericValue(ApplicationServices.get().isReplayMode()));
+        recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(Event.TYPE_EVENT_VALUE));
+        recordHeaders.add(EventRecord.PRODUCTOR_NAME_KEY, new ByteArrayValue(productorName));
+        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(ApplicationServices.get().isReplayMode()));
 
         logger.debug("CRecord getList: " + recordHeaders.toString());
 

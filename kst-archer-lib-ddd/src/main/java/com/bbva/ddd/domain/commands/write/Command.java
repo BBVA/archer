@@ -5,7 +5,7 @@ import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
-import com.bbva.common.utils.GenericValue;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.OptionalRecordHeaders;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.ApplicationServices;
@@ -190,13 +190,13 @@ public class Command {
     private RecordHeaders headers(String name, String entityId, OptionalRecordHeaders optionalHeaders) {
 
         RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CRecord.TYPE_KEY, new GenericValue(Command.TYPE_COMMAND_VALUE));
-        recordHeaders.add(CommandRecord.UUID_KEY, new GenericValue(UUID.randomUUID().toString()));
-        recordHeaders.add(CommandRecord.NAME_KEY, new GenericValue(name));
+        recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(Command.TYPE_COMMAND_VALUE));
+        recordHeaders.add(CommandRecord.UUID_KEY, new ByteArrayValue(UUID.randomUUID().toString()));
+        recordHeaders.add(CommandRecord.NAME_KEY, new ByteArrayValue(name));
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY,
-                new GenericValue(ApplicationServices.get().isReplayMode() && !persistent));
+                new ByteArrayValue(ApplicationServices.get().isReplayMode() && !persistent));
         if (entityId != null) {
-            recordHeaders.add(CommandRecord.ENTITY_ID_KEY, new GenericValue(entityId));
+            recordHeaders.add(CommandRecord.ENTITY_ID_KEY, new ByteArrayValue(entityId));
         }
 
         if (optionalHeaders != null && optionalHeaders.getList().size() > 0) {

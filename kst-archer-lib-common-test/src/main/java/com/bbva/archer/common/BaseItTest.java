@@ -8,7 +8,7 @@ import com.bbva.common.config.Config;
 import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
-import com.bbva.common.utils.GenericValue;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.CommonClientConfigs;
@@ -45,17 +45,17 @@ public class BaseItTest {
 
     public static <T extends SpecificRecord> void generateTestEvent(final String topic, final T record) {
         final String key = UUID.randomUUID().toString();
-        producer.add(new PRecord(topic, key, record,
-                generateHeaders(key)), (o, e) -> handlePutRecord(o, e));
+        producer.add(new PRecord<>(topic, key, record,
+                generateHeaders(key)), BaseItTest::handlePutRecord);
     }
 
 
     private static RecordHeaders generateHeaders(final String key) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add("action", new GenericValue("command"));
-        recordHeaders.add("key", new GenericValue(key));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new GenericValue(false));
+        recordHeaders.add("action", new ByteArrayValue("command"));
+        recordHeaders.add("key", new ByteArrayValue(key));
+        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(false));
 
         return recordHeaders;
     }

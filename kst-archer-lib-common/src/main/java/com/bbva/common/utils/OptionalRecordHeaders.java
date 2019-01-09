@@ -17,22 +17,22 @@ public class OptionalRecordHeaders extends RecordHeaders {
     }
 
     public OptionalRecordHeaders addOrigin(String value) {
-        headers.add(new RecordHeader(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY, new GenericValue(value)));
+        headers.add(new RecordHeader(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY, ByteArrayValue.Serde.serialize(value)));
         return this;
     }
 
     public OptionalRecordHeaders addAck(String value) {
-        headers.add(new RecordHeader(OptionalRecordHeaders.CUSTOM_ACK_KEY, new GenericValue(value)));
+        headers.add(new RecordHeader(OptionalRecordHeaders.CUSTOM_ACK_KEY, ByteArrayValue.Serde.serialize(value)));
         return this;
     }
 
     public String getOrigin() {
-        GenericValue value = find(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY);
+        ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY);
         return value != null ? value.asString() : null;
     }
 
     public String getAck() {
-        GenericValue value = find(OptionalRecordHeaders.CUSTOM_ACK_KEY);
+        ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ACK_KEY);
         return value != null ? value.asString() : null;
     }
 
