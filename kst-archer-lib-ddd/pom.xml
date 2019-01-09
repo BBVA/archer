@@ -7,42 +7,17 @@
     <parent>
         <groupId>bbva.ndb</groupId>
         <artifactId>archer-lib</artifactId>
-        <version>4.0.22</version>
+        <version>4.0.0</version>
     </parent>
     <artifactId>lib-ddd</artifactId>
     <packaging>jar</packaging>
 
     <properties>
         <lib.commons>${revision}</lib.commons>
-        <lib.processors>${revision}</lib.processors>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksql-engine</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksql-parser</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksql-common</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksql-metastore</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent.ksql</groupId>
-            <artifactId>ksql-serde</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
+    
         <dependency>
             <groupId>bbva.ndb</groupId>
             <artifactId>lib-common</artifactId>
