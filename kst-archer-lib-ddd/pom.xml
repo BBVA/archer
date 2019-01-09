@@ -7,26 +7,22 @@
     <parent>
         <groupId>bbva.ndb</groupId>
         <artifactId>archer-lib</artifactId>
-        <version>4.0.0</version>
+        <version>4.1.0</version>
     </parent>
     <artifactId>lib-ddd</artifactId>
     <packaging>jar</packaging>
-
-    <properties>
-        <lib.commons>${revision}</lib.commons>
-    </properties>
 
     <dependencies>
     
         <dependency>
             <groupId>bbva.ndb</groupId>
             <artifactId>lib-common</artifactId>
-            <version>${lib.commons}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>bbva.ndb</groupId>
             <artifactId>lib-data-processors</artifactId>
-            <version>${lib.commons}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
