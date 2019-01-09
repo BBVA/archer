@@ -16,9 +16,9 @@ import java.lang.reflect.InvocationTargetException;
 public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>> {
 
     private static final LoggerGen logger = LoggerGenesis.getLogger(EntityTransformer.class.getName());
-    // TODO nerver used
-    private ProcessorContext context;
-    private KeyValueStore<K, V> stateStore;
+
+    protected ProcessorContext context;
+    protected KeyValueStore<K, V> stateStore;
     private final String stateStoreName;
 
     public EntityTransformer(final String stateStoreName) {
@@ -26,7 +26,6 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void init(final ProcessorContext context) {
         this.context = context;
 
@@ -34,7 +33,6 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public KeyValue<K, V> transform(final K key, final V value) {
         final V oldValue = stateStore.get(key);
         final V newValue;
@@ -43,6 +41,10 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
         } else {
             newValue = (V) merge(oldValue, value);
         }
+        return setMergedKeyValue(key, newValue);
+    }
+
+    protected KeyValue<K, V> setMergedKeyValue(final K key, final V newValue) {
         stateStore.put(key, newValue);
         return KeyValue.pair(key, newValue);
     }
