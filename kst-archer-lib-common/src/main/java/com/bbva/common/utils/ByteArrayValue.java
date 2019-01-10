@@ -10,9 +10,9 @@ import java.nio.ByteBuffer;
 
 public class ByteArrayValue {
 
-    private byte[] data;
+    private final byte[] data;
 
-    public <V> ByteArrayValue(V data) {
+    public <V> ByteArrayValue(final V data) {
         this.data = Serde.serialize(data);
     }
 
@@ -48,28 +48,27 @@ public class ByteArrayValue {
         return as(Float.class);
     }
 
-    public <V> V as(Class<V> classValue) {
+    public <V> V as(final Class<V> classValue) {
         return Serde.deserializeAs(classValue, data);
     }
 
     public static class Serde {
 
-        @SuppressWarnings("unchecked")
-        public static <T> T deserializeAs(Class<T> classType, byte[] data) {
-            T deserializeData;
-            if (classType.isInstance(ByteBuffer.class)) {
+        public static <T> T deserializeAs(final Class<T> classType, final byte[] data) {
+            final T deserializeData;
+            if (classType == ByteBuffer.class) {
                 deserializeData = (T) ByteBuffer.wrap(data);
-            } else if (classType.isInstance(Bytes.class)) {
+            } else if (classType == Bytes.class) {
                 deserializeData = (T) Bytes.wrap(data);
-            } else if (classType.isInstance(String.class)) {
+            } else if (classType == String.class) {
                 deserializeData = (T) new String(data);
-            } else if (classType.isInstance(boolean.class)) {
+            } else if (classType == Boolean.class) {
                 deserializeData = (T) Boolean.valueOf(data.length > 0 && data[0] != 0);
-            } else if (classType.isInstance(Integer.class)) {
+            } else if (classType == Integer.class) {
                 deserializeData = (T) (Integer) ByteBuffer.wrap(data).getInt();
-            } else if (classType.isInstance(Long.class)) {
+            } else if (classType == Long.class) {
                 deserializeData = (T) (Long) ByteBuffer.wrap(data).getLong();
-            } else if (classType.isInstance(Float.class)) {
+            } else if (classType == Float.class) {
                 deserializeData = (T) (Float) ByteBuffer.wrap(data).getFloat();
             } else {
                 throw new ClassCastException("Inconvertible types");
@@ -77,10 +76,9 @@ public class ByteArrayValue {
             return deserializeData;
         }
 
-        @SuppressWarnings("unchecked")
-        public static <T> byte[] serialize(T data) {
-            byte[] serializeData = null;
-            if (data == byte[].class) {
+        public static <T> byte[] serialize(final T data) {
+            final byte[] serializeData;
+            if (data instanceof byte[]) {
                 serializeData = (byte[]) data;
             } else if (data instanceof ByteBuffer) {
                 serializeData = ((ByteBuffer) data).array();
@@ -97,13 +95,13 @@ public class ByteArrayValue {
             } else if (data instanceof Float) {
                 serializeData = ByteBuffer.allocate(4).putFloat((Float) data).array();
             } else {
-                try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                    ObjectOutput out;
+                try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+                    final ObjectOutput out;
                     out = new ObjectOutputStream(bos);
                     out.writeObject(data);
                     out.flush();
                     serializeData = bos.toByteArray();
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new ClassCastException("Inconvertible types: data is " + data.getClass().getName());
                 }
             }
