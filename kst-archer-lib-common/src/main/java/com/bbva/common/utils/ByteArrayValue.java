@@ -56,19 +56,19 @@ public class ByteArrayValue {
 
         public static <T> T deserializeAs(final Class<T> classType, final byte[] data) {
             final T deserializeData;
-            if (classType.getName().equals(ByteBuffer.class.getName())) {
+            if (classType == ByteBuffer.class) {
                 deserializeData = (T) ByteBuffer.wrap(data);
-            } else if (classType.getName().equals(Bytes.class.getName())) {
+            } else if (classType == Bytes.class) {
                 deserializeData = (T) Bytes.wrap(data);
-            } else if (classType.getName().equals(String.class.getName())) {
+            } else if (classType == String.class) {
                 deserializeData = (T) new String(data);
-            } else if (classType.getName().equals(boolean.class.getName())) {
+            } else if (classType == Boolean.class) {
                 deserializeData = (T) Boolean.valueOf(data.length > 0 && data[0] != 0);
-            } else if (classType.getName().equals(Integer.class.getName())) {
+            } else if (classType == Integer.class) {
                 deserializeData = (T) (Integer) ByteBuffer.wrap(data).getInt();
-            } else if (classType.getName().equals(Long.class.getName())) {
+            } else if (classType == Long.class) {
                 deserializeData = (T) (Long) ByteBuffer.wrap(data).getLong();
-            } else if (classType.getName().equals(Float.class.getName())) {
+            } else if (classType == Float.class) {
                 deserializeData = (T) (Float) ByteBuffer.wrap(data).getFloat();
             } else {
                 throw new ClassCastException("Inconvertible types");
@@ -77,8 +77,8 @@ public class ByteArrayValue {
         }
 
         public static <T> byte[] serialize(final T data) {
-            byte[] serializeData = null;
-            if (data == byte[].class) {
+            final byte[] serializeData;
+            if (data instanceof byte[]) {
                 serializeData = (byte[]) data;
             } else if (data instanceof ByteBuffer) {
                 serializeData = ((ByteBuffer) data).array();
