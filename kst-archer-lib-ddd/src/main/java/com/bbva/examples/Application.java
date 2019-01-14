@@ -209,8 +209,10 @@ public class Application {
         headers.find("string").asString();
         headers.find("long").asLong();
         headers.find("float").asFloat();
-        new String(headers.find("bytes").getBytes(), StandardCharsets.UTF_8);
+        new String(headers.find("bytes").asByteArray(), StandardCharsets.UTF_8);
         headers.find("integer").asInteger();
+
+        headers.find("integer").as().toString();
 
         headers.toString();
     }

@@ -7,8 +7,11 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 public class ByteArrayValue {
-
     private final byte[] data;
+
+    public ByteArrayValue(final byte[] data, final boolean serialized) {
+        this.data = serialized ? data : Serde.serialize(data);
+    }
 
     public <V> ByteArrayValue(final V data) {
         this.data = Serde.serialize(data);
@@ -18,50 +21,70 @@ public class ByteArrayValue {
         return data;
     }
 
+    public byte[] asByteArray() {
+        return (byte[]) as();
+    }
+
     public ByteBuffer asByteBuffer() {
-        return as(ByteBuffer.class);
+        return (ByteBuffer) as();
     }
 
     public Bytes asBytes() {
-        return as(Bytes.class);
+        return (Bytes) as();
     }
 
     public String asString() {
-        return as(String.class);
+        return (String) as();
     }
 
     public boolean asBoolean() {
-        return as(Boolean.class);
+        return (Boolean) as();
     }
 
     public Integer asInteger() {
-        return as(Integer.class);
+        return (Integer) as();
     }
 
     public Long asLong() {
-        return as(Long.class);
+        return (Long) as();
     }
 
     public Float asFloat() {
-        return as(Float.class);
+        return (Float) as();
     }
 
-    public <V> V as(final Class<V> classValue) {
-        return Serde.deserializeAs(classValue, data);
+    public Object as() {
+        return Serde.deserializeAs(data);
     }
 
     public static class Serde {
 
-        public static <T> T deserializeAs(final Class<T> classType, final byte[] data) {
-            return (T) SerializationUtils.deserialize(data);
+        public static Object deserializeAs(final byte[] data) {
+            final GenericValue<Object> valueData = (GenericValue<Object>) SerializationUtils.deserialize(data);
+            return valueData.getClassType().cast(valueData.getValue());
         }
 
         public static <T> byte[] serialize(final T data) {
-            if (data instanceof byte[]) {
-                return (byte[]) data;
-            }
-            return SerializationUtils.serialize((Serializable) data);
+            return SerializationUtils.serialize(new GenericValue<>(data.getClass(), data));
+        }
+    }
+
+    private static class GenericValue<T> implements Serializable {
+        private static final long serialVersionUID = 5852838510474805025L;
+        private final Class classType;
+        private final T value;
+
+        public GenericValue(final Class classType, final T value) {
+            this.classType = classType;
+            this.value = value;
         }
 
+        public T getValue() {
+            return value;
+        }
+
+        public Class getClassType() {
+            return classType;
+        }
     }
 }
