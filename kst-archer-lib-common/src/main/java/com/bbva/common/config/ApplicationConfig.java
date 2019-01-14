@@ -17,6 +17,11 @@ public class ApplicationConfig implements Cloneable {
     public static final String CHANGELOG_RECORD_NAME_SUFFIX = "_data_changelog";
     public static final String COMMANDS_RECORD_NAME_SUFFIX = "_commands";
     public static final String EVENTS_RECORD_NAME_SUFFIX = "_events";
+    public static final String COMMON_RECORD_TYPE = "common";
+    public static final String CHANGELOG_RECORD_TYPE = "data_changelog";
+    public static final String COMMANDS_RECORD_TYPE = "commands";
+    public static final String EVENTS_RECORD_TYPE = "events";
+    public static final String SNAPSHOT_RECORD_TYPE = "snapshot";
     public static final String STORE_NAME_SUFFIX = "_store";
     public static final String INTERNAL_NAME_PREFIX = "internal_";
 

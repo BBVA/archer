@@ -7,7 +7,6 @@ import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
 import com.bbva.dataprocessors.transformers.EntityTransformer;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -26,19 +25,19 @@ public class EntityStateBuilder<K, V extends SpecificRecordBase> implements Stat
     private final GenericClass<K> keyClass;
     private final String snapshotTopicName;
 
-    public EntityStateBuilder(GenericClass<K> keyClass) {
+    public EntityStateBuilder(final GenericClass<K> keyClass) {
         this.keyClass = keyClass;
         snapshotTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
                 + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
     }
 
-    public EntityStateBuilder(String snapshotTopicName, GenericClass<K> keyClass) {
+    public EntityStateBuilder(final String snapshotTopicName, final GenericClass<K> keyClass) {
         this.keyClass = keyClass;
         this.snapshotTopicName = snapshotTopicName;
     }
 
     @Override
-    public void init(DataflowProcessorContext context) {
+    public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
@@ -54,27 +53,23 @@ public class EntityStateBuilder<K, V extends SpecificRecordBase> implements Stat
                 + ApplicationConfig.STORE_NAME_SUFFIX;
         final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
 
-        Map<String, Map<String, String>> topics = new HashMap<>();
-        Map<String, String> snapshotTopicNameConfig = new HashMap<>();
-        snapshotTopicNameConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
-        snapshotTopicNameConfig.put(TopicConfig.MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0");
-        snapshotTopicNameConfig.put(TopicConfig.MIN_COMPACTION_LAG_MS_CONFIG, "0");
-        topics.put(snapshotTopicName, snapshotTopicNameConfig);
-        topics.put(sourceChangelogTopicName, new HashMap<>());
+        final Map<String, String> topics = new HashMap<>();
+        topics.put(snapshotTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
+        topics.put(sourceChangelogTopicName, ApplicationConfig.CHANGELOG_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
 
-        org.apache.kafka.streams.StreamsBuilder builder = context.streamsBuilder();
+        final org.apache.kafka.streams.StreamsBuilder builder = context.streamsBuilder();
 
-        StoreBuilder<KeyValueStore<K, V>> entityStore = Stores
+        final StoreBuilder<KeyValueStore<K, V>> entityStore = Stores
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalLocalStoreName), keySerde, valueSerde)
-                .withLoggingEnabled(snapshotTopicNameConfig);
+                .withLoggingEnabled(TopicManager.configTypes.get(ApplicationConfig.SNAPSHOT_RECORD_TYPE));
 
         builder.addStateStore(entityStore).stream(sourceChangelogTopicName, Consumed.with(keySerde, valueSerde))
                 .transform(() -> new EntityTransformer<>(entityStore.name()), entityStore.name())
                 .to(snapshotTopicName, Produced.with(keySerde, valueSerde));
 
         builder.globalTable(snapshotTopicName,
-                Materialized.<K, V, KeyValueStore<Bytes, byte[]>> as(applicationGlobalStoreName).withKeySerde(keySerde)
+                Materialized.<K, V, KeyValueStore<Bytes, byte[]>>as(applicationGlobalStoreName).withKeySerde(keySerde)
                         .withValueSerde(valueSerde));
     }
 }

@@ -5,7 +5,6 @@ import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.GenericAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
 import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -42,18 +41,14 @@ public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
 
         final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
 
-        final Map<String, Map<String, String>> topics = new HashMap<>();
-        final Map<String, String> sourceTopicNameConfig = new HashMap<>();
-        sourceTopicNameConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
-        sourceTopicNameConfig.put(TopicConfig.MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0");
-        sourceTopicNameConfig.put(TopicConfig.MIN_COMPACTION_LAG_MS_CONFIG, "0");
-        topics.put(sourceTopicName, sourceTopicNameConfig);
+        final Map<String, String> topics = new HashMap<>();
+        topics.put(sourceTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
 
         final StreamsBuilder builder = context.streamsBuilder();
 
         builder.globalTable(sourceTopicName,
-                Materialized.<String, GenericRecord, KeyValueStore<Bytes, byte[]>> as(applicationGlobalStoreName)
+                Materialized.<String, GenericRecord, KeyValueStore<Bytes, byte[]>>as(applicationGlobalStoreName)
                         .withKeySerde(Serdes.String()).withValueSerde(newValueSerde));
     }
 }
