@@ -5,7 +5,10 @@ import com.bbva.avro.Users;
 import com.bbva.avro.users.FiscalData;
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.Config;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.GenericClass;
+import com.bbva.common.utils.RecordHeaders;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.builders.dataflows.states.SimpleGlobalTableStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilderFactory;
@@ -19,12 +22,13 @@ import com.google.common.collect.Lists;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.state.KeyValueIterator;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO can affect to main services @Config(file = "examples/config.yml", dataflow = true, ksql = true)
+@Config(file = "examples/config.yml", dataflow = true, ksql = true)
 public class Application {
 
     public static final String EMAIL_TOPIC_SOURCE = FiscalDataAggregate.baseName()
@@ -38,6 +42,9 @@ public class Application {
     public static void main(final String[] args) {
 
         final ApplicationConfig applicationConfig = new AppConfiguration().init();
+
+        checkSerializations();
+
 
         try {
             final Map<String, String> usersColumns = new HashMap<>();
@@ -189,5 +196,22 @@ public class Application {
             e.printStackTrace();
         }
 
+    }
+
+    private static void checkSerializations() {
+        final RecordHeaders headers = new RecordHeaders();
+        headers.add("string", new ByteArrayValue("string"));
+        headers.add("long", new ByteArrayValue(1L));
+        headers.add("float", new ByteArrayValue(1F));
+        headers.add("integer", new ByteArrayValue(new Integer(1)));
+        headers.add("bytes", new ByteArrayValue("bytes".getBytes()));
+
+        headers.find("string").asString();
+        headers.find("long").asLong();
+        headers.find("float").asFloat();
+        new String(headers.find("bytes").getBytes(), StandardCharsets.UTF_8);
+        headers.find("integer").asInteger();
+
+        headers.toString();
     }
 }

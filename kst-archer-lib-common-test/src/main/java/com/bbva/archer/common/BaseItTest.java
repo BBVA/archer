@@ -54,7 +54,7 @@ public class BaseItTest {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add("action", new ByteArrayValue("command"));
-        recordHeaders.add("key", new ByteArrayValue(key));
+        recordHeaders.add("referenceId", new ByteArrayValue(key));
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(false));
 
         return recordHeaders;

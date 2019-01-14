@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -209,10 +210,10 @@ public final class Domain {
     private void initHandlers() {
         final int numConsumers = 1;
 
-        final List<String> consumerTopics = Stream
+        final Map<String, String> consumerTopics = Stream
                 .concat(Stream.concat(handler.commandsSubscribed().stream(), handler.eventsSubscribed().stream()),
                         handler.dataChangelogsSubscribed().stream())
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(Function.identity(), type -> ApplicationConfig.COMMON_RECORD_TYPE));
 
         TopicManager.createTopics(consumerTopics, applicationConfig);
 

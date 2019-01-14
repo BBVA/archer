@@ -10,14 +10,15 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Serialized;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DropDetectionBuilder implements DataflowBuilder {
 
     private DataflowProcessorContext context;
 
     public DropDetectionBuilder() {
-        
+
     }
 
     @Override
@@ -30,7 +31,9 @@ public class DropDetectionBuilder implements DataflowBuilder {
         final String topic = context.name();
         final String store = topic + ApplicationConfig.STORE_NAME_SUFFIX;
 
-        TopicManager.createTopics(Arrays.asList(topic), context.configs());
+        final Map<String, String> topics = new HashMap();
+        topics.put(topic, ApplicationConfig.CHANGELOG_RECORD_TYPE);
+        TopicManager.createTopics(topics, context.configs());
 
         final KStream<String, Long> dataStream = context.streamsBuilder().stream(topic,
                 Consumed.with(Serdes.String(), Serdes.Long()));

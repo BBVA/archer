@@ -7,7 +7,6 @@ import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
 import com.bbva.dataprocessors.transformers.UniqueFieldTransformer;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -58,14 +57,11 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
                 + ApplicationConfig.STORE_NAME_SUFFIX;
         final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
 
-        final Map<String, Map<String, String>> topics = new HashMap<>();
-        final Map<String, String> sinkInternalChangelogTopicNameConfig = new HashMap<>();
-        sinkInternalChangelogTopicNameConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
-        sinkInternalChangelogTopicNameConfig.put(TopicConfig.MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0");
-        sinkInternalChangelogTopicNameConfig.put(TopicConfig.MIN_COMPACTION_LAG_MS_CONFIG, "0");
-        topics.put(sinkInternalChangelogTopicName, sinkInternalChangelogTopicNameConfig);
-        topics.put(sourceTopicName, new HashMap<>());
+        final Map<String, String> topics = new HashMap<>();
+        topics.put(sinkInternalChangelogTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
+        topics.put(sourceTopicName, ApplicationConfig.CHANGELOG_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
+
 
         final StoreBuilder<KeyValueStore<K1, K>> localUniqueFieldStore = Stores
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalLocalStoreName), key1Serde, keySerde)

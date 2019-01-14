@@ -14,17 +14,17 @@ public class RecordHeaders {
     public RecordHeaders() {
     }
 
-    public RecordHeaders(Headers headers) {
+    public RecordHeaders(final Headers headers) {
         this.headers = Arrays.asList(headers.toArray());
     }
 
-    public RecordHeaders(List<Header> headers) {
+    public RecordHeaders(final List<Header> headers) {
         this.headers = headers;
     }
 
-    public ByteArrayValue find(String key) {
+    public ByteArrayValue find(final String key) {
         ByteArrayValue value = null;
-        for (Header header : headers) {
+        for (final Header header : headers) {
             if (header.key().equals(key)) {
                 value = new ByteArrayValue(header.value());
                 break;
@@ -33,15 +33,15 @@ public class RecordHeaders {
         return value;
     }
 
-    public void add(String key, ByteArrayValue value) {
+    public void add(final String key, final ByteArrayValue value) {
         headers.add(new RecordHeader(key, value.getBytes()));
     }
 
-    public void add(RecordHeader recordHeader) {
+    public void add(final RecordHeader recordHeader) {
         headers.add(recordHeader);
     }
 
-    public void addAll(RecordHeaders recordHeaders) {
+    public void addAll(final RecordHeaders recordHeaders) {
         this.headers.addAll(recordHeaders.getList());
     }
 
@@ -51,9 +51,16 @@ public class RecordHeaders {
 
     @Override
     public String toString() {
-        StringBuilder value = new StringBuilder("[");
-        for (Header header : headers) {
-            value.append("{key: ").append(header.key()).append(", value: ").append(ByteArrayValue.Serde.deserializeAs(String.class, header.value())).append("}");
+        final StringBuilder value = new StringBuilder("[");
+        String valueHeader;
+
+        for (final Header header : headers) {
+            try {
+                valueHeader = ByteArrayValue.Serde.deserializeAs(String.class, header.value());
+            } catch (final Exception e) {
+                valueHeader = "";
+            }
+            value.append("{key: ").append(header.key()).append(", value: ").append(valueHeader).append("}");
         }
         value.append("]");
         return value.toString();
