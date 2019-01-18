@@ -4,16 +4,16 @@ import com.bbva.ddd.domain.changelogs.Repository;
 
 import java.util.Map;
 
-class Repositories {
+final class Repositories {
 
-    private static Repositories instance = new Repositories();
+    private static final Repositories instance = new Repositories();
     private Map<String, Repository> repositories;
 
     private Repositories() {
 
     }
 
-    void setRepositories(Map<String, Repository> repositories) {
+    void setRepositories(final Map<String, Repository> repositories) {
         this.repositories = repositories;
     }
 
@@ -21,7 +21,7 @@ class Repositories {
         return instance;
     }
 
-    static Repository get(String baseName) {
+    static Repository get(final String baseName) {
         return instance.repositories.get(baseName);
     }
 }

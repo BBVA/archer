@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class CreateTableQueryBuilder extends QueryBuilder implements CreateQueryBuilder {
 
-    private String name;
+    private final String name;
     private Map<String, String> columnsDefinition = new HashMap<>();
     private WithPropertiesClauseBuilder withProperties;
     private SelectQueryBuilder asSelect;
-    private String query;
+    private final StringBuilder query = new StringBuilder();
 
-    public CreateTableQueryBuilder(String name) {
+    public CreateTableQueryBuilder(final String name) {
         this.name = name;
     }
 
@@ -24,49 +24,56 @@ public class CreateTableQueryBuilder extends QueryBuilder implements CreateQuery
         return name;
     }
 
-    public CreateTableQueryBuilder columns(Map<String, String> columnsDefinition) {
+    public CreateTableQueryBuilder columns(final Map<String, String> columnsDefinition) {
         this.columnsDefinition = columnsDefinition;
         return this;
     }
 
-    public CreateTableQueryBuilder with(WithPropertiesClauseBuilder withProperties) {
+    public CreateTableQueryBuilder with(final WithPropertiesClauseBuilder withProperties) {
         this.withProperties = withProperties;
         return this;
     }
 
-    public CreateTableQueryBuilder asSelect(SelectQueryBuilder asSelect) {
+    public CreateTableQueryBuilder asSelect(final SelectQueryBuilder asSelect) {
         this.asSelect = asSelect;
         return this;
     }
 
     @Override
     protected String query() {
-        return query;
+        return query.toString();
     }
 
     @Override
     protected String build() {
 
-        String columnsClause = "";
+        final StringBuilder columnsClause = new StringBuilder();
         if (!columnsDefinition.isEmpty()) {
-            List<String> columnsList = new ArrayList<>();
-            for (String prop : columnsDefinition.keySet()) {
+            final List<String> columnsList = new ArrayList<>();
+            for (final String prop : columnsDefinition.keySet()) {
                 columnsList.add(prop + " " + columnsDefinition.get(prop).toUpperCase());
             }
-            columnsClause = " (" + String.join(", ", columnsList) + ")";
+            columnsClause.append(" (");
+            columnsClause.append(String.join(", ", columnsList));
+            columnsClause.append(")");
         }
 
-        String withClause = withProperties.build();
+        final String withClause = withProperties.build();
 
-        String asSelectClause = "";
+        final StringBuilder asSelectClause = new StringBuilder();
         if (asSelect != null) {
-            asSelectClause += " AS " + asSelect.build();
+            asSelectClause.append(" AS ");
+            asSelectClause.append(asSelect.build());
         } else {
-            asSelectClause = ";";
+            asSelectClause.append(";");
         }
 
-        this.query = "CREATE TABLE " + name + columnsClause + withClause + asSelectClause;
+        query.append("CREATE TABLE ");
+        query.append(name);
+        query.append(columnsClause);
+        query.append(withClause);
+        query.append(asSelectClause);
 
-        return query;
+        return query.toString();
     }
 }

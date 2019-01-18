@@ -7,7 +7,7 @@ import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
-import com.bbva.ddd.ApplicationServices;
+import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AbstractAggregateBase;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
@@ -16,6 +16,7 @@ import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;
 import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.changelogs.write.ChangelogRecordMetadata;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.util.StoreUtil;
 import kst.logging.LoggerGen;
 import kst.logging.LoggerGenesis;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -41,7 +42,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
     private String parentChangelogName;
     private Field expectedParentField;
-    private Class<? extends SpecificRecordBase> parentValueClass = null;
+    private Class<? extends SpecificRecordBase> parentValueClass;
 
     public Repository(final String baseName, final Class<? extends AggregateBase> aggregateClass,
                       final ApplicationConfig applicationConfig) throws AggregateDependenciesException {
@@ -86,23 +87,20 @@ public final class Repository<K, V extends SpecificRecordBase> {
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         logger.debug("Loading from store " + baseName);
 
-        V value;
+        final V value;
 
         try {
-            value = ApplicationServices.<String, V>getStore(baseName).findById(key);
+            value = StoreUtil.<String, V>getStore(baseName).findById(key);
 
         } catch (final NullPointerException e) {
-            value = null;
+            return null;
         }
 
         if (value != null) {
             logger.debug("Value found for id " + key);
-
             return getAggregateIntance(key, value);
-
-        } else {
-            return null;
         }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -230,7 +228,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         recordHeaders.add(ChangelogRecord.TRIGGER_REFERENCE_KEY,
                 new ByteArrayValue(record != null ? record.key() : ""));
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(
-                (record != null && record.isReplayMode()) || ApplicationServices.get().isReplayMode()));
+                (record != null && record.isReplayMode()) || HelperDomain.get().isReplayMode()));
         recordHeaders.add(ChangelogRecord.AGGREGATE_UUID_KEY, new ByteArrayValue(aggregateUUID));
         recordHeaders.add(ChangelogRecord.AGGREGATE_NAME_KEY, new ByteArrayValue(this.aggregateClass.getName()));
         recordHeaders.add(ChangelogRecord.AGGREGATE_METHOD_KEY, new ByteArrayValue(aggregateMethod));

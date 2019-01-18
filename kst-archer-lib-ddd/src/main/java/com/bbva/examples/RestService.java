@@ -1,6 +1,6 @@
 package com.bbva.examples;
 
-import com.bbva.ddd.ApplicationServices;
+import com.bbva.ddd.HelperDomain;
 import com.bbva.examples.api.channels.ChannelsServices;
 import com.bbva.examples.api.devices.DevicesServices;
 import com.bbva.examples.api.users.FiscalDataServices;
@@ -22,7 +22,7 @@ public class RestService {
     private final WalletsServices walletsServices;
     private final ChannelsServices channelsServices;
 
-    RestService(final ApplicationServices app) {
+    RestService(final HelperDomain app) {
         fiscalDataServices = new FiscalDataServices(app);
         settingsServices = new SettingsServices(app);
         devicesServices = new DevicesServices(app);

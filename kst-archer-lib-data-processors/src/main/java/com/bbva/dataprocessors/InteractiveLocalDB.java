@@ -1,7 +1,6 @@
 package com.bbva.dataprocessors;
 
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
@@ -14,8 +13,7 @@ public class InteractiveLocalDB {
     private final KafkaStreams streams;
     private final Map<String, ReadableStore> readableStores;
 
-    // TODO remove host info require remove in news
-    public InteractiveLocalDB(final KafkaStreams streams, final HostInfo hostInfo) {
+    public InteractiveLocalDB(final KafkaStreams streams) {
         this.streams = streams;
         this.readableStores = new HashMap<>();
     }

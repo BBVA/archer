@@ -59,7 +59,7 @@ public class MainHandler implements Handler {
         if (command.topic().equals(USER_COMMANDS_TOPICS)) {
             switch (command.name()) {
                 case Command.DELETE_ACTION:
-                    rootAggregate.deleteUser(command);
+                    RootAggregate.deleteUser(command);
                     break;
             }
 
@@ -68,10 +68,10 @@ public class MainHandler implements Handler {
 
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createUserFiscalData(fiscalData, command);
+                    RootAggregate.createUserFiscalData(fiscalData, command);
                     break;
                 case ADD_FISCAL_DATA_ACTION:
-                    rootAggregate.updateUserFiscalData(fiscalData, command);
+                    RootAggregate.updateUserFiscalData(fiscalData, command);
 
                     break;
             }
@@ -81,7 +81,7 @@ public class MainHandler implements Handler {
 
             switch (command.name()) {
                 case ADD_SETTINGS_ACTION:
-                    rootAggregate.updateUserSettings(settings, command);
+                    RootAggregate.updateUserSettings(settings, command);
                     break;
             }
 
@@ -90,13 +90,13 @@ public class MainHandler implements Handler {
 
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createDevice(devices, command);
+                    RootAggregate.createDevice(devices, command);
                     break;
                 case UPDATE_DEVICE_ACTION:
-                    rootAggregate.updateDevice(devices, command);
+                    RootAggregate.updateDevice(devices, command);
                     break;
                 case Command.DELETE_ACTION:
-                    rootAggregate.deleteDevice(command);
+                    RootAggregate.deleteDevice(command);
                     break;
             }
         } else if (command.topic().equals(WALLETS_COMMANDS_TOPICS)) {
@@ -104,10 +104,10 @@ public class MainHandler implements Handler {
 
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createWallets(wallets, command);
+                    RootAggregate.createWallets(wallets, command);
                     break;
                 case UPDATE_WALLET_ACTION:
-                    rootAggregate.updateWallets(wallets, command);
+                    RootAggregate.updateWallets(wallets, command);
                     break;
             }
         } else if (command.topic().equals(CHANNELS_COMMANDS_TOPICS)) {
@@ -115,10 +115,10 @@ public class MainHandler implements Handler {
 
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createChannels(channels, command);
+                    RootAggregate.createChannels(channels, command);
                     break;
                 case UPDATE_CHANNEL_ACTION:
-                    rootAggregate.updateChannels(channels, command);
+                    RootAggregate.updateChannels(channels, command);
                     break;
             }
         } else {

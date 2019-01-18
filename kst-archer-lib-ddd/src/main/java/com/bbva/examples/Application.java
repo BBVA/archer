@@ -14,8 +14,9 @@ import com.bbva.dataprocessors.builders.dataflows.states.SimpleGlobalTableStateB
 import com.bbva.dataprocessors.builders.sql.QueryBuilderFactory;
 import com.bbva.dataprocessors.builders.sql.queries.CreateStreamQueryBuilder;
 import com.bbva.dataprocessors.builders.sql.queries.WithPropertiesClauseBuilder;
-import com.bbva.ddd.ApplicationServices;
+import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.Domain;
+import com.bbva.ddd.util.StoreUtil;
 import com.bbva.examples.aggregates.*;
 import com.bbva.examples.aggregates.user.FiscalDataAggregate;
 import com.google.common.collect.Lists;
@@ -139,7 +140,7 @@ public class Application {
 
             final Domain domain = new Domain(new MainHandler(new RootAggregate()), applicationConfig);
 
-            final ApplicationServices app = domain
+            final HelperDomain app = domain
                     .<String, FiscalData, String>indexFieldAsLocalState(EMAIL_STORE_BASENAME, EMAIL_TOPIC_SOURCE,
                             "email", new GenericClass<>(String.class), new GenericClass<>(String.class))
                     .<String, Devices, String>indexFieldAsLocalState(PUBLIC_UUID_STORE_BASENAME,
@@ -167,7 +168,7 @@ public class Application {
                     .start();
 
             // At this point, local states are filled
-            final ReadableStore<String, Users> store = ApplicationServices.getStore(UserAggregate.baseName());
+            final ReadableStore<String, Users> store = StoreUtil.getStore(UserAggregate.baseName());
             final long numEntries = store.approximateNumEntries();
             KeyValueIterator<String, Users> users = null;
             List<KeyValue<String, Users>> usersList = null;
