@@ -9,9 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Command {
 
-    String baseName() default "";
-
-    Class aggregateClass() default String.class;
+    String baseName();
 
     String commandAction();
 }

@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Changelog {
 
-    String baseName() default "";
+    String baseName();
 
-    Class aggregateClass() default String.class;
 }

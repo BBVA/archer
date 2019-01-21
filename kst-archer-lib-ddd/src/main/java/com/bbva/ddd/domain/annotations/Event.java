@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Event {
 
-    String baseName() default "";
+    String baseName();
 
-    Class aggregateClass() default String.class;
 }

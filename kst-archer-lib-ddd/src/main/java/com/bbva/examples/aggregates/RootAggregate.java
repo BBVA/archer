@@ -4,8 +4,6 @@ import com.bbva.avro.Users;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.examples.aggregates.user.FiscalDataAggregate;
-import com.bbva.examples.aggregates.user.SettingsAggregate;
 
 import java.util.logging.Logger;
 
@@ -38,7 +36,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = FiscalDataAggregate.class, commandAction = ADD_FISCAL_DATA_ACTION)
+    @Command(baseName = "test_users_fiscal_data", commandAction = ADD_FISCAL_DATA_ACTION)
     public static void updateUserFiscalData(final CommandRecord command) {
         try {
             AggregateFactory.load(UserAggregate.class, command.entityId()).updateFiscalData(command.value(), command);
@@ -48,7 +46,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = SettingsAggregate.class, commandAction = ADD_SETTINGS_ACTION)
+    @Command(baseName = "test_users_settings", commandAction = ADD_SETTINGS_ACTION)
     public static void updateUserSettings(final CommandRecord command) {
         try {
             AggregateFactory.load(UserAggregate.class, command.entityId()).addSettings(command.value(), command);
@@ -58,7 +56,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = UserAggregate.class, commandAction = DELETE_ACTION)
+    @Command(baseName = "test_users", commandAction = DELETE_ACTION)
     public static void deleteUser(final CommandRecord command) {
         try {
             AggregateFactory.load(UserAggregate.class, command.entityId()).delete(command);
@@ -68,7 +66,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = DeviceAggregate.class, commandAction = CREATE_ACTION)
+    @Command(baseName = "test_devices", commandAction = CREATE_ACTION)
     public static void createDevice(final CommandRecord command) {
         AggregateFactory.create(DeviceAggregate.class, command.entityId(), command.value(), command, (key, e) -> {
             if (e != null) {
@@ -79,7 +77,7 @@ public class RootAggregate {
         });
     }
 
-    @Command(aggregateClass = DeviceAggregate.class, commandAction = UPDATE_DEVICE_ACTION)
+    @Command(baseName = "test_devices", commandAction = UPDATE_DEVICE_ACTION)
     public static void updateDevice(final CommandRecord command) {
         try {
             AggregateFactory.load(DeviceAggregate.class, command.entityId()).update(command.value(), command);
@@ -89,7 +87,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = DeviceAggregate.class, commandAction = DELETE_ACTION)
+    @Command(baseName = "test_devices", commandAction = DELETE_ACTION)
     public static void deleteDevice(final CommandRecord command) {
         try {
             AggregateFactory.load(DeviceAggregate.class, command.entityId()).delete(command);
@@ -99,7 +97,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = WalletsAggregate.class, commandAction = CREATE_ACTION)
+    @Command(baseName = "test_wallets", commandAction = CREATE_ACTION)
     public static void createWallets(final CommandRecord command) {
         AggregateFactory.create(WalletsAggregate.class, command.entityId(), command.value(), command, (key, e) -> {
             if (e != null) {
@@ -110,7 +108,7 @@ public class RootAggregate {
         });
     }
 
-    @Command(aggregateClass = WalletsAggregate.class, commandAction = UPDATE_WALLET_ACTION)
+    @Command(baseName = "test_wallets", commandAction = UPDATE_WALLET_ACTION)
     public static void updateWallets(final CommandRecord command) {
         try {
             AggregateFactory.load(WalletsAggregate.class, command.entityId()).update(command.value(), command);
@@ -120,7 +118,7 @@ public class RootAggregate {
         }
     }
 
-    @Command(aggregateClass = ChannelsAggregate.class, commandAction = CREATE_ACTION)
+    @Command(baseName = "test_channels", commandAction = CREATE_ACTION)
     public static void createChannels(final CommandRecord command) {
         AggregateFactory.create(ChannelsAggregate.class, command.entityId(), command.value(), command, (key, e) -> {
             if (e != null) {
@@ -131,7 +129,7 @@ public class RootAggregate {
         });
     }
 
-    @Command(aggregateClass = ChannelsAggregate.class, commandAction = UPDATE_CHANNEL_ACTION)
+    @Command(baseName = "test_channels", commandAction = UPDATE_CHANNEL_ACTION)
     public static void updateChannels(final CommandRecord command) {
         try {
             AggregateFactory.load(ChannelsAggregate.class, command.entityId()).update(command.value(), command);

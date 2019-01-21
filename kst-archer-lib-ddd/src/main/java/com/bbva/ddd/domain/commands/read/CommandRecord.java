@@ -10,7 +10,6 @@ public class CommandRecord extends CRecord {
     public static final String UUID_KEY = "uuid";
     public static final String NAME_KEY = "name";
     public static final String ENTITY_ID_KEY = "entity.id";
-    public static final String ACTION = "action";
 
     public CommandRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
                          final String key, final SpecificRecord value, final RecordHeaders headers) {
@@ -27,10 +26,6 @@ public class CommandRecord extends CRecord {
 
     public String entityId() {
         return headers.find(CommandRecord.ENTITY_ID_KEY).asString();
-    }
-
-    public String action() {
-        return headers.find(CommandRecord.ACTION).asString();
     }
 
 }

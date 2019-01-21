@@ -196,6 +196,12 @@ public class Application {
                 }
             }));
 
+            app.persistsCommandTo(UserAggregate.baseName()).delete("user", Users.class, null, (key, e) -> {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            });
+
         } catch (final Exception e) {
             e.printStackTrace();
         }

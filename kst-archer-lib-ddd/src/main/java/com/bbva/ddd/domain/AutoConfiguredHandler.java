@@ -2,7 +2,6 @@ package com.bbva.ddd.domain;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.consumers.CRecord;
-import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.annotations.Changelog;
 import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.annotations.Event;
@@ -43,28 +42,21 @@ public class AutoConfiguredHandler implements Handler {
             for (final Method method : allMethods) {
                 if (method.isAnnotationPresent(Command.class)) {
                     final Command annotatedAction = method.getAnnotation(Command.class);
-                    final String baseName = !"".equals(annotatedAction.baseName()) ? annotatedAction.baseName() : getAggregateBaseName(annotatedAction.aggregateClass());
-                    commandMethods.put(baseName + "::" + annotatedAction.commandAction(), method);
-                    commandsSubscribed.add(baseName + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX);
+                    commandMethods.put(annotatedAction.baseName() + "::" + annotatedAction.commandAction(), method);
+                    commandsSubscribed.add(annotatedAction.baseName() + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Event.class)) {
                     final Event annotatedEvent = method.getAnnotation(Event.class);
-                    final String baseName = !"".equals(annotatedEvent.baseName()) ? annotatedEvent.baseName() : getAggregateBaseName(annotatedEvent.aggregateClass());
-                    eventMethods.put(baseName, method);
-                    eventsSubscribed.add(baseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX);
+                    eventMethods.put(annotatedEvent.baseName(), method);
+                    eventsSubscribed.add(annotatedEvent.baseName() + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Changelog.class)) {
                     final Changelog annotatedChangelog = method.getAnnotation(Changelog.class);
-                    final String baseName = !"".equals(annotatedChangelog.baseName()) ? annotatedChangelog.baseName() : getAggregateBaseName(annotatedChangelog.aggregateClass());
-                    changelogMethods.put(baseName, method);
-                    dataChangelogsSubscribed.add(baseName + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX);
+                    changelogMethods.put(annotatedChangelog.baseName(), method);
+                    dataChangelogsSubscribed.add(annotatedChangelog.baseName() + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX);
                 }
             }
             type = type.getSuperclass();
         }
         return methods;
-    }
-
-    private static String getAggregateBaseName(final Class aggregateClass) {
-        return Aggregate.class.cast(aggregateClass.getAnnotation(Aggregate.class)).baseName();
     }
 
     @Override
@@ -126,8 +118,8 @@ public class AutoConfiguredHandler implements Handler {
     }
 
     private static String getCommandAction(final CommandRecord commandRecord) {
-        if (commandRecord.recordHeaders().find(CommandRecord.ACTION) != null) {
-            return commandRecord.action();
+        if (commandRecord.recordHeaders().find(CommandRecord.NAME_KEY) != null) {
+            return commandRecord.name();
         }
         return commandRecord.name();
     }
