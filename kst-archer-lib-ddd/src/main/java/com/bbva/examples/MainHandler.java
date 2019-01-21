@@ -1,10 +1,5 @@
 package com.bbva.examples;
 
-import com.bbva.avro.Channels;
-import com.bbva.avro.Devices;
-import com.bbva.avro.Wallets;
-import com.bbva.avro.users.FiscalData;
-import com.bbva.avro.users.Settings;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.ddd.domain.Handler;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
@@ -16,6 +11,7 @@ import com.bbva.examples.aggregates.user.SettingsAggregate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
+
 
 public class MainHandler implements Handler {
 
@@ -59,66 +55,55 @@ public class MainHandler implements Handler {
         if (command.topic().equals(USER_COMMANDS_TOPICS)) {
             switch (command.name()) {
                 case Command.DELETE_ACTION:
-                    rootAggregate.deleteUser(command);
+                    RootAggregate.deleteUser(command);
                     break;
             }
 
         } else if (command.topic().equals(USER_FISCAL_DATA_COMMANDS_TOPICS)) {
-            final FiscalData fiscalData = command.value();
-
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createUserFiscalData(fiscalData, command);
+                    RootAggregate.createUserFiscalData(command);
                     break;
                 case ADD_FISCAL_DATA_ACTION:
-                    rootAggregate.updateUserFiscalData(fiscalData, command);
-
+                    RootAggregate.updateUserFiscalData(command);
                     break;
             }
 
         } else if (command.topic().equals(USERS_SETTINGS_COMMANDS_TOPICS)) {
-            final Settings settings = command.value();
-
             switch (command.name()) {
                 case ADD_SETTINGS_ACTION:
-                    rootAggregate.updateUserSettings(settings, command);
+                    RootAggregate.updateUserSettings(command);
                     break;
             }
 
         } else if (command.topic().equals(DEVICE_COMMANDS_TOPICS)) {
-            final Devices devices = command.value();
-
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createDevice(devices, command);
+                    RootAggregate.createDevice(command);
                     break;
                 case UPDATE_DEVICE_ACTION:
-                    rootAggregate.updateDevice(devices, command);
+                    RootAggregate.updateDevice(command);
                     break;
                 case Command.DELETE_ACTION:
-                    rootAggregate.deleteDevice(command);
+                    RootAggregate.deleteDevice(command);
                     break;
             }
         } else if (command.topic().equals(WALLETS_COMMANDS_TOPICS)) {
-            final Wallets wallets = command.value();
-
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createWallets(wallets, command);
+                    RootAggregate.createWallets(command);
                     break;
                 case UPDATE_WALLET_ACTION:
-                    rootAggregate.updateWallets(wallets, command);
+                    RootAggregate.updateWallets(command);
                     break;
             }
         } else if (command.topic().equals(CHANNELS_COMMANDS_TOPICS)) {
-            final Channels channels = command.value();
-
             switch (command.name()) {
                 case Command.CREATE_ACTION:
-                    rootAggregate.createChannels(channels, command);
+                    RootAggregate.createChannels(command);
                     break;
                 case UPDATE_CHANNEL_ACTION:
-                    rootAggregate.updateChannels(channels, command);
+                    RootAggregate.updateChannels(command);
                     break;
             }
         } else {

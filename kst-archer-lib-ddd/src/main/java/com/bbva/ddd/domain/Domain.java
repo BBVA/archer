@@ -8,7 +8,7 @@ import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.EntityStateBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.UniqueFieldStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
-import com.bbva.ddd.ApplicationServices;
+import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;
@@ -26,10 +26,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -60,6 +57,10 @@ public final class Domain {
         DataProcessor.create(this.applicationConfig);
 
         initRepositories();
+    }
+
+    public Domain(final ApplicationConfig applicationConfig) throws RepositoryException {
+        this(new AutoConfiguredHandler(), applicationConfig);
     }
 
     public Domain addDataProcessorBuilder(final String name, final DataflowBuilder builder) {
@@ -110,14 +111,14 @@ public final class Domain {
      * @return
      * @throws NullPointerException
      */
-    public synchronized ApplicationServices start() {
+    public synchronized HelperDomain start() {
 
         initHandlers();
 
         DataProcessor.get().start();
         logger.info("States have been started");
 
-        final ApplicationServices app = new ApplicationServices(applicationConfig);
+        final HelperDomain app = new HelperDomain(applicationConfig);
 
         final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
 
@@ -204,36 +205,36 @@ public final class Domain {
         logger.info("Repositories initialized with Aggregates");
     }
 
-    /**
-     *
-     */
     private void initHandlers() {
         final int numConsumers = 1;
+        final List<String> commandsSubscribed = handler.commandsSubscribed();
+        final List<String> eventsSubscribed = handler.eventsSubscribed();
+        final List<String> dataChangelogsSubscribed = handler.dataChangelogsSubscribed();
 
-        final Map<String, String> consumerTopics = Stream
-                .concat(Stream.concat(handler.commandsSubscribed().stream(), handler.eventsSubscribed().stream()),
-                        handler.dataChangelogsSubscribed().stream())
-                .collect(Collectors.toMap(Function.identity(), type -> ApplicationConfig.COMMON_RECORD_TYPE));
+        final Map<String, String> consumerTopics =
+                Stream.of(commandsSubscribed, eventsSubscribed, dataChangelogsSubscribed).flatMap(Collection::stream)
+                        .collect(Collectors.toMap(Function.identity(), type -> ApplicationConfig.COMMON_RECORD_TYPE,
+                                (command1, command2) -> command1));
 
         TopicManager.createTopics(consumerTopics, applicationConfig);
 
         logger.info("Necessary consumer topics created");
 
-        if (!handler.commandsSubscribed().isEmpty()) {
+        if (!commandsSubscribed.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(new CommandConsumer<>(i, handler.commandsSubscribed(), handler::processCommand,
                         applicationConfig));
             }
         }
 
-        if (!handler.eventsSubscribed().isEmpty()) {
+        if (!eventsSubscribed.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(
                         new EventConsumer<>(i, handler.eventsSubscribed(), handler::processEvent, applicationConfig));
             }
         }
 
-        if (!handler.dataChangelogsSubscribed().isEmpty()) {
+        if (!dataChangelogsSubscribed.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(new ChangelogConsumer<>(i, handler.dataChangelogsSubscribed(),
                         handler::processDataChangelog, applicationConfig));

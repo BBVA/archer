@@ -7,7 +7,7 @@ import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
-import com.bbva.ddd.ApplicationServices;
+import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import kst.logging.LoggerGen;
 import kst.logging.LoggerGenesis;
@@ -26,64 +26,49 @@ public class Event {
     private final CachedProducer producer;
     private final String topic;
 
-    public Event(String topicBaseName, ApplicationConfig applicationConfig) {
+    public Event(final String topicBaseName, final ApplicationConfig applicationConfig) {
         this.topic = topicBaseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX;
         producer = new CachedProducer(applicationConfig);
     }
 
-    /**
-     *
-     * @param productorName
-     * @param data
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    public <V extends SpecificRecord> EventRecordMetadata send(String productorName, V data, ProducerCallback callback)
+    public <V extends SpecificRecord> EventRecordMetadata send(final String productorName, final V data, final ProducerCallback callback)
             throws ExecutionException, InterruptedException {
-        return generateEvent(null, productorName, data, callback);
+        return generateEvent(null, productorName, data, callback, HelperDomain.get().isReplayMode(), null);
     }
 
-    /**
-     *
-     * @param key
-     * @param productorName
-     * @param data
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    public <V extends SpecificRecord> EventRecordMetadata send(String key, String productorName, V data,
-            ProducerCallback callback) throws ExecutionException, InterruptedException {
-        return generateEvent(key, productorName, data, callback);
+    public <V extends SpecificRecord> EventRecordMetadata send(final String key, final String productorName, final V data,
+                                                               final ProducerCallback callback) throws ExecutionException, InterruptedException {
+        return generateEvent(key, productorName, data, callback, HelperDomain.get().isReplayMode(), null);
     }
 
-    private <V extends SpecificRecord> EventRecordMetadata generateEvent(String key, String productorName, V record,
-            ProducerCallback callback) throws InterruptedException, ExecutionException {
+    public <V extends SpecificRecord> EventRecordMetadata send(final String productorName, final V data, final ProducerCallback callback, final boolean replay, final String referenceId)
+            throws ExecutionException, InterruptedException {
+        return generateEvent(null, productorName, data, callback, replay, referenceId);
+    }
+
+    private <V extends SpecificRecord> EventRecordMetadata generateEvent(String key, final String productorName, final V record,
+                                                                         final ProducerCallback callback, final boolean replay, final String referenceId) throws InterruptedException, ExecutionException {
         logger.debug("Generating event by " + productorName);
         key = (key != null) ? key : UUID.randomUUID().toString();
 
-        RecordHeaders headers = headers(productorName);
+        final RecordHeaders headers = headers(productorName, replay, referenceId);
 
-        Future<RecordMetadata> result = producer.add(new PRecord<>(topic, key, record, headers), callback);
+        final Future<RecordMetadata> result = producer.add(new PRecord<>(topic, key, record, headers), callback);
 
-        EventRecordMetadata recordedMessageMetadata = new EventRecordMetadata(result.get(), key);
+        final EventRecordMetadata recordedMessageMetadata = new EventRecordMetadata(result.get(), key);
 
         logger.info("Event created: " + key);
 
         return recordedMessageMetadata;
     }
 
-    private RecordHeaders headers(String productorName) {
+    private static RecordHeaders headers(final String productorName, final boolean replay, final String referenceId) {
 
-        RecordHeaders recordHeaders = new RecordHeaders();
+        final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(Event.TYPE_EVENT_VALUE));
         recordHeaders.add(EventRecord.PRODUCTOR_NAME_KEY, new ByteArrayValue(productorName));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(ApplicationServices.get().isReplayMode()));
+        recordHeaders.add(EventRecord.REFERENCE_ID, new ByteArrayValue(referenceId));
+        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
 
         logger.debug("CRecord getList: " + recordHeaders.toString());
 

@@ -15,19 +15,18 @@ public class AggregateFactory {
 
     private static final LoggerGen logger = LoggerGenesis.getLogger(AggregateFactory.class.getName());
 
-    public static <V extends SpecificRecordBase, T extends AggregateBase> T create(Class<T> aggregateClass, V record,
-            CommandRecord commandMessage, ProducerCallback callback) {
+    public static <V extends SpecificRecordBase, T extends AggregateBase> T create(final Class<T> aggregateClass, final V record,
+                                                                                   final CommandRecord commandMessage, final ProducerCallback callback) {
 
         return create(aggregateClass, null, record, commandMessage, callback);
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V extends SpecificRecordBase, T extends AggregateBase> T create(Class<T> aggregateClass,
-            String key, V value, CommandRecord commandMessage, ProducerCallback callback) {
-        Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
-        String basename = aggregateAnnotation.baseName();
+    public static <K, V extends SpecificRecordBase, T extends AggregateBase> T create(final Class<T> aggregateClass,
+                                                                                      final String key, final V value, final CommandRecord commandMessage, final ProducerCallback callback) {
 
-        final Repository repository = Repositories.get(basename);
+        final Repository repository = getRepositoryFromAggregate(aggregateClass);
+
         AggregateBase aggregateBaseInstance = null;
 
         try {
@@ -35,7 +34,7 @@ public class AggregateFactory {
                 aggregateBaseInstance = repository.create(key, value, commandMessage, callback);
             }
 
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+        } catch (final NoSuchMethodException | IllegalAccessException | InstantiationException
                 | InvocationTargetException e) {
             logger.error("Problems found in create factory", e);
         }
@@ -43,26 +42,24 @@ public class AggregateFactory {
         return aggregateClass.cast(aggregateBaseInstance);
     }
 
+
     /**
      * @param aggregateClass
      * @param id
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static <T extends AggregateBase> T load(Class<T> aggregateClass, String id) {
+    public static <T extends AggregateBase> T load(final Class<T> aggregateClass, final String id) {
         if (aggregateClass.isAnnotationPresent(Aggregate.class)) {
 
-            Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
-            String basename = aggregateAnnotation.baseName();
-
-            final Repository repository = Repositories.get(basename);
+            final Repository repository = getRepositoryFromAggregate(aggregateClass);
 
             try {
                 if (repository != null) {
                     return (T) repository.loadFromStore(id);
                 }
 
-            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException
+            } catch (final NoSuchMethodException | IllegalAccessException | InstantiationException
                     | InvocationTargetException e) {
                 logger.error("Problems found in load factory", e);
             }
@@ -71,4 +68,10 @@ public class AggregateFactory {
         return null;
     }
 
+    private static <T extends AggregateBase> Repository getRepositoryFromAggregate(final Class<T> aggregateClass) {
+        final Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
+        final String basename = aggregateAnnotation.baseName();
+
+        return Repositories.get(basename);
+    }
 }

@@ -17,10 +17,6 @@ public class DropDetectionBuilder implements DataflowBuilder {
 
     private DataflowProcessorContext context;
 
-    public DropDetectionBuilder() {
-
-    }
-
     @Override
     public void init(final DataflowProcessorContext context) {
         this.context = context;
