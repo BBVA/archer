@@ -109,9 +109,9 @@ public class AutoConfiguredHandler implements Handler {
         return list;
     }
 
-    private static <C extends CRecord> void executeMethod(final C command, final Method toExecuteMethod) throws IllegalAccessException, InvocationTargetException {
+    private static <CR extends CRecord> void executeMethod(final CR record, final Method toExecuteMethod) throws IllegalAccessException, InvocationTargetException {
         if (toExecuteMethod != null) {
-            toExecuteMethod.invoke(null, command);
+            toExecuteMethod.invoke(null, record);
         } else {
             logger.info("Event not handled");
         }
