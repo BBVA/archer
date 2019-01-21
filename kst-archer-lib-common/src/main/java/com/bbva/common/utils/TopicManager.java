@@ -34,22 +34,34 @@ public class TopicManager {
 
     public static void createTopics(final Map<String, String> topicNames, final ApplicationConfig config) {
         final Collection<NewTopic> topics = new ArrayList();
-        NewTopic newTopic;
         for (final String topicName : topicNames.keySet()) {
-            newTopic = new NewTopic(topicName, getProperty(config,
-                    ApplicationConfig.PARTITIONS, DEFAULT_PARTITIONS),
-                    (short) getProperty(config, ApplicationConfig.REPLICATION_FACTOR, DEFAULT_REPLICATION));
-            final Map<String, String> newTopicConfig = configTypes.get(topicNames.get(topicName));
-            if (newTopicConfig != null && !newTopicConfig.isEmpty()) {
-                newTopic.configs(newTopicConfig);
-            }
-            topics.add(newTopic);
+            topics.add(createTopic(config, topicName, configTypes.get(topicNames.get(topicName))));
         }
         logger.debug("Create topics " + Arrays.toString(topicNames.keySet().toArray()));
-        createAdminClient(topics, config);
+        createTopics(topics, config);
     }
 
-    private static void createAdminClient(final Collection<NewTopic> topics, final ApplicationConfig config) {
+    public static void createTopicsWithConfig(final Map<String, Map<String, String>> topicNamesWithConfig, final ApplicationConfig config) {
+        final Collection<NewTopic> topics = new ArrayList();
+        for (final String topicName : topicNamesWithConfig.keySet()) {
+            topics.add(createTopic(config, topicName, topicNamesWithConfig.get(topicName)));
+        }
+        logger.debug("Create topics " + Arrays.toString(topicNamesWithConfig.keySet().toArray()));
+        createTopics(topics, config);
+    }
+
+    private static NewTopic createTopic(final ApplicationConfig config, final String topicName, final Map<String, String> topicConfig) {
+        final NewTopic newTopic;
+        newTopic = new NewTopic(topicName, getProperty(config,
+                ApplicationConfig.PARTITIONS, DEFAULT_PARTITIONS),
+                (short) getProperty(config, ApplicationConfig.REPLICATION_FACTOR, DEFAULT_REPLICATION));
+        if (topicConfig != null && !topicConfig.isEmpty()) {
+            newTopic.configs(topicConfig);
+        }
+        return newTopic;
+    }
+
+    private static void createTopics(final Collection<NewTopic> topics, final ApplicationConfig config) {
         final AdminClient adminClient = AdminClient.create(config.get());
         adminClient.createTopics(topics);
         adminClient.close();

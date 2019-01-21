@@ -26,7 +26,7 @@ public class RecordHeaders {
         ByteArrayValue value = null;
         for (final Header header : headers) {
             if (header.key().equals(key)) {
-                value = new ByteArrayValue(header.value());
+                value = new ByteArrayValue(header.value(), true);
                 break;
             }
         }
@@ -52,15 +52,8 @@ public class RecordHeaders {
     @Override
     public String toString() {
         final StringBuilder value = new StringBuilder("[");
-        String valueHeader;
-
         for (final Header header : headers) {
-            try {
-                valueHeader = ByteArrayValue.Serde.deserializeAs(String.class, header.value());
-            } catch (final Exception e) {
-                valueHeader = "";
-            }
-            value.append("{key: ").append(header.key()).append(", value: ").append(valueHeader).append("}");
+            value.append("{key: ").append(header.key()).append(", value: ").append(ByteArrayValue.Serde.deserializeAs(header.value()).toString()).append("}");
         }
         value.append("]");
         return value.toString();
