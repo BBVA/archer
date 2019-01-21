@@ -1,6 +1,7 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.consumers.CRecord;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.annotations.Changelog;
 import com.bbva.ddd.domain.annotations.Command;
@@ -65,7 +66,7 @@ public class AutoConfiguredHandler implements Handler {
     private static String getAggregateBaseName(final Class aggregateClass) {
         return Aggregate.class.cast(aggregateClass.getAnnotation(Aggregate.class)).baseName();
     }
-    
+
     @Override
     public List<String> commandsSubscribed() {
         return cleanList(commandsSubscribed);
@@ -85,23 +86,16 @@ public class AutoConfiguredHandler implements Handler {
     public void processCommand(final CommandRecord command) {
         try {
             final String actionToExecute = command.topic().replace(ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(command);
-            commandMethods.get(actionToExecute).invoke(null, command);
+            executeMethod(command, commandMethods.get(actionToExecute));
         } catch (final IllegalAccessException | InvocationTargetException e) {
             logger.error("Command not found", e);
         }
     }
 
-    private static String getCommandAction(final CommandRecord commandRecord) {
-        if (commandRecord.recordHeaders().find(CommandRecord.ACTION) != null) {
-            return commandRecord.action();
-        }
-        return commandRecord.name();
-    }
-
     @Override
     public void processEvent(final EventRecord eventMessage) {
         try {
-            eventMethods.get(eventMessage.topic().replace(ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, "")).invoke(null, eventMessage);
+            executeMethod(eventMessage, eventMethods.get(eventMessage.topic().replace(ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
         } catch (final IllegalAccessException | InvocationTargetException e) {
             logger.error("Event not found", e);
         }
@@ -110,7 +104,7 @@ public class AutoConfiguredHandler implements Handler {
     @Override
     public void processDataChangelog(final ChangelogRecord changelogMessage) {
         try {
-            eventMethods.get(changelogMessage.topic().replace(ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, "")).invoke(null, changelogMessage);
+            executeMethod(changelogMessage, eventMethods.get(changelogMessage.topic().replace(ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
         } catch (final IllegalAccessException | InvocationTargetException e) {
             logger.error("Changelog not found", e);
         }
@@ -121,5 +115,20 @@ public class AutoConfiguredHandler implements Handler {
         list.clear();
         list.addAll(uniqueCommands);
         return list;
+    }
+
+    private static <C extends CRecord> void executeMethod(final C command, final Method toExecuteMethod) throws IllegalAccessException, InvocationTargetException {
+        if (toExecuteMethod != null) {
+            toExecuteMethod.invoke(null, command);
+        } else {
+            logger.info("Event not handled");
+        }
+    }
+
+    private static String getCommandAction(final CommandRecord commandRecord) {
+        if (commandRecord.recordHeaders().find(CommandRecord.ACTION) != null) {
+            return commandRecord.action();
+        }
+        return commandRecord.name();
     }
 }
