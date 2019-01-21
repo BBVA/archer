@@ -59,6 +59,10 @@ public final class Domain {
         initRepositories();
     }
 
+    public Domain(final ApplicationConfig applicationConfig) throws RepositoryException {
+        this(new AutoConfiguredHandler(), applicationConfig);
+    }
+
     public Domain addDataProcessorBuilder(final String name, final DataflowBuilder builder) {
         DataProcessor.get().add(name, builder);
         return this;
@@ -201,9 +205,6 @@ public final class Domain {
         logger.info("Repositories initialized with Aggregates");
     }
 
-    /**
-     *
-     */
     private void initHandlers() {
         final int numConsumers = 1;
         final List<String> commandsSubscribed = handler.commandsSubscribed();

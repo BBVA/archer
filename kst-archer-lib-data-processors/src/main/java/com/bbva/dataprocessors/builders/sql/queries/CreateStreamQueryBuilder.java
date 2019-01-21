@@ -71,7 +71,7 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
             asSelectClause.append(";");
         }
 
-        query.append("CREATE STREAM ");
+        query = new StringBuilder("CREATE STREAM ");
         query.append(name);
         query.append(columnsClause);
         query.append(withClause);

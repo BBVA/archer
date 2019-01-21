@@ -17,7 +17,10 @@ import com.bbva.dataprocessors.builders.sql.queries.WithPropertiesClauseBuilder;
 import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.Domain;
 import com.bbva.ddd.util.StoreUtil;
-import com.bbva.examples.aggregates.*;
+import com.bbva.examples.aggregates.ChannelsAggregate;
+import com.bbva.examples.aggregates.DeviceAggregate;
+import com.bbva.examples.aggregates.UserAggregate;
+import com.bbva.examples.aggregates.WalletsAggregate;
 import com.bbva.examples.aggregates.user.FiscalDataAggregate;
 import com.google.common.collect.Lists;
 import org.apache.kafka.streams.KeyValue;
@@ -138,7 +141,7 @@ public class Application {
                                             QueryBuilderFactory.createWithin("1 HOURS")))))
                     .partitionBy("address");
 
-            final Domain domain = new Domain(new MainHandler(new RootAggregate()), applicationConfig);
+            final Domain domain = new Domain(applicationConfig);
 
             final HelperDomain app = domain
                     .<String, FiscalData, String>indexFieldAsLocalState(EMAIL_STORE_BASENAME, EMAIL_TOPIC_SOURCE,
@@ -192,6 +195,12 @@ public class Application {
                     // ignored
                 }
             }));
+
+            app.persistsCommandTo(UserAggregate.baseName()).delete("user", Users.class, null, (key, e) -> {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            });
 
         } catch (final Exception e) {
             e.printStackTrace();

@@ -13,7 +13,7 @@ public class CreateTableQueryBuilder extends QueryBuilder implements CreateQuery
     private Map<String, String> columnsDefinition = new HashMap<>();
     private WithPropertiesClauseBuilder withProperties;
     private SelectQueryBuilder asSelect;
-    private final StringBuilder query = new StringBuilder();
+    private StringBuilder query = new StringBuilder();
 
     public CreateTableQueryBuilder(final String name) {
         this.name = name;
@@ -68,7 +68,7 @@ public class CreateTableQueryBuilder extends QueryBuilder implements CreateQuery
             asSelectClause.append(";");
         }
 
-        query.append("CREATE TABLE ");
+        query = new StringBuilder("CREATE TABLE ");
         query.append(name);
         query.append(columnsClause);
         query.append(withClause);
