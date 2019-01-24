@@ -1,0 +1,77 @@
+{
+  "type": "record",
+  "name": "NotificationState",
+  "namespace": "com.bbva.archer.avro",
+  "doc": "Structure of notification state values.",
+  "fields": [
+    {
+      "name": "uuid",
+      "doc": "Notification States UUID. Key of the record included to query with KSQL.",
+      "type": [ "null", "string" ],
+      "default": null
+    },
+    {
+      "name": "channelUuid",
+      "doc": "Channel reference to identify the Notification Register. Used both for acknowledgement of receipt and for user notifications.",
+      "type": [ "null", "string" ],
+      "default": null
+    },
+    {
+      "name": "data",
+      "doc": "It is used to do not send with the notification, instead client has to make a request via HTTP to the notification service to recover data.",
+      "type": [ "null", "string" ],
+      "default": null
+    },
+    {
+      "name": "state",
+      "doc": "State of the notification.",
+      "type": [
+        "null",
+        {
+            "name": "State",
+            "namespace": "com.bbva.archer.avro.notifications",
+            "doc": "",
+            "type": "record",
+            "fields": [
+                {
+                    "name": "name",
+                    "doc": "Name of the notification state.",
+                    "type": {
+                      "type": "enum",
+                      "name": "States",
+                      "namespace": "com.bbva.archer.avro.notifications.enums",
+                      "symbols" : ["DELIVERED", "CLOSED", "EXPIRED", "ERROR"]
+                    },
+                    "default": "DELIVERED"
+                },
+                {
+                    "name": "description",
+                    "doc": "Description of the notification state. It can be used to save data from third party responses like SNS.",
+                    "type": [ "null", "string" ],
+                    "default": null
+                }
+            ]
+        }
+      ],
+      "default": null
+    },
+    {
+      "name": "expirationTime",
+      "doc": "TTime in seconds for expire the notification.",
+      "type": [ "null", "long" ],
+      "default": null
+    },
+    {
+      "name": "created_at",
+      "doc": "Creation date of the user.",
+      "type": [ "null", "long" ],
+      "default": null
+    },
+    {
+      "name": "updated_at",
+      "doc": "Update date of the user.",
+      "type": [ "null", "long" ],
+      "default": null
+    }
+  ]
+}
