@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "OutputEvent",
+  "namespace": "com.bbva.archer.avro.gateway.example",
+  "doc": "Structure of output event",
+  "fields": [
+    {
+      "name": "body",
+      "doc": "Json body",
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
+    }
+  ]
+}

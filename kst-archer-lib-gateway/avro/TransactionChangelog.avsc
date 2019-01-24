@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "TransactionChangelog",
+  "namespace": "com.bbva.archer.avro.gateway",
+  "doc": "Structure of changelog event.",
+  "fields": [
+    {
+      "name": "uuid",
+      "doc": "Changelog key",
+      "type": "string",
+      "default": "NO"
+    },
+    {
+      "name": "input",
+      "doc": "Input step",
+      "type": "string"
+    },
+    {
+      "name": "output",
+      "doc": "Output step",
+      "type": "string"
+    }
+  ]
+}
