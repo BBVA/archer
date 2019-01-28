@@ -25,4 +25,4 @@ app:
         state.dir: /tmp/kafka-streams-XXX
         num.standby.replicas: 0
 custom:
-    topicName: default-gateway3
+    baseName: default-gateway

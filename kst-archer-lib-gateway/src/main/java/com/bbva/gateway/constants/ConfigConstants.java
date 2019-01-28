@@ -23,5 +23,5 @@ public class ConfigConstants {
     public static final String GATEWAY_QUERY_PARAMS = "queryParams";
     public static final String GATEWAY_REST_PORT = "port";
     public static final String GATEWAY_REST_RESOURCE = "resource";
-    public static final String GATEWAY_TOPIC = "topicName";
+    public static final String GATEWAY_TOPIC = "baseName";
 }

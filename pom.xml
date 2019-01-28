@@ -95,6 +95,19 @@
         </extensions>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <excludes>
+                        <exclude>com/bbva/example/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
             <!-- run mvn formatter:format -->
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>

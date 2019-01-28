@@ -82,6 +82,9 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <excludes>
+                        <exclude>com/bbva/examples/**</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 

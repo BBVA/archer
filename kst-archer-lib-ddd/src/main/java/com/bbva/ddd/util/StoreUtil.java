@@ -7,7 +7,7 @@ import kst.logging.LoggerGen;
 import kst.logging.LoggerGenesis;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
 
-public final class StoreUtil {
+public class StoreUtil {
 
     private static final LoggerGen logger = LoggerGenesis.getLogger(HelperDomain.class.getName());
 

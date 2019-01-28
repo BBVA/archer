@@ -10,7 +10,7 @@ app:
         auto.offset.reset: earliest
     producer:
         acks: all
-        retries: 1
+        retries: 3
     streams:
         application.server: localhost:8080
         client.id: $UUID

@@ -67,7 +67,9 @@ public class Event {
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(Event.TYPE_EVENT_VALUE));
         recordHeaders.add(EventRecord.PRODUCTOR_NAME_KEY, new ByteArrayValue(productorName));
-        recordHeaders.add(EventRecord.REFERENCE_ID, new ByteArrayValue(referenceId));
+        if (referenceId != null) {
+            recordHeaders.add(EventRecord.REFERENCE_ID, new ByteArrayValue(referenceId));
+        }
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
 
         logger.debug("CRecord getList: " + recordHeaders.toString());

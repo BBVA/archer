@@ -225,8 +225,10 @@ public final class Repository<K, V extends SpecificRecordBase> {
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(ChangelogRecord.TYPE_CHANGELOG_VALUE));
         recordHeaders.add(ChangelogRecord.UUID_KEY, new ByteArrayValue(UUID.randomUUID().toString()));
-        recordHeaders.add(ChangelogRecord.TRIGGER_REFERENCE_KEY,
-                new ByteArrayValue(record != null ? record.key() : ""));
+        if (record != null && record.key() != null) {
+            recordHeaders.add(ChangelogRecord.TRIGGER_REFERENCE_KEY,
+                    new ByteArrayValue(record.key()));
+        }
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(
                 (record != null && record.isReplayMode()) || HelperDomain.get().isReplayMode()));
         recordHeaders.add(ChangelogRecord.AGGREGATE_UUID_KEY, new ByteArrayValue(aggregateUUID));
