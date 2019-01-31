@@ -47,7 +47,7 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
             defaultConfig.put("kafkastore.bootstrap.servers", this.getKafkaConnectString());
             defaultConfig.put("kafkastore.group.id", "local-test-group");
             defaultConfig.put("kafkastore.security.protocol", "PLAINTEXT");
-            defaultConfig.put("cluster.enable", "false");
+            defaultConfig.put("cluster.enable", "true");
             defaultConfig.put("port", schemaRegistryPort);
 
             final SchemaRegistryConfig configRegistry = new SchemaRegistryConfig(defaultConfig);

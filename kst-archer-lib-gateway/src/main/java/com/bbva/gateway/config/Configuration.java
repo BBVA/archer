@@ -102,7 +102,7 @@ public class Configuration {
 
     public static List<Class> getServiceClasses(final String servicesPackage) {
         final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(servicesPackage != "" ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0],
+                .setUrls(ClasspathHelper.forPackage(!servicesPackage.equals("") ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0],
                         ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
         final List<Class> serviceClasses = new ArrayList<>();

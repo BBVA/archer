@@ -24,7 +24,7 @@ public class RetrofitClient {
     public static Retrofit build(final String url) {
         final Gson gson = new GsonBuilder().setLenient().create();
 
-        final OkHttpClient okHttpClient = new okhttp3.OkHttpClient.Builder().retryOnConnectionFailure(true).connectTimeout(5, TimeUnit.SECONDS)
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().retryOnConnectionFailure(true).connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS).build();
 
         return new Retrofit.Builder().baseUrl(url).client(okHttpClient)

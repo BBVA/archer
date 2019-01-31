@@ -3,6 +3,7 @@ package com.bbva.examples.aggregates;
 import com.bbva.avro.Users;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.annotations.Command;
+import com.bbva.ddd.domain.annotations.Handler;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 
 import java.util.logging.Logger;
@@ -10,7 +11,7 @@ import java.util.logging.Logger;
 import static com.bbva.ddd.domain.commands.write.Command.CREATE_ACTION;
 import static com.bbva.ddd.domain.commands.write.Command.DELETE_ACTION;
 
-//@Handler
+@Handler
 public class RootAggregate {
 
     private static final Logger logger = Logger.getLogger(RootAggregate.class.getName());

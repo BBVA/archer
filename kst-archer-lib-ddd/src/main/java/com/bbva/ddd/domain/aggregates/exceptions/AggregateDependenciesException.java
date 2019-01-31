@@ -2,19 +2,21 @@ package com.bbva.ddd.domain.aggregates.exceptions;
 
 public class AggregateDependenciesException extends Exception {
 
+    private static final long serialVersionUID = 6231818687606572725L;
+
     public AggregateDependenciesException() {
         super();
     }
 
-    public AggregateDependenciesException(String message) {
+    public AggregateDependenciesException(final String message) {
         super(message);
     }
 
-    public AggregateDependenciesException(String message, Throwable cause) {
+    public AggregateDependenciesException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public AggregateDependenciesException(Throwable cause) {
+    public AggregateDependenciesException(final Throwable cause) {
         super(cause);
     }
 }

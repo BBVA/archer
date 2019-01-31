@@ -24,7 +24,7 @@ public class GatewayHandler implements Handler {
     List<String> eventsSubscribed = new ArrayList<>();
     protected static Configuration config;
 
-    GatewayHandler(final String servicePackages, final Configuration generalConfig) {
+    public GatewayHandler(final String servicePackages, final Configuration generalConfig) {
         final List<Class> serviceClasses = Configuration.getServiceClasses(servicePackages);
         config = generalConfig;
         baseName = (String) config.getCustom().get(ConfigConstants.GATEWAY_TOPIC);
@@ -89,5 +89,13 @@ public class GatewayHandler implements Handler {
         } else {
             eventServices.put(event, service);
         }
+    }
+
+    public Map<String, IGatewayService> getCommandServices() {
+        return commandServices;
+    }
+
+    public Map<String, IGatewayService> getEventServices() {
+        return eventServices;
     }
 }

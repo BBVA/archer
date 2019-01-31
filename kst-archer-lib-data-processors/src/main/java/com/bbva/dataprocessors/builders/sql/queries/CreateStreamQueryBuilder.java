@@ -52,13 +52,15 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
 
     @Override
     protected String build() {
-        String columnsClause = "";
+        StringBuilder columnsClause = new StringBuilder();
         if (!columnsDefinition.isEmpty()) {
             final List<String> columnsList = new ArrayList<>();
             for (final String prop : columnsDefinition.keySet()) {
                 columnsList.add(prop + " " + columnsDefinition.get(prop).toUpperCase());
             }
-            columnsClause = " (" + String.join(", ", columnsList) + ")";
+            columnsClause.append(" (");
+            columnsClause.append(String.join(", ", columnsList));
+            columnsClause.append(")");
         }
 
         final String withClause = withProperties.build();
@@ -73,7 +75,7 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
 
         query = new StringBuilder("CREATE STREAM ");
         query.append(name);
-        query.append(columnsClause);
+        query.append(columnsClause.toString());
         query.append(withClause);
         query.append(asSelectClause);
 

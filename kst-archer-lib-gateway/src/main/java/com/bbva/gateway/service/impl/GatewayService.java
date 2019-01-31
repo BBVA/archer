@@ -139,9 +139,8 @@ public abstract class GatewayService<T>
     }
 
     protected static Boolean isReplay(final CRecord record) {
-        final Boolean replayValue = record.recordHeaders() != null
+        return record.recordHeaders() != null
                 ? record.isReplayMode() : false;
-        return replayValue;
     }
 
     protected static void handleOutPutted(final Object o, final Exception e) {
