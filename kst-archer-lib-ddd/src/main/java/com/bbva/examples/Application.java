@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Config(file = "examples/config.yml", dataflow = true, ksql = true)
+@Config(file = "examples/config.yml")
 public class Application {
 
     public static final String EMAIL_TOPIC_SOURCE = FiscalDataAggregate.baseName()

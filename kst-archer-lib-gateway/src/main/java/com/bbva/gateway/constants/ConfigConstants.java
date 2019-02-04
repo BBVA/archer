@@ -11,6 +11,8 @@ public class ConfigConstants {
     public static final String GATEWAY_CONSUMER_PROPERTIES = "consumerProperties";
     public static final String GATEWAY_PRODUCER_PROPERTIES = "producerProperties";
     public static final String GATEWAY_STREAM_PROPERTIES = "streamsProperties";
+    public static final String GATEWAY_KSQL_PROPERTIES = "ksql";
+    public static final String GATEWAY_DATAFLOW_PROPERTIES = "dataflow";
     public static final String GATEWAY_SYNC = "synchronous";
     public static final String GATEWAY_CALLBACK = "callback";
     public static final String GATEWAY_HTTP_HEADERS = "headers";
