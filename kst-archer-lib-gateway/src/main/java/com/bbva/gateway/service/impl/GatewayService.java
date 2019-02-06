@@ -114,11 +114,15 @@ public abstract class GatewayService<T>
     }
 
     protected static <O extends SpecificRecord> void sendEvent(final CRecord originalRecord, final O outputEvent) {
+        sendEvent(baseName, originalRecord, outputEvent);
+    }
+
+    protected static <O extends SpecificRecord> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
         try {
             if (originalRecord != null) {
-                HelperDomain.get().sendEventLogTo(baseName).send("gateway", outputEvent, GatewayService::handleOutPutted, isReplay(originalRecord), originalRecord.key());
+                HelperDomain.get().sendEventLogTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted, isReplay(originalRecord), originalRecord.key());
             } else {
-                HelperDomain.get().sendEventLogTo(baseName).send("gateway", outputEvent, GatewayService::handleOutPutted);
+                HelperDomain.get().sendEventLogTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted);
             }
         } catch (final InterruptedException | ExecutionException e) {
             logger.error("Problems generating event", e);
