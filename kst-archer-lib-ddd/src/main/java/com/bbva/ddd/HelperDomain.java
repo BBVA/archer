@@ -1,11 +1,16 @@
 package com.bbva.ddd;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.utils.TopicManager;
 import com.bbva.ddd.domain.commands.write.Command;
 import com.bbva.ddd.domain.events.write.Event;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HelperDomain {
 
@@ -64,5 +69,14 @@ public class HelperDomain {
             cacheEventLog.put(baseName, eventWriter);
             return eventWriter;
         }
+    }
+
+    public synchronized void createEvents(final List<String> produceEvents) {
+        final Map<String, String> producerEvents =
+                Stream.of(produceEvents).flatMap(Collection::stream)
+                        .collect(Collectors.toMap(k -> k + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, type -> ApplicationConfig.COMMON_RECORD_TYPE,
+                                (command1, command2) -> command1));
+
+        TopicManager.createTopics(producerEvents, applicationConfig);
     }
 }
