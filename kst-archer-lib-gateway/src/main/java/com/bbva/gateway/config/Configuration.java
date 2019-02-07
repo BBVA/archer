@@ -4,15 +4,13 @@ import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.gateway.Gateway;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.*;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
 
+@com.bbva.common.config.Config()
 public class Configuration {
 
     private ApplicationConfig applicationConfig;
@@ -50,17 +48,20 @@ public class Configuration {
     }
 
     public Configuration init(final Config extraConfig) {
+
         final Map<String, Object> config = getConfig(extraConfig);
         custom = (LinkedHashMap<String, Object>) config.get(GATEWAY_CUSTOM_PROPERTIES);
         application = (LinkedHashMap<String, Object>) config.get(GATEWAY_APPLICATION_PROPERTIES);
         gateway = (LinkedHashMap<String, Object>) config.get(GATEWAY_GATEWAY_PROPERTIES);
 
-        applicationConfig = new ApplicationConfig();
+        applicationConfig = new AppConfiguration().init(Configuration.class.getAnnotation(com.bbva.common.config.Config.class));
 
         addConfigProperties(application, applicationConfig.get(), GATEWAY_APP_PROPERTIES);
         addConfigProperties(application, applicationConfig.consumer().get(), GATEWAY_CONSUMER_PROPERTIES);
         addConfigProperties(application, applicationConfig.producer().get(), GATEWAY_PRODUCER_PROPERTIES);
         addConfigProperties(application, applicationConfig.streams().get(), GATEWAY_STREAM_PROPERTIES);
+        addConfigProperties(application, applicationConfig.ksql().get(), GATEWAY_KSQL_PROPERTIES);
+        addConfigProperties(application, applicationConfig.dataflow().get(), GATEWAY_DATAFLOW_PROPERTIES);
 
         instance = this;
         return this;
@@ -87,10 +88,7 @@ public class Configuration {
     }
 
     public static Config findConfigAnnotation() {
-        final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(Gateway.class.getPackage().getName().split("\\.")[0],
-                        ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
-                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
+        final Reflections ref = new Reflections(Gateway.class.getPackage().getName().split("\\.")[0]);
         Config configAnnotation = null;
         for (final Class<?> mainClass : ref.getTypesAnnotatedWith(Config.class)) {
             configAnnotation = mainClass.getAnnotation(Config.class);
@@ -101,10 +99,7 @@ public class Configuration {
 
 
     public static List<Class> getServiceClasses(final String servicesPackage) {
-        final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(!servicesPackage.equals("") ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0],
-                        ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
-                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
+        final Reflections ref = new Reflections(!servicesPackage.equals("") ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0]);
         final List<Class> serviceClasses = new ArrayList<>();
         for (final Class<?> mainClass : ref.getTypesAnnotatedWith(ServiceConfig.class)) {
             serviceClasses.add(mainClass);

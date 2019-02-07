@@ -17,3 +17,15 @@ app:
         auto.offset.reset: ${ARCHER_AUTO_OFFSET_RESET:earliest}
         commit.interval.ms: ${ARCHER_COMMIT_INTERVAL_MS:500}
         replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
+    ksql:
+        ksql.statestore.suffix: _store
+        ksql.sink.partitions: ${ARCHER_PARTITIONS:3}
+        ksql.sink.replicas: ${ARCHER_REPLICATION_FACTOR:1}
+        commit.interval.ms: 500
+        auto.offset.reset: earliest
+    dataflow:
+        client.id: $UUID
+        max.poll.interval.ms: 300000
+        max.poll.records: 500
+        session.timeout.ms: 10000
+        state.dir: /tmp/kafka-streams-#client.id#

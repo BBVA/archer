@@ -47,15 +47,12 @@ public final class Domain {
      * @param applicationConfig
      */
     public Domain(final Handler handler, final ApplicationConfig applicationConfig) throws RepositoryException {
-
         this.mapAggregates(handler);
 
         this.handler = handler;
 
         this.applicationConfig = applicationConfig;
-
         DataProcessor.create(this.applicationConfig);
-
         initRepositories();
     }
 
@@ -170,9 +167,12 @@ public final class Domain {
 
     private void aggregatesByPackage(final String mainPackage) {
         final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(mainPackage, ClasspathHelper.contextClassLoader(),
-                        ClasspathHelper.staticClassLoader()))
-                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
+                .setUrls(ClasspathHelper.forPackage(mainPackage, ClasspathHelper.contextClassLoader()))
+                .filterInputsBy(new FilterBuilder()
+                        .excludePackage("org")
+                        .excludePackage("sun")
+                        .excludePackage("java")
+                        .excludePackage("jdk")));
 
         for (final Class<?> aggregateClass : ref.getTypesAnnotatedWith(Aggregate.class)) {
             final Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);

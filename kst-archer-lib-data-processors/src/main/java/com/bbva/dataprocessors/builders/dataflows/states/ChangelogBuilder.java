@@ -1,11 +1,10 @@
-package com.bbva.gateway.consumer.builder;
+package com.bbva.dataprocessors.builders.dataflows.states;
 
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.utils.GenericClass;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
-import com.bbva.dataprocessors.builders.dataflows.states.StateDataflowBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
 import com.bbva.dataprocessors.transformers.EntityTransformer;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -24,14 +23,13 @@ import java.util.Map;
 
 import static com.bbva.common.config.ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
 
-public class ChangelogBuilder<K, V extends SpecificRecordBase> implements StateDataflowBuilder {
+public abstract class ChangelogBuilder<K, V extends SpecificRecordBase> implements StateDataflowBuilder {
     public static final String SNAPSHOT = "_snapshot";
     public static final String STORE = "_store";
     private DataflowProcessorContext context;
     private final GenericClass<K> keyClass;
     protected final String snapshotTopicName;
     private final String topic;
-    private final boolean local = false;
 
     public ChangelogBuilder(final String baseName) {
         this.keyClass = new GenericClass(String.class);
@@ -78,9 +76,7 @@ public class ChangelogBuilder<K, V extends SpecificRecordBase> implements StateD
                 Materialized.as(name));
     }
 
-    protected EntityTransformer newTransformer(final String entityName) {
-        return new EntityTransformer(entityName);
-    }
+    protected abstract EntityTransformer newTransformer(final String entityName);
 
     private void createTopics(final String sourceChangelogTopicName) {
         final Map<String, String> topics = new HashMap<>();

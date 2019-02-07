@@ -36,7 +36,6 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
         this.topics = topics;
         this.callback = callback;
         this.applicationConfig = applicationConfig;
-
         final String schemaRegistryUrl = applicationConfig.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
         final CachedSchemaRegistryClient schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
@@ -51,14 +50,12 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     public abstract T message(String topic, int partition, long offset, long timestamp, TimestampType timestampType,
                               String key, V value, RecordHeaders headers);
 
-    @SuppressWarnings("unchecked")
     public void replay(final List<String> topics) {
         logger.info("Consumer started in mode replay");
 
         final Properties props = applicationConfig.consumer().get();
         props.put(ApplicationConfig.ConsumerProperties.ENABLE_AUTO_COMMIT, false);
         props.put(ApplicationConfig.ConsumerProperties.SESSION_TIMEOUT_MS, "30000");
-
         final KafkaConsumer<String, V> replayConsumer = new KafkaConsumer<>(props, Serdes.String().deserializer(),
                 specificSerde.deserializer());
 
@@ -139,8 +136,9 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
             }
         } catch (final WakeupException e) {
             // ignore for shutdown
-            if (!closed.get())
+            if (!closed.get()) {
                 logger.error(e);
+            }
         } catch (final Exception e) {
             logger.error(e);
         } finally {

@@ -23,7 +23,6 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
         this.name = name;
 
         this.config = config;
-
         final String schemaRegistryUrl = this.config.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
         schemaRegistry = new CustomCachedSchemaRegistryClient(schemaRegistryUrl, 100);
@@ -56,6 +55,7 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
         return ksqlContext;
     }
 
+    @Override
     public void printDataSources() {
         logger.info("KSQL DataSources:");
         logger.info("*****************");

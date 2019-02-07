@@ -11,8 +11,4 @@ public @interface Config {
 
     String file() default "";
 
-    boolean ksql() default false;
-
-    boolean dataflow() default false;
-
 }

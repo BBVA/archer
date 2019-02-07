@@ -43,13 +43,8 @@ public class AppConfiguration {
         addConfigProperties(appConfig, applicationConfig.consumer().get(), "consumer");
         addConfigProperties(appConfig, applicationConfig.producer().get(), "producer");
         addConfigProperties(appConfig, applicationConfig.streams().get(), "streams");
-
-        if (extraConfig.ksql()) {
-            addConfigProperties(appConfig, applicationConfig.ksql().get(), "ksql");
-        }
-        if (extraConfig.dataflow()) {
-            addConfigProperties(appConfig, applicationConfig.dataflow().get(), "dataflow");
-        }
+        addConfigProperties(appConfig, applicationConfig.ksql().get(), "ksql");
+        addConfigProperties(appConfig, applicationConfig.dataflow().get(), "dataflow");
 
         instance = this;
         return applicationConfig;

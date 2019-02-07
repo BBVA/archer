@@ -11,14 +11,15 @@ import java.util.function.Consumer;
 
 public class CommandConsumer<V extends SpecificRecordBase> extends RunnableConsumer<V, CommandRecord> {
 
-    public CommandConsumer(int id, List<String> topics, Consumer<CommandRecord> callback,
-            ApplicationConfig applicationConfig) {
+    public CommandConsumer(final int id, final List<String> topics, final Consumer<CommandRecord> callback,
+                           final ApplicationConfig applicationConfig) {
+
         super(id, topics, callback, applicationConfig);
     }
 
     @Override
-    public CommandRecord message(String topic, int partition, long offset, long timestamp, TimestampType timestampType,
-            String key, V value, RecordHeaders headers) {
+    public CommandRecord message(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
+                                 final String key, final V value, final RecordHeaders headers) {
         return new CommandRecord(topic, partition, offset, timestamp, timestampType, key, value, headers);
     }
 
