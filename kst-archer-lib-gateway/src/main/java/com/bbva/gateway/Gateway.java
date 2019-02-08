@@ -15,7 +15,6 @@ public class Gateway {
     protected static String servicesPackage;
     protected static Domain domain;
 
-
     public void init() throws RepositoryException {
         configure();
 

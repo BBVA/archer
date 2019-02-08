@@ -2,15 +2,15 @@ package com.bbva.dataprocessors.builders.dataflows;
 
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyDescription;
 
 public class DataflowProcessorBuilder implements ProcessorBuilder {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(DataflowProcessorBuilder.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DataflowProcessorBuilder.class);
     private final DataflowBuilder stateBuilder;
     private DataflowProcessorContext context;
     private KafkaStreams streams;
@@ -35,9 +35,9 @@ public class DataflowProcessorBuilder implements ProcessorBuilder {
         streams = new KafkaStreams(topology, context.configs().streams().get());
 
         final TopologyDescription topologyDescription = topology.describe();
-        logger.info("******************************** Topology Description for: " + context.name());
-        logger.info("GlobalStores: " + topologyDescription.globalStores());
-        logger.info("Subtopologies: " + topologyDescription.subtopologies());
+        logger.info("******************************** Topology Description for: {}", context.name());
+        logger.info("GlobalStores: {}", topologyDescription.globalStores());
+        logger.info("Subtopologies: {}", topologyDescription.subtopologies());
         logger.info("********************************");
 
         streams.setUncaughtExceptionHandler((Thread t, Throwable e) -> {

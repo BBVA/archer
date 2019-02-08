@@ -4,8 +4,8 @@ import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CRecord> {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultConsumer.class);
 
     protected final AtomicBoolean closed = new AtomicBoolean(false);
     protected KafkaConsumer<String, V> consumer;
@@ -29,7 +30,7 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     protected Consumer<T> callback;
     private final ApplicationConfig applicationConfig;
     private final SpecificAvroSerde<V> specificSerde;
-    private static final LoggerGen logger = LoggerGenesis.getLogger(DefaultConsumer.class.getName());
+
 
     public DefaultConsumer(final int id, final List<String> topics, final Consumer<T> callback, final ApplicationConfig applicationConfig) {
         this.id = id;
@@ -62,21 +63,19 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
         try {
 
             replayConsumer.subscribe(topics);
-            logger.debug("Topics subscribed: " + topics.toString());
+            logger.debug("Topics subscribed: {}", topics.toString());
 
             replayConsumer.poll(0L);
             final Set<TopicPartition> topicPartitionSet = replayConsumer.assignment();
 
-            logger.debug("Partitions assigned " + topicPartitionSet.toString());
+            logger.debug("Partitions assigned {}", topicPartitionSet.toString());
 
             if (topicPartitionSet.isEmpty()) {
                 logger.error("Replay failed. Not assigment detected");
-
             } else {
 
                 for (final TopicPartition topicPartition : topicPartitionSet) {
-                    logger.debug("Start replay on topic " + topicPartition.topic() + " partition "
-                            + topicPartition.partition());
+                    logger.debug("Start replay on topic {} partition {}", topicPartition.topic(), topicPartition.partition());
 
                     final long lastOffset = replayConsumer.position(topicPartition);
 
@@ -101,8 +100,7 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
                                         offset.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
                                         replayConsumer.commitAsync(offset, null);
                                         stop = true;
-                                        logger.debug("End replay on topic " + topicPartition.topic() + " partition "
-                                                + topicPartition.partition());
+                                        logger.debug("End replay on topic {} partition {}", topicPartition.topic(), topicPartition.partition());
                                         break;
                                     }
                                 }
@@ -113,7 +111,7 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
             }
 
         } catch (final Exception e) {
-            logger.error("Exception: " + e.getLocalizedMessage());
+            logger.error("Exception", e);
         } finally {
             logger.info("End replay");
             replayConsumer.close();
@@ -137,10 +135,10 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
         } catch (final WakeupException e) {
             // ignore for shutdown
             if (!closed.get()) {
-                logger.error(e);
+                logger.error("Error closing the consumer", e);
             }
         } catch (final Exception e) {
-            logger.error(e);
+            logger.error("Error closing the consumer", e);
         } finally {
             consumer.close();
         }

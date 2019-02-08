@@ -2,13 +2,13 @@ package com.bbva.dataprocessors.builders.sql;
 
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContext;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.kafka.streams.KafkaStreams;
 
 public class QueryProcessorBuilder implements ProcessorBuilder {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(QueryProcessorBuilder.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(QueryProcessorBuilder.class);
     private final QueryBuilder queryBuilder;
     // TODO never setted
     private KafkaStreams streams;
@@ -30,10 +30,10 @@ public class QueryProcessorBuilder implements ProcessorBuilder {
     @Override
     public void start() {
         try {
-            logger.info("Launching query: " + queryBuilder.query());
+            logger.info("Launching query: {}", queryBuilder.query());
             context.ksqlContext().sql(queryBuilder.query());
         } catch (final Exception e) {
-            logger.error(e);
+            logger.error("Error starting ksql context", e);
         }
     }
 

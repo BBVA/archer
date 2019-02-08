@@ -5,21 +5,20 @@ import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
 import io.confluent.ksql.KsqlContext;
 import io.confluent.ksql.metastore.StructuredDataSource;
 import io.confluent.ksql.util.KsqlConfig;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 
 import java.util.Map;
 
 public class SQLProcessorContextSupplier implements SQLProcessorContext {
+    private static final Logger logger = LoggerFactory.getLogger(SQLProcessorContextSupplier.class);
 
     private final ApplicationConfig config;
     private final CustomCachedSchemaRegistryClient schemaRegistry;
     private final String name;
     private final KsqlContext ksqlContext;
-    private static final LoggerGen logger = LoggerGenesis.getLogger(SQLProcessorContextSupplier.class.getName());
 
     public SQLProcessorContextSupplier(final String name, final ApplicationConfig config) {
-
         this.name = name;
 
         this.config = config;
@@ -61,11 +60,11 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
         logger.info("*****************");
         final Map<String, StructuredDataSource> metaStore = ksqlContext().getMetaStore().getAllStructuredDataSources();
         metaStore.forEach((key, dataSource) -> {
-            logger.info("Data Source : " + key);
-            logger.info("-> Type: " + dataSource.getDataSourceType());
-            logger.info("-> Name: " + dataSource.getName());
-            logger.info("-> Topic: " + dataSource.getTopicName());
-            logger.info("-> Query ID: " + dataSource.getPersistentQueryId().getId());
+            logger.info("Data Source : {}", key);
+            logger.info("-> Type: {}", dataSource.getDataSourceType());
+            logger.info("-> Name: {}", dataSource.getName());
+            logger.info("-> Topic: {}", dataSource.getTopicName());
+            logger.info("-> Query ID: {}", dataSource.getPersistentQueryId().getId());
         });
     }
 }

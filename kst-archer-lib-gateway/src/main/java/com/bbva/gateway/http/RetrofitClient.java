@@ -2,8 +2,8 @@ package com.bbva.gateway.http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RetrofitClient {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(RetrofitClient.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RetrofitClient.class);
 
     public static Retrofit build(final String url) {
         final Gson gson = new GsonBuilder().setLenient().create();

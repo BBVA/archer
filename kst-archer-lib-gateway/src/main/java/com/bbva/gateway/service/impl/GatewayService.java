@@ -9,8 +9,8 @@ import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.service.IGatewayService;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -25,7 +25,7 @@ import static com.bbva.gateway.constants.Constants.*;
 
 public abstract class GatewayService<T>
         implements IGatewayService<T> {
-    private static final LoggerGen logger = LoggerGenesis.getLogger(GatewayService.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
 
     protected Configuration config;
     protected static ObjectMapper om = new ObjectMapper();

@@ -1,8 +1,8 @@
 package com.bbva.common.utils;
 
 import com.bbva.common.config.ApplicationConfig;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
@@ -10,6 +10,7 @@ import org.apache.kafka.common.config.TopicConfig;
 import java.util.*;
 
 public class TopicManager {
+    private static final Logger logger = LoggerFactory.getLogger(TopicManager.class);
 
     public static final int DEFAULT_PARTITIONS = 2;
     public static final int DEFAULT_REPLICATION = 3;
@@ -30,14 +31,12 @@ public class TopicManager {
         configTypes = Collections.unmodifiableMap(configMap);
     }
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(TopicManager.class.getName());
-
     public static void createTopics(final Map<String, String> topicNames, final ApplicationConfig config) {
         final Collection<NewTopic> topics = new ArrayList();
         for (final String topicName : topicNames.keySet()) {
             topics.add(createTopic(config, topicName, configTypes.get(topicNames.get(topicName))));
         }
-        logger.debug("Create topics " + Arrays.toString(topicNames.keySet().toArray()));
+        logger.debug("Create topics {}", Arrays.toString(topicNames.keySet().toArray()));
         createTopics(topics, config);
     }
 
@@ -46,7 +45,7 @@ public class TopicManager {
         for (final String topicName : topicNamesWithConfig.keySet()) {
             topics.add(createTopic(config, topicName, topicNamesWithConfig.get(topicName)));
         }
-        logger.debug("Create topics " + Arrays.toString(topicNamesWithConfig.keySet().toArray()));
+        logger.debug("Create topics {}", Arrays.toString(topicNamesWithConfig.keySet().toArray()));
         createTopics(topics, config);
     }
 
