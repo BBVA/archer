@@ -5,8 +5,8 @@ import com.bbva.gateway.bean.HttpBean;
 import com.bbva.gateway.http.HttpRequest;
 import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.service.IGatewayService;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import org.codehaus.jackson.JsonParser;
@@ -21,7 +21,7 @@ import static com.bbva.gateway.constants.ConfigConstants.*;
 public abstract class HttpGatewayService
         extends GatewayService<Response> implements IGatewayService<Response> {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(HttpGatewayService.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(HttpGatewayService.class);
     private Retrofit retrofit;
     private Map<String, String> queryParams;
 

@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.transformers;
 
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
@@ -10,19 +10,19 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 
 public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> implements Transformer<K, V, KeyValue<K1, K>> {
-    private static final LoggerGen logger = LoggerGenesis.getLogger(UniqueFieldTransformer.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(UniqueFieldTransformer.class);
     private KeyValueStore<K1, K> stateStore;
-    private String stateStoreName;
-    private String fieldPath;
+    private final String stateStoreName;
+    private final String fieldPath;
 
-    public UniqueFieldTransformer(String stateStoreName, String fieldPath) {
+    public UniqueFieldTransformer(final String stateStoreName, final String fieldPath) {
         this.stateStoreName = stateStoreName;
         this.fieldPath = fieldPath;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void init(ProcessorContext context) {
+    public void init(final ProcessorContext context) {
         stateStore = (KeyValueStore<K1, K>) context.getStateStore(stateStoreName);
     }
 
@@ -32,19 +32,19 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
         K1 uniqueFieldKey = null;
         K uniqueFieldValue = null;
         if (value == null) {
-            KeyValueIterator<K1, K> iterator = stateStore.all();
+            final KeyValueIterator<K1, K> iterator = stateStore.all();
             while (iterator.hasNext()) {
-                KeyValue<K1, K> row = iterator.next();
+                final KeyValue<K1, K> row = iterator.next();
                 if (row.value.equals(key)) {
                     uniqueFieldKey = row.key;
                     break;
                 }
             }
         } else {
-            String[] splitFieldPath = fieldPath.split("\\.");
+            final String[] splitFieldPath = fieldPath.split("\\.");
             try {
                 Object fieldValue = value;
-                for (String field : splitFieldPath) {
+                for (final String field : splitFieldPath) {
                     if (fieldValue instanceof SpecificRecordBase) {
                         fieldValue = ((SpecificRecordBase) fieldValue).get(field);
 
@@ -54,10 +54,8 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
                         }
                     }
                 }
-            } catch (NullPointerException e) {
-                // ignored
-            } catch (Exception e) {
-                logger.error(e);
+            } catch (final Exception e) {
+                logger.error("Error transforming the data", e);
             }
         }
 

@@ -2,8 +2,8 @@ package com.bbva.gateway.api;
 
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_RESOURCE;
 
 public class RestUtil {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(RestUtil.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RestUtil.class);
     public static final int DEFAULT_PORT = 8080;
     public static final String DEFAULT_RESOURCE = "/";
     public static final String LOCALHOST = "localhost";

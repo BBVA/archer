@@ -1,7 +1,7 @@
-package com.bbva.archer.common.util;
+package com.bbva.common.util;
 
 
-import com.bbva.archer.common.BaseItTest;
+import com.bbva.common.BaseItTest;
 import com.salesforce.kafka.test.AbstractKafkaTestResource;
 import com.salesforce.kafka.test.KafkaBroker;
 import com.salesforce.kafka.test.KafkaCluster;
@@ -10,8 +10,8 @@ import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.eclipse.jetty.server.Server;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -23,14 +23,14 @@ import java.util.Properties;
 
 
 public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTestResource> implements TestRule {
-    private static final LoggerGen LOGGER = LoggerGenesis.getLogger(BaseItTest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(BaseItTest.class);
     public static final String HTTP_LOCALHOST = "http://localhost:";
     private static Server server;
 
     private static SchemaRegistryRestApplication app;
 
     private void before() throws Exception {
-        LOGGER.info("Starting kafka test server");
+        logger.info("Starting kafka test server");
         if (this.getKafkaCluster() != null) {
             throw new IllegalStateException("Unknown State!  Kafka Test Server already exists!");
         } else {
@@ -56,12 +56,12 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
 
             server.start();
         } catch (final Exception e) {
-            LOGGER.error("Error launching schema registry", e);
+            logger.error("Error launching schema registry", e);
         }
     }
 
     private void after() throws Exception {
-        LOGGER.info("Shutting down kafka test server");
+        logger.info("Shutting down kafka test server");
         app.stop();
         server.stop();
 

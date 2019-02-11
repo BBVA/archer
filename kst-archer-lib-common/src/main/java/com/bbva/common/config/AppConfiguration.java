@@ -1,7 +1,7 @@
 package com.bbva.common.config;
 
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -15,7 +15,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 public class AppConfiguration {
-    private static final LoggerGen logger = LoggerGenesis.getLogger(AppConfiguration.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AppConfiguration.class);
 
     private ApplicationConfig applicationConfig;
     private static AppConfiguration instance;

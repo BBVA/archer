@@ -4,8 +4,8 @@ import com.bbva.gateway.config.Config;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.ServiceConfig;
 import com.bbva.gateway.service.IAsyncGatewayService;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.Consumes;
@@ -24,7 +24,7 @@ import static com.bbva.gateway.constants.ConfigConstants.*;
 @Consumes(MediaType.APPLICATION_JSON)
 public class CallbackRest {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(CallbackRest.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(CallbackRest.class);
     protected static Configuration config;
     private static IAsyncGatewayService gateway;
 
@@ -50,12 +50,9 @@ public class CallbackRest {
         }
     }
 
-
     @POST
     public static Response callback(final String request) {
         logger.debug("Callback receive");
-        // TODO key should be in the response or callback
-        //gateway.saveResponse(UUID.randomUUID().toString(), request);
         return Response.ok().build();
     }
 

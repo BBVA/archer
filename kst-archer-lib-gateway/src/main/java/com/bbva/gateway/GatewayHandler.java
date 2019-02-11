@@ -6,16 +6,17 @@ import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.ServiceConfig;
-import com.bbva.gateway.constants.ConfigConstants;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.gateway.service.impl.GatewayService;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 
 import java.util.*;
 
+import static com.bbva.gateway.constants.ConfigConstants.*;
+
 public class GatewayHandler implements Handler {
-    private static final LoggerGen logger = LoggerGenesis.getLogger(GatewayService.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
 
     private static String baseName;
     private static final Map<String, IGatewayService> commandServices = new HashMap<>();
@@ -27,14 +28,14 @@ public class GatewayHandler implements Handler {
     public GatewayHandler(final String servicePackages, final Configuration generalConfig) {
         final List<Class> serviceClasses = Configuration.getServiceClasses(servicePackages);
         config = generalConfig;
-        baseName = (String) config.getCustom().get(ConfigConstants.GATEWAY_TOPIC);
+        baseName = (String) config.getCustom().get(GATEWAY_TOPIC);
 
         for (final Class serviceClass : serviceClasses) {
             final ServiceConfig serviceConfig = (ServiceConfig) serviceClass.getAnnotation(ServiceConfig.class);
 
             final LinkedHashMap<String, Object> gatewayConfig = Configuration.getServiceConfig(serviceConfig.file());
-            final String commandAction = (String) gatewayConfig.get("commandAction");
-            final String event = (String) gatewayConfig.get("event");
+            final String commandAction = (String) gatewayConfig.get(GATEWAY_COMMAND_ACTION);
+            final String event = (String) gatewayConfig.get(GATEWAY_EVENT_NAME);
             if (commandAction != null) {
                 commandsSubscribed.add(baseName + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 initActionService(serviceClass, gatewayConfig, commandAction, null);
@@ -80,7 +81,7 @@ public class GatewayHandler implements Handler {
         try {
             service = (IGatewayService) serviceClass.newInstance();
         } catch (final IllegalAccessException | InstantiationException e) {
-            logger.error(e);
+            logger.error("Error initializing service", e);
         }
         service.init(newConfig, baseName);
         service.postInitActions();

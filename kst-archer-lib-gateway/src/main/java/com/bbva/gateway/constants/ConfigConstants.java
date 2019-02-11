@@ -26,4 +26,8 @@ public class ConfigConstants {
     public static final String GATEWAY_REST_PORT = "port";
     public static final String GATEWAY_REST_RESOURCE = "resource";
     public static final String GATEWAY_TOPIC = "baseName";
+
+    public static final String GATEWAY_COMMAND_ACTION = "commandAction";
+    public static final String GATEWAY_EVENT_NAME = "event";
+
 }

@@ -10,8 +10,8 @@ import com.bbva.common.utils.OptionalRecordHeaders;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
@@ -26,7 +26,7 @@ public class Command {
     public static final String DELETE_ACTION = "delete";
     private static final String TYPE_COMMAND_VALUE = "command";
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(Command.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Command.class);
     private final CachedProducer producer;
     private final String topic;
     private final boolean persistent;
@@ -157,7 +157,7 @@ public class Command {
     private <V extends SpecificRecord> CommandRecordMetadata generateCommand(final String action, final V record,
                                                                              final Class<V> recordClass, final String entityId, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback)
             throws InterruptedException, ExecutionException {
-        logger.debug("Creating command of type " + action);
+        logger.debug("Creating command of type {}", action);
         final String key = UUID.randomUUID().toString();
 
         final RecordHeaders headers = headers(action, entityId, optionalHeaders);
@@ -172,7 +172,7 @@ public class Command {
                 result = producer.remove(new PRecord<>(topic, key, null, headers), recordClass, callback);
             } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException
                     | InstantiationException e) {
-                logger.error("Error " + e.getMessage(), e);
+                logger.error("Error ", e);
             }
         } else {
             throw new IllegalArgumentException("Record or recordClass params must be set");
@@ -201,7 +201,7 @@ public class Command {
             recordHeaders.addAll(optionalHeaders);
         }
 
-        logger.debug("CRecord headers: " + recordHeaders.toString());
+        logger.debug("CRecord headers: {}", recordHeaders.toString());
 
         return recordHeaders;
     }

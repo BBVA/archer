@@ -9,8 +9,8 @@ import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.ddd.util.AnnotationUtil;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ import java.util.*;
 
 
 public class AutoConfiguredHandler implements Handler {
-    private static final LoggerGen logger = LoggerGenesis.getLogger(AutoConfiguredHandler.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AutoConfiguredHandler.class);
 
     private static final List<String> commandsSubscribed = new ArrayList<>();
     private static final List<String> eventsSubscribed = new ArrayList<>();

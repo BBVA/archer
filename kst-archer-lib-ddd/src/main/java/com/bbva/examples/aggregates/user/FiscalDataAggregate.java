@@ -6,14 +6,14 @@ import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.aggregates.annotations.AggregateParent;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.examples.aggregates.UserAggregate;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 
 @Aggregate(baseName = "test_users_fiscal_data")
 @AggregateParent(UserAggregate.class)
 public class FiscalDataAggregate extends AbstractChildAggregateBase<String, FiscalData> {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(FiscalDataAggregate.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(FiscalDataAggregate.class);
 
     public FiscalDataAggregate(final String id, final FiscalData data) {
         super(id, data);
@@ -24,7 +24,7 @@ public class FiscalDataAggregate extends AbstractChildAggregateBase<String, Fisc
             if (e != null) {
                 logger.error("Error aggregating", e);
             }
-            logger.info("change fiscal data from " + getData() + " to " + modifiedData);
+            logger.info("change fiscal data from {} to {}", getData(), modifiedData);
         });
     }
 

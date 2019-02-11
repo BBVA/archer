@@ -3,13 +3,13 @@ package com.bbva.ddd.util;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.States;
 import com.bbva.ddd.HelperDomain;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
 
 public class StoreUtil {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(HelperDomain.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(HelperDomain.class);
 
     public static <K, V> ReadableStore<K, V> getStore(final String store) {
         while (true) {

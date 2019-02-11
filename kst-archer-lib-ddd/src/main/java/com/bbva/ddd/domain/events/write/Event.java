@@ -9,8 +9,8 @@ import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.events.read.EventRecord;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
@@ -22,7 +22,7 @@ public class Event {
 
     private static final String TYPE_EVENT_VALUE = "event";
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(Event.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Event.class);
     private final CachedProducer producer;
     private final String topic;
 
@@ -48,7 +48,7 @@ public class Event {
 
     private <V extends SpecificRecord> EventRecordMetadata generateEvent(String key, final String productorName, final V record,
                                                                          final ProducerCallback callback, final boolean replay, final String referenceId) throws InterruptedException, ExecutionException {
-        logger.debug("Generating event by " + productorName);
+        logger.debug("Generating event by {}", productorName);
         key = (key != null) ? key : UUID.randomUUID().toString();
 
         final RecordHeaders headers = headers(productorName, replay, referenceId);
@@ -57,7 +57,7 @@ public class Event {
 
         final EventRecordMetadata recordedMessageMetadata = new EventRecordMetadata(result.get(), key);
 
-        logger.info("Event created: " + key);
+        logger.info("Event created: {}", key);
 
         return recordedMessageMetadata;
     }
@@ -72,7 +72,7 @@ public class Event {
         }
         recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
 
-        logger.debug("CRecord getList: " + recordHeaders.toString());
+        logger.debug("CRecord getList: {}", recordHeaders.toString());
 
         return recordHeaders;
     }

@@ -1,10 +1,10 @@
-package com.bbva.archer.common;
+package com.bbva.common;
 
-import com.bbva.archer.common.util.KafkaTestResource;
-import com.bbva.archer.common.util.TestUtil;
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.config.Config;
+import com.bbva.common.util.KafkaTestResource;
+import com.bbva.common.util.TestUtil;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;

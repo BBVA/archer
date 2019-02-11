@@ -5,15 +5,15 @@ import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.changelogs.Repository;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 
 import java.lang.reflect.InvocationTargetException;
 
 public class AggregateFactory {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(AggregateFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AggregateFactory.class);
 
     public static <V extends SpecificRecordBase, T extends AggregateBase> T create(final Class<T> aggregateClass, final V record,
                                                                                    final CommandRecord commandMessage, final ProducerCallback callback) {

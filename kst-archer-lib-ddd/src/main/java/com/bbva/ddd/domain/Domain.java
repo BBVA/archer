@@ -17,8 +17,8 @@ import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
 import com.bbva.ddd.domain.changelogs.read.ChangelogConsumer;
 import com.bbva.ddd.domain.commands.read.CommandConsumer;
 import com.bbva.ddd.domain.events.read.EventConsumer;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.map.HashedMap;
 import org.reflections.Reflections;
@@ -35,12 +35,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Domain {
-
+    private static final Logger logger = LoggerFactory.getLogger(Domain.class);
     private final List<RunnableConsumer> consumers = new ArrayList<>();
     private final Handler handler;
     private final ApplicationConfig applicationConfig;
     private final Map<String, Class<? extends AggregateBase>> aggregatesMap = new HashedMap();
-    private static final LoggerGen logger = LoggerGenesis.getLogger(Domain.class.getName());
+
 
     /**
      * @param handler
@@ -84,7 +84,7 @@ public final class Domain {
         final String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
                 + "_" + baseName;
         DataProcessor.get().add(baseName, new EntityStateBuilder<K, V>(snapshotTopicName, keyClass));
-        logger.info("Local state " + baseName + " added");
+        logger.info("Local state {} added", baseName);
         return this;
     }
 
@@ -100,7 +100,7 @@ public final class Domain {
                                                                                final String originTopicName, final String fieldPath, final GenericClass<K> keyClass, final GenericClass<K1> key1Class) {
         DataProcessor.get().add(targetBaseName,
                 new UniqueFieldStateBuilder<K, V, K1>(originTopicName, fieldPath, keyClass, key1Class));
-        logger.info("Local state for index field " + fieldPath + " added");
+        logger.info("Local state for index field {} added", fieldPath);
         return this;
     }
 
@@ -151,7 +151,7 @@ public final class Domain {
             mapAllPackagesAggregates();
         }
 
-        logger.info(" Aggregates mapped: " + aggregatesMap.toString());
+        logger.info(" Aggregates mapped: {}", aggregatesMap.toString());
     }
 
     private void mapAllPackagesAggregates() {
@@ -191,7 +191,7 @@ public final class Domain {
             try {
                 repositories.put(baseName, new Repository(baseName, aggregateClass, applicationConfig));
             } catch (final AggregateDependenciesException e) {
-                logger.error(e.getMessage(), e);
+                logger.error("Error aggregating dependencies", e);
             }
 
             addEntityAsLocalState(baseName, new GenericClass<>(String.class));

@@ -17,8 +17,8 @@ import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.changelogs.write.ChangelogRecordMetadata;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.util.StoreUtil;
-import kst.logging.LoggerGen;
-import kst.logging.LoggerGenesis;
+import kst.logging.Logger;
+import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
@@ -32,7 +32,7 @@ import java.util.concurrent.Future;
 
 public final class Repository<K, V extends SpecificRecordBase> {
 
-    private static final LoggerGen logger = LoggerGenesis.getLogger(Repository.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(Repository.class);
 
     private final Class<? extends AggregateBase> aggregateClass;
     private final CachedProducer producer;
@@ -54,7 +54,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
         setDependencies();
 
-        logger.info("Repository for " + aggregateClass.getName() + " initialized");
+        logger.info("Repository for {} initialized", aggregateClass.getName());
     }
 
     public String getBaseName() {
@@ -75,7 +75,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
         final AggregateBase aggregateBaseInstance = getAggregateIntance(key, value);
 
-        logger.debug("Creating PRecord of type " + value.getClass().getName());
+        logger.debug("Creating PRecord of type {}", value.getClass().getName());
 
         save((String) aggregateBaseInstance.getId(), (V) aggregateBaseInstance.getData(), commandMessage, "constructor",
                 callback);
@@ -85,7 +85,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
     public AggregateBase loadFromStore(final String key)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        logger.debug("Loading from store " + baseName);
+        logger.debug("Loading from store {}", baseName);
 
         final V value;
 
@@ -97,7 +97,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         }
 
         if (value != null) {
-            logger.debug("Value found for id " + key);
+            logger.debug("Value found for id {}", key);
             return getAggregateIntance(key, value);
         }
         return null;
@@ -125,9 +125,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
                 }
             }
             if (expectedParentField == null) {
-                final String errorMessage = "Something rare happened: Parent has not field for child";
-                logger.error(errorMessage);
-                throw new AggregateDependenciesException(errorMessage);
+                throw new AggregateDependenciesException("Something rare happened: Parent has not field for child");
             }
         }
     }
@@ -147,7 +145,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
                 changelogMessageMetadata = propagate(parentChangelogName, key, parentValue, headers(method, record),
                         (id, e) -> {
                             if (e != null) {
-                                logger.error(e);
+                                logger.error("Error saving the object", e);
                             } else {
                                 logger.info("Parent updated");
                                 propagate(changelogName, key, value, headers(method, record), callback);
@@ -165,7 +163,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
     private ChangelogRecordMetadata propagate(final String changelogName, final String key,
                                               final SpecificRecordBase value, final RecordHeaders headers, final ProducerCallback callback) {
-        logger.info("Propagate PRecord for key: " + key);
+        logger.info("Propagate PRecord for key: {}", key);
         ChangelogRecordMetadata changelogMessageMetadata = null;
         final PRecord<String, SpecificRecordBase> record = new PRecord<>(changelogName, key, value, headers);
 
@@ -183,7 +181,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
     private ChangelogRecordMetadata delete(final K key, final Class<V> valueClass, final RecordHeaders headers,
                                            final ProducerCallback callback)
             throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        logger.info("Delete PRecord for key: " + key);
+        logger.info("Delete PRecord for key: {}", key);
         ChangelogRecordMetadata changelogMessageMetadata = null;
         final PRecord<K, V> record = new PRecord<>(changelogName, key, null, headers);
 
@@ -216,7 +214,6 @@ public final class Repository<K, V extends SpecificRecordBase> {
         }
 
         logger.debug("Returning Aggregate instance");
-
         return aggregateBaseInstance;
     }
 
@@ -235,7 +232,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         recordHeaders.add(ChangelogRecord.AGGREGATE_NAME_KEY, new ByteArrayValue(this.aggregateClass.getName()));
         recordHeaders.add(ChangelogRecord.AGGREGATE_METHOD_KEY, new ByteArrayValue(aggregateMethod));
 
-        logger.debug("CRecord getList: " + recordHeaders.toString());
+        logger.debug("CRecord getList: {}", recordHeaders.toString());
 
         return recordHeaders;
     }
