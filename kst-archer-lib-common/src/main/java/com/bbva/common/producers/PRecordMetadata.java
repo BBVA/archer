@@ -7,7 +7,6 @@ public class PRecordMetadata {
     protected RecordMetadata recordMetadata;
 
     public PRecordMetadata() {
-
     }
 
     public PRecordMetadata(final RecordMetadata recordMetadata) {

@@ -2,11 +2,13 @@ package com.bbva.ddd.domain.changelogs;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.consumers.CRecord;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
+import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
 import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AbstractAggregateBase;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
@@ -63,8 +65,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
 
     @SuppressWarnings("unchecked")
     public AggregateBase create(String key, final V value, final CommandRecord commandMessage,
-                                final ProducerCallback callback)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+                                final ProducerCallback callback) {
         key = (key == null) ? commandMessage.entityId() : key;
 
         try {
@@ -83,16 +84,14 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return aggregateBaseInstance;
     }
 
-    public AggregateBase loadFromStore(final String key)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public AggregateBase loadFromStore(final String key) {
         logger.debug("Loading from store {}", baseName);
 
         final V value;
 
         try {
             value = StoreUtil.<String, V>getStore(baseName).findById(key);
-
-        } catch (final NullPointerException e) {
+        } catch (final StoreNotFoundException e) {
             return null;
         }
 
@@ -103,7 +102,6 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private void setDependencies() throws AggregateDependenciesException {
 
         if (aggregateClass.isAnnotationPresent(AggregateParent.class)) {
@@ -151,8 +149,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
                                 propagate(changelogName, key, value, headers(method, record), callback);
                             }
                         });
-            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException
-                    | NoSuchMethodException e) {
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 logger.error("Problems saving the object", e);
             }
         } else {
@@ -179,9 +176,10 @@ public final class Repository<K, V extends SpecificRecordBase> {
     }
 
     private ChangelogRecordMetadata delete(final K key, final Class<V> valueClass, final RecordHeaders headers,
-                                           final ProducerCallback callback)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+                                           final ProducerCallback callback) {
+
         logger.info("Delete PRecord for key: {}", key);
+
         ChangelogRecordMetadata changelogMessageMetadata = null;
         final PRecord<K, V> record = new PRecord<>(changelogName, key, null, headers);
 
@@ -196,11 +194,15 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return changelogMessageMetadata;
     }
 
-    @SuppressWarnings("unchecked")
-    private AggregateBase getAggregateIntance(final String key, final V value)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        final AggregateBase aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
-                .newInstance(key, value);
+    private AggregateBase getAggregateIntance(final String key, final V value) {
+        final AggregateBase aggregateBaseInstance;
+        try {
+            aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
+                    .newInstance(key, value);
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            logger.error("Not constructor found for aggregate class", e);
+            throw new ApplicationException("Not constructor found for aggregate class");
+        }
 
         logger.info("Aggregate loaded");
 

@@ -1,5 +1,6 @@
 package com.bbva.common.config;
 
+import com.bbva.common.exceptions.ApplicationException;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.reflections.Reflections;
@@ -72,12 +73,13 @@ public class AppConfiguration {
 
     public static Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
                                                         final String filename) {
-        Map<String, Object> properties = null;
+        final Map<String, Object> properties;
         try (final InputStream in = classLoader.getResourceAsStream(filename)) {
             properties = (Map<String, Object>) yaml.load(in);
 
         } catch (final IOException e) {
             logger.error("Config file not exists", e);
+            throw new ApplicationException("Config file not exists", e);
         }
         return properties;
     }

@@ -1,5 +1,6 @@
 package com.bbva.gateway.api;
 
+import com.bbva.common.exceptions.ApplicationException;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import kst.logging.Logger;
@@ -20,7 +21,7 @@ public class RestUtil {
     public static final String DEFAULT_RESOURCE = "/";
     public static final String LOCALHOST = "localhost";
 
-    public static void startRestCallBack(final Map<String, Object> callbackConfig) throws IOException, InterruptedException {
+    public static void startRestCallBack(final Map<String, Object> callbackConfig) {
         final Integer port = callbackConfig.get(GATEWAY_REST_PORT) != null ? Integer.valueOf(callbackConfig.get(GATEWAY_REST_PORT).toString())
                 : DEFAULT_PORT;
         final String resource = callbackConfig.get(GATEWAY_REST_RESOURCE) != null
@@ -29,12 +30,23 @@ public class RestUtil {
 
         logger.info("Rest endpoint callback " + resource + " started started at port: " + port);
 
-        Thread.currentThread().join();
+        try {
+            Thread.currentThread().join();
+        } catch (final InterruptedException e) {
+            logger.error("Thread problem", e);
+            throw new ApplicationException("Thread problem");
+        }
     }
 
 
-    private static void startServer(final int port, final String resource) throws IOException {
-        final HttpServer server = HttpServer.create(new InetSocketAddress(LOCALHOST, port), 0);
+    private static void startServer(final int port, final String resource) {
+        final HttpServer server;
+        try {
+            server = HttpServer.create(new InetSocketAddress(LOCALHOST, port), 0);
+        } catch (final IOException e) {
+            logger.error("Problem creating rest service", e);
+            throw new ApplicationException("Problem creating rest service");
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop(0)));
 

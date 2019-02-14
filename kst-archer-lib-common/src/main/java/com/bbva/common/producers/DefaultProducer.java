@@ -24,21 +24,14 @@ public class DefaultProducer<K, V> {
     public Future<RecordMetadata> save(final PRecord<K, V> record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
 
-        Future<RecordMetadata> result = null;
-
-        try {
-            result = producer.send(record, (metadata, e) -> {
-                if (e != null) {
-                    logger.error("Error producing key " + record.key(), e);
-                } else {
-                    logger.info("PRecord Produced. key {}", record.key());
-                }
-                callback.onCompletion(record.key(), e);
-            });
-        } catch (final Exception e) {
-            logger.error("Exception producing record", e);
+        final Future<RecordMetadata> result = producer.send(record, (metadata, e) -> {
+            if (e != null) {
+                logger.error("Error producing key " + record.key(), e);
+            } else {
+                logger.info("PRecord Produced. key {}", record.key());
+            }
             callback.onCompletion(record.key(), e);
-        }
+        });
 
         producer.flush();
 

@@ -51,6 +51,7 @@ public class RecordHeaders {
 
     @Override
     public String toString() {
+        
         final StringBuilder value = new StringBuilder("[");
         for (final Header header : headers) {
             value.append("{key: ").append(header.key()).append(", value: ").append(ByteArrayValue.Serde.deserializeAs(header.value()).toString()).append("}");

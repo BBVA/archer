@@ -24,15 +24,14 @@ public abstract class RunnableConsumer<V extends SpecificRecordBase, T extends C
     @Override
     public void run() {
         if (this.replayTopics.length > 0) {
-            final HelperDomain app = HelperDomain.get();
-            app.setReplayMode(true);
-            this.replay(Arrays.asList(this.replayTopics));
-            app.setReplayMode(false);
-            this.play();
-        } else {
-            this.play();
+            final HelperDomain helperDomain = HelperDomain.get();
+
+            helperDomain.setReplayMode(true);
+            replay(Arrays.asList(this.replayTopics));
+            helperDomain.setReplayMode(false);
         }
 
+        this.play();
     }
 
     public void shutdown() {

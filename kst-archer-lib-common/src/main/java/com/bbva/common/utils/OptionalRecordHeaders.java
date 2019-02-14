@@ -6,33 +6,34 @@ import java.util.List;
 
 public class OptionalRecordHeaders extends RecordHeaders {
 
-    private static String CUSTOM_ORIGIN_KEY = "custom.origin";
-    private static String CUSTOM_ACK_KEY = "custom.ack";
+    private static final String CUSTOM_ORIGIN_KEY = "custom.origin";
+    private static final String CUSTOM_ACK_KEY = "custom.ack";
 
     public OptionalRecordHeaders() {
     }
 
-    public OptionalRecordHeaders(List<Header> headers) {
+    public OptionalRecordHeaders(final List<Header> headers) {
         super(headers);
     }
 
-    public OptionalRecordHeaders addOrigin(String value) {
+    public OptionalRecordHeaders addOrigin(final String value) {
         headers.add(new RecordHeader(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY, ByteArrayValue.Serde.serialize(value)));
         return this;
     }
 
-    public OptionalRecordHeaders addAck(String value) {
+    public OptionalRecordHeaders addAck(final String value) {
         headers.add(new RecordHeader(OptionalRecordHeaders.CUSTOM_ACK_KEY, ByteArrayValue.Serde.serialize(value)));
         return this;
     }
 
     public String getOrigin() {
-        ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY);
+        final ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ORIGIN_KEY);
         return value != null ? value.asString() : null;
     }
 
     public String getAck() {
-        ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ACK_KEY);
+        new RecordHeader();
+        final ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ACK_KEY);
         return value != null ? value.asString() : null;
     }
 

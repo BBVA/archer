@@ -16,12 +16,6 @@ package com.bbva.common.utils.interactivequeries;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * A simple bean that can be JSON serialized via Jersey. Represents a KafkaStreams instance that has a set of state
- * stores. See {@link WordCountInteractiveQueriesRestService} for how it is used.
- * <p>
- * We use this JavaBean based approach as it fits nicely with JSON serialization provided by jax-rs/jersey
- */
 public class HostStoreInfo {
 
     private String host;
@@ -29,10 +23,9 @@ public class HostStoreInfo {
     private Set<String> storeNames;
 
     public HostStoreInfo() {
-
     }
 
-    public HostStoreInfo(String host, int port, Set<String> storeNames) {
+    public HostStoreInfo(final String host, final int port, final Set<String> storeNames) {
         this.host = host;
         this.port = port;
         this.storeNames = storeNames;
@@ -42,7 +35,7 @@ public class HostStoreInfo {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -50,7 +43,7 @@ public class HostStoreInfo {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
@@ -58,7 +51,7 @@ public class HostStoreInfo {
         return storeNames;
     }
 
-    public void setStoreNames(Set<String> storeNames) {
+    public void setStoreNames(final Set<String> storeNames) {
         this.storeNames = storeNames;
     }
 
@@ -68,14 +61,14 @@ public class HostStoreInfo {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        HostStoreInfo that = (HostStoreInfo) o;
+        final HostStoreInfo that = (HostStoreInfo) o;
         return port == that.port && Objects.equals(host, that.host) && Objects.equals(storeNames, that.storeNames);
     }
 

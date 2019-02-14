@@ -2,6 +2,7 @@ package com.bbva.ddd.domain;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.consumers.CRecord;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.ddd.domain.annotations.Changelog;
 import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.annotations.Event;
@@ -76,30 +77,18 @@ public class AutoConfiguredHandler implements Handler {
 
     @Override
     public void processCommand(final CommandRecord command) {
-        try {
-            final String actionToExecute = command.topic().replace(ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(command);
-            executeMethod(command, commandMethods.get(actionToExecute));
-        } catch (final IllegalAccessException | InvocationTargetException e) {
-            logger.error("Command not found", e);
-        }
+        final String actionToExecute = command.topic().replace(ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(command);
+        executeMethod(command, commandMethods.get(actionToExecute));
     }
 
     @Override
     public void processEvent(final EventRecord eventMessage) {
-        try {
-            executeMethod(eventMessage, eventMethods.get(eventMessage.topic().replace(ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
-        } catch (final IllegalAccessException | InvocationTargetException e) {
-            logger.error("Event not found", e);
-        }
+        executeMethod(eventMessage, eventMethods.get(eventMessage.topic().replace(ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
     }
 
     @Override
     public void processDataChangelog(final ChangelogRecord changelogMessage) {
-        try {
-            executeMethod(changelogMessage, eventMethods.get(changelogMessage.topic().replace(ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
-        } catch (final IllegalAccessException | InvocationTargetException e) {
-            logger.error("Changelog not found", e);
-        }
+        executeMethod(changelogMessage, changelogMethods.get(changelogMessage.topic().replace(ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
     }
 
     private static List<String> cleanList(final List<String> list) {
@@ -109,9 +98,14 @@ public class AutoConfiguredHandler implements Handler {
         return list;
     }
 
-    private static <CR extends CRecord> void executeMethod(final CR record, final Method toExecuteMethod) throws IllegalAccessException, InvocationTargetException {
+    private static <CR extends CRecord> void executeMethod(final CR record, final Method toExecuteMethod) {
         if (toExecuteMethod != null) {
-            toExecuteMethod.invoke(null, record);
+            try {
+                toExecuteMethod.invoke(null, record);
+            } catch (final IllegalAccessException | InvocationTargetException e) {
+                logger.error("Error executing method: " + toExecuteMethod.getName(), e);
+                throw new ApplicationException("Error executing method: " + toExecuteMethod.getName(), e);
+            }
         } else {
             logger.info("Event not handled");
         }

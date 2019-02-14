@@ -1,8 +1,8 @@
 package com.bbva.gateway.api;
 
-import com.bbva.gateway.config.Config;
 import com.bbva.gateway.config.Configuration;
-import com.bbva.gateway.config.ServiceConfig;
+import com.bbva.gateway.config.annotations.Config;
+import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IAsyncGatewayService;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
@@ -29,7 +29,7 @@ public class CallbackRest {
     private static IAsyncGatewayService gateway;
 
     @PostConstruct
-    private static void init() throws IllegalAccessException, InstantiationException {
+    private static void init() {
         final Config annotationConfig = Configuration.findConfigAnnotation();
         final List<Class> serviceClasses = Configuration.getServiceClasses(annotationConfig.servicesPackage());
         config = new Configuration().init(annotationConfig);
@@ -41,7 +41,12 @@ public class CallbackRest {
             final String baseName = (String) config.getCustom().get(GATEWAY_TOPIC);
             config.setGateway(gatewayConfig);
             if (commandAction != null && config.getGateway().get(GATEWAY_SYNC) != null && !(Boolean) config.getGateway().get(GATEWAY_SYNC) && config.getGateway().get(GATEWAY_CALLBACK) != null) {
-                final IAsyncGatewayService service = (IAsyncGatewayService) serviceClass.newInstance();
+                IAsyncGatewayService service = null;
+                try {
+                    service = (IAsyncGatewayService) serviceClass.newInstance();
+                } catch (final InstantiationException | IllegalAccessException e) {
+                    logger.error("Error instancing the service", e);
+                }
                 service.init(config, baseName);
                 service.postInitActions();
                 gateway = service;

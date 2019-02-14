@@ -38,7 +38,7 @@ public final class DataProcessor {
         return instance;
     }
 
-    public DataProcessor add(final String name, final DataflowBuilder builder) throws IllegalArgumentException {
+    public DataProcessor add(final String name, final DataflowBuilder builder) {
         final DataflowProcessorBuilder dataflowProcessorBuilder = new DataflowProcessorBuilder(builder);
         dataflowProcessorBuilder.init(new DataflowProcessorContextSupplier(name, config));
         dataflowProcessorBuilder.build();
@@ -51,7 +51,7 @@ public final class DataProcessor {
         return this;
     }
 
-    public DataProcessor add(final QueryBuilder queryBuilder) throws IllegalArgumentException {
+    public DataProcessor add(final QueryBuilder queryBuilder) {
         final QueryProcessorBuilder queryProcessorBuilder = new QueryProcessorBuilder(queryBuilder);
         queryProcessorBuilder.init(sqlProcessorContext);
         queryProcessorBuilder.build();
@@ -60,7 +60,7 @@ public final class DataProcessor {
         return this;
     }
 
-    public DataProcessor add(final LinkedList<QueryBuilder> queryBuilders) throws IllegalArgumentException {
+    public DataProcessor add(final LinkedList<QueryBuilder> queryBuilders) {
         for (final QueryBuilder builder : queryBuilders) {
             add(builder);
         }

@@ -8,10 +8,9 @@ public class RecordHeader implements Header {
     private byte[] value;
 
     public RecordHeader() {
-
     }
 
-    public RecordHeader(String key, byte[] value) {
+    public RecordHeader(final String key, final byte[] value) {
         this.key = key;
         this.value = value;
     }
@@ -21,7 +20,7 @@ public class RecordHeader implements Header {
         return key;
     }
 
-    public void key(String key) {
+    public void key(final String key) {
         this.key = key;
     }
 
@@ -30,7 +29,7 @@ public class RecordHeader implements Header {
         return value;
     }
 
-    public void value(byte[] value) {
+    public void value(final byte[] value) {
         this.value = value;
     }
 }

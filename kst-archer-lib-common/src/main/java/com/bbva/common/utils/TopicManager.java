@@ -71,6 +71,7 @@ public class TopicManager {
         try {
             partitions = Integer.valueOf(config.get(property).toString());
         } catch (final NullPointerException e) {
+            logger.error("Error getting property:" + property, e);
             partitions = defaultValue;
         }
         return partitions;

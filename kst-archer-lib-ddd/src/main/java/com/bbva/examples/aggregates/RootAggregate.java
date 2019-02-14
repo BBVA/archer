@@ -60,7 +60,7 @@ public class RootAggregate {
     @Command(baseName = "test_users", commandAction = DELETE_ACTION)
     public static void deleteUser(final CommandRecord command) {
         try {
-            AggregateFactory.load(UserAggregate.class, command.entityId()).delete(command);
+            AggregateFactory.load(UserAggregate.class, command.entityId()).delete(command, null);
 
         } catch (final NullPointerException e) {
             logger.warning("[WARN] Aggregate not found");
@@ -81,7 +81,7 @@ public class RootAggregate {
     @Command(baseName = "test_devices", commandAction = UPDATE_DEVICE_ACTION)
     public static void updateDevice(final CommandRecord command) {
         try {
-            AggregateFactory.load(DeviceAggregate.class, command.entityId()).update(command.value(), command);
+            AggregateFactory.load(DeviceAggregate.class, command.entityId()).update(command.value(), command, null);
 
         } catch (final NullPointerException e) {
             logger.warning("[WARN] Aggregate not found");
@@ -91,7 +91,7 @@ public class RootAggregate {
     @Command(baseName = "test_devices", commandAction = DELETE_ACTION)
     public static void deleteDevice(final CommandRecord command) {
         try {
-            AggregateFactory.load(DeviceAggregate.class, command.entityId()).delete(command);
+            AggregateFactory.load(DeviceAggregate.class, command.entityId()).delete(command, null);
 
         } catch (final NullPointerException e) {
             logger.warning("[WARN] Aggregate not found");
@@ -112,7 +112,7 @@ public class RootAggregate {
     @Command(baseName = "test_wallets", commandAction = UPDATE_WALLET_ACTION)
     public static void updateWallets(final CommandRecord command) {
         try {
-            AggregateFactory.load(WalletsAggregate.class, command.entityId()).update(command.value(), command);
+            AggregateFactory.load(WalletsAggregate.class, command.entityId()).update(command.value(), command, null);
 
         } catch (final NullPointerException e) {
             logger.warning("[WARN] Aggregate not found");
@@ -133,7 +133,7 @@ public class RootAggregate {
     @Command(baseName = "test_channels", commandAction = UPDATE_CHANNEL_ACTION)
     public static void updateChannels(final CommandRecord command) {
         try {
-            AggregateFactory.load(ChannelsAggregate.class, command.entityId()).update(command.value(), command);
+            AggregateFactory.load(ChannelsAggregate.class, command.entityId()).update(command.value(), command, null);
 
         } catch (final NullPointerException e) {
             logger.warning("[WARN] Aggregate not found");

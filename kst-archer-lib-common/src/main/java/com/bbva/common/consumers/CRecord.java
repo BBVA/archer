@@ -19,8 +19,8 @@ public class CRecord {
     protected final SpecificRecord value;
     protected final RecordHeaders headers;
 
-    public CRecord(String topic, int partition, long offset, long timestamp, TimestampType timestampType, String key,
-            SpecificRecord value, RecordHeaders headers) {
+    public CRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType, final String key,
+                   final SpecificRecord value, final RecordHeaders headers) {
         this.topic = topic;
         this.partition = partition;
         this.offset = offset;
@@ -39,7 +39,6 @@ public class CRecord {
         return key;
     }
 
-    @SuppressWarnings("unchecked")
     public <V extends SpecificRecord> V value() {
         return value != null ? (V) value : null;
     }

@@ -1,6 +1,7 @@
 package com.bbva.common.utils.serdes;
 
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -9,7 +10,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import java.util.Collections;
 import java.util.Map;
 
-public class SpecificAvroSerde<T extends org.apache.avro.specific.SpecificRecord> implements Serde<T> {
+public class SpecificAvroSerde<T extends SpecificRecord> implements Serde<T> {
 
     private final Serde<T> inner;
 
@@ -20,11 +21,11 @@ public class SpecificAvroSerde<T extends org.apache.avro.specific.SpecificRecord
         inner = Serdes.serdeFrom(new SpecificAvroSerializer<>(), new SpecificAvroDeserializer<>());
     }
 
-    public SpecificAvroSerde(SchemaRegistryClient client) {
+    public SpecificAvroSerde(final SchemaRegistryClient client) {
         this(client, Collections.emptyMap());
     }
 
-    public SpecificAvroSerde(SchemaRegistryClient client, Map<String, ?> props) {
+    public SpecificAvroSerde(final SchemaRegistryClient client, final Map<String, ?> props) {
         inner = Serdes.serdeFrom(new SpecificAvroSerializer<>(client, props),
                 new SpecificAvroDeserializer<>(client, props));
     }
@@ -40,7 +41,7 @@ public class SpecificAvroSerde<T extends org.apache.avro.specific.SpecificRecord
     }
 
     @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
+    public void configure(final Map<String, ?> configs, final boolean isKey) {
         inner.serializer().configure(configs, isKey);
         inner.deserializer().configure(configs, isKey);
     }

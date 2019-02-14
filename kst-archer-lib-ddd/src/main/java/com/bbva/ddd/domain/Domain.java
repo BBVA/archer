@@ -1,6 +1,7 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.utils.GenericClass;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
@@ -17,14 +18,11 @@ import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
 import com.bbva.ddd.domain.changelogs.read.ChangelogConsumer;
 import com.bbva.ddd.domain.commands.read.CommandConsumer;
 import com.bbva.ddd.domain.events.read.EventConsumer;
+import com.bbva.ddd.util.AnnotationUtil;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.map.HashedMap;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -41,12 +39,7 @@ public final class Domain {
     private final ApplicationConfig applicationConfig;
     private final Map<String, Class<? extends AggregateBase>> aggregatesMap = new HashedMap();
 
-
-    /**
-     * @param handler
-     * @param applicationConfig
-     */
-    public Domain(final Handler handler, final ApplicationConfig applicationConfig) throws RepositoryException {
+    public Domain(final Handler handler, final ApplicationConfig applicationConfig) {
         this.mapAggregates(handler);
 
         this.handler = handler;
@@ -56,7 +49,7 @@ public final class Domain {
         initRepositories();
     }
 
-    public Domain(final ApplicationConfig applicationConfig) throws RepositoryException {
+    public Domain(final ApplicationConfig applicationConfig) {
         this(new AutoConfiguredHandler(), applicationConfig);
     }
 
@@ -71,15 +64,6 @@ public final class Domain {
         return this;
     }
 
-    /**
-     * Add a local state to StreamProcessor
-     *
-     * @param baseName
-     * @param keyClass
-     * @param <K>
-     * @param <V>
-     * @return Domain
-     */
     public <K, V extends SpecificRecordBase> Domain addEntityAsLocalState(final String baseName, final GenericClass<K> keyClass) {
         final String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
                 + "_" + baseName;
@@ -88,26 +72,16 @@ public final class Domain {
         return this;
     }
 
-    /**
-     * @param originTopicName
-     * @param fieldPath
-     * @param keyClass
-     * @param <K>
-     * @param <V>
-     * @throws IllegalArgumentException
-     */
-    public <K, V extends SpecificRecordBase, K1> Domain indexFieldAsLocalState(final String targetBaseName,
-                                                                               final String originTopicName, final String fieldPath, final GenericClass<K> keyClass, final GenericClass<K1> key1Class) {
+    public <K, V extends SpecificRecordBase, K1> Domain indexFieldAsLocalState(
+            final String targetBaseName, final String originTopicName, final String fieldPath,
+            final GenericClass<K> keyClass, final GenericClass<K1> key1Class) {
+
         DataProcessor.get().add(targetBaseName,
                 new UniqueFieldStateBuilder<K, V, K1>(originTopicName, fieldPath, keyClass, key1Class));
         logger.info("Local state for index field {} added", fieldPath);
         return this;
     }
 
-    /**
-     * @return
-     * @throws NullPointerException
-     */
     public synchronized HelperDomain start() {
 
         initHandlers();
@@ -135,8 +109,6 @@ public final class Domain {
                 executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
             } catch (final InterruptedException e) {
                 logger.warn("InterruptedException starting the application", e);
-            } catch (final Exception e) {
-                logger.error("Problems starting the application", e);
             }
         }));
 
@@ -144,49 +116,21 @@ public final class Domain {
     }
 
     private void mapAggregates(final Handler handler) {
-        final String mainPackage = handler.getClass().getCanonicalName().split("\\.")[0];
-        aggregatesByPackage(mainPackage);
+        final List<Class> classes = AnnotationUtil.findAllAnnotatedClasses(Aggregate.class, handler);
 
-        if (aggregatesMap.isEmpty()) {
-            mapAllPackagesAggregates();
-        }
-
-        logger.info(" Aggregates mapped: {}", aggregatesMap.toString());
-    }
-
-    private void mapAllPackagesAggregates() {
-        final Package[] packages = Package.getPackages();
-        for (final Package packageLoaded : packages) {
-            // Exclude unnecesary packages
-            if (!packageLoaded.getName().matches("^(org|sun|java|jdk).*")) {
-                aggregatesByPackage(packageLoaded.getName());
-            }
-
-        }
-    }
-
-    private void aggregatesByPackage(final String mainPackage) {
-        final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(mainPackage, ClasspathHelper.contextClassLoader()))
-                .filterInputsBy(new FilterBuilder()
-                        .excludePackage("org")
-                        .excludePackage("sun")
-                        .excludePackage("java")
-                        .excludePackage("jdk")));
-
-        for (final Class<?> aggregateClass : ref.getTypesAnnotatedWith(Aggregate.class)) {
+        for (final Class<?> aggregateClass : classes) {
             final Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
             final String baseName = aggregateAnnotation.baseName();
             aggregatesMap.put(baseName, aggregateClass.asSubclass(AggregateBase.class));
         }
     }
 
-    private void initRepositories() throws RepositoryException {
+    private void initRepositories() {
         final Map<String, Repository> repositories = new HashMap<>();
 
         aggregatesMap.forEach((baseName, aggregateClass) -> {
             if (aggregateClass == null) {
-                throw new NullPointerException("Aggregate cannot be null");
+                throw new ApplicationException("Aggregate cannot be null");
             }
             try {
                 repositories.put(baseName, new Repository(baseName, aggregateClass, applicationConfig));

@@ -17,13 +17,13 @@ public class HelperDomain {
     private final ApplicationConfig applicationConfig;
     private static HelperDomain instance;
     private final Map<String, Command> cacheCommandPersistance;
-    private final Map<String, Event> cacheEventLog;
+    private final Map<String, Event> cacheEvents;
     private boolean replayMode;
 
     public HelperDomain(final ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
         cacheCommandPersistance = new HashMap<>();
-        cacheEventLog = new HashMap<>();
+        cacheEvents = new HashMap<>();
         instance = this;
     }
 
@@ -61,12 +61,12 @@ public class HelperDomain {
         }
     }
 
-    public synchronized Event sendEventLogTo(final String baseName) {
-        if (cacheEventLog.containsKey(baseName)) {
-            return cacheEventLog.get(baseName);
+    public synchronized Event sendEventTo(final String baseName) {
+        if (cacheEvents.containsKey(baseName)) {
+            return cacheEvents.get(baseName);
         } else {
             final Event eventWriter = new Event(baseName, applicationConfig);
-            cacheEventLog.put(baseName, eventWriter);
+            cacheEvents.put(baseName, eventWriter);
             return eventWriter;
         }
     }

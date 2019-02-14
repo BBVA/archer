@@ -7,8 +7,6 @@ import com.bbva.ddd.domain.aggregates.callbacks.DeleteRecordCallback;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 
-import java.lang.reflect.InvocationTargetException;
-
 public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> implements AggregateBase<K, V> {
 
     private final V data;
@@ -33,12 +31,11 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
 
     @Override
     public void apply(final String method, final V record, final CommandRecord commandMessage,
-            final ProducerCallback callback) {
+                      final ProducerCallback callback) {
         applyRecordCallback.apply(method, record, commandMessage, callback);
     }
 
-    public void apply(final String method, final CRecord record, final ProducerCallback callback)
-            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    public void apply(final String method, final CRecord record, final ProducerCallback callback) {
         deleteRecordCallback.apply(method, (Class<V>) data.getClass(), record, callback);
     }
 

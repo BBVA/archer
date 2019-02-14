@@ -3,8 +3,8 @@ package com.bbva.gateway;
 import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.ddd.domain.Domain;
 import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
-import com.bbva.gateway.config.Config;
 import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.consumer.builder.ChangelogKeyBuilder;
 
 import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;

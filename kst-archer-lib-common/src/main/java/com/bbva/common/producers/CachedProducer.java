@@ -1,6 +1,7 @@
 package com.bbva.common.producers;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
 import com.bbva.common.utils.serdes.GenericAvroSerializer;
 import com.bbva.common.utils.serdes.SpecificAvroSerializer;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 public class CachedProducer {
+
     private static final Logger logger = LoggerFactory.getLogger(CachedProducer.class);
 
     private final Map<String, DefaultProducer> cachedProducers = new HashMap<>();
@@ -37,60 +39,57 @@ public class CachedProducer {
     }
 
     public <K, V> Future<RecordMetadata> add(final PRecord<K, V> record, final ProducerCallback callback) {
-
         final DefaultProducer<K, V> producer;
-
         if (cachedProducers.containsKey(record.topic())) {
             logger.info("Recovered cached producer for topic {}", record.topic());
             producer = cachedProducers.get(record.topic());
 
         } else {
-            logger.info("Cached producer not found for topic {}", record.topic());
-            final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
-                    schemaRegistryUrl);
-
-            final Serializer<K> serializedKey = serializeFrom(record.key());
-            serializedKey.configure(serdeProps, true);
-            logger.info("Serializing key to {}", serializedKey.toString());
-
             final Serializer<V> serializedValue = serializeFrom(record.value());
-            serializedValue.configure(serdeProps, false);
-            logger.info("Serializing value to {}", serializedValue.toString());
 
-            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
-            cachedProducers.put(record.topic(), producer);
+            producer = getProducer(record, serializedValue);
         }
-
         return producer.save(record, callback);
     }
 
-    public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback) {
         final DefaultProducer<K, V> producer;
-
         if (cachedProducers.containsKey(record.topic())) {
             logger.info("Recovered cached producer for topic {}", record.topic());
             producer = cachedProducers.get(record.topic());
 
         } else {
-            logger.info("Cached producer not found for topic {}", record.topic());
-            final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
-                    schemaRegistryUrl);
-
-            final Serializer<K> serializedKey = serializeFrom(record.key());
-            serializedKey.configure(serdeProps, true);
-            logger.info("Serializing key to {}", serializedKey.toString());
-
-            final V value = valueClass.getConstructor().newInstance();
+            final V value;
+            try {
+                value = valueClass.getConstructor().newInstance();
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                logger.error("Invalid constructor of class " + valueClass.getName(), e);
+                throw new ApplicationException("Invalid constructor of class " + valueClass.getName());
+            }
             final Serializer<V> serializedValue = serializeFrom(value);
-            serializedValue.configure(serdeProps, false);
-            logger.info("Serializing value to {}", serializedValue.toString());
-
-            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
-            cachedProducers.put(record.topic(), producer);
+            producer = getProducer(record, serializedValue);
         }
-
         return producer.save(record, callback);
+    }
+
+    private <K, V> DefaultProducer<K, V> getProducer(final PRecord<K, V> record, final Serializer<V> serializedValue) {
+        final DefaultProducer<K, V> producer;
+
+        logger.info("Cached producer not found for topic {}", record.topic());
+        final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
+                schemaRegistryUrl);
+
+        final Serializer<K> serializedKey = serializeFrom(record.key());
+        serializedKey.configure(serdeProps, true);
+        logger.info("Serializing key to {}", serializedKey.toString());
+
+        serializedValue.configure(serdeProps, false);
+        logger.info("Serializing value to {}", serializedValue.toString());
+
+        producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
+        cachedProducers.put(record.topic(), producer);
+
+        return producer;
     }
 
     private <T> Serializer<T> serializeFrom(final T type) {
@@ -130,6 +129,6 @@ public class CachedProducer {
             return (Serializer<T>) Serdes.Bytes().serializer();
         }
 
-        throw new IllegalArgumentException("Unknown class for built-in serializer");
+        throw new ApplicationException("Unknown class for built-in serializer" + type.getClass().getName());
     }
 }
