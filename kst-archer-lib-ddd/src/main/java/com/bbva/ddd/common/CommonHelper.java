@@ -1,4 +1,4 @@
-package com.bbva.ddd;
+package com.bbva.ddd.common;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.utils.TopicManager;
@@ -12,35 +12,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class HelperDomain {
+public class CommonHelper {
 
-    private final ApplicationConfig applicationConfig;
-    private static HelperDomain instance;
-    private final Map<String, Command> cacheCommandPersistance;
-    private final Map<String, Event> cacheEvents;
-    private boolean replayMode;
+    protected final ApplicationConfig applicationConfig;
+    protected static CommonHelper instance;
+    protected final Map<String, Command> cacheCommandPersistance;
+    protected final Map<String, Event> cacheEvents;
 
-    public HelperDomain(final ApplicationConfig applicationConfig) {
+    public CommonHelper(final ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
         cacheCommandPersistance = new HashMap<>();
         cacheEvents = new HashMap<>();
         instance = this;
     }
 
-    public static HelperDomain get() {
-        return instance;
-    }
 
     public ApplicationConfig getConfig() {
         return applicationConfig;
-    }
-
-    public boolean isReplayMode() {
-        return replayMode;
-    }
-
-    public void setReplayMode(final boolean replayMode) {
-        this.replayMode = replayMode;
     }
 
     public synchronized Command persistsCommandTo(final String baseName) {
@@ -55,6 +43,10 @@ public class HelperDomain {
         if (cacheCommandPersistance.containsKey(baseName)) {
             return cacheCommandPersistance.get(baseName);
         } else {
+            final Map<String, String> commandTopic = new HashMap<>();
+            commandTopic.put(baseName + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, ApplicationConfig.COMMANDS_RECORD_TYPE);
+            TopicManager.createTopics(commandTopic, applicationConfig);
+
             final Command command = new Command(baseName, applicationConfig, persist);
             cacheCommandPersistance.put(baseName, command);
             return command;
@@ -65,6 +57,10 @@ public class HelperDomain {
         if (cacheEvents.containsKey(baseName)) {
             return cacheEvents.get(baseName);
         } else {
+            final Map<String, String> commandTopic = new HashMap<>();
+            commandTopic.put(baseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, ApplicationConfig.EVENTS_RECORD_TYPE);
+            TopicManager.createTopics(commandTopic, applicationConfig);
+
             final Event eventWriter = new Event(baseName, applicationConfig);
             cacheEvents.put(baseName, eventWriter);
             return eventWriter;

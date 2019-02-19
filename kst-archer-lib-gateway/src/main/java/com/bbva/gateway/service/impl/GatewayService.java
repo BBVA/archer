@@ -2,8 +2,8 @@ package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.CRecord;
-import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.AggregateFactory;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;

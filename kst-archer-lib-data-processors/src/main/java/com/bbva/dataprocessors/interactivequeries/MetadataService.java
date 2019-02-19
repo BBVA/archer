@@ -1,4 +1,4 @@
-package com.bbva.common.utils.interactivequeries;
+package com.bbva.dataprocessors.interactivequeries;
 
 import com.bbva.common.exceptions.ApplicationException;
 import org.apache.kafka.common.serialization.Serializer;

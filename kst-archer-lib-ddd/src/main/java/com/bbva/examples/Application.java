@@ -14,8 +14,8 @@ import com.bbva.dataprocessors.builders.dataflows.states.SimpleGlobalTableStateB
 import com.bbva.dataprocessors.builders.sql.QueryBuilderFactory;
 import com.bbva.dataprocessors.builders.sql.queries.CreateStreamQueryBuilder;
 import com.bbva.dataprocessors.builders.sql.queries.WithPropertiesClauseBuilder;
-import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.Domain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.examples.aggregates.ChannelsAggregate;
 import com.bbva.examples.aggregates.DeviceAggregate;

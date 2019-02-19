@@ -13,12 +13,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
-        <dependency>
-            <groupId>bbva.ndb</groupId>
-            <artifactId>lib-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>bbva.ndb</groupId>
             <artifactId>lib-data-processors</artifactId>
@@ -27,11 +21,6 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>monitoring-interceptors</artifactId>
             <version>${confluent.version}</version>
         </dependency>
         <dependency>

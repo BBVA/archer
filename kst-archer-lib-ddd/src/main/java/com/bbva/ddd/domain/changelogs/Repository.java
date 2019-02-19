@@ -9,7 +9,7 @@ import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.RecordHeaders;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AbstractAggregateBase;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
@@ -63,7 +63,6 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return baseName;
     }
 
-    @SuppressWarnings("unchecked")
     public AggregateBase create(String key, final V value, final CommandRecord commandMessage,
                                 final ProducerCallback callback) {
         key = (key == null) ? commandMessage.entityId() : key;

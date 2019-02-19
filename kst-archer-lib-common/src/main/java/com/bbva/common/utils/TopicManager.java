@@ -67,13 +67,11 @@ public class TopicManager {
     }
 
     private static int getProperty(final ApplicationConfig config, final String property, final int defaultValue) {
-        int partitions;
         try {
-            partitions = Integer.valueOf(config.get(property).toString());
+            return Integer.valueOf(config.get(property).toString());
         } catch (final NullPointerException e) {
             logger.error("Error getting property:" + property, e);
-            partitions = defaultValue;
+            return defaultValue;
         }
-        return partitions;
     }
 }

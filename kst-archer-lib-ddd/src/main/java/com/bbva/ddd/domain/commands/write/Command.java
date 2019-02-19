@@ -9,7 +9,7 @@ import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.OptionalRecordHeaders;
 import com.bbva.common.utils.RecordHeaders;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import kst.logging.Logger;

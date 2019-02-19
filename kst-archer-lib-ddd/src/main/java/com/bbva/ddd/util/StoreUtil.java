@@ -4,7 +4,7 @@ import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.States;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;

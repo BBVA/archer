@@ -9,7 +9,6 @@ import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.EntityStateBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.UniqueFieldStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
-import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;

@@ -3,7 +3,6 @@ package com.bbva.ddd.domain;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.consumers.CRecord;
 import com.bbva.common.consumers.DefaultConsumer;
-import com.bbva.ddd.HelperDomain;
 import org.apache.avro.specific.SpecificRecordBase;
 
 import java.util.Arrays;

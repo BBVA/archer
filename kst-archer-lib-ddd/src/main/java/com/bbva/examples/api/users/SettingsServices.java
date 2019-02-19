@@ -2,7 +2,7 @@ package com.bbva.examples.api.users;
 
 import com.bbva.avro.Users;
 import com.bbva.avro.users.Settings;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.examples.MainHandler;
 import com.bbva.examples.ResultsBean;
