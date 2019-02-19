@@ -57,7 +57,7 @@ public class CachedProducer {
             final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
                     schemaRegistryUrl);
 
-            final Serializer<K> serializedKey = serializeFrom(record.key());
+            final Serializer<K> serializedKey = serializeFrom(record.key().getClass());
             serializedKey.configure(serdeProps, true);
             logger.info("Serializing key to {}", serializedKey.toString());
 
