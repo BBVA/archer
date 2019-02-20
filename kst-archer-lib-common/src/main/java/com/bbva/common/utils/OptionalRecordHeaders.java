@@ -32,7 +32,6 @@ public class OptionalRecordHeaders extends RecordHeaders {
     }
 
     public String getAck() {
-        new RecordHeader();
         final ByteArrayValue value = find(OptionalRecordHeaders.CUSTOM_ACK_KEY);
         return value != null ? value.asString() : null;
     }
