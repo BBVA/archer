@@ -1,9 +1,7 @@
 package com.bbva.common.util;
 
-
 import java.io.IOException;
 import java.net.ServerSocket;
-
 
 public class TestUtil {
     public static int getFreePort(final int defaultPort) {

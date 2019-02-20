@@ -2,20 +2,21 @@ package com.bbva.ddd.domain.commands.write;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.consumers.CRecord;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.OptionalRecordHeaders;
 import com.bbva.common.utils.RecordHeaders;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.domain.exceptions.ProduceException;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -37,148 +38,81 @@ public class Command {
         this.persistent = persistent;
     }
 
-    /**
-     * @param data
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final ProducerCallback callback)
-            throws ExecutionException, InterruptedException {
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final ProducerCallback callback) {
         return create(data, null, callback);
     }
 
-    /**
-     * @param data
-     * @param optionalHeaders
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
     public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final OptionalRecordHeaders optionalHeaders,
-                                                                   final ProducerCallback callback) throws ExecutionException, InterruptedException {
+                                                                   final ProducerCallback callback) {
         return generateCommand(Command.CREATE_ACTION, data, null, UUID.randomUUID().toString(), optionalHeaders,
                 callback);
     }
 
-    /**
-     * @param data
-     * @param entityId
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityId, final V data,
-                                                                          final ProducerCallback callback) throws ExecutionException, InterruptedException {
+                                                                          final ProducerCallback callback) {
         return processAction(action, entityId, data, null, callback);
     }
 
-    /**
-     * @param action
-     * @param entityId
-     * @param data
-     * @param optionalHeaders
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityId, final V data,
-                                                                          final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback)
-            throws ExecutionException, InterruptedException {
+                                                                          final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
         return generateCommand(action, data, null, entityId, optionalHeaders, callback);
     }
 
     /**
      * Deprecated method. Use processAction method instead
-     *
-     * @param action
-     * @param entityId
-     * @param data
-     * @param optionalHeaders
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Deprecated
-    public <V extends SpecificRecord> CommandRecordMetadata update(final String action, final String entityId, final V data,
-                                                                   final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback)
-            throws ExecutionException, InterruptedException {
+    public <V extends SpecificRecord> CommandRecordMetadata update(
+            final String action, final String entityId, final V data,
+            final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
         if (entityId == null) {
-            throw new IllegalArgumentException("entityId can not be null");
+            throw new ApplicationException("entityId can not be null");
         }
         return generateCommand(action, data, null, entityId, optionalHeaders, callback);
     }
 
-    /**
-     * @param entityId
-     * @param valueClass
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws IllegalArgumentException
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityId, final Class<V> valueClass,
-                                                                   final ProducerCallback callback) throws IllegalArgumentException, ExecutionException, InterruptedException {
+                                                                   final ProducerCallback callback) {
         return delete(entityId, valueClass, null, callback);
     }
 
-    /**
-     * @param entityId
-     * @param valueClass
-     * @param optionalHeaders
-     * @param callback
-     * @param <V>
-     * @return
-     * @throws IllegalArgumentException
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityId, final Class<V> valueClass,
-                                                                   final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback)
-            throws IllegalArgumentException, ExecutionException, InterruptedException {
+                                                                   final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
         if (entityId == null) {
-            throw new IllegalArgumentException("entityId can not be null");
+            throw new ApplicationException("entityId can not be null");
         }
         return generateCommand(Command.DELETE_ACTION, null, valueClass, entityId, optionalHeaders, callback);
     }
 
-    private <V extends SpecificRecord> CommandRecordMetadata generateCommand(final String action, final V record,
-                                                                             final Class<V> recordClass, final String entityId, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback)
-            throws InterruptedException, ExecutionException {
+    private <V extends SpecificRecord> CommandRecordMetadata generateCommand(
+            final String action, final V record,
+            final Class<V> recordClass, final String entityId, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
         logger.debug("Creating command of type {}", action);
         final String key = UUID.randomUUID().toString();
 
         final RecordHeaders headers = headers(action, entityId, optionalHeaders);
         final String commandUUID = headers.find(CommandRecord.UUID_KEY).asString();
 
-        Future<RecordMetadata> result = null;
+        final Future<RecordMetadata> result;
 
         if (record != null) {
             result = producer.add(new PRecord<>(topic, key, record, headers), callback);
         } else if (recordClass != null) {
-            try {
-                result = producer.remove(new PRecord<>(topic, key, null, headers), recordClass, callback);
-            } catch (final NoSuchMethodException | IllegalAccessException | InvocationTargetException
-                    | InstantiationException e) {
-                logger.error("Error ", e);
-            }
+
+            result = producer.remove(new PRecord<>(topic, key, null, headers), recordClass, callback);
+
         } else {
-            throw new IllegalArgumentException("Record or recordClass params must be set");
+            throw new ApplicationException("Record or recordClass params must be set");
         }
 
-        final CommandRecordMetadata recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, entityId);
+        final CommandRecordMetadata recordedMessageMetadata;
+        try {
+            recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, entityId);
+        } catch (final InterruptedException | ExecutionException e) {
+            logger.error("Cannot resolve the promise", e);
+            throw new ProduceException("Cannot resolve the promise", e);
+
+        }
 
         logger.info("CommandRecord created: " + commandUUID);
 

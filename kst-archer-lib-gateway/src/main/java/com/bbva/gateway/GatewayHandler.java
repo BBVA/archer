@@ -5,7 +5,7 @@ import com.bbva.ddd.domain.Handler;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.gateway.config.Configuration;
-import com.bbva.gateway.config.ServiceConfig;
+import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.gateway.service.impl.GatewayService;
 import kst.logging.Logger;

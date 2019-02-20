@@ -2,6 +2,7 @@ package com.bbva.dataprocessors;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
+import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
 import org.apache.kafka.streams.KafkaStreams;
 
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public final class States {
         return this;
     }
 
-    public <K, V> ReadableStore<K, V> getStore(final String name) {
+    public <K, V> ReadableStore<K, V> getStore(final String name) throws StoreNotFoundException {
         final String storeName = name + ApplicationConfig.STORE_NAME_SUFFIX;
         final ReadableStore<K, V> store;
 
@@ -38,7 +39,7 @@ public final class States {
                 store = new ReadableStore<>(storeName, streams);
                 readableStores.put(storeName, store);
             } else {
-                throw new NullPointerException();
+                throw new StoreNotFoundException("State not found :" + name);
             }
         }
         return store;

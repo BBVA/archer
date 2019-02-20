@@ -1,6 +1,7 @@
 package com.bbva.common.producers;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
 import com.bbva.common.utils.serdes.GenericAvroSerializer;
 import com.bbva.common.utils.serdes.SpecificAvroSerializer;
@@ -13,7 +14,6 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.utils.Bytes;
 
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 public class CachedProducer {
+
     private static final Logger logger = LoggerFactory.getLogger(CachedProducer.class);
 
     private final Map<String, DefaultProducer> cachedProducers = new HashMap<>();
@@ -37,99 +38,78 @@ public class CachedProducer {
     }
 
     public <K, V> Future<RecordMetadata> add(final PRecord<K, V> record, final ProducerCallback callback) {
+        return getProducer(record, null).save(record, callback);
+    }
 
+    public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback) {
+        return getProducer(record, valueClass).save(record, callback);
+    }
+
+    private <K, V> DefaultProducer<K, V> getProducer(final PRecord<K, V> record, final Class<V> valueClass) {
         final DefaultProducer<K, V> producer;
-
         if (cachedProducers.containsKey(record.topic())) {
             logger.info("Recovered cached producer for topic {}", record.topic());
             producer = cachedProducers.get(record.topic());
 
         } else {
+
             logger.info("Cached producer not found for topic {}", record.topic());
             final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
                     schemaRegistryUrl);
 
-            final Serializer<K> serializedKey = serializeFrom(record.key());
+            final Serializer<K> serializedKey = serializeFrom(record.key().getClass());
             serializedKey.configure(serdeProps, true);
             logger.info("Serializing key to {}", serializedKey.toString());
 
-            final Serializer<V> serializedValue = serializeFrom(record.value());
+            final Serializer<V> serializedValue = serializeFrom(record.value() != null ? record.value().getClass() : valueClass);
+
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to {}", serializedValue.toString());
 
             producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
             cachedProducers.put(record.topic(), producer);
         }
-
-        return producer.save(record, callback);
+        return producer;
     }
 
-    public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        final DefaultProducer<K, V> producer;
+    private <T> Serializer<T> serializeFrom(final Class classType) {
 
-        if (cachedProducers.containsKey(record.topic())) {
-            logger.info("Recovered cached producer for topic {}", record.topic());
-            producer = cachedProducers.get(record.topic());
-
-        } else {
-            logger.info("Cached producer not found for topic {}", record.topic());
-            final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
-                    schemaRegistryUrl);
-
-            final Serializer<K> serializedKey = serializeFrom(record.key());
-            serializedKey.configure(serdeProps, true);
-            logger.info("Serializing key to {}", serializedKey.toString());
-
-            final V value = valueClass.getConstructor().newInstance();
-            final Serializer<V> serializedValue = serializeFrom(value);
-            serializedValue.configure(serdeProps, false);
-            logger.info("Serializing value to {}", serializedValue.toString());
-
-            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
-            cachedProducers.put(record.topic(), producer);
-        }
-
-        return producer.save(record, callback);
-    }
-
-    private <T> Serializer<T> serializeFrom(final T type) {
-        if (SpecificRecord.class.isAssignableFrom(type.getClass())) {
+        if (SpecificRecord.class.isAssignableFrom(classType)) {
             return (Serializer<T>) new SpecificAvroSerializer<>(schemaRegistry);
         }
 
-        if (GenericRecord.class.isAssignableFrom(type.getClass())) {
+        if (GenericRecord.class.isAssignableFrom(classType)) {
             return (Serializer<T>) new GenericAvroSerializer(schemaRegistry);
         }
 
-        if (String.class.isAssignableFrom(type.getClass())) {
+        if (String.class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.String().serializer();
         }
 
-        if (Integer.class.isAssignableFrom(type.getClass())) {
+        if (Integer.class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.Integer().serializer();
         }
 
-        if (Long.class.isAssignableFrom(type.getClass())) {
+        if (Long.class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.Long().serializer();
         }
 
-        if (Double.class.isAssignableFrom(type.getClass())) {
+        if (Double.class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.Double().serializer();
         }
 
-        if (byte[].class.isAssignableFrom(type.getClass())) {
+        if (byte[].class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.ByteArray().serializer();
         }
 
-        if (ByteBuffer.class.isAssignableFrom(type.getClass())) {
+        if (ByteBuffer.class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.ByteBuffer().serializer();
         }
 
-        if (Bytes.class.isAssignableFrom(type.getClass())) {
+        if (Bytes.class.isAssignableFrom(classType)) {
             return (Serializer<T>) Serdes.Bytes().serializer();
         }
 
-        throw new IllegalArgumentException("Unknown class for built-in serializer");
+        throw new ApplicationException("Unknown class for built-in serializer" + classType.getName());
     }
 }

@@ -4,7 +4,6 @@ package com.bbva.common.util;
 import com.bbva.common.BaseItTest;
 import com.salesforce.kafka.test.AbstractKafkaTestResource;
 import com.salesforce.kafka.test.KafkaBroker;
-import com.salesforce.kafka.test.KafkaCluster;
 import com.salesforce.kafka.test.KafkaTestCluster;
 import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
@@ -31,15 +30,17 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
 
     private void before() throws Exception {
         logger.info("Starting kafka test server");
-        if (this.getKafkaCluster() != null) {
+
+        if (getKafkaCluster() != null) {
             throw new IllegalStateException("Unknown State!  Kafka Test Server already exists!");
         } else {
-            this.setKafkaCluster(new KafkaTestCluster(this.getNumberOfBrokers(), this.getBrokerProperties(), Collections.singletonList(this.getRegisteredListener())));
-            this.getKafkaCluster().start();
+            setKafkaCluster(new KafkaTestCluster(this.getNumberOfBrokers(), this.getBrokerProperties(), Collections.singletonList(this.getRegisteredListener())));
+            getKafkaCluster().start();
         }
     }
 
     public void initSchemaRegistry(final int schemaRegistryPort) {
+
         final Properties defaultConfig = new Properties();
         defaultConfig.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, HTTP_LOCALHOST + schemaRegistryPort);
         try {
@@ -69,6 +70,7 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         for (final KafkaBroker broker : brokers) {
             broker.stop();
         }
+
         this.getKafkaTestUtils().getAdminClient().close();
 
         if (this.getKafkaCluster() != null) {
@@ -78,8 +80,7 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
                 throw new RuntimeException(var2);
             }
 
-            this.setKafkaCluster((KafkaCluster) null);
-            this.before();
+            this.setKafkaCluster(null);
         }
     }
 
@@ -88,12 +89,11 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                KafkaTestResource.this.before();
-
+                before();
                 try {
                     base.evaluate();
                 } finally {
-                    KafkaTestResource.this.after();
+                    after();
                 }
 
             }

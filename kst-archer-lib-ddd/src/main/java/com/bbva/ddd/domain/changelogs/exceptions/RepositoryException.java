@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.changelogs.exceptions;
 
-public class RepositoryException extends Exception {
-    
+public class RepositoryException extends RuntimeException {
+
     private static final long serialVersionUID = 2554593551091176856L;
 
     public RepositoryException() {

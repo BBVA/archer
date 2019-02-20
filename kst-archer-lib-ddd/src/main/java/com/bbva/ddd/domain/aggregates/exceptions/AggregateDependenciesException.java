@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.aggregates.exceptions;
 
-public class AggregateDependenciesException extends Exception {
+public class AggregateDependenciesException extends Throwable {
 
     private static final long serialVersionUID = 6231818687606572725L;
 

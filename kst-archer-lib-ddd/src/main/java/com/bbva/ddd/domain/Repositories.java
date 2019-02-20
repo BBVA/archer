@@ -9,10 +9,6 @@ final class Repositories {
     private static final Repositories instance = new Repositories();
     private Map<String, Repository> repositories;
 
-    private Repositories() {
-
-    }
-
     void setRepositories(final Map<String, Repository> repositories) {
         this.repositories = repositories;
     }

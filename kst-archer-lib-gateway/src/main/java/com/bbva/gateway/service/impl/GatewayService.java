@@ -2,8 +2,8 @@ package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.CRecord;
-import com.bbva.ddd.HelperDomain;
 import com.bbva.ddd.domain.AggregateFactory;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;
@@ -18,7 +18,6 @@ import org.codehaus.jackson.type.TypeReference;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
 import static com.bbva.gateway.constants.Constants.*;
@@ -118,15 +117,13 @@ public abstract class GatewayService<T>
     }
 
     protected static <O extends SpecificRecord> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
-        try {
-            if (originalRecord != null) {
-                HelperDomain.get().sendEventLogTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted, isReplay(originalRecord), originalRecord.key());
-            } else {
-                HelperDomain.get().sendEventLogTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted);
-            }
-        } catch (final InterruptedException | ExecutionException e) {
-            logger.error("Problems generating event", e);
+
+        if (originalRecord != null) {
+            HelperDomain.get().sendEventTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted, isReplay(originalRecord), originalRecord.key());
+        } else {
+            HelperDomain.get().sendEventTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted);
         }
+
     }
 
     @Override

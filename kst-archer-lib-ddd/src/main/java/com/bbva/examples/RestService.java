@@ -1,6 +1,6 @@
 package com.bbva.examples;
 
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.examples.api.channels.ChannelsServices;
 import com.bbva.examples.api.devices.DevicesServices;
 import com.bbva.examples.api.users.FiscalDataServices;

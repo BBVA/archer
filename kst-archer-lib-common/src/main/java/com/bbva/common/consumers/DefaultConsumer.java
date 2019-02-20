@@ -83,10 +83,10 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
 
                         replayConsumer.seekToBeginning(Arrays.asList(topicPartition));
 
-                        long currentOffset = replayConsumer.position(topicPartition);
+                        replayConsumer.position(topicPartition);
 
+                        long currentOffset;
                         boolean stop = false;
-
                         while (!stop) {
                             final ConsumerRecords<String, V> records = replayConsumer.poll(Long.MAX_VALUE);
                             for (final ConsumerRecord<String, V> record : records) {
@@ -110,8 +110,6 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
                 }
             }
 
-        } catch (final Exception e) {
-            logger.error("Exception", e);
         } finally {
             logger.info("End replay");
             replayConsumer.close();
@@ -137,8 +135,6 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
             if (!closed.get()) {
                 logger.error("Error closing the consumer", e);
             }
-        } catch (final Exception e) {
-            logger.error("Error closing the consumer", e);
         } finally {
             consumer.close();
         }

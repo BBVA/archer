@@ -3,6 +3,8 @@ package com.bbva.gateway.config;
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.gateway.Gateway;
+import com.bbva.gateway.config.annotations.Config;
+import com.bbva.gateway.config.annotations.ServiceConfig;
 import org.reflections.Reflections;
 import org.yaml.snakeyaml.Yaml;
 

@@ -16,7 +16,6 @@ public class EntityProcessor<K, V> implements Processor<K, V> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void init(final ProcessorContext context) {
         this.context = context;
 
@@ -24,7 +23,6 @@ public class EntityProcessor<K, V> implements Processor<K, V> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void process(final K key, final V value) {
         final V oldValue = stateStore.get(key);
         final V newValue;

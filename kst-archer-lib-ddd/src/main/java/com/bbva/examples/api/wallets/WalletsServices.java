@@ -2,7 +2,7 @@ package com.bbva.examples.api.wallets;
 
 import com.bbva.avro.Wallets;
 import com.bbva.common.utils.OptionalRecordHeaders;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.write.CommandRecordMetadata;
 import com.bbva.examples.ResultsBean;
 import com.bbva.examples.aggregates.WalletsAggregate;

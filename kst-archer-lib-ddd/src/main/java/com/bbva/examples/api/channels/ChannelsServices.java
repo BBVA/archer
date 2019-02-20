@@ -3,7 +3,7 @@ package com.bbva.examples.api.channels;
 import com.bbva.avro.Channels;
 import com.bbva.avro.Devices;
 import com.bbva.common.utils.OptionalRecordHeaders;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.write.CommandRecordMetadata;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.examples.MainHandler;

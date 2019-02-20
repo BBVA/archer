@@ -4,7 +4,7 @@ import com.bbva.avro.Users;
 import com.bbva.avro.users.FiscalData;
 import com.bbva.common.utils.OptionalRecordHeaders;
 import com.bbva.dataprocessors.ReadableStore;
-import com.bbva.ddd.HelperDomain;
+import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.write.CommandRecordMetadata;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.examples.Application;

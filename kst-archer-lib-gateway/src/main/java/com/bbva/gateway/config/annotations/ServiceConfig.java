@@ -1,4 +1,4 @@
-package com.bbva.gateway.config;
+package com.bbva.gateway.config.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

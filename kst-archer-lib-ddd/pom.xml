@@ -7,18 +7,12 @@
     <parent>
         <groupId>bbva.ndb</groupId>
         <artifactId>archer-lib</artifactId>
-        <version>5.2.0</version>
+        <version>5.3.0</version>
     </parent>
     <artifactId>lib-ddd</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-
-        <dependency>
-            <groupId>bbva.ndb</groupId>
-            <artifactId>lib-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>bbva.ndb</groupId>
             <artifactId>lib-data-processors</artifactId>
@@ -27,11 +21,6 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-streams-avro-serde</artifactId>
-            <version>${confluent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>monitoring-interceptors</artifactId>
             <version>${confluent.version}</version>
         </dependency>
         <dependency>

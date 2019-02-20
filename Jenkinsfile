@@ -7,7 +7,7 @@ archerJavaPipeline{
     container("jdk"){
       sh """
         env
-        mvn cobertura:cobertura
+        //mvn cobertura:cobertura
       """
     }
   }

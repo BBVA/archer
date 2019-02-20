@@ -6,8 +6,6 @@ import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 
-import java.lang.reflect.InvocationTargetException;
-
 public class SpecificAggregate<T, V extends SpecificRecordBase> extends AbstractAggregateBase<T, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(SpecificAggregate.class);
@@ -17,32 +15,28 @@ public class SpecificAggregate<T, V extends SpecificRecordBase> extends Abstract
     }
 
     public void update(final V modifiedRecord, final CommandRecord command, final AggregateCallback callback) {
-        this.apply(
-                "update",
-                modifiedRecord,
+        this.apply("update", modifiedRecord,
                 transformUpdateRecord(command),
-                (id, e) -> onComplete(callback, e, "Update ...", "update"));
+                (id, e) -> onComplete(callback, e, "Update ..."));
     }
 
     protected static CommandRecord transformUpdateRecord(final CommandRecord command) {
         return command;
     }
 
-    public void delete(final CommandRecord command, final AggregateCallback callback)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException {
-        this.apply(
-                "delete",
-                command,
-                (id, e) -> onComplete(callback, e, "Delete ...", "delete"));
+    public void delete(final CommandRecord command, final AggregateCallback callback) {
+        this.apply("delete", command,
+                (id, e) -> onComplete(callback, e, "Delete ..."));
     }
 
-    protected static void onComplete(final AggregateCallback callback, final Exception e, final String message, final String method) {
+    protected static void onComplete(final AggregateCallback callback, final Exception e, final String message) {
         if (e != null) {
             logger.error("Error performing the action", e);
         } else {
             logger.info(message);
-            callback.onComplete();
+            if (callback != null) {
+                callback.onComplete();
+            }
         }
     }
 }
