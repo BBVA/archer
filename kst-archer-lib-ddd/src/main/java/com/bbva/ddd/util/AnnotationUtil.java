@@ -14,18 +14,19 @@ public final class AnnotationUtil {
 
     public static <C extends Annotation> List<Class> findAllAnnotatedClasses(final Class<C> annotation, final Handler handler) {
         final String mainPackage = handler.getClass().getCanonicalName().split("\\.")[0];
-        return findAnnotations(findClassesInPackage(mainPackage, annotation), findInAllPackages(annotation));
+
+        return findAnnotations(mainPackage, annotation);
     }
 
     public static <C extends Annotation> List<Class> findAllAnnotatedClasses(final Class<C> annotation) {
         final String mainPackage = AnnotationUtil.class.getCanonicalName().split("\\.")[0];
-        return findAnnotations(findClassesInPackage(mainPackage, annotation), findInAllPackages(annotation));
+        return findAnnotations(mainPackage, annotation);
     }
 
-    private static List<Class> findAnnotations(final List<Class> classesInPackage, final List<Class> inAllPackages) {
-        List<Class> handlers = classesInPackage;
+    private static <C extends Annotation> List<Class> findAnnotations(final String mainPackage, final Class<C> annotation) {
+        List<Class> handlers = (List<Class>) findClassesInPackage(mainPackage, annotation);
         if (handlers.isEmpty()) {
-            handlers = inAllPackages;
+            handlers = findInAllPackages(annotation);
         }
         return handlers;
     }
