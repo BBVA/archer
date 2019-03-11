@@ -17,42 +17,42 @@ public class SelectQueryBuilder extends QueryBuilder {
 
     }
 
-    public SelectQueryBuilder addQueryFields(String selectExpression) {
+    public SelectQueryBuilder addQueryFields(final String selectExpression) {
         this.select = selectExpression;
         return this;
     }
 
-    public SelectQueryBuilder addQueryFields(List<String> selectExpressionList) {
+    public SelectQueryBuilder addQueryFields(final List<String> selectExpressionList) {
         this.select = String.join(", ", selectExpressionList);
         return this;
     }
 
-    public SelectQueryBuilder from(String streamName) {
+    public SelectQueryBuilder from(final String streamName) {
         this.from = new FromClauseBuilder(streamName);
         return this;
     }
 
-    public SelectQueryBuilder from(FromClauseBuilder fromClause) {
+    public SelectQueryBuilder from(final FromClauseBuilder fromClause) {
         this.from = fromClause;
         return this;
     }
 
-    public SelectQueryBuilder from(CreateQueryBuilder createQueryBuilder) {
+    public SelectQueryBuilder from(final CreateQueryBuilder createQueryBuilder) {
         this.from = new FromClauseBuilder(createQueryBuilder.name());
         return this;
     }
 
-    public SelectQueryBuilder where(String whereExpression) {
+    public SelectQueryBuilder where(final String whereExpression) {
         this.where = whereExpression;
         return this;
     }
 
-    public SelectQueryBuilder groupBy(String groupByExpression) {
+    public SelectQueryBuilder groupBy(final String groupByExpression) {
         this.groupBy = groupByExpression;
         return this;
     }
 
-    public SelectQueryBuilder having(String havingExpression) {
+    public SelectQueryBuilder having(final String havingExpression) {
         this.having = havingExpression;
         return this;
     }
@@ -64,16 +64,21 @@ public class SelectQueryBuilder extends QueryBuilder {
 
     @Override
     protected String build() {
-        query = "SELECT " + select + " " + from.build();
+        final StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT ");
+        queryBuilder.append(select);
+        queryBuilder.append(" ");
+        queryBuilder.append(from.build());
 
-        query += where != null && !where.isEmpty() ? "WHERE " + where + " " : " ";
+        queryBuilder.append(where != null && !where.isEmpty() ? "WHERE " + where + " " : "");
 
-        query += groupBy != null && !groupBy.isEmpty() ? "GROUP BY " + groupBy + " " : " ";
+        queryBuilder.append(groupBy != null && !groupBy.isEmpty() ? "GROUP BY " + groupBy + " " : "");
 
-        query += having != null && !having.isEmpty() ? "HAVING " + having + " " : " ";
+        queryBuilder.append(having != null && !having.isEmpty() ? "HAVING " + having + " " : "");
 
-        query += ";";
+        queryBuilder.append(";");
 
+        this.query = queryBuilder.toString();
         return query;
     }
 }

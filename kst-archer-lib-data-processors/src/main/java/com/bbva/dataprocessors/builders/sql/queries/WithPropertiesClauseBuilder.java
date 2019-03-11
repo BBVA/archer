@@ -19,67 +19,67 @@ public class WithPropertiesClauseBuilder {
     public static final String JSON_FORMAT = "JSON";
     public static final String DELIMITED_FORMAT = "DELIMITED";
 
-    private Map<String, String> withProperties = new HashMap<>();
+    private final Map<String, Object> withProperties = new HashMap<>();
 
     public String kafkaTopic() {
-        return withProperties.get(KAFKA_TOPIC);
+        return (String) withProperties.get(KAFKA_TOPIC);
     }
 
-    public WithPropertiesClauseBuilder kafkaTopic(String kafkaTopic) {
+    public WithPropertiesClauseBuilder kafkaTopic(final String kafkaTopic) {
         withProperties.put(KAFKA_TOPIC, kafkaTopic);
         return this;
     }
 
     public String valueFormat() {
-        return withProperties.get(VALUE_FORMAT);
+        return (String) withProperties.get(VALUE_FORMAT);
     }
 
-    public WithPropertiesClauseBuilder valueFormat(String valueFormat) {
+    public WithPropertiesClauseBuilder valueFormat(final String valueFormat) {
         withProperties.put(VALUE_FORMAT, valueFormat);
         return this;
     }
 
     public String key() {
-        return withProperties.get(KEY);
+        return (String) withProperties.get(KEY);
     }
 
-    public WithPropertiesClauseBuilder key(String key) {
+    public WithPropertiesClauseBuilder key(final String key) {
         withProperties.put(KEY, key);
         return this;
     }
 
-    public String timestamp() {
-        return withProperties.get(TIMESTAMP);
+    public Long timestamp() {
+        return (long) withProperties.get(TIMESTAMP);
     }
 
-    public WithPropertiesClauseBuilder timestamp(String timestamp) {
+    public WithPropertiesClauseBuilder timestamp(final Long timestamp) {
         withProperties.put(TIMESTAMP, timestamp);
         return this;
     }
 
     public String timestampFormat() {
-        return withProperties.get(TIMESTAMP_FORMAT);
+        return String.valueOf(withProperties.get(TIMESTAMP_FORMAT));
     }
 
-    public WithPropertiesClauseBuilder timestampFormat(String timestampFormat) {
+    public WithPropertiesClauseBuilder timestampFormat(final String timestampFormat) {
         withProperties.put(TIMESTAMP_FORMAT, timestampFormat);
         return this;
     }
 
-    public String partitions() {
-        return withProperties.get(PARTITIONS);
+    public Integer partitions() {
+        return (int) withProperties.get(PARTITIONS);
     }
 
-    public WithPropertiesClauseBuilder partitions(String partitions) {
+    public WithPropertiesClauseBuilder partitions(final Integer partitions) {
         withProperties.put(PARTITIONS, partitions);
         return this;
     }
 
-    public String replicas() {
-        return withProperties.get(REPLICAS);
+    public Integer replicas() {
+        return (int) withProperties.get(REPLICAS);
     }
 
-    public WithPropertiesClauseBuilder replicas(String replicas) {
+    public WithPropertiesClauseBuilder replicas(final Integer replicas) {
         withProperties.put(REPLICAS, replicas);
         return this;
     }
@@ -87,9 +87,14 @@ public class WithPropertiesClauseBuilder {
     String build() {
         String withClause = "";
         if (!withProperties.isEmpty()) {
-            List<String> withPropertiesList = new ArrayList<>();
-            for (String prop : withProperties.keySet()) {
-                withPropertiesList.add(prop.toUpperCase() + " = '" + withProperties.get(prop) + "'");
+            final List<String> withPropertiesList = new ArrayList<>();
+            for (final String prop : withProperties.keySet()) {
+                if (withProperties.get(prop) instanceof String) {
+                    withPropertiesList.add(prop.toUpperCase() + " = '" + withProperties.get(prop) + "'");
+                } else {
+                    withPropertiesList.add(prop.toUpperCase() + " = " + withProperties.get(prop));
+                }
+
             }
             withClause = " WITH (" + String.join(", ", withPropertiesList) + ")";
         }
