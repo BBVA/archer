@@ -67,11 +67,6 @@ public class TopicManager {
     }
 
     private static int getProperty(final ApplicationConfig config, final String property, final int defaultValue) {
-        try {
-            return Integer.valueOf(config.get(property).toString());
-        } catch (final NullPointerException e) {
-            logger.error("Error getting property:" + property, e);
-            return defaultValue;
-        }
+        return config.contains(property) ? Integer.valueOf(config.get(property).toString()) : defaultValue;
     }
 }

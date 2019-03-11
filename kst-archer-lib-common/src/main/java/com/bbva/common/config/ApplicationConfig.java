@@ -44,6 +44,10 @@ public class ApplicationConfig implements Cloneable {
         return applicationProperties.getProperty(key);
     }
 
+    public boolean contains(final String key) {
+        return applicationProperties.contains(key);
+    }
+
     public Integer getInteger(final String key) {
         return Integer.valueOf(applicationProperties.getProperty(key));
     }
