@@ -44,4 +44,9 @@ public final class States {
         }
         return store;
     }
+
+    public KafkaStreams.State getStoreState(final String name) {
+        final KafkaStreams streams = states.get(name).streams();
+        return streams.state();
+    }
 }

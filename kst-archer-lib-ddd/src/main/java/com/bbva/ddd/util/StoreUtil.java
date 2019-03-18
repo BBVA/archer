@@ -28,4 +28,8 @@ public class StoreUtil {
         }
     }
 
+    public static boolean checkStoreStatus(final String store) {
+        return States.get().getStoreState(store).isRunning();
+    }
+
 }
