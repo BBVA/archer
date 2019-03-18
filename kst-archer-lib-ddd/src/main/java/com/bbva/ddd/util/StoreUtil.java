@@ -7,6 +7,7 @@ import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
 import com.bbva.ddd.domain.HelperDomain;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
+import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
 
 public class StoreUtil {
@@ -26,6 +27,12 @@ public class StoreUtil {
                 }
             }
         }
+    }
+
+    public static KafkaStreams.State getStoreState(final String store) {
+
+        return States.get().getStoreState(store);
+
     }
 
 }
