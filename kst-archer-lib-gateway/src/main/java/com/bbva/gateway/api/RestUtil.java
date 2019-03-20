@@ -32,7 +32,7 @@ public class RestUtil {
 
         try {
             Thread.currentThread().join();
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException e) { //NOSONAR
             logger.error("Thread problem", e);
             throw new ApplicationException("Thread problem");
         }

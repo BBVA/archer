@@ -106,7 +106,7 @@ public final class Domain {
             executor.shutdown();
             try {
                 executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-            } catch (final InterruptedException e) {
+            } catch (final InterruptedException e) { //NOSONAR
                 logger.warn("InterruptedException starting the application", e);
             }
         }));

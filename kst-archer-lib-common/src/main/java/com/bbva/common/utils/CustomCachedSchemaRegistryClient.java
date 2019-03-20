@@ -24,7 +24,7 @@ public class CustomCachedSchemaRegistryClient implements SchemaRegistryClient {
     private final Map<String, Map<Schema, Integer>> schemaCache;
     private final Map<String, Map<Integer, Schema>> idCache;
     private final Map<String, Map<Schema, Integer>> versionCache;
-    public static final Map<String, String> DEFAULT_REQUEST_PROPERTIES = new HashMap();
+    protected static final Map<String, String> DEFAULT_REQUEST_PROPERTIES = new HashMap();
 
     public CustomCachedSchemaRegistryClient(final String baseUrl, final int identityMapCapacity) {
         this(new RestService(baseUrl), identityMapCapacity);

@@ -67,7 +67,7 @@ public class AppConfiguration {
             properties = mergeProperties(properties, getConfigFromFile(yaml, classLoader, extraConfig.file()));
         }
 
-        properties = replaceEnvVariables(properties);
+        replaceEnvVariables(properties);
         return properties;
     }
 

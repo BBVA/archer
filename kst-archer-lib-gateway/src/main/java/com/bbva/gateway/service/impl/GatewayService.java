@@ -81,7 +81,7 @@ public abstract class GatewayService<T>
         if ((response == null || !isSuccess(response)) && retryEnabled && attempNum < attemps) {
             try {
                 Thread.sleep(seconds);
-            } catch (final InterruptedException e) {
+            } catch (final InterruptedException e) { //NOSONAR
                 logger.error("Problems sleeping the thread", e);
             }
             return attemp(record, attempNum + 1);

@@ -20,7 +20,7 @@ public class StoreUtil {
             } catch (final InvalidStateStoreException ignored) {
                 try {
                     Thread.sleep(500);
-                } catch (final InterruptedException e) {
+                } catch (final InterruptedException e) { //NOSONAR
                     logger.error("Problems sleeping the execution", e);
                     throw new ApplicationException("Problems sleeping the execution", e);
                 }

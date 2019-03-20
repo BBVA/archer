@@ -50,7 +50,7 @@ public class ExampleUtil<T extends SpecificRecord> {
                 generateHeaders(key, replay, commandAction)), (o, e) -> handlePutRecord(o, e));
         try {
             Thread.sleep(replyTime);
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException e) { //NOSONAR
             e.printStackTrace();
         }
     }
