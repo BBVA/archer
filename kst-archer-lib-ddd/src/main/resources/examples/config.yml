@@ -1,33 +1,20 @@
 app:
     common:
-        bootstrap.servers: ${ARCHER_BOOTSTRAP_SERVERS:SASL_SSL://KICKSTARTTEAM.COM:19094}
-        security.protocol: SASL_SSL
-        sasl.jaas.config: com.sun.security.auth.module.Krb5LoginModule required useKeyTab=true storeKey=true keyTab="/home/sendoamoronta/git/archer/kst-archer-docker-compose/kerberos/secrets/kafka.keytab" principal="kafka/kafka@KICKSTARTTEAM.COM";
-        sasl.kerberos.service.name: kafka
-        # sasl.login.class: com.sun.security.auth.module.Krb5LoginModule
-        sasl.mechanism: GSSAPI
+        bootstrap.servers: ${ARCHER_BOOTSTRAP_SERVERS:PLAINTEXT://localhost:9092}
     application:
         host.port: 8080
     streams:
-        application.server: ${ARCHER_APPLICATION_SERVER:KICKSTARTTEAM.COM:8080}
+        application.server: ${ARCHER_APPLICATION_SERVER:localhost:8080}
         application.name: ${ARCHER_APPLICATION_NAME:lib_ddd_example}
     ksql:
         ksql.statestore.suffix: _store
-        ksql.sink.partitions: ${ARCHER_PARTITIONS:2}
-        ksql.sink.replicas: 1
+        ksql.sink.partitions: ${ARCHER_PARTITIONS:3}
+        ksql.sink.replicas: ${ARCHER_REPLICATION_FACTOR:1}
         commit.interval.ms: 500
         auto.offset.reset: earliest
-        sasl.jaas.config: com.sun.security.auth.module.Krb5LoginModule required useKeyTab=true storeKey=true keyTab="/home/sendoamoronta/git/archer/kst-archer-docker-compose/kerberos/secrets/kafka.keytab" principal="kafka/kafka@KICKSTARTTEAM.COM";
-        sasl.kerberos.service.name: kafka
-        # sasl.login.class: com.sun.security.auth.module.Krb5LoginModule
-        sasl.mechanism: GSSAPI
     dataflow:
         client.id: $UUID
         max.poll.interval.ms: 300000
         max.poll.records: 500
         session.timeout.ms: 10000
         state.dir: /tmp/kafka-streams-#client.id#
-        sasl.jaas.config: com.sun.security.auth.module.Krb5LoginModule required useKeyTab=true storeKey=true keyTab="/home/sendoamoronta/git/archer/kst-archer-docker-compose/kerberos/secrets/kafka.keytab" principal="kafka/kafka@KICKSTARTTEAM.COM";
-        sasl.kerberos.service.name: kafka
-        # sasl.login.class: com.sun.security.auth.module.Krb5LoginModule
-        sasl.mechanism: GSSAPI

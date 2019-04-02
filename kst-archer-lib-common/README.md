@@ -1,5 +1,9 @@
 # Run securize services services #
 
+Configure bootstrap server with sasl protocol, for example
+```
+export ARCHER_BOOTSTRAP_SERVERS=SASL_SSL://KICKSTARTTEAM.COM:19094
+```
 Annotate service with @SecureConfig
 
 Configure new environment variable with jass config, for example:
