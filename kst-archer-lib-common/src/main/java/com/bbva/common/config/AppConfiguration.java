@@ -11,6 +11,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -30,13 +31,28 @@ public class AppConfiguration {
     }
 
     public ApplicationConfig init() {
-        final Config extraConfig = getConfigAnnotation();
+        final SecureConfig secureConfig = getConfigAnnotation(SecureConfig.class);
+        if (secureConfig != null) {
+            return init(secureConfig);
+        }
+
+        final Config extraConfig = getConfigAnnotation(Config.class);
         return init(extraConfig);
     }
 
-    public ApplicationConfig init(final Config extraConfig) {
-        final Map<String, Object> config = getConfig(extraConfig);
+    public ApplicationConfig init(final SecureConfig extraConfig) {
+        final Map<String, Object> config = getConfig("common-secure-config.yml", extraConfig.file());
 
+        return configure(config);
+    }
+
+    public ApplicationConfig init(final Config extraConfig) {
+        final Map<String, Object> config = getConfig("common-config.yml", extraConfig.file());
+
+        return configure(config);
+    }
+
+    private ApplicationConfig configure(final Map<String, Object> config) {
         applicationConfig = new ApplicationConfig();
 
         final Map<String, Object> appConfig = (Map<String, Object>) config.get("app");
@@ -59,12 +75,12 @@ public class AppConfiguration {
         }
     }
 
-    private static Map<String, Object> getConfig(final Config extraConfig) {
+    private static Map<String, Object> getConfig(final String commonFile, final String extraFile) {
         final Yaml yaml = new Yaml();
         final ClassLoader classLoader = AppConfiguration.class.getClassLoader();
-        Map<String, Object> properties = getConfigFromFile(yaml, classLoader, "common-config.yml");
-        if (extraConfig != null && !extraConfig.file().isEmpty()) {
-            properties = mergeProperties(properties, getConfigFromFile(yaml, classLoader, extraConfig.file()));
+        Map<String, Object> properties = getConfigFromFile(yaml, classLoader, commonFile);
+        if (extraFile != null && !extraFile.isEmpty()) {
+            properties = mergeProperties(properties, getConfigFromFile(yaml, classLoader, extraFile));
         }
 
         replaceEnvVariables(properties);
@@ -129,16 +145,17 @@ public class AppConfiguration {
         return common;
     }
 
-    public static Config getConfigAnnotation() {
+    public static <C extends Annotation> C getConfigAnnotation(final Class<C> annotationClass) {
         final Reflections ref = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(AppConfiguration.class.getPackage().getName().split("\\.")[0],
                         ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
-        Config configAnnotation = null;
-        for (final Class<?> mainClass : ref.getTypesAnnotatedWith(Config.class)) {
-            configAnnotation = mainClass.getAnnotation(Config.class);
+        C configAnnotation = null;
+        for (final Class<?> mainClass : ref.getTypesAnnotatedWith(annotationClass)) {
+            configAnnotation = mainClass.getAnnotation(annotationClass);
         }
 
         return configAnnotation;
     }
+
 }
