@@ -7,7 +7,7 @@ archerJavaPipeline{
 
   // Deploy JAR
   stage("Deploy JAR"){
-    container("maven"){
+    container("jdk"){
       sh """
         ./gradlew publish
       """
