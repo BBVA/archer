@@ -1,0 +1,16 @@
+dependencies {
+
+    compile 'io.confluent:kafka-avro-serializer:5.0.0'
+    compile 'io.confluent:kafka-schema-registry-client:5.0.0'
+    compile 'io.confluent:kafka-streams-avro-serde:5.0.0'
+    compile 'io.confluent:monitoring-interceptors:5.0.0'
+
+    compile 'com.101tec:zkclient:0.10'
+
+    compile 'org.apache.kafka:kafka-clients:2.0.0'
+    compile 'org.apache.avro:avro:1.8.2'
+    compile 'org.apache.avro:avro-maven-plugin:1.8.2'
+    compile 'bbva.ndb:lib-genesis-log:2.0.0'
+    compile 'org.yaml:snakeyaml:1.11'
+    
+}

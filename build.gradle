@@ -1,0 +1,72 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+        //maven { url "https://jitpack.io" }
+        maven { url "http://packages.confluent.io/maven/" }
+        maven {
+            url "s3://microservices-java-repository/maven/release"
+            authentication {
+                awsIm(AwsImAuthentication)
+            }
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    group = "bbva.ndb"
+
+    dependencies {
+        compile('org.apache.kafka:kafka-streams:2.0.0')
+        compile('org.apache.kafka:kafka_2.11:2.0.0')
+        compile('org.scala-lang:scala-library:2.11.8')
+        compile('javax.ws.rs:javax.ws.rs-api:2.0.1')
+        compile('org.reflections:reflections:0.9.10')
+    }
+
+    clean {
+        delete 'tests'
+        delete 'build'
+        delete 'out'
+    }
+
+    jar {
+        manifest {
+            attributes('Implementation-Title': project.name,
+                    'Implementation-Version': project.version)
+        }
+    }
+
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                url "s3://microservices-java-repository/maven/release"
+                authentication {
+                    awsIm(AwsImAuthentication)
+                }
+            }
+        }
+    }
+}
+
+
+subprojects {
+    version = '0.0.0'
+}

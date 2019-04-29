@@ -1,0 +1,13 @@
+rootProject.name = 'archer-lib'
+
+include 'kst-archer-lib-common'
+include 'kst-archer-lib-common-test'
+include 'kst-archer-lib-data-processors'
+include 'kst-archer-lib-ddd'
+include 'kst-archer-lib-gateway'
+
+project(":kst-archer-lib-common").name = "lib-common"
+project(":kst-archer-lib-common-test").name = "lib-common-test"
+project(":kst-archer-lib-data-processors").name = "lib-data-processors"
+project(":kst-archer-lib-ddd").name = "lib-ddd"
+project(":kst-archer-lib-gateway").name = "lib-gateway"

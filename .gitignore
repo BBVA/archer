@@ -11,4 +11,6 @@ kst-archer-lib-gateway/tests/*
 tests/*
 .idea
 *.iml
-
+.gradle/
+build/
+generated-sources/
