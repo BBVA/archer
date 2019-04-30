@@ -41,7 +41,7 @@ task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask)
 compileJava.source(generateAvro.outputs)
 
 jar {
-    exclude("**ecamples**")
+    exclude("**examples**")
 }
 
 
