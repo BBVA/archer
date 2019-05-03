@@ -7,11 +7,9 @@ archerJavaPipeline{
 
   // Deploy JAR
   stage("Deploy JAR"){
-    container("maven"){
+    container("jdk"){
       sh """
-        export AWS_ACCESS_KEY_ID=AKIAIM5BHCDAPR2HJ6GQ
-        export AWS_SECRET_ACCESS_KEY=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
-        mvn clean deploy
+        ./gradlew publish
       """
     }
   }

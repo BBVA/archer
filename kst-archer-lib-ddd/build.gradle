@@ -1,0 +1,47 @@
+plugins {
+    id "com.commercehub.gradle.plugin.avro" version "0.9.0"
+}
+
+apply plugin: "com.commercehub.gradle.plugin.avro"
+
+sourceSets {
+    main {
+        java {
+            srcDir 'generated-sources/avro'
+            exclude 'com/bbva/examples/**'
+        }
+        resources {
+            exclude 'avro/**'
+            exclude 'examples/**'
+        }
+    }
+}
+
+dependencies {
+
+    compile project(':lib-data-processors')
+
+    compile 'io.confluent:kafka-streams-avro-serde:5.0.0'
+    compile 'org.apache.avro:avro:1.8.2'
+    compile 'org.apache.avro:avro-maven-plugin:1.8.2'
+
+    compile 'org.eclipse.jetty:jetty-server:9.2.24.v20180105'
+    compile 'org.eclipse.jetty:jetty-servlet:9.2.24.v20180105'
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet-core:2.25'
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.25'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
+
+}
+
+task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
+    source("src/main/resources/avro/com/bbva")
+    outputDir = file("generated-sources/avro")
+}
+
+compileJava.source(generateAvro.outputs)
+
+jar {
+    exclude("**examples**")
+}
+
+

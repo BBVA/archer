@@ -1,0 +1,11 @@
+dependencies {
+
+    compile project(':lib-common')
+
+    compile 'io.confluent.ksql:ksql-engine:5.0.0'
+    compile 'io.confluent.ksql:ksql-parser:5.0.0'
+    compile 'io.confluent.ksql:ksql-common:5.0.0'
+    compile 'io.confluent.ksql:ksql-metastore:5.0.0'
+    compile 'io.confluent.ksql:ksql-serde:5.0.0'
+
+}
