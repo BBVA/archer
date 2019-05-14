@@ -1,9 +1,13 @@
 dependencies {
 
     compile "io.confluent:kafka-avro-serializer:$project.confluent_version"
-    compile "io.confluent:kafka-schema-registry-client:$project.confluent_version"
+    compile("io.confluent:kafka-schema-registry:$project.confluent_version") {
+        exclude group: 'org.apache.kafka', module: 'kafka_2.12'
+    }
     compile "io.confluent:kafka-streams-avro-serde:$project.confluent_version"
-    compile "io.confluent:monitoring-interceptors:$project.confluent_version"
+    compile("io.confluent:monitoring-interceptors:$project.confluent_version") {
+        exclude group: 'org.apache.kafka', module: 'kafka_2.12'
+    }
 
     compile 'com.101tec:zkclient:0.10'
 
