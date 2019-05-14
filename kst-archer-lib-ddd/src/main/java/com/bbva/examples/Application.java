@@ -158,14 +158,17 @@ public class Application {
                     .addDataProcessorBuilder(QueryBuilderFactory.dropStream(channelByAddressStream, true))
                     .addDataProcessorBuilder(QueryBuilderFactory.dropStream(usersStream, true))
                     .addDataProcessorBuilder(QueryBuilderFactory.dropStream(usersFilteredStream, true))
-                    .addDataProcessorBuilder(devicesStream).addDataProcessorBuilder(walletsStream)
-                    .addDataProcessorBuilder(channelsStream).addDataProcessorBuilder(devicesByAddressStream)
+                    .addDataProcessorBuilder(devicesStream)
+                    .addDataProcessorBuilder(walletsStream)
+                    .addDataProcessorBuilder(channelsStream)
+                    .addDataProcessorBuilder(devicesByAddressStream)
                     .addDataProcessorBuilder(TEST_QUERY_STORE_BASENAME,
                             new SimpleGlobalTableStateBuilder(devicesByAddressStream.name()))
                     .addDataProcessorBuilder(channelByAddressStream)
                     .addDataProcessorBuilder(TEST_QUERY_STORE_BASENAME + "2",
                             new SimpleGlobalTableStateBuilder(channelByAddressStream.name()))
-                    .addDataProcessorBuilder(usersStream).addDataProcessorBuilder(usersFilteredStream)
+                    .addDataProcessorBuilder(usersStream)
+                    .addDataProcessorBuilder(usersFilteredStream)
                     .addDataProcessorBuilder("email-filtered",
                             new SimpleGlobalTableStateBuilder(usersFilteredStream.name()))
                     .start();

@@ -2,9 +2,9 @@ package com.bbva.common.producers;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.exceptions.ApplicationException;
-import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
 import com.bbva.common.utils.serdes.GenericAvroSerializer;
 import com.bbva.common.utils.serdes.SpecificAvroSerializer;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.apache.avro.generic.GenericRecord;
@@ -26,7 +26,7 @@ public class CachedProducer {
 
     private final Map<String, DefaultProducer> cachedProducers = new HashMap<>();
     private final ApplicationConfig applicationConfig;
-    private final CustomCachedSchemaRegistryClient schemaRegistry;
+    private final CachedSchemaRegistryClient schemaRegistry;
     private final String schemaRegistryUrl;
 
     public CachedProducer(final ApplicationConfig applicationConfig) {
@@ -34,7 +34,7 @@ public class CachedProducer {
 
         schemaRegistryUrl = applicationConfig.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
-        schemaRegistry = new CustomCachedSchemaRegistryClient(schemaRegistryUrl, 1000);
+        schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 1000);
     }
 
     public <K, V> Future<RecordMetadata> add(final PRecord<K, V> record, final ProducerCallback callback) {

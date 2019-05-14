@@ -6,11 +6,11 @@ import kst.logging.Logger;
 import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 
-public class SpecificAggregate<T, V extends SpecificRecordBase> extends AbstractAggregateBase<T, V> {
+public class SpecificAggregate<K, V extends SpecificRecordBase> extends AbstractAggregateBase<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(SpecificAggregate.class);
 
-    public SpecificAggregate(final T id, final V record) {
+    public SpecificAggregate(final K id, final V record) {
         super(id, record);
     }
 
