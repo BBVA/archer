@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.contexts.dataflow;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.kafka.streams.StreamsBuilder;
 
 import java.util.Collections;
@@ -11,7 +11,7 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
 
     private final ApplicationConfig config;
     private final StreamsBuilder builder;
-    private final CustomCachedSchemaRegistryClient schemaRegistry;
+    private final CachedSchemaRegistryClient schemaRegistry;
     private final Map<String, String> serdeProps;
     private final String name;
 
@@ -30,7 +30,7 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
 
         final String schemaRegistryUrl = this.config.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
-        schemaRegistry = new CustomCachedSchemaRegistryClient(schemaRegistryUrl, 100);
+        schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
 
         serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL, schemaRegistryUrl);
 
@@ -38,7 +38,7 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
     }
 
     @Override
-    public CustomCachedSchemaRegistryClient schemaRegistryClient() {
+    public CachedSchemaRegistryClient schemaRegistryClient() {
         return schemaRegistry;
     }
 

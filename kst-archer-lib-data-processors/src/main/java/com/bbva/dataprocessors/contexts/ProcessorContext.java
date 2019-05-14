@@ -1,11 +1,11 @@
 package com.bbva.dataprocessors.contexts;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 
 public interface ProcessorContext {
 
-    CustomCachedSchemaRegistryClient schemaRegistryClient();
+    CachedSchemaRegistryClient schemaRegistryClient();
 
     ApplicationConfig configs();
 

@@ -1,8 +1,9 @@
 package com.bbva.dataprocessors.contexts.sql;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.utils.CustomCachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.ksql.KsqlContext;
+import io.confluent.ksql.logging.processing.ProcessingLogContext;
 import io.confluent.ksql.metastore.StructuredDataSource;
 import io.confluent.ksql.util.KsqlConfig;
 import kst.logging.Logger;
@@ -14,7 +15,7 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
     private static final Logger logger = LoggerFactory.getLogger(SQLProcessorContextSupplier.class);
 
     private final ApplicationConfig config;
-    private final CustomCachedSchemaRegistryClient schemaRegistry;
+    private final CachedSchemaRegistryClient schemaRegistry;
     private final String name;
     private final KsqlContext ksqlContext;
 
@@ -24,13 +25,13 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
         this.config = config;
         final String schemaRegistryUrl = this.config.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
 
-        schemaRegistry = new CustomCachedSchemaRegistryClient(schemaRegistryUrl, 100);
+        schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
 
-        ksqlContext = KsqlContext.create(new KsqlConfig(config.ksql().get()), schemaRegistry);
+        ksqlContext = KsqlContext.create(new KsqlConfig(config.ksql().get()), ProcessingLogContext.create());
     }
 
     @Override
-    public CustomCachedSchemaRegistryClient schemaRegistryClient() {
+    public CachedSchemaRegistryClient schemaRegistryClient() {
         return schemaRegistry;
     }
 

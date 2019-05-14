@@ -19,7 +19,7 @@ dependencies {
 
     compile project(':lib-ddd')
 
-    compile 'org.apache.avro:avro:1.8.2'
+    compile "org.apache.avro:avro:$project.avro_version"
     compile 'com.squareup.retrofit2:retrofit:2.5.0'
     compile 'com.squareup.retrofit2:converter-gson:2.5.0'
     compile 'org.glassfish.jersey.core:jersey-common:2.27'
