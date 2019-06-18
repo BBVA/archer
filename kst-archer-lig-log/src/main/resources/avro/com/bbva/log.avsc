@@ -1,0 +1,89 @@
+{
+  "type": "record",
+  "name": "LogEvent",
+  "namespace": "com.bbva.avro",
+  "doc": "Structure of logs event values.",
+  "fields": [
+    {
+      "name": "uuid",
+      "doc": "Record key",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "time",
+      "doc": "Timestamp of the log",
+      "default": null,
+      "type": [
+        "null",
+        "long"
+      ]
+    },
+    {
+      "name": "level",
+      "doc": "Log level",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "message",
+      "doc": "Formated message",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "thread",
+      "doc": "Thread of the trace",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "name",
+      "doc": "Class name of trace",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "function",
+      "doc": "Function that put the trace",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "application",
+      "doc": "Application name",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "hostname",
+      "doc": "Host name",
+      "default": null,
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}
