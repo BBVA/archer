@@ -10,8 +10,8 @@ import com.bbva.common.utils.RecordHeaders;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.ddd.domain.exceptions.ProduceException;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 

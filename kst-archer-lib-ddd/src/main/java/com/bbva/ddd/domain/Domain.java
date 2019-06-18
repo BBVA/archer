@@ -18,8 +18,8 @@ import com.bbva.ddd.domain.changelogs.read.ChangelogConsumer;
 import com.bbva.ddd.domain.commands.read.CommandConsumer;
 import com.bbva.ddd.domain.events.read.EventConsumer;
 import com.bbva.ddd.util.AnnotationUtil;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.map.HashedMap;
 

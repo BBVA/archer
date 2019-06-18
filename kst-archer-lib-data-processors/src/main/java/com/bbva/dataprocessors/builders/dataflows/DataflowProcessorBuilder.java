@@ -2,8 +2,8 @@ package com.bbva.dataprocessors.builders.dataflows;
 
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyDescription;

@@ -10,8 +10,8 @@ import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.ddd.util.AnnotationUtil;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

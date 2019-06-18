@@ -1,12 +1,12 @@
 package com.bbva.common.config;
 
 import com.bbva.common.exceptions.ApplicationException;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;

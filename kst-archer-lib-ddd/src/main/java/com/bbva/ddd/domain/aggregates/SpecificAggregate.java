@@ -2,8 +2,8 @@ package com.bbva.ddd.domain.aggregates;
 
 import com.bbva.ddd.domain.aggregates.callbacks.AggregateCallback;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 
 public class SpecificAggregate<K, V extends SpecificRecordBase> extends AbstractAggregateBase<K, V> {

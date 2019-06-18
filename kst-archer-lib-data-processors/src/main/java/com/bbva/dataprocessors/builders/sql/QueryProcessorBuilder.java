@@ -2,8 +2,8 @@ package com.bbva.dataprocessors.builders.sql;
 
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContext;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.kafka.streams.KafkaStreams;
 
 public class QueryProcessorBuilder implements ProcessorBuilder {
