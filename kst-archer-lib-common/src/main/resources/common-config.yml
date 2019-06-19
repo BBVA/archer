@@ -1,31 +1,35 @@
 app:
-    common:
-        bootstrap.servers: ${ARCHER_BOOTSTRAP_SERVERS}
-    application:
-        schema.registry.url: ${ARCHER_SCHEMA_REGISTRY_URL}
-        replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
-    consumer:
-        group.id: ${ARCHER_CONSUMER_GROUP_ID}
-        client.id: $UUID
-        auto.offset.reset: ${ARCHER_AUTO_OFFSET_RESET:earliest}
-    producer:
-        acks: ${ARCHER_PRODUCER_ACKS:all}
-        retries: ${ARCHER_PRODUCER_RETRIES:1}
-    streams:
-        application.server: ${ARCHER_APPLICATION_SERVER}
-        application.name: ${ARCHER_APPLICATION_NAME}
-        auto.offset.reset: ${ARCHER_AUTO_OFFSET_RESET:earliest}
-        commit.interval.ms: ${ARCHER_COMMIT_INTERVAL_MS:500}
-        replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
-    ksql:
-        ksql.statestore.suffix: _store
-        ksql.sink.partitions: ${ARCHER_PARTITIONS:3}
-        ksql.sink.replicas: ${ARCHER_REPLICATION_FACTOR:1}
-        commit.interval.ms: 500
-        auto.offset.reset: earliest
-    dataflow:
-        client.id: $UUID
-        max.poll.interval.ms: 300000
-        max.poll.records: 500
-        session.timeout.ms: 10000
-        state.dir: /tmp/kafka-streams-#client.id#
+  common:
+    bootstrap.servers: ${ARCHER_BOOTSTRAP_SERVERS}
+  application:
+    schema.registry.url: ${ARCHER_SCHEMA_REGISTRY_URL}
+    replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
+  consumer:
+    group.id: ${ARCHER_CONSUMER_GROUP_ID}
+    client.id: $UUID
+    auto.offset.reset: ${ARCHER_AUTO_OFFSET_RESET:earliest}
+    isolation.level: ${ARCHER_CONSUMER_ISOLATION_LEVEL:read_committed}
+  producer:
+    acks: ${ARCHER_PRODUCER_ACKS:all}
+    retries: ${ARCHER_PRODUCER_RETRIES:1}
+    enable.idempotence: ${ARCHER_PRODUCER_ENABLE_IDEMPOTENCE:true}
+    transactional.id.prefix: ${ARCHER_PRODUCER_TRANSACTIONAL_ID_PREFIX}
+  streams:
+    application.server: ${ARCHER_APPLICATION_SERVER}
+    application.name: ${ARCHER_APPLICATION_NAME}
+    auto.offset.reset: ${ARCHER_AUTO_OFFSET_RESET:earliest}
+    commit.interval.ms: ${ARCHER_COMMIT_INTERVAL_MS:500}
+    replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
+    processing.guarantee: ${ARCHER_STREAMS_PROCESSING_GUARANTEE:exactly_once}
+  ksql:
+    ksql.statestore.suffix: _store
+    ksql.sink.partitions: ${ARCHER_PARTITIONS:3}
+    ksql.sink.replicas: ${ARCHER_REPLICATION_FACTOR:1}
+    commit.interval.ms: 500
+    auto.offset.reset: earliest
+  dataflow:
+    client.id: $UUID
+    max.poll.interval.ms: 300000
+    max.poll.records: 500
+    session.timeout.ms: 10000
+    state.dir: /tmp/kafka-streams-#client.id#

@@ -82,6 +82,9 @@ public class ApplicationConfig implements Cloneable {
         public static final String PRODUCER_ACKS = ProducerConfig.ACKS_CONFIG;
         public static final String PRODUCER_RETRIES = ProducerConfig.RETRIES_CONFIG;
         public static final String INTERCEPTOR_CLASSES = ProducerConfig.INTERCEPTOR_CLASSES_CONFIG;
+        public static final String ENABLE_IDEMPOTENCE = ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG;
+        public static final String TRANSACTIONAL_ID_PREFIX = "transactional.id.prefix";
+        public static final String TRANSACTIONAL_ID = ProducerConfig.TRANSACTIONAL_ID_CONFIG;
 
     }
 
@@ -95,6 +98,7 @@ public class ApplicationConfig implements Cloneable {
         public static final String AUTO_COMMIT_INTERVAL_MS = ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG;
         public static final String SESSION_TIMEOUT_MS = ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG;
         public static final String INTERCEPTOR_CLASSES = ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG;
+        public static final String ISOLATION_LEVEL = ConsumerConfig.ISOLATION_LEVEL_CONFIG;
 
     }
 
@@ -113,6 +117,7 @@ public class ApplicationConfig implements Cloneable {
         public static final String MAX_POLL_INTERVAL_MS = ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG;
         public static final String SESSION_TIMEOUT_MS = ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG;
         public static final String STATE_DIR = StreamsConfig.STATE_DIR_CONFIG;
+        public static final String PROCESSING_GUARANTEE = StreamsConfig.PROCESSING_GUARANTEE_CONFIG;
         public static final String PRODUCER_INTERCEPTOR_CLASSES = StreamsConfig.PRODUCER_PREFIX
                 + ProducerConfig.INTERCEPTOR_CLASSES_CONFIG;
         public static final String CONSUMER_INTERCEPTOR_CLASSES = StreamsConfig.CONSUMER_PREFIX

@@ -1,7 +1,7 @@
 package com.bbva.common.consumers;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import kst.logging.Logger;

@@ -66,7 +66,7 @@ public class CachedProducer {
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to {}", serializedValue.toString());
 
-            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
+            producer = new DefaultProducer<>(record.topic(), applicationConfig, serializedKey, serializedValue);
             cachedProducers.put(record.topic(), producer);
         }
         return producer;
