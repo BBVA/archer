@@ -7,7 +7,10 @@ import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.common.utils.headers.types.ChangelogHeaderType;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AbstractAggregateBase;
@@ -15,7 +18,6 @@ import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.aggregates.annotations.AggregateParent;
 import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;
-import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.changelogs.write.ChangelogRecordMetadata;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.util.StoreUtil;
@@ -221,17 +223,17 @@ public final class Repository<K, V extends SpecificRecordBase> {
     private RecordHeaders headers(final String aggregateMethod, final CRecord record) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(ChangelogRecord.TYPE_CHANGELOG_VALUE));
-        recordHeaders.add(ChangelogRecord.UUID_KEY, new ByteArrayValue(UUID.randomUUID().toString()));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, ChangelogHeaderType.TYPE_CHANGELOG_VALUE);
+        recordHeaders.add(ChangelogHeaderType.UUID_KEY.getName(), record.recordHeaders().find(CommandHeaderType.ENTITY_ID_KEY));
         if (record != null && record.key() != null) {
-            recordHeaders.add(ChangelogRecord.TRIGGER_REFERENCE_KEY,
+            recordHeaders.add(ChangelogHeaderType.TRIGGER_REFERENCE_KEY,
                     new ByteArrayValue(record.key()));
         }
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(
                 (record != null && record.isReplayMode()) || HelperDomain.get().isReplayMode()));
-        recordHeaders.add(ChangelogRecord.AGGREGATE_UUID_KEY, new ByteArrayValue(aggregateUUID));
-        recordHeaders.add(ChangelogRecord.AGGREGATE_NAME_KEY, new ByteArrayValue(this.aggregateClass.getName()));
-        recordHeaders.add(ChangelogRecord.AGGREGATE_METHOD_KEY, new ByteArrayValue(aggregateMethod));
+        recordHeaders.add(ChangelogHeaderType.AGGREGATE_UUID_KEY, new ByteArrayValue(aggregateUUID));
+        recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, new ByteArrayValue(this.aggregateClass.getName()));
+        recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, new ByteArrayValue(aggregateMethod));
 
         logger.debug("CRecord getList: {}", recordHeaders.toString());
 

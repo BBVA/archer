@@ -1,4 +1,4 @@
-package com.bbva.common.utils;
+package com.bbva.common.utils.headers;
 
 import org.apache.kafka.common.header.Header;
 

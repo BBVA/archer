@@ -2,6 +2,7 @@ package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.CRecord;
+import com.bbva.common.utils.headers.types.EventHeaderType;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
@@ -65,7 +66,7 @@ public abstract class GatewayService<T>
     }
 
     protected static TransactionChangelog findChangelogByReference(final CRecord record) {
-        return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(HEADER_REFERENCE_ID).asString());
+        return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(EventHeaderType.REFERENCE_ID_KEY).asString());
     }
 
     private void saveChangelogAndProcessOutput(final CRecord record, final T response, final boolean replay) {

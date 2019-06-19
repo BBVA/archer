@@ -8,7 +8,7 @@ import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.config.Config;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.GenericClass;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.builders.dataflows.states.SimpleGlobalTableStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilderFactory;
