@@ -1,13 +1,13 @@
 package com.bbva.dataprocessors.contexts.sql;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.ksql.KsqlContext;
 import io.confluent.ksql.logging.processing.ProcessingLogContext;
 import io.confluent.ksql.metastore.StructuredDataSource;
 import io.confluent.ksql.util.KsqlConfig;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 
 import java.util.Map;
 

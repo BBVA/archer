@@ -4,8 +4,6 @@ import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -15,6 +13,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.serialization.Serdes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;

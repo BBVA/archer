@@ -1,10 +1,10 @@
 package com.bbva.gateway.api;
 
 import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;

@@ -4,8 +4,8 @@ import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IAsyncGatewayService;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.Consumes;

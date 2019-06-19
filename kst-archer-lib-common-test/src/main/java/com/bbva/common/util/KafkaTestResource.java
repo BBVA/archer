@@ -9,12 +9,12 @@ import com.salesforce.kafka.test.junit4.SharedKafkaTestResource;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryConfig;
 import io.confluent.kafka.schemaregistry.rest.SchemaRegistryRestApplication;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 import org.eclipse.jetty.server.Server;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         if (getKafkaCluster() != null) {
             throw new IllegalStateException("Unknown State!  Kafka Test Server already exists!");
         } else {
-            setKafkaCluster(new KafkaTestCluster(this.getNumberOfBrokers(), this.getBrokerProperties(), Collections.singletonList(this.getRegisteredListener())));
+            setKafkaCluster(new KafkaTestCluster(getNumberOfBrokers(), getBrokerProperties(), Collections.singletonList(getRegisteredListener())));
             getKafkaCluster().start();
         }
     }
@@ -44,8 +44,8 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         final Properties defaultConfig = new Properties();
         defaultConfig.put(KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG, HTTP_LOCALHOST + schemaRegistryPort);
         try {
-            defaultConfig.put("kafkastore.connection.url", this.getZookeeperConnectString());
-            defaultConfig.put("kafkastore.bootstrap.servers", this.getKafkaConnectString());
+            defaultConfig.put("kafkastore.connection.url", getZookeeperConnectString());
+            defaultConfig.put("kafkastore.bootstrap.servers", getKafkaConnectString());
             defaultConfig.put("kafkastore.group.id", "local-test-group");
             defaultConfig.put("kafkastore.security.protocol", "PLAINTEXT");
             defaultConfig.put("cluster.enable", "true");
@@ -66,21 +66,21 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         app.stop();
         server.stop();
 
-        final List<KafkaBroker> brokers = this.getKafkaBrokers().asList();
+        final List<KafkaBroker> brokers = getKafkaBrokers().asList();
         for (final KafkaBroker broker : brokers) {
             broker.stop();
         }
 
-        this.getKafkaTestUtils().getAdminClient().close();
+        getKafkaTestUtils().getAdminClient().close();
 
-        if (this.getKafkaCluster() != null) {
+        if (getKafkaCluster() != null) {
             try {
-                this.getKafkaCluster().close();
+                getKafkaCluster().close();
             } catch (final Exception var2) {
                 throw new RuntimeException(var2);
             }
 
-            this.setKafkaCluster(null);
+            setKafkaCluster(null);
         }
     }
 

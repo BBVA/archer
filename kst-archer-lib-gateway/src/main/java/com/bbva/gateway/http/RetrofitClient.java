@@ -1,9 +1,9 @@
 package com.bbva.gateway.http;
 
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;

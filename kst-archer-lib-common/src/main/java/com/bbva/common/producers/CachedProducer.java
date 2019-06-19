@@ -5,14 +5,14 @@ import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.utils.serdes.GenericAvroSerializer;
 import com.bbva.common.utils.serdes.SpecificAvroSerializer;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.utils.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
