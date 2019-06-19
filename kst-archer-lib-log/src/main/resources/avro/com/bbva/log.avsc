@@ -68,15 +68,6 @@
       ]
     },
     {
-      "name": "application",
-      "doc": "Application name",
-      "default": null,
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
       "name": "hostname",
       "doc": "Host name",
       "default": null,

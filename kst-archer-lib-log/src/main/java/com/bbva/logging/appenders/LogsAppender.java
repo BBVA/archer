@@ -22,21 +22,16 @@ public class LogsAppender extends AppenderSkeleton {
 
     public static final String DEFAULT_BASE_NAME = "logs_events";
     private CachedProducer logsProducer;
-    private String appName;
     private String hostName;
-    private String logsBaseName;
+    private String logsSinkName;
     final ExecutorService executor = Executors.newFixedThreadPool(1);
 
     @Override
     public void activateOptions() {
         super.activateOptions();
 
-        appName = System.getenv("APPLICATION_NAME") != null
-                ? System.getenv("APPLICATION_NAME")
-                : "AppNoConfigured";
-
-        logsBaseName = System.getenv("LOG_BASE_NAME") != null
-                ? System.getenv("LOG_BASE_NAME")
+        logsSinkName = System.getenv("LOG_SINK_NAME") != null
+                ? System.getenv("LOG_SINK_NAME")
                 : DEFAULT_BASE_NAME;
         try {
             hostName = InetAddress.getLocalHost().getHostName();
@@ -67,13 +62,12 @@ public class LogsAppender extends AppenderSkeleton {
                 .setLevel(event.getLevel().toString())
                 .setTime(event.getTimeStamp())
                 .setHostname(hostName)
-                .setApplication(appName)
                 .setThread(event.getThreadName())
                 .setName(MDC.get("loggerName").toString())
                 .setFunction(MDC.get("msFunction").toString())
                 .setMessage(event.getMessage().toString()).build();
 
-        final Runnable produceLog = new RunnableProducer(logsBaseName, logEvent, logsProducer);
+        final Runnable produceLog = new RunnableProducer(logsSinkName, logEvent, logsProducer);
         executor.execute(produceLog);
 
     }
