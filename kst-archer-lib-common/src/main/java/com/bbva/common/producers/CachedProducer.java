@@ -66,7 +66,14 @@ public class CachedProducer {
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to {}", serializedValue.toString());
 
-            producer = new DefaultProducer<>(record.topic(), applicationConfig, serializedKey, serializedValue);
+            boolean exactlyOnce = false;
+            if (applicationConfig.producer().get(ApplicationConfig.ProducerProperties.ENABLE_IDEMPOTENCE).toString().equals("true")) {
+                final String transactionalIdPrefix = applicationConfig.producer().get(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
+                applicationConfig.producer().put(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID, transactionalIdPrefix + record.topic());
+                exactlyOnce = true;
+            }
+
+            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue, exactlyOnce);
             cachedProducers.put(record.topic(), producer);
         }
         return producer;

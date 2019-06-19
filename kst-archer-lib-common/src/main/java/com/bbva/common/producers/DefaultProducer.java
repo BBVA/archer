@@ -18,14 +18,17 @@ public class DefaultProducer<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultProducer.class);
     private final Producer<K, V> producer;
+    private final boolean exactlyOnce;
 
-    public DefaultProducer(final String producerName, final ApplicationConfig applicationConfig, final Serializer<K> serializedKey,
-                           final Serializer<V> serializedValue) {
+    public DefaultProducer(final ApplicationConfig applicationConfig, final Serializer<K> serializedKey,
+                           final Serializer<V> serializedValue, final boolean exactlyOnce) {
 
-        final String transactionalIdPrefix = applicationConfig.producer().get(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
-        applicationConfig.producer().put(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID, transactionalIdPrefix + producerName);
+        this.exactlyOnce = exactlyOnce;
         producer = new KafkaProducer<>(applicationConfig.producer().get(), serializedKey, serializedValue);
-        producer.initTransactions();
+
+        if (exactlyOnce) {
+            producer.initTransactions();
+        }
     }
 
     public Future<RecordMetadata> save(final PRecord<K, V> record, final ProducerCallback callback) {
@@ -33,18 +36,24 @@ public class DefaultProducer<K, V> {
 
         Future<RecordMetadata> result = null;
         try {
-            producer.beginTransaction();
+            if (exactlyOnce) {
+                producer.beginTransaction();
+            }
             result = producer.send(record, (metadata, e) -> {
                 if (e != null) {
                     logger.error("Error producing key " + record.key(), e);
-                    producer.abortTransaction();
+                    if (exactlyOnce) {
+                        producer.abortTransaction();
+                    }
                 } else {
                     logger.info("PRecord Produced. key {}", record.key());
                 }
                 callback.onCompletion(record.key(), e);
             });
 
-            producer.commitTransaction();
+            if (exactlyOnce) {
+                producer.commitTransaction();
+            }
             producer.flush();
 
             logger.debug("End of production");
@@ -54,7 +63,10 @@ public class DefaultProducer<K, V> {
             producer.close();
             throw e;
         } catch (final KafkaException e) {
-            producer.abortTransaction();
+            logger.error(e.getMessage(), e);
+            if (exactlyOnce) {
+                producer.abortTransaction();
+            }
         }
         return result;
     }
