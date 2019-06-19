@@ -1,15 +1,12 @@
 package com.bbva.ddd.domain.commands.read;
 
 import com.bbva.common.consumers.CRecord;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.record.TimestampType;
 
 public class CommandRecord extends CRecord {
-
-    public static final String UUID_KEY = "uuid";
-    public static final String NAME_KEY = "name";
-    public static final String ENTITY_ID_KEY = "entity.id";
 
     public CommandRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
                          final String key, final SpecificRecord value, final RecordHeaders headers) {
@@ -17,15 +14,15 @@ public class CommandRecord extends CRecord {
     }
 
     public String uuid() {
-        return headers.find(CommandRecord.UUID_KEY).asString();
+        return headers.find(CommandHeaderType.UUID_KEY).asString();
     }
 
     public String name() {
-        return headers.find(CommandRecord.NAME_KEY).asString();
+        return headers.find(CommandHeaderType.NAME_KEY).asString();
     }
 
     public String entityId() {
-        return headers.find(CommandRecord.ENTITY_ID_KEY).asString();
+        return headers.find(CommandHeaderType.ENTITY_ID_KEY).asString();
     }
 
 }

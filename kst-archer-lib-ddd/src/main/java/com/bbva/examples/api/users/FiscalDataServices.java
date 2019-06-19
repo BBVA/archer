@@ -2,7 +2,7 @@ package com.bbva.examples.api.users;
 
 import com.bbva.avro.Users;
 import com.bbva.avro.users.FiscalData;
-import com.bbva.common.utils.OptionalRecordHeaders;
+import com.bbva.common.utils.headers.OptionalRecordHeaders;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.write.CommandRecordMetadata;

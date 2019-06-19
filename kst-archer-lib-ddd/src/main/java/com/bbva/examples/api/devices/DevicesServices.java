@@ -1,7 +1,7 @@
 package com.bbva.examples.api.devices;
 
 import com.bbva.avro.Devices;
-import com.bbva.common.utils.OptionalRecordHeaders;
+import com.bbva.common.utils.headers.OptionalRecordHeaders;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.write.CommandRecordMetadata;

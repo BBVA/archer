@@ -1,16 +1,16 @@
 package com.bbva.ddd.domain.commands.write;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
-import com.bbva.common.utils.OptionalRecordHeaders;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.OptionalRecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
@@ -91,7 +91,7 @@ public class Command {
         final String key = UUID.randomUUID().toString();
 
         final RecordHeaders headers = headers(action, entityId, optionalHeaders);
-        final String commandUUID = headers.find(CommandRecord.UUID_KEY).asString();
+        final String commandUUID = headers.find(CommandHeaderType.UUID_KEY).asString();
 
         final Future<RecordMetadata> result;
 
@@ -122,13 +122,13 @@ public class Command {
     private RecordHeaders headers(final String name, final String entityId, final OptionalRecordHeaders optionalHeaders) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(Command.TYPE_COMMAND_VALUE));
-        recordHeaders.add(CommandRecord.UUID_KEY, new ByteArrayValue(UUID.randomUUID().toString()));
-        recordHeaders.add(CommandRecord.NAME_KEY, new ByteArrayValue(name));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY,
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(Command.TYPE_COMMAND_VALUE));
+        recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue(UUID.randomUUID().toString()));
+        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue(name));
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY,
                 new ByteArrayValue(HelperDomain.get().isReplayMode() && !persistent));
         if (entityId != null) {
-            recordHeaders.add(CommandRecord.ENTITY_ID_KEY, new ByteArrayValue(entityId));
+            recordHeaders.add(CommandHeaderType.ENTITY_ID_KEY, new ByteArrayValue(entityId));
         }
 
         if (optionalHeaders != null && optionalHeaders.getList().size() > 0) {

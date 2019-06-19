@@ -1,14 +1,12 @@
 package com.bbva.common.consumers;
 
-import com.bbva.common.utils.OptionalRecordHeaders;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.OptionalRecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.record.TimestampType;
 
 public class CRecord {
-
-    public static final String TYPE_KEY = "type";
-    public static final String FLAG_REPLAY_KEY = "flag.replay";
 
     protected final String topic;
     protected final int partition;
@@ -68,6 +66,6 @@ public class CRecord {
     }
 
     public boolean isReplayMode() {
-        return this.headers.find(FLAG_REPLAY_KEY).asBoolean();
+        return this.headers.find(CommonHeaderType.FLAG_REPLAY_KEY).asBoolean();
     }
 }
