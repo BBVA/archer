@@ -10,6 +10,7 @@ ext {
 
 allprojects {
     repositories {
+        mavenLocal()
         jcenter()
         mavenCentral()
         //maven { url "https://jitpack.io" }
@@ -34,8 +35,9 @@ subprojects {
         compile("org.apache.kafka:kafka-streams:$project.kafka_version")
         compile("org.apache.kafka:kafka_2.11:$project.kafka_version")
         compile('org.scala-lang:scala-library:2.11.8')
-        compile('javax.ws.rs:javax.ws.rs-api:2.0.1')
         compile('org.reflections:reflections:0.9.10')
+
+        implementation('javax.ws.rs:javax.ws.rs-api:2.1.1')
     }
 
     clean {
@@ -74,5 +76,5 @@ subprojects {
 
 
 subprojects {
-    version = '5.6.4'
+    version = '5.6.0'
 }

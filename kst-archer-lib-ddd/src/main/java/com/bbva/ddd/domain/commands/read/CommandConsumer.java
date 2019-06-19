@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.commands.read;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.ddd.domain.RunnableConsumer;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.common.record.TimestampType;

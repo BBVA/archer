@@ -1,14 +1,14 @@
 package com.bbva.ddd.domain.events.write;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
 import com.bbva.common.utils.ByteArrayValue;
-import com.bbva.common.utils.RecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.common.utils.headers.types.EventHeaderType;
 import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import kst.logging.Logger;
 import kst.logging.LoggerFactory;
@@ -76,15 +76,15 @@ public class Event {
     private static RecordHeaders headers(final String productorName, final boolean replay, final String referenceId, final String name) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CRecord.TYPE_KEY, new ByteArrayValue(Event.TYPE_EVENT_VALUE));
-        recordHeaders.add(EventRecord.PRODUCTOR_NAME_KEY, new ByteArrayValue(productorName));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(Event.TYPE_EVENT_VALUE));
+        recordHeaders.add(EventHeaderType.PRODUCTOR_NAME_KEY, new ByteArrayValue(productorName));
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
         if (referenceId != null) {
-            recordHeaders.add(EventRecord.REFERENCE_ID, new ByteArrayValue(referenceId));
+            recordHeaders.add(EventHeaderType.REFERENCE_ID_KEY, new ByteArrayValue(referenceId));
         }
 
         if (name != null) {
-            recordHeaders.add(EventRecord.NAME_KEY, new ByteArrayValue(name));
+            recordHeaders.add(EventHeaderType.NAME_KEY, new ByteArrayValue(name));
         }
 
         logger.debug("CRecord getList: {}", recordHeaders.toString());

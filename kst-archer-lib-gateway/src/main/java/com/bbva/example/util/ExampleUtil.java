@@ -1,14 +1,14 @@
 package com.bbva.example.util;
 
 import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.utils.ByteArrayValue;
-import com.bbva.common.utils.RecordHeaders;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.common.utils.headers.types.EventHeaderType;
 import com.bbva.gateway.config.Configuration;
-import com.bbva.gateway.constants.Constants;
 import org.apache.avro.specific.SpecificRecord;
 
 import java.util.Date;
@@ -58,9 +58,9 @@ public class ExampleUtil<T extends SpecificRecord> {
     private static RecordHeaders generateHeaders(final String key, final Boolean replay, final String commandAction) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommandRecord.NAME_KEY, new ByteArrayValue(commandAction));
-        recordHeaders.add(Constants.HEADER_REFERENCE_ID, new ByteArrayValue(key));
-        recordHeaders.add(CRecord.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
+        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue(commandAction));
+        recordHeaders.add(EventHeaderType.REFERENCE_ID_KEY, new ByteArrayValue(key));
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
 
         return recordHeaders;
     }

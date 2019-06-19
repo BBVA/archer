@@ -26,11 +26,11 @@ dependencies {
     compile "org.apache.avro:avro-maven-plugin:$project.avro_version"
 
     compile 'org.eclipse.jetty:jetty-server:9.2.24.v20180105'
-    compile 'org.eclipse.jetty:jetty-servlet:9.2.24.v20180105'
-    compile 'org.glassfish.jersey.containers:jersey-container-servlet-core:2.25'
-    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:2.25'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
 
+    implementation 'org.eclipse.jetty:jetty-servlet:9.2.24.v20180105'
+    implementation 'org.glassfish.jersey.containers:jersey-container-servlet-core:2.25'
+    implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:2.25'
 }
 
 task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {

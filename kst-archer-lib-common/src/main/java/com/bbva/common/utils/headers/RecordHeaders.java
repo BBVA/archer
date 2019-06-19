@@ -1,5 +1,6 @@
-package com.bbva.common.utils;
+package com.bbva.common.utils.headers;
 
+import com.bbva.common.utils.ByteArrayValue;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
@@ -22,6 +23,10 @@ public class RecordHeaders {
         this.headers = headers;
     }
 
+    public ByteArrayValue find(final HeaderType key) {
+        return this.find(key.getName());
+    }
+
     public ByteArrayValue find(final String key) {
         ByteArrayValue value = null;
         for (final Header header : headers) {
@@ -31,6 +36,14 @@ public class RecordHeaders {
             }
         }
         return value;
+    }
+
+    public void add(final HeaderType key, final HeaderType value) {
+        this.add(key, new ByteArrayValue(value.getName()));
+    }
+
+    public void add(final HeaderType key, final ByteArrayValue value) {
+        this.add(key.getName(), value);
     }
 
     public void add(final String key, final ByteArrayValue value) {
@@ -51,7 +64,7 @@ public class RecordHeaders {
 
     @Override
     public String toString() {
-        
+
         final StringBuilder value = new StringBuilder("[");
         for (final Header header : headers) {
             value.append("{key: ").append(header.key()).append(", value: ").append(ByteArrayValue.Serde.deserializeAs(header.value()).toString()).append("}");

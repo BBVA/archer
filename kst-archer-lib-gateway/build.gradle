@@ -28,7 +28,6 @@ dependencies {
 
     compile 'org.glassfish.jersey.core:jersey-client:2.27'
     compile 'org.glassfish.jersey.core:jersey-server:2.27'
-    compile 'javax.ws.rs:javax.ws.rs-api:2.1.1'
     compile 'com.amazonaws:aws-java-sdk-sns:1.11.463'
     compileOnly 'org.projectlombok:lombok:1.16.16'
 

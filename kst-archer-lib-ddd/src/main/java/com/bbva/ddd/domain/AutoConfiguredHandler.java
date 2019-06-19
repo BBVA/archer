@@ -3,6 +3,7 @@ package com.bbva.ddd.domain;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.consumers.CRecord;
 import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.ddd.domain.annotations.Changelog;
 import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.annotations.Event;
@@ -112,7 +113,7 @@ public class AutoConfiguredHandler implements Handler {
     }
 
     private static String getCommandAction(final CommandRecord commandRecord) {
-        if (commandRecord.recordHeaders().find(CommandRecord.NAME_KEY) != null) {
+        if (commandRecord.recordHeaders().find(CommandHeaderType.NAME_KEY) != null) {
             return commandRecord.name();
         }
         return commandRecord.name();

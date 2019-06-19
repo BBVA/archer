@@ -1,5 +1,6 @@
-package com.bbva.common.utils;
+package com.bbva.common.utils.headers;
 
+import com.bbva.common.utils.ByteArrayValue;
 import org.apache.kafka.common.header.Header;
 
 import java.util.List;
