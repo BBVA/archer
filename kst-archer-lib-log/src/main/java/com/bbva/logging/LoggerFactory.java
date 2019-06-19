@@ -33,10 +33,6 @@ public class LoggerFactory {
             PropertyConfigurator.configure(logPorperties);
 
             MDC.put("hostName", InetAddress.getLocalHost().getHostName());
-            MDC.put("appName",
-                    System.getenv("APPLICATION_NAME") != null
-                            ? System.getenv("APPLICATION_NAME")
-                            : "AppNoConfigured");
 
         } catch (final IOException e) {
             logger.error("Failed to load log4j properties from file", e);
