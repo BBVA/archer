@@ -1,7 +1,8 @@
 dependencies {
 
     compile project(':lib-common')
-
+    compile project(':lib-log')
+    
     compile("io.confluent.ksql:ksql-engine:$project.confluent_version") {
         exclude group: 'org.apache.kafka', module: 'kafka_2.12'
     }

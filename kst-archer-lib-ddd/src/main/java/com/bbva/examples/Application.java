@@ -22,6 +22,8 @@ import com.bbva.examples.aggregates.DeviceAggregate;
 import com.bbva.examples.aggregates.UserAggregate;
 import com.bbva.examples.aggregates.WalletsAggregate;
 import com.bbva.examples.aggregates.user.FiscalDataAggregate;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import com.google.common.collect.Lists;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.state.KeyValueIterator;
@@ -34,7 +36,7 @@ import java.util.Map;
 
 @Config(file = "examples/config.yml")
 public class Application {
-
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
     public static final String EMAIL_TOPIC_SOURCE = FiscalDataAggregate.baseName()
             + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX;
     public static final String PUBLIC_UUID_TOPIC_SOURCE = FiscalDataAggregate.baseName()
@@ -44,7 +46,7 @@ public class Application {
     public static final String TEST_QUERY_STORE_BASENAME = "query_devices";
 
     public static void main(final String[] args) {
-
+        logger.info("test");
         final ApplicationConfig applicationConfig = new AppConfiguration().init();
 
         checkSerializations();

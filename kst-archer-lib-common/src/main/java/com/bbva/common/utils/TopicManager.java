@@ -1,11 +1,11 @@
 package com.bbva.common.utils;
 
 import com.bbva.common.config.ApplicationConfig;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -31,7 +31,8 @@ public class TopicManager {
         configTypes = Collections.unmodifiableMap(configMap);
     }
 
-    public static void createTopics(final Map<String, String> topicNames, final ApplicationConfig config) {
+    public static void createTopics(
+            final Map<String, String> topicNames, final ApplicationConfig config) {
         final Collection<NewTopic> topics = new ArrayList();
         for (final String topicName : topicNames.keySet()) {
             topics.add(createTopic(config, topicName, configTypes.get(topicNames.get(topicName))));
@@ -40,7 +41,8 @@ public class TopicManager {
         createTopics(topics, config);
     }
 
-    public static void createTopicsWithConfig(final Map<String, Map<String, String>> topicNamesWithConfig, final ApplicationConfig config) {
+    public static void createTopicsWithConfig(
+            final Map<String, Map<String, String>> topicNamesWithConfig, final ApplicationConfig config) {
         final Collection<NewTopic> topics = new ArrayList();
         for (final String topicName : topicNamesWithConfig.keySet()) {
             topics.add(createTopic(config, topicName, topicNamesWithConfig.get(topicName)));
@@ -49,24 +51,33 @@ public class TopicManager {
         createTopics(topics, config);
     }
 
-    private static NewTopic createTopic(final ApplicationConfig config, final String topicName, final Map<String, String> topicConfig) {
+    private static NewTopic createTopic(
+            final ApplicationConfig config,
+            final String topicName,
+            final Map<String, String> topicConfig) {
         final NewTopic newTopic;
-        newTopic = new NewTopic(topicName, getProperty(config,
-                ApplicationConfig.PARTITIONS, DEFAULT_PARTITIONS),
-                (short) getProperty(config, ApplicationConfig.REPLICATION_FACTOR, DEFAULT_REPLICATION));
+        newTopic =
+                new NewTopic(
+                        topicName,
+                        getProperty(config, ApplicationConfig.PARTITIONS, DEFAULT_PARTITIONS),
+                        (short) getProperty(config, ApplicationConfig.REPLICATION_FACTOR, DEFAULT_REPLICATION));
         if (topicConfig != null && !topicConfig.isEmpty()) {
             newTopic.configs(topicConfig);
         }
         return newTopic;
     }
 
-    private static void createTopics(final Collection<NewTopic> topics, final ApplicationConfig config) {
+    private static void createTopics(
+            final Collection<NewTopic> topics, final ApplicationConfig config) {
         final AdminClient adminClient = AdminClient.create(config.get());
         adminClient.createTopics(topics);
         adminClient.close();
     }
 
-    private static int getProperty(final ApplicationConfig config, final String property, final int defaultValue) {
-        return config.contains(property) ? Integer.valueOf(config.get(property).toString()) : defaultValue;
+    private static int getProperty(
+            final ApplicationConfig config, final String property, final int defaultValue) {
+        return config.contains(property)
+                ? Integer.valueOf(config.get(property).toString())
+                : defaultValue;
     }
 }

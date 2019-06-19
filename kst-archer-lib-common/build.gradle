@@ -14,7 +14,10 @@ dependencies {
     compile "org.apache.kafka:kafka-clients:$project.kafka_version"
     compile "org.apache.avro:avro:$project.avro_version"
     compile "org.apache.avro:avro-maven-plugin:$project.avro_version"
-    compile 'bbva.ndb:lib-genesis-log:2.0.0'
     compile 'org.yaml:snakeyaml:1.11'
+
+    compile('org.slf4j:slf4j-log4j12:1.7.25')
+    compile('org.slf4j:slf4j-api:1.7.25')
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
 
 }

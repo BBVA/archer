@@ -14,3 +14,8 @@ tests/*
 .gradle/
 build/
 generated-sources/
+kst-archer-lib-ddd/out/*
+kst-archer-lib-data-processors/out/*
+kst-archer-lib-common/out/*
+kst-archer-lib-gateway/out/*
+kst-archer-lib-log/out/*
