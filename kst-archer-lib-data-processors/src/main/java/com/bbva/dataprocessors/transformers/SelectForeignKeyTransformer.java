@@ -1,8 +1,8 @@
 package com.bbva.dataprocessors.transformers;
 
 import com.bbva.dataprocessors.util.ObjectUtils;
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.streams.KeyValue;
 

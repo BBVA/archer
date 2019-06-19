@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.records;
 
-import kst.logging.Logger;
-import kst.logging.LoggerFactory;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
@@ -27,7 +27,7 @@ public class GenericRecordList<V extends SpecificRecord> {
         try {
             final V itemInstance = itemClass.newInstance();
             itemSchema = itemInstance.getSchema();
-            
+
         } catch (final IllegalAccessException | InstantiationException e) {
             logger.error(e.getMessage(), e);
         }
