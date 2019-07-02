@@ -13,7 +13,6 @@ allprojects {
         mavenLocal()
         jcenter()
         mavenCentral()
-        //maven { url "https://jitpack.io" }
         maven { url "http://packages.confluent.io/maven/" }
         maven {
             url "s3://microservices-java-repository/maven/release"
@@ -36,8 +35,6 @@ subprojects {
         compile("org.apache.kafka:kafka_2.11:$project.kafka_version")
         compile('org.scala-lang:scala-library:2.11.8')
         compile('org.reflections:reflections:0.9.10')
-
-        implementation('javax.ws.rs:javax.ws.rs-api:2.1.1')
     }
 
     clean {
@@ -52,7 +49,6 @@ subprojects {
                     'Implementation-Version': project.version)
         }
     }
-
 
     publishing {
         publications {
@@ -73,7 +69,6 @@ subprojects {
         }
     }
 }
-
 
 subprojects {
     version = '7.1.0'
