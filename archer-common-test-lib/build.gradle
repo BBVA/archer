@@ -1,0 +1,9 @@
+dependencies {
+
+    compile project(':common-lib')
+
+    compile 'com.salesforce.kafka.test:kafka-junit4:3.1.1'
+    compile("io.confluent:kafka-schema-registry:$project.confluent_version") {
+        exclude group: 'org.apache.kafka', module: 'kafka_2.12'
+    }
+}

@@ -1,0 +1,14 @@
+dependencies {
+
+    compile project(':common-lib')
+    compile project(':log-lib')
+
+    compile("io.confluent.ksql:ksql-engine:$project.confluent_version") {
+        exclude group: 'org.apache.kafka', module: 'kafka_2.12'
+    }
+    compile "io.confluent.ksql:ksql-parser:$project.confluent_version"
+    compile "io.confluent.ksql:ksql-common:$project.confluent_version"
+    compile "io.confluent.ksql:ksql-metastore:$project.confluent_version"
+    compile "io.confluent.ksql:ksql-serde:$project.confluent_version"
+
+}

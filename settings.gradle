@@ -1,15 +1,15 @@
-rootProject.name = 'archer-lib'
+rootProject.name = 'archer-es-framework'
 
-include 'kst-archer-lib-common'
-include 'kst-archer-lib-common-test'
-include 'kst-archer-lib-log'
-include 'kst-archer-lib-data-processors'
-include 'kst-archer-lib-ddd'
-include 'kst-archer-lib-gateway'
+include 'archer-common-lib'
+include 'archer-common-test-lib'
+include 'archer-log-lib'
+include 'archer-data-processors-lib'
+include 'archer-ddd-lib'
+include 'archer-gateway-lib'
 
-project(":kst-archer-lib-common").name = "lib-common"
-project(":kst-archer-lib-common-test").name = "lib-common-test"
-project(":kst-archer-lib-log").name = "lib-log"
-project(":kst-archer-lib-data-processors").name = "lib-data-processors"
-project(":kst-archer-lib-ddd").name = "lib-ddd"
-project(":kst-archer-lib-gateway").name = "lib-gateway"
+project(":archer-common-lib").name = "common-lib"
+project(":archer-common-test-lib").name = "common-test-lib"
+project(":archer-log-lib").name = "log-lib"
+project(":archer-data-processors-lib").name = "data-processors-lib"
+project(":archer-ddd-lib").name = "ddd-lib"
+project(":archer-gateway-lib").name = "gateway-lib"

@@ -15,7 +15,7 @@ allprojects {
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" }
         maven {
-            url "s3://microservices-java-repository/maven/release"
+            url internalRepositoryURL
             authentication {
                 awsIm(AwsImAuthentication)
             }
@@ -56,12 +56,9 @@ subprojects {
                 from components.java
             }
         }
-    }
-
-    publishing {
         repositories {
             maven {
-                url "s3://microservices-java-repository/maven/release"
+                url internalRepositoryURL
                 authentication {
                     awsIm(AwsImAuthentication)
                 }
@@ -71,5 +68,5 @@ subprojects {
 }
 
 subprojects {
-    version = '7.1.0'
+    version = '8.0.0'
 }

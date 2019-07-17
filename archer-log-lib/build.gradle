@@ -1,0 +1,33 @@
+plugins {
+    id "com.commercehub.gradle.plugin.avro" version "0.9.0"
+}
+
+apply plugin: "com.commercehub.gradle.plugin.avro"
+
+sourceSets {
+    main {
+        java {
+            srcDir 'generated-sources/avro'
+        }
+        resources {
+            exclude 'avro/**'
+        }
+    }
+}
+
+dependencies {
+
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.26'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+    compile group: 'com.lmax', name: 'disruptor', version: '3.2.0'
+
+    compile project(':common-lib')
+}
+
+task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
+    source("src/main/resources/avro/com/bbva")
+    outputDir = file("generated-sources/avro")
+}
+
+compileJava.source(generateAvro.outputs)
