@@ -41,10 +41,11 @@ test.dependsOn instrument
 
 
 def jacoco_exclusions = ['src/test/**',
+                         '**com/bbva/common/consumers/**',
+                         '**/com/bbva/common/utils/serdes/**',
                          '**/model/**',
-                         '**/exception/**',
-                         '**/resources/**',
-                         '**/core/**']
+                         '**/exceptions/**',
+                         '**/resources/**']
 
 jacocoTestReport {
     reports {

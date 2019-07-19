@@ -7,9 +7,6 @@ public class RecordHeader implements Header {
     private String key;
     private byte[] value;
 
-    public RecordHeader() {
-    }
-
     public RecordHeader(final String key, final byte[] value) {
         this.key = key;
         this.value = value;

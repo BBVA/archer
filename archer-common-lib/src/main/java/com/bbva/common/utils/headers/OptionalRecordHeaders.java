@@ -10,9 +10,6 @@ public class OptionalRecordHeaders extends RecordHeaders {
     private static final String CUSTOM_ORIGIN_KEY = "custom.origin";
     private static final String CUSTOM_ACK_KEY = "custom.ack";
 
-    public OptionalRecordHeaders() {
-    }
-
     public OptionalRecordHeaders(final List<Header> headers) {
         super(headers);
     }
