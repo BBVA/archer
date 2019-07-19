@@ -18,8 +18,10 @@ allprojects {
             url internalRepositoryURL
             authentication {
                 awsIm(AwsImAuthentication)
+
             }
         }
+
     }
 }
 
@@ -35,7 +37,18 @@ subprojects {
         compile("org.apache.kafka:kafka_2.11:$project.kafka_version")
         compile('org.scala-lang:scala-library:2.11.8')
         compile('org.reflections:reflections:0.9.10')
+
+        testImplementation 'junit:junit:4.12'
+        testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+        testImplementation group: 'org.powermock', name: 'powermock-mockito-release-full', version: '1.6.4'
+        testImplementation group: 'org.junit', name: 'junit5-api', version: '5.0.0-ALPHA'
+        testImplementation group: 'org.junit', name: 'junit4-runner', version: '5.0.0-ALPHA'
+        testImplementation group: 'org.junit', name: 'junit5-engine', version: '5.0.0-ALPHA'
+
+
     }
+
+    apply from: '../jacoco.gradle'
 
     clean {
         delete 'tests'
@@ -65,6 +78,7 @@ subprojects {
             }
         }
     }
+
 }
 
 subprojects {

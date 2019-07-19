@@ -1,0 +1,94 @@
+apply plugin: 'jacoco'
+
+configurations {
+    jacocoAnt
+    jacocoRuntime
+}
+
+jacoco {
+    toolVersion = "0.8.2"
+    reportsDir = file("tests/reports")
+}
+
+task instrument(dependsOn: [classes, project.configurations.jacocoAnt]) {
+
+    inputs.files classes.outputs.files
+    File outputDir = new File(project.buildDir, 'instrumentedClasses')
+    outputs.dir outputDir
+    doFirst {
+        project.delete(outputDir)
+        ant.taskdef(
+                resource: 'org/jacoco/ant/antlib.xml',
+                classpath: project.configurations.jacocoAnt.asPath,
+                uri: 'jacoco'
+        )
+        def instrumented = false
+        if (file(sourceSets.main.java.outputDir).exists()) {
+            def instrumentedClassedDir = "${outputDir}/${sourceSets.main.java}"
+            ant.'jacoco:instrument'(destdir: instrumentedClassedDir) {
+                fileset(dir: sourceSets.main.java.outputDir, includes: '**/*.class')
+            }
+            sourceSets.test.runtimeClasspath -= files(sourceSets.main.java.outputDir)
+            sourceSets.test.runtimeClasspath += files(instrumentedClassedDir)
+            instrumented = true
+        }
+        if (instrumented) {
+            test.jvmArgs += '-noverify'
+        }
+    }
+}
+test.dependsOn instrument
+
+
+def jacoco_exclusions = ['src/test/**',
+                         '**/model/**',
+                         '**/exception/**',
+                         '**/resources/**',
+                         '**/core/**']
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.enabled true
+        html.destination file("tests/reports")
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: jacoco_exclusions)
+        })
+    }
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: jacoco_exclusions)
+        })
+    }
+    violationRules {
+        rule {
+            limit {
+                counter = "CLASS"
+                minimum = 0.6
+            }
+            limit {
+                counter = "METHOD"
+                minimum = 0.6
+            }
+            limit {
+                counter = "BRANCH"
+                minimum = 0.6
+            }
+            limit {
+                counter = "LINE"
+                minimum = 0.6
+            }
+        }
+    }
+
+}
+
+check.dependsOn jacocoTestCoverageVerification

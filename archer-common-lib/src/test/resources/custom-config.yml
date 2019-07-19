@@ -1,0 +1,6 @@
+app:
+    common:
+        bootstrap.servers: PLAINTEXT://localhost:9092
+    application:
+        schema.registry.url: http://localhost:8081
+        replication.factor: 3
