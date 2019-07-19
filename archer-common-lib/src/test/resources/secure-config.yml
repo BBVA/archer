@@ -1,0 +1,7 @@
+app:
+    common:
+        bootstrap.servers: SASL://localhost:9093
+        sasl.jaas.config: jas-config
+    application:
+        schema.registry.url: http://localhost:8081
+        replication.factor: 3

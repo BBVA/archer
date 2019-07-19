@@ -41,15 +41,66 @@ public class AppConfiguration {
     }
 
     public ApplicationConfig init(final SecureConfig extraConfig) {
-        final Map<String, Object> config = getConfig("common-secure-config.yml", extraConfig.file());
+        final Map<String, Object> config = getConfig("common-secure-config.yml", extraConfig != null ? extraConfig.file() : null);
 
         return configure(config);
     }
 
     public ApplicationConfig init(final Config extraConfig) {
-        final Map<String, Object> config = getConfig("common-config.yml", extraConfig.file());
+        final Map<String, Object> config = getConfig("common-config.yml", extraConfig != null ? extraConfig.file() : null);
 
         return configure(config);
+    }
+
+    public Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
+                                                 final String filename) {
+        final Map<String, Object> properties;
+        try (final InputStream in = classLoader.getResourceAsStream(filename)) {
+            properties = (Map<String, Object>) yaml.load(in);
+
+        } catch (final IOException e) {
+            logger.error("Config file not exists", e);
+            throw new ApplicationException("Config file not exists", e);
+        }
+        return properties;
+    }
+
+    public Map<String, Object> replaceEnvVariables(final Map<String, Object> properties) {
+        for (final Map.Entry property : properties.entrySet()) {
+            if (property.getValue() instanceof String) {
+                final String value = (String) property.getValue();
+                getStringProperty(properties, property, value);
+            } else if (property.getValue() instanceof Integer) {
+                property.setValue(String.valueOf(property.getValue()));
+            } else if (property.getValue() instanceof Map) {
+                property.setValue(replaceEnvVariables((Map<String, Object>) property.getValue()));
+            }
+        }
+        return properties;
+    }
+
+    public Map mergeProperties(final Map common, final Map specific) {
+        for (final Object key : specific.keySet()) {
+            if (specific.get(key) instanceof Map && common.get(key) instanceof Map) {
+                common.put(key, mergeProperties((Map) common.get(key), (Map) specific.get(key)));
+            } else {
+                common.put(key, specific.get(key));
+            }
+        }
+        return common;
+    }
+
+    private <C extends Annotation> C getConfigAnnotation(final Class<C> annotationClass) {
+        final Reflections ref = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(AppConfiguration.class.getPackage().getName().split("\\.")[0],
+                        ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
+                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
+        C configAnnotation = null;
+        for (final Class<?> mainClass : ref.getTypesAnnotatedWith(annotationClass)) {
+            configAnnotation = mainClass.getAnnotation(annotationClass);
+        }
+
+        return configAnnotation;
     }
 
     private ApplicationConfig configure(final Map<String, Object> config) {
@@ -67,15 +118,15 @@ public class AppConfiguration {
         return applicationConfig;
     }
 
-    private static void addConfigProperties(final Map<String, Object> kafkaConfig, final Properties properties,
-                                            final String applicationProperties) {
+    private void addConfigProperties(final Map<String, Object> kafkaConfig, final Properties properties,
+                                     final String applicationProperties) {
         if (kafkaConfig.get(applicationProperties) != null) {
             properties.putAll((Map<String, String>) kafkaConfig.get("common"));
             properties.putAll((Map<String, String>) kafkaConfig.get(applicationProperties));
         }
     }
 
-    private static Map<String, Object> getConfig(final String commonFile, final String extraFile) {
+    private Map<String, Object> getConfig(final String commonFile, final String extraFile) {
         final Yaml yaml = new Yaml();
         final ClassLoader classLoader = AppConfiguration.class.getClassLoader();
         Map<String, Object> properties = getConfigFromFile(yaml, classLoader, commonFile);
@@ -87,34 +138,7 @@ public class AppConfiguration {
         return properties;
     }
 
-    public static Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
-                                                        final String filename) {
-        final Map<String, Object> properties;
-        try (final InputStream in = classLoader.getResourceAsStream(filename)) {
-            properties = (Map<String, Object>) yaml.load(in);
-
-        } catch (final IOException e) {
-            logger.error("Config file not exists", e);
-            throw new ApplicationException("Config file not exists", e);
-        }
-        return properties;
-    }
-
-    public static Map<String, Object> replaceEnvVariables(final Map<String, Object> properties) {
-        for (final Map.Entry property : properties.entrySet()) {
-            if (property.getValue() instanceof String) {
-                final String value = (String) property.getValue();
-                getStringProperty(properties, property, value);
-            } else if (property.getValue() instanceof Integer) {
-                property.setValue(String.valueOf(property.getValue()));
-            } else if (property.getValue() instanceof Map) {
-                property.setValue(replaceEnvVariables((Map<String, Object>) property.getValue()));
-            }
-        }
-        return properties;
-    }
-
-    public static void getStringProperty(final Map<String, Object> properties, final Map.Entry property, final String value) {
+    private void getStringProperty(final Map<String, Object> properties, final Map.Entry property, final String value) {
         if (value.startsWith("${")) {
             final String[] envVariable = value.replace("${", "").replace("}", "").split(":", 2);
             final String envValue = System.getenv(envVariable[0]);
@@ -132,30 +156,6 @@ public class AppConfiguration {
 
             property.setValue(fieldValue);
         }
-    }
-
-    public static Map mergeProperties(final Map common, final Map specific) {
-        for (final Object key : specific.keySet()) {
-            if (specific.get(key) instanceof Map && common.get(key) instanceof Map) {
-                common.put(key, mergeProperties((Map) common.get(key), (Map) specific.get(key)));
-            } else {
-                common.put(key, specific.get(key));
-            }
-        }
-        return common;
-    }
-
-    public static <C extends Annotation> C getConfigAnnotation(final Class<C> annotationClass) {
-        final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(AppConfiguration.class.getPackage().getName().split("\\.")[0],
-                        ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
-                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
-        C configAnnotation = null;
-        for (final Class<?> mainClass : ref.getTypesAnnotatedWith(annotationClass)) {
-            configAnnotation = mainClass.getAnnotation(annotationClass);
-        }
-
-        return configAnnotation;
     }
 
 }
