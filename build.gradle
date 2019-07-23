@@ -38,14 +38,12 @@ subprojects {
         compile('org.scala-lang:scala-library:2.11.8')
         compile('org.reflections:reflections:0.9.10')
 
+        testCompile 'org.mockito:mockito-all:1.10.19'
+        testCompile 'org.powermock:powermock-mockito-release-full:1.6.4'
         testImplementation 'junit:junit:4.12'
-        testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
-        testImplementation group: 'org.powermock', name: 'powermock-mockito-release-full', version: '1.6.4'
-        testImplementation group: 'org.junit', name: 'junit5-api', version: '5.0.0-ALPHA'
-        testImplementation group: 'org.junit', name: 'junit4-runner', version: '5.0.0-ALPHA'
-        testImplementation group: 'org.junit', name: 'junit5-engine', version: '5.0.0-ALPHA'
-
-
+        testImplementation 'org.junit:junit4-runner:5.0.0-ALPHA'
+        testImplementation 'org.junit:junit5-api:5.0.0-ALPHA'
+        testImplementation 'org.junit:junit5-engine:5.0.0-ALPHA'
     }
 
     apply from: '../jacoco.gradle'
