@@ -24,7 +24,7 @@ public class RecordHeaders {
     }
 
     public ByteArrayValue find(final HeaderType key) {
-        return this.find(key.getName());
+        return find(key.getName());
     }
 
     public ByteArrayValue find(final String key) {
@@ -39,11 +39,11 @@ public class RecordHeaders {
     }
 
     public void add(final HeaderType key, final HeaderType value) {
-        this.add(key, new ByteArrayValue(value.getName()));
+        add(key, new ByteArrayValue(value.getName()));
     }
 
     public void add(final HeaderType key, final ByteArrayValue value) {
-        this.add(key.getName(), value);
+        add(key.getName(), value);
     }
 
     public void add(final String key, final ByteArrayValue value) {
@@ -55,7 +55,7 @@ public class RecordHeaders {
     }
 
     public void addAll(final RecordHeaders recordHeaders) {
-        this.headers.addAll(recordHeaders.getList());
+        headers.addAll(recordHeaders.getList());
     }
 
     public List<Header> getList() {

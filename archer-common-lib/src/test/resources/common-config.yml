@@ -13,7 +13,7 @@ app:
         acks: ${ARCHER_PRODUCER_ACKS:all}
         retries: ${ARCHER_PRODUCER_RETRIES:1}
         enable.idempotence: ${ARCHER_PRODUCER_ENABLE_IDEMPOTENCE:true}
-        transactional.id.prefix: ${ARCHER_PRODUCER_TRANSACTIONAL_ID_PREFIX}
+        transactional.id.prefix: ${ARCHER_PRODUCER_TRANSACTIONAL_ID_PREFIX:prefix}
     streams:
         application.server: ${ARCHER_APPLICATION_SERVER}
         application.name: ${ARCHER_APPLICATION_NAME}

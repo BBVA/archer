@@ -33,15 +33,14 @@ public final class States {
 
         if (readableStores.containsKey(storeName)) {
             store = readableStores.get(storeName);
+        } else if (states.containsKey(name)) {
+            final KafkaStreams streams = states.get(name).streams();
+            store = new ReadableStore<>(storeName, streams);
+            readableStores.put(storeName, store);
         } else {
-            if (states.containsKey(name)) {
-                final KafkaStreams streams = states.get(name).streams();
-                store = new ReadableStore<>(storeName, streams);
-                readableStores.put(storeName, store);
-            } else {
-                throw new StoreNotFoundException("State not found :" + name);
-            }
+            throw new StoreNotFoundException("State not found :" + name);
         }
+
         return store;
     }
 

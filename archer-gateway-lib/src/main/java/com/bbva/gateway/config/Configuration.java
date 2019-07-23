@@ -79,13 +79,14 @@ public class Configuration {
 
     private static Map<String, Object> getConfig(final Config extraConfig) {
         final Yaml yaml = new Yaml();
+        final AppConfiguration appConfiguration = new AppConfiguration();
         final ClassLoader classLoader = Gateway.class.getClassLoader();
-        Map<String, Object> properties = AppConfiguration.getConfigFromFile(yaml, classLoader, COMMON_CONFIG);
+        Map<String, Object> properties = appConfiguration.getConfigFromFile(yaml, classLoader, COMMON_CONFIG);
         if (extraConfig != null) {
-            properties = AppConfiguration.mergeProperties(properties, AppConfiguration.getConfigFromFile(yaml, classLoader, extraConfig.file()));
+            properties = appConfiguration.mergeProperties(properties, appConfiguration.getConfigFromFile(yaml, classLoader, extraConfig.file()));
         }
 
-        properties = AppConfiguration.replaceEnvVariables(properties);
+        properties = appConfiguration.replaceEnvVariables(properties);
         return properties;
     }
 
@@ -112,10 +113,11 @@ public class Configuration {
 
     public static LinkedHashMap<String, Object> getServiceConfig(final String file) {
         final Yaml yaml = new Yaml();
+        final AppConfiguration appConfiguration = new AppConfiguration();
         final ClassLoader classLoader = Gateway.class.getClassLoader();
-        Map<String, Object> properties = AppConfiguration.getConfigFromFile(yaml, classLoader, file);
+        Map<String, Object> properties = appConfiguration.getConfigFromFile(yaml, classLoader, file);
 
-        properties = AppConfiguration.replaceEnvVariables(properties);
+        properties = appConfiguration.replaceEnvVariables(properties);
         return (LinkedHashMap<String, Object>) properties;
     }
 }

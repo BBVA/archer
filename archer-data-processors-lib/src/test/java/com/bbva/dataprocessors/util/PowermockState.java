@@ -1,4 +1,4 @@
-package com.bbva.common.util;
+package com.bbva.dataprocessors.util;
 
 import java.util.HashSet;
 import java.util.Set;
