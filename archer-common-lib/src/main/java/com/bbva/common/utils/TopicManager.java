@@ -19,21 +19,34 @@ public class TopicManager {
 
     static {
         final Map<String, Map<String, String>> configMap = new HashMap<>();
-        configMap.put(ApplicationConfig.EVENTS_RECORD_TYPE, Collections.emptyMap());
-        configMap.put(ApplicationConfig.COMMANDS_RECORD_TYPE, Collections.emptyMap());
-        configMap.put(ApplicationConfig.CHANGELOG_RECORD_TYPE, Collections.emptyMap());
-        configMap.put(ApplicationConfig.COMMON_RECORD_TYPE, Collections.emptyMap());
+
+        final Map<String, String> commandOrEventConfig = new HashMap<>();
+        commandOrEventConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
+        commandOrEventConfig.put(TopicConfig.RETENTION_BYTES_CONFIG, "-1");
+        commandOrEventConfig.put(TopicConfig.RETENTION_MS_CONFIG, "-1");
+        configMap.put(ApplicationConfig.EVENTS_RECORD_TYPE, commandOrEventConfig);
+        configMap.put(ApplicationConfig.COMMANDS_RECORD_TYPE, commandOrEventConfig);
+
+        final Map<String, String> changelogConfig = new HashMap<>();
+        changelogConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
+        changelogConfig.put(TopicConfig.RETENTION_BYTES_CONFIG, "-1");
+        changelogConfig.put(TopicConfig.RETENTION_MS_CONFIG, "-1");
+        configMap.put(ApplicationConfig.CHANGELOG_RECORD_TYPE, changelogConfig);
+
         final Map<String, String> snapshotConfig = new HashMap<>();
         snapshotConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
         snapshotConfig.put(TopicConfig.MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0");
         snapshotConfig.put(TopicConfig.MIN_COMPACTION_LAG_MS_CONFIG, "0");
         configMap.put(ApplicationConfig.SNAPSHOT_RECORD_TYPE, snapshotConfig);
+
+        configMap.put(ApplicationConfig.COMMON_RECORD_TYPE, Collections.emptyMap());
+
         configTypes = Collections.unmodifiableMap(configMap);
     }
 
     public static void createTopics(
             final Map<String, String> topicNames, final ApplicationConfig config) {
-        final Collection<NewTopic> topics = new ArrayList();
+        final Collection<NewTopic> topics = new ArrayList<>();
         for (final String topicName : topicNames.keySet()) {
             topics.add(createTopic(config, topicName, configTypes.get(topicNames.get(topicName))));
         }
@@ -43,7 +56,7 @@ public class TopicManager {
 
     public static void createTopicsWithConfig(
             final Map<String, Map<String, String>> topicNamesWithConfig, final ApplicationConfig config) {
-        final Collection<NewTopic> topics = new ArrayList();
+        final Collection<NewTopic> topics = new ArrayList<>();
         for (final String topicName : topicNamesWithConfig.keySet()) {
             topics.add(createTopic(config, topicName, topicNamesWithConfig.get(topicName)));
         }

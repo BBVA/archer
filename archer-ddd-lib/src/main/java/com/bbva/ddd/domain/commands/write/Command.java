@@ -37,6 +37,14 @@ public class Command {
         this.persistent = persistent;
     }
 
+    /**
+     * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
+     *
+     * @param data     Data to send as command in event store
+     * @param callback Callback executed when command is stored
+     * @param <V>      Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final ProducerCallback callback) {
         return create(data, null, callback);
     }
