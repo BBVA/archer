@@ -14,13 +14,13 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" }
-        maven {
+        /*maven {
             url internalRepositoryURL
             authentication {
                 awsIm(AwsImAuthentication)
 
             }
-        }
+        }*/
 
     }
 }
@@ -63,7 +63,7 @@ subprojects {
         }
     }
 
-    publishing {
+    /*publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
@@ -77,7 +77,7 @@ subprojects {
                 }
             }
         }
-    }
+    }*/
 
 }
 

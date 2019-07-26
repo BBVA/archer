@@ -63,7 +63,8 @@ public class EntityStateBuilder<K, V extends SpecificRecordBase> implements Stat
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalLocalStoreName), keySerde, valueSerde)
                 .withLoggingEnabled(TopicManager.configTypes.get(ApplicationConfig.SNAPSHOT_RECORD_TYPE));
 
-        builder.addStateStore(entityStore).stream(sourceChangelogTopicName, Consumed.with(keySerde, valueSerde))
+        builder.addStateStore(entityStore)
+                .stream(sourceChangelogTopicName, Consumed.with(keySerde, valueSerde))
                 .transform(() -> new EntityTransformer<>(entityStore.name()), entityStore.name())
                 .to(snapshotTopicName, Produced.with(keySerde, valueSerde));
 

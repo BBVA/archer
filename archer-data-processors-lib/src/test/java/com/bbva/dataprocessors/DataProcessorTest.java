@@ -15,7 +15,6 @@ import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.LinkedList;
@@ -23,7 +22,6 @@ import java.util.LinkedList;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PrepareForTest(DataProcessor.class)
-@PowerMockIgnore("javax.management.*")
 public class DataProcessorTest {
 
     @DisplayName("Create DataProcessor and get it ok")

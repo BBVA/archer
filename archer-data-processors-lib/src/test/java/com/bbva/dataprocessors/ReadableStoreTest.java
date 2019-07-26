@@ -15,13 +15,11 @@ import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PrepareForTest({DefaultProducer.class, CachedProducer.class})
-@PowerMockIgnore("javax.management.*")
 public class ReadableStoreTest {
 
     @DisplayName("Create readable store ok")
