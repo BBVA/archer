@@ -62,4 +62,25 @@ public class TopicManagerTest {
         Assertions.assertNull(ex);
     }
 
+    @DisplayName("Creation topic with config ok")
+    @Test
+    public void createTopicWithConfigOk() throws Exception {
+        PowerMockito.spy(TopicManager.class);
+        final Method m = Whitebox.getMethod(TopicManager.class, Collection.class, ApplicationConfig.class);
+        PowerMockito.doNothing().when(TopicManager.class, m).withArguments(Matchers.any(Collection.class), Matchers.any(ApplicationConfig.class));
+
+        final Map<String, String> commandTopic = new HashMap<>();
+        commandTopic.put("topic" + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, ApplicationConfig.EVENTS_RECORD_TYPE);
+
+        Exception ex = null;
+        final Map<String, Map<String, String>> topicName = new HashMap<>();
+        topicName.put("topicName", TopicManager.configTypes.get(ApplicationConfig.CHANGELOG_RECORD_TYPE));
+        try {
+            TopicManager.createTopicsWithConfig(topicName, new AppConfiguration().init());
+        } catch (final Exception e) {
+            ex = e;
+        }
+        Assertions.assertNull(ex);
+    }
+
 }
