@@ -1,0 +1,8 @@
+custom:
+    baseName: basename
+gateway:
+    uri: http://localhost
+    retry:
+        enabled: true
+        seconds: 2000
+        attemps: 3

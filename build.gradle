@@ -14,13 +14,13 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" }
-        /*maven {
+        maven {
             url internalRepositoryURL
             authentication {
                 awsIm(AwsImAuthentication)
 
             }
-        }*/
+        }
 
     }
 }
@@ -46,7 +46,7 @@ subprojects {
         testImplementation 'org.junit:junit5-engine:5.0.0-ALPHA'
     }
 
-    apply from: '../jacoco.gradle'
+    apply from: '../ jacoco.gradle '
 
     clean {
         delete 'tests'
@@ -61,7 +61,7 @@ subprojects {
         }
     }
 
-    /*publishing {
+    publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
@@ -75,7 +75,7 @@ subprojects {
                 }
             }
         }
-    }*/
+    }
 
 }
 

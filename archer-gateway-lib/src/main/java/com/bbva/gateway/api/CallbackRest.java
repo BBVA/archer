@@ -29,7 +29,7 @@ public class CallbackRest {
     private static IAsyncGatewayService gateway;
 
     @PostConstruct
-    private static void init() {
+    public static void init() {
         final Config annotationConfig = Configuration.findConfigAnnotation();
         final List<Class> serviceClasses = Configuration.getServiceClasses(annotationConfig.servicesPackage());
         config = new Configuration().init(annotationConfig);
