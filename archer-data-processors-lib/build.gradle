@@ -11,4 +11,5 @@ dependencies {
     compile "io.confluent.ksql:ksql-metastore:$project.confluent_version"
     compile "io.confluent.ksql:ksql-serde:$project.confluent_version"
 
+    testCompile project(path: ':common-lib', configuration: 'commonTestClasses')
 }

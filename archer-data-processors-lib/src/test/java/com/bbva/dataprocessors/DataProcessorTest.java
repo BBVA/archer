@@ -1,12 +1,12 @@
 package com.bbva.dataprocessors;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.dataflows.DataflowProcessorBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContextSupplier;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContextSupplier;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;

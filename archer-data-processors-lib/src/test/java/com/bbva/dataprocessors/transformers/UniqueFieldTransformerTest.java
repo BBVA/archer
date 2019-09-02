@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.transformers;
 
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.transformers.records.SpecificRecordImpl;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import com.bbva.dataprocessors.util.beans.Person;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.processor.ProcessorContext;

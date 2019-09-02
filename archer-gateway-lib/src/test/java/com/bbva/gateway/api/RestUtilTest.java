@@ -1,7 +1,7 @@
 package com.bbva.gateway.api;
 
 import com.bbva.common.exceptions.ApplicationException;
-import com.bbva.gateway.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

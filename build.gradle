@@ -46,7 +46,7 @@ subprojects {
         testImplementation 'org.junit:junit5-engine:5.0.0-ALPHA'
     }
 
-    apply from: '../ jacoco.gradle '
+    apply from: '../jacoco.gradle'
 
     clean {
         delete 'tests'

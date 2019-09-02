@@ -1,10 +1,10 @@
 package com.bbva.dataprocessors.builders.sql;
 
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.builders.sql.queries.CreateTableQueryBuilder;
 import com.bbva.dataprocessors.builders.sql.queries.SelectQueryBuilder;
 import com.bbva.dataprocessors.builders.sql.queries.WithPropertiesClauseBuilder;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContext;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import io.confluent.ksql.KsqlContext;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

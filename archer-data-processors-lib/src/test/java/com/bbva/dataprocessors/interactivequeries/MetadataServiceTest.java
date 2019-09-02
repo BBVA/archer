@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.interactivequeries;
 
 import com.bbva.common.exceptions.ApplicationException;
-import com.bbva.dataprocessors.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.state.HostInfo;
 import org.apache.kafka.streams.state.StreamsMetadata;

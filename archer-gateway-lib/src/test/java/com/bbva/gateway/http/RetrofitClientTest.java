@@ -1,6 +1,6 @@
 package com.bbva.gateway.http;
 
-import com.bbva.gateway.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import okhttp3.ResponseBody;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

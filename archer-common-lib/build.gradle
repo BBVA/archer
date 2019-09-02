@@ -21,3 +21,18 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
 
 }
+
+configurations {
+    commonTestClasses {
+        extendsFrom(testRuntime)
+    }
+}
+
+task testJar(type: Jar) {
+    classifier = 'test'
+    from sourceSets.test.output
+}
+
+artifacts {
+    commonTestClasses testJar
+}

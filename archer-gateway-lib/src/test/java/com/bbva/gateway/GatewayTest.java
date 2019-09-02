@@ -1,8 +1,8 @@
 package com.bbva.gateway;
 
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.DomainBuilder;
 import com.bbva.gateway.config.annotations.Config;
-import com.bbva.gateway.util.PowermockExtension;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;

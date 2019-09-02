@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.transformers;
 
-import com.bbva.dataprocessors.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.util.beans.Person;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.processor.ProcessorContext;
@@ -62,7 +62,7 @@ public class EntityTransformerTest {
 
         final EntityTransformer entityTransformer = new EntityTransformer("stateStoreName");
         entityTransformer.init(processorContext);
-        Person newPerson = new Person();
+        final Person newPerson = new Person();
         newPerson.setPhone("123456789");
         final KeyValue transformed = entityTransformer.transform("key", newPerson);
 

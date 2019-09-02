@@ -2,7 +2,7 @@ package com.bbva.dataprocessors;
 
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.DefaultProducer;
-import com.bbva.dataprocessors.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreType;

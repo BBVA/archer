@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.interactivequeries;
 
-import com.bbva.dataprocessors.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;

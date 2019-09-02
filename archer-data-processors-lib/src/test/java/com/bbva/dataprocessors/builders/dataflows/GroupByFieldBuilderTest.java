@@ -1,10 +1,10 @@
 package com.bbva.dataprocessors.builders.dataflows;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.builders.dataflows.states.GroupByFieldStateBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;

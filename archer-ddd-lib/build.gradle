@@ -25,6 +25,8 @@ dependencies {
     compile "org.apache.avro:avro-maven-plugin:$project.avro_version"
 
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
+
+    testCompile project(path: ':common-lib', configuration: 'commonTestClasses')
 }
 
 task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {

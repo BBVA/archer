@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors;
 
-import com.bbva.dataprocessors.util.PowermockExtension;
+import com.bbva.common.util.PowermockExtension;
 import org.apache.kafka.streams.KafkaStreams;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

@@ -2,9 +2,9 @@ package com.bbva.dataprocessors.contexts;
 
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContextSupplier;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContextSupplier;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.ksql.KsqlContext;
 import org.junit.gen5.api.Assertions;

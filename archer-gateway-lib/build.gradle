@@ -24,6 +24,8 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.5.0'
     compileOnly 'org.projectlombok:lombok:1.18.6'
     compile 'com.amazonaws:aws-java-sdk-sns:1.11.463'
+
+    testCompile project(path: ':common-lib', configuration: 'commonTestClasses')
 }
 
 task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {

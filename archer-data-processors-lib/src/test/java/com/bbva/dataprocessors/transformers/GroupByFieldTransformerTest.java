@@ -1,12 +1,12 @@
 package com.bbva.dataprocessors.transformers;
 
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
 import com.bbva.dataprocessors.records.GenericRecordList;
 import com.bbva.dataprocessors.transformers.records.PersonalData;
 import com.bbva.dataprocessors.transformers.records.SpecificRecordImpl;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import org.apache.avro.generic.GenericData;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.streams.KeyValue;

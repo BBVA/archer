@@ -1,6 +1,7 @@
 package com.bbva.gateway.service;
 
 import com.bbva.common.consumers.CRecord;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
@@ -11,7 +12,6 @@ import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.gateway.service.impl.HttpAsyncGatewayServiceImpl;
 import com.bbva.gateway.service.records.PersonalData;
-import com.bbva.gateway.util.PowermockExtension;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

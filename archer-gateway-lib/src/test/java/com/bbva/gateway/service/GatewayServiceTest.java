@@ -2,6 +2,7 @@ package com.bbva.gateway.service;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.CRecord;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
@@ -18,7 +19,6 @@ import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.gateway.service.impl.GatewayServiceImpl;
 import com.bbva.gateway.service.impl.beans.Person;
 import com.bbva.gateway.service.records.PersonalData;
-import com.bbva.gateway.util.PowermockExtension;
 import org.apache.kafka.common.record.TimestampType;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.gen5.api.Assertions;
@@ -133,5 +133,5 @@ public class GatewayServiceTest {
                 () -> Assertions.assertNotNull(finalService)
         );
     }
-    
+
 }

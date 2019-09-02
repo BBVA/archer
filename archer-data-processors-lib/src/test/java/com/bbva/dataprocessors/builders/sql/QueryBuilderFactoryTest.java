@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.builders.sql;
 
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.builders.sql.queries.*;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;

@@ -2,11 +2,11 @@ package com.bbva.dataprocessors.builders.dataflows;
 
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import com.bbva.dataprocessors.builders.dataflows.states.EntityStateBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
-import com.bbva.dataprocessors.util.PowermockExtension;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;

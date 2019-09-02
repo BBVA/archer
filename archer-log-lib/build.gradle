@@ -23,6 +23,8 @@ dependencies {
     compile group: 'com.lmax', name: 'disruptor', version: '3.2.0'
 
     compile project(':common-lib')
+
+    testCompile project(path: ':common-lib', configuration: 'commonTestClasses')
 }
 
 task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
