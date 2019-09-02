@@ -16,6 +16,7 @@ public class CreateTableQueryBuilder extends QueryBuilder implements CreateQuery
     private StringBuilder query = new StringBuilder();
 
     public CreateTableQueryBuilder(final String name) {
+        super();
         this.name = name;
     }
 

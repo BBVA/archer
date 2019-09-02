@@ -5,8 +5,8 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class CommandRecordMetadata extends PRecordMetadata {
 
-    private String commandId;
-    private String entityId;
+    private final String commandId;
+    private final String entityId;
 
     public CommandRecordMetadata(final RecordMetadata recordMetadata, final String commandId, final String entityId) {
         super(recordMetadata);
@@ -15,10 +15,10 @@ public class CommandRecordMetadata extends PRecordMetadata {
     }
 
     public String commandId() {
-        return this.commandId;
+        return commandId;
     }
 
     public String entityId() {
-        return this.entityId;
+        return entityId;
     }
 }

@@ -34,7 +34,7 @@ public class RestUtil {
             Thread.currentThread().join();
         } catch (final InterruptedException e) { //NOSONAR
             logger.error("Thread problem", e);
-            throw new ApplicationException("Thread problem");
+            throw new ApplicationException("Thread problem", e);
         }
     }
 
@@ -45,7 +45,7 @@ public class RestUtil {
             server = HttpServer.create(new InetSocketAddress(LOCALHOST, port), 0);
         } catch (final IOException e) {
             logger.error("Problem creating rest service", e);
-            throw new ApplicationException("Problem creating rest service");
+            throw new ApplicationException("Problem creating rest service", e);
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop(0)));

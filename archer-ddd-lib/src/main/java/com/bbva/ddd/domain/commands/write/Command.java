@@ -85,30 +85,26 @@ public class Command {
         final String key = UUID.randomUUID().toString();
 
         final RecordHeaders headers = headers(action, key, entityId, optionalHeaders);
-        final String commandUUID = headers.find(CommandHeaderType.UUID_KEY).asString();
 
         final Future<RecordMetadata> result;
-
         if (record != null) {
             result = producer.add(new PRecord<>(topic, key, record, headers), callback);
         } else if (recordClass != null) {
-
             result = producer.remove(new PRecord<>(topic, key, null, headers), recordClass, callback);
-
         } else {
             throw new ApplicationException("Record or recordClass params must be set");
         }
 
         final CommandRecordMetadata recordedMessageMetadata;
         try {
+            final String commandUUID = headers.find(CommandHeaderType.UUID_KEY).asString();
             recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, entityId);
+            logger.info("CommandRecord created: " + commandUUID);
         } catch (final InterruptedException | ExecutionException e) {
             logger.error("Cannot resolve the promise", e);
             throw new ProduceException("Cannot resolve the promise", e);
 
         }
-
-        logger.info("CommandRecord created: " + commandUUID);
 
         return recordedMessageMetadata;
     }

@@ -102,7 +102,7 @@ public class Configuration {
 
 
     public static List<Class> getServiceClasses(final String servicesPackage) {
-        final Reflections ref = new Reflections(!servicesPackage.equals("") ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0]);
+        final Reflections ref = new Reflections(!"".equals(servicesPackage) ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0]);
         final List<Class> serviceClasses = new ArrayList<>();
         for (final Class<?> mainClass : ref.getTypesAnnotatedWith(ServiceConfig.class)) {
             serviceClasses.add(mainClass);

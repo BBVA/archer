@@ -8,9 +8,9 @@ import com.bbva.common.utils.headers.RecordHeaders;
 public class RunnableProducer implements Runnable {
 
     private final LogEvent eventLog;
-    CachedProducer logsProducer;
+    private final CachedProducer logsProducer;
     private final LogsAppenderCallback logsAppenderCallback = new LogsAppenderCallback();
-    String sourceName;
+    private final String sourceName;
 
     public RunnableProducer(final String baseName, final LogEvent logEvent, final CachedProducer producer) {
         eventLog = logEvent;

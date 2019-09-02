@@ -15,7 +15,7 @@ public class PowermockState {
         return origClassLoader;
     }
 
-    void setOrigClassLoader(final ClassLoader origClassLoader) {
+    public void setOrigClassLoader(final ClassLoader origClassLoader) {
         this.origClassLoader = origClassLoader;
     }
 
@@ -29,8 +29,7 @@ public class PowermockState {
     }
 
     public String[] getPackagesToIgnoreAsArray() {
-        final String[] result = packagesToIgnore.toArray(new String[packagesToIgnore.size()]);
-        return result;
+        return packagesToIgnore.toArray(new String[packagesToIgnore.size()]);
     }
 
 }

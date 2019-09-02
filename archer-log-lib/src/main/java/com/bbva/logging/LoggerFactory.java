@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
 
-public class LoggerFactory {
-    static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoggerFactory.class);
+public final class LoggerFactory {
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoggerFactory.class);
 
     private static final String LOG4J_PROPS_PATH = "custom_log4j.properties";
     private static final String CUSTOM_LOG_PROPS_PATH = "appender_log4j.properties";

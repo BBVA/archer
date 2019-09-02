@@ -5,20 +5,20 @@ import java.util.List;
 
 public class FromClauseBuilder {
 
-    private String streamName;
-    private List<JoinClauseBuilder> joinBuilderList = new LinkedList<>();
+    private final String streamName;
+    private final List<JoinClauseBuilder> joinBuilderList = new LinkedList<>();
     private String clause = "";
 
-    public FromClauseBuilder(String streamName) {
+    public FromClauseBuilder(final String streamName) {
         this.streamName = streamName;
     }
 
-    public FromClauseBuilder(CreateQueryBuilder createQueryBuilder) {
-        this.streamName = createQueryBuilder.name();
+    public FromClauseBuilder(final CreateQueryBuilder createQueryBuilder) {
+        streamName = createQueryBuilder.name();
     }
 
-    public FromClauseBuilder join(JoinClauseBuilder joinBuilder) {
-        this.joinBuilderList.add(joinBuilder);
+    public FromClauseBuilder join(final JoinClauseBuilder joinBuilder) {
+        joinBuilderList.add(joinBuilder);
         return this;
     }
 
@@ -26,8 +26,8 @@ public class FromClauseBuilder {
         clause += "FROM " + streamName + " ";
 
         if (!joinBuilderList.isEmpty()) {
-            StringBuilder clauseBuilder = new StringBuilder(clause);
-            for (JoinClauseBuilder join : joinBuilderList) {
+            final StringBuilder clauseBuilder = new StringBuilder(clause);
+            for (final JoinClauseBuilder join : joinBuilderList) {
                 clauseBuilder.append(join.build());
             }
             clause = clauseBuilder.toString();

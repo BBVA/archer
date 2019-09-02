@@ -12,7 +12,7 @@ import com.bbva.dataprocessors.contexts.sql.SQLProcessorContext;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContextSupplier;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -60,7 +60,7 @@ public final class DataProcessor {
         return this;
     }
 
-    public DataProcessor add(final LinkedList<QueryBuilder> queryBuilders) {
+    public DataProcessor add(final List<QueryBuilder> queryBuilders) {
         for (final QueryBuilder builder : queryBuilders) {
             add(builder);
         }

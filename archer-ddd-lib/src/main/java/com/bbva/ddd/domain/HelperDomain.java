@@ -3,7 +3,7 @@ package com.bbva.ddd.domain;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.ddd.common.CommonHelper;
 
-public class HelperDomain extends CommonHelper {
+public final class HelperDomain extends CommonHelper {
     private static HelperDomain instance;
     private boolean replayMode;
 

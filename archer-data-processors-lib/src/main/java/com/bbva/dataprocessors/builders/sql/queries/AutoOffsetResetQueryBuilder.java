@@ -11,10 +11,11 @@ public class AutoOffsetResetQueryBuilder extends QueryBuilder {
     private String query;
 
     public AutoOffsetResetQueryBuilder() {
+        super();
         resetType = EARLIEST;
     }
 
-    public AutoOffsetResetQueryBuilder(String resetType) {
+    public AutoOffsetResetQueryBuilder(final String resetType) {
         this.resetType = resetType;
     }
 
@@ -22,7 +23,7 @@ public class AutoOffsetResetQueryBuilder extends QueryBuilder {
         return new AutoOffsetResetQueryBuilder();
     }
 
-    public static AutoOffsetResetQueryBuilder create(String resetType) {
+    public static AutoOffsetResetQueryBuilder create(final String resetType) {
         return new AutoOffsetResetQueryBuilder(resetType);
     }
 

@@ -24,7 +24,7 @@ public class LogsAppender extends AppenderSkeleton {
     private CachedProducer logsProducer;
     private String hostName;
     private String logsSinkName;
-    final ExecutorService executor = Executors.newFixedThreadPool(1);
+    private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
     @Override
     public void activateOptions() {

@@ -30,18 +30,16 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
 
     public GroupByFieldTransformer(final String stateStoreName, final Class<V> valueClass) {
         this.stateStoreName = stateStoreName;
-        this.genericRecordList = new GenericRecordList<>(valueClass);
+        genericRecordList = new GenericRecordList<>(valueClass);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void init(final ProcessorContext context) {
         this.context = context;
         stateStore = (KeyValueStore<K, GenericRecord>) this.context.getStateStore(stateStoreName);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public KeyValue<K, GenericRecord> transform(final K newKey, final V newValue) {
         K resultKey = null;
         GenericRecord resultValue = null;
@@ -60,7 +58,7 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
                     record = iterator.next();
                     final List<V> resultValueList = genericRecordList.getList(record.value);
 
-                    if (resultValueList.size() > 0) {
+                    if (!resultValueList.isEmpty()) {
                         final Method resultValueListItemIdMethod = resultValueList
                                 .get(0)
                                 .getClass()

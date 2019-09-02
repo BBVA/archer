@@ -8,7 +8,8 @@ public class DropTableQueryBuilder extends QueryBuilder {
     private final String tableName;
     private final boolean deleteTopic;
 
-    public DropTableQueryBuilder(String tableName, boolean deleteTopic) {
+    public DropTableQueryBuilder(final String tableName, final boolean deleteTopic) {
+        super();
         this.tableName = tableName;
         this.deleteTopic = deleteTopic;
     }

@@ -6,45 +6,45 @@ import java.util.LinkedList;
 
 public class QueryBuilderFactory {
 
-    public static LinkedList<DropStreamQueryBuilder> dropStreams(LinkedList<CreateStreamQueryBuilder> streamsBuilder,
-            boolean deleteTopic) {
-        LinkedList<DropStreamQueryBuilder> dropStreamBuilderList = new LinkedList<>();
-        for (CreateStreamQueryBuilder builder : streamsBuilder) {
+    public static LinkedList<DropStreamQueryBuilder> dropStreams(final LinkedList<CreateStreamQueryBuilder> streamsBuilder,
+                                                                 final boolean deleteTopic) {
+        final LinkedList<DropStreamQueryBuilder> dropStreamBuilderList = new LinkedList<>();
+        for (final CreateStreamQueryBuilder builder : streamsBuilder) {
             dropStreamBuilderList.add(new DropStreamQueryBuilder(builder.name(), deleteTopic));
         }
         return dropStreamBuilderList;
     }
 
-    public static DropStreamQueryBuilder dropStream(String streamName, boolean deleteTopic) {
+    public static DropStreamQueryBuilder dropStream(final String streamName, final boolean deleteTopic) {
         return new DropStreamQueryBuilder(streamName, deleteTopic);
     }
 
-    public static DropStreamQueryBuilder dropStream(CreateStreamQueryBuilder streamBuilder, boolean deleteTopic) {
+    public static DropStreamQueryBuilder dropStream(final CreateStreamQueryBuilder streamBuilder, final boolean deleteTopic) {
         return new DropStreamQueryBuilder(streamBuilder.name(), deleteTopic);
     }
 
-    public static LinkedList<DropTableQueryBuilder> dropTables(LinkedList<CreateTableQueryBuilder> tableBuilders,
-            boolean deleteTopic) {
-        LinkedList<DropTableQueryBuilder> dropStreamBuilderList = new LinkedList<>();
-        for (CreateTableQueryBuilder builder : tableBuilders) {
+    public static LinkedList<DropTableQueryBuilder> dropTables(final LinkedList<CreateTableQueryBuilder> tableBuilders,
+                                                               final boolean deleteTopic) {
+        final LinkedList<DropTableQueryBuilder> dropStreamBuilderList = new LinkedList<>();
+        for (final CreateTableQueryBuilder builder : tableBuilders) {
             dropStreamBuilderList.add(new DropTableQueryBuilder(builder.name(), deleteTopic));
         }
         return dropStreamBuilderList;
     }
 
-    public static DropTableQueryBuilder dropTable(String streamName, boolean deleteTopic) {
+    public static DropTableQueryBuilder dropTable(final String streamName, final boolean deleteTopic) {
         return new DropTableQueryBuilder(streamName, deleteTopic);
     }
 
-    public static DropTableQueryBuilder dropTable(CreateStreamQueryBuilder tableBuilder, boolean deleteTopic) {
+    public static DropTableQueryBuilder dropTable(final CreateStreamQueryBuilder tableBuilder, final boolean deleteTopic) {
         return new DropTableQueryBuilder(tableBuilder.name(), deleteTopic);
     }
 
-    public static CreateStreamQueryBuilder createStream(String streamName) {
+    public static CreateStreamQueryBuilder createStream(final String streamName) {
         return new CreateStreamQueryBuilder(streamName);
     }
 
-    public static CreateTableQueryBuilder createTable(String tableName) {
+    public static CreateTableQueryBuilder createTable(final String tableName) {
         return new CreateTableQueryBuilder(tableName);
     }
 
@@ -56,37 +56,37 @@ public class QueryBuilderFactory {
         return new WithPropertiesClauseBuilder();
     }
 
-    public static FromClauseBuilder createFrom(String streamName) {
+    public static FromClauseBuilder createFrom(final String streamName) {
         return new FromClauseBuilder(streamName);
     }
 
-    public static FromClauseBuilder createFrom(CreateQueryBuilder createQueryBuilder) {
+    public static FromClauseBuilder createFrom(final CreateQueryBuilder createQueryBuilder) {
         return new FromClauseBuilder(createQueryBuilder);
     }
 
-    public static JoinClauseBuilder createJoin(String type, String name, String criteria) {
+    public static JoinClauseBuilder createJoin(final String type, final String name, final String criteria) {
         return new JoinClauseBuilder(type, name, criteria);
     }
 
-    public static JoinClauseBuilder createJoin(String type, String name, String criteria,
-            JoinClauseBuilder.WithinClauseBuilder within) {
+    public static JoinClauseBuilder createJoin(final String type, final String name, final String criteria,
+                                               final JoinClauseBuilder.WithinClauseBuilder within) {
         return new JoinClauseBuilder(type, name, criteria, within);
     }
 
-    public static JoinClauseBuilder createJoin(String type, CreateQueryBuilder createQueryBuilder, String criteria) {
+    public static JoinClauseBuilder createJoin(final String type, final CreateQueryBuilder createQueryBuilder, final String criteria) {
         return new JoinClauseBuilder(type, createQueryBuilder, criteria);
     }
 
-    public static JoinClauseBuilder createJoin(String type, CreateQueryBuilder createQueryBuilder, String criteria,
-            JoinClauseBuilder.WithinClauseBuilder within) {
+    public static JoinClauseBuilder createJoin(final String type, final CreateQueryBuilder createQueryBuilder, final String criteria,
+                                               final JoinClauseBuilder.WithinClauseBuilder within) {
         return new JoinClauseBuilder(type, createQueryBuilder, criteria, within);
     }
 
-    public static JoinClauseBuilder.WithinClauseBuilder createWithin(String before, String after) {
+    public static JoinClauseBuilder.WithinClauseBuilder createWithin(final String before, final String after) {
         return JoinClauseBuilder.createWithinClause(before, after);
     }
 
-    public static JoinClauseBuilder.WithinClauseBuilder createWithin(String nTime) {
+    public static JoinClauseBuilder.WithinClauseBuilder createWithin(final String nTime) {
         return JoinClauseBuilder.createWithinClause(nTime);
     }
 }

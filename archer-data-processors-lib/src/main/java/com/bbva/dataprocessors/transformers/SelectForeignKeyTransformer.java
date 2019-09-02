@@ -21,12 +21,11 @@ public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends En
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public KeyValue<K, V> transform(final K key, final V value) {
         KeyValue<K, V> resultKeyValue = null;
 
-        final V oldValue = this.stateStore.get(key);
-        final V newValue = (oldValue != null && value != null) ? (V) ObjectUtils.merge(oldValue, value) : value;
+        final V oldValue = stateStore.get(key);
+        final V newValue = oldValue != null && value != null ? (V) ObjectUtils.merge(oldValue, value) : value;
         stateStore.put(key, newValue);
 
         try {

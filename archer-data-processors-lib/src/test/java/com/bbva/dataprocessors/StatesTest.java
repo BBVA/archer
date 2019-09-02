@@ -43,9 +43,7 @@ public class StatesTest {
         final KafkaStreams.State state = states.getStoreState("test");
 
 
-        Assertions.assertAll("states",
-                () -> Assertions.assertEquals(state.isRunning(), false)
-        );
+        Assertions.assertEquals(state.isRunning(), false);
     }
 
     @DisplayName("Add state running and get it")
@@ -61,10 +59,7 @@ public class StatesTest {
         states.add("test", builder);
         final KafkaStreams.State state = states.getStoreState("test");
 
-
-        Assertions.assertAll("states",
-                () -> Assertions.assertEquals(state.isRunning(), true)
-        );
+        Assertions.assertEquals(state.isRunning(), true);
     }
 
     @DisplayName("Get store not found")
@@ -73,13 +68,12 @@ public class StatesTest {
         Assertions.assertThrows(StoreNotFoundException.class, () -> {
             final States states = States.get();
             states.getStore("test");
-
         });
     }
 
     @DisplayName("Add state running and get it")
     @Test
-    public void GetStateStoreOk() throws Exception {
+    public void getStateStoreOk() throws Exception {
         final ProcessorBuilder builder = PowerMockito.mock(ProcessorBuilder.class);
         final KafkaStreams stream = PowerMockito.mock(KafkaStreams.class);
 
@@ -91,9 +85,6 @@ public class StatesTest {
         final ReadableStore store = states.getStore("test");
         final ReadableStore cachedStore = states.getStore("test");
 
-
-        Assertions.assertAll("stores",
-                () -> Assertions.assertEquals(store, cachedStore)
-        );
+        Assertions.assertEquals(store, cachedStore);
     }
 }

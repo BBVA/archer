@@ -14,46 +14,46 @@ public class SelectQueryBuilder extends QueryBuilder {
     private String query;
 
     public SelectQueryBuilder() {
-
+        super();
     }
 
     public SelectQueryBuilder addQueryFields(final String selectExpression) {
-        this.select = selectExpression;
+        select = selectExpression;
         return this;
     }
 
     public SelectQueryBuilder addQueryFields(final List<String> selectExpressionList) {
-        this.select = String.join(", ", selectExpressionList);
+        select = String.join(", ", selectExpressionList);
         return this;
     }
 
     public SelectQueryBuilder from(final String streamName) {
-        this.from = new FromClauseBuilder(streamName);
+        from = new FromClauseBuilder(streamName);
         return this;
     }
 
     public SelectQueryBuilder from(final FromClauseBuilder fromClause) {
-        this.from = fromClause;
+        from = fromClause;
         return this;
     }
 
     public SelectQueryBuilder from(final CreateQueryBuilder createQueryBuilder) {
-        this.from = new FromClauseBuilder(createQueryBuilder.name());
+        from = new FromClauseBuilder(createQueryBuilder.name());
         return this;
     }
 
     public SelectQueryBuilder where(final String whereExpression) {
-        this.where = whereExpression;
+        where = whereExpression;
         return this;
     }
 
     public SelectQueryBuilder groupBy(final String groupByExpression) {
-        this.groupBy = groupByExpression;
+        groupBy = groupByExpression;
         return this;
     }
 
     public SelectQueryBuilder having(final String havingExpression) {
-        this.having = havingExpression;
+        having = havingExpression;
         return this;
     }
 
@@ -78,7 +78,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 
         queryBuilder.append(";");
 
-        this.query = queryBuilder.toString();
+        query = queryBuilder.toString();
         return query;
     }
 }

@@ -6,43 +6,43 @@ public class JoinClauseBuilder {
     public static final String LEFT = "LEFT";
     public static final String INNER = "INNER";
 
-    private String type;
-    private String criteria;
-    private String name;
+    private final String type;
+    private final String criteria;
+    private final String name;
     private WithinClauseBuilder within;
 
-    public JoinClauseBuilder(String type, String name, String criteria) {
+    public JoinClauseBuilder(final String type, final String name, final String criteria) {
         this.type = type;
         this.name = name;
         this.criteria = criteria;
     }
 
-    public JoinClauseBuilder(String type, String name, String criteria, WithinClauseBuilder within) {
+    public JoinClauseBuilder(final String type, final String name, final String criteria, final WithinClauseBuilder within) {
         this.type = type;
         this.name = name;
         this.criteria = criteria;
         this.within = within;
     }
 
-    public JoinClauseBuilder(String type, CreateQueryBuilder createQueryBuilder, String criteria) {
+    public JoinClauseBuilder(final String type, final CreateQueryBuilder createQueryBuilder, final String criteria) {
         this.type = type;
-        this.name = createQueryBuilder.name();
+        name = createQueryBuilder.name();
         this.criteria = criteria;
     }
 
-    public JoinClauseBuilder(String type, CreateQueryBuilder createQueryBuilder, String criteria,
-            WithinClauseBuilder within) {
+    public JoinClauseBuilder(final String type, final CreateQueryBuilder createQueryBuilder, final String criteria,
+                             final WithinClauseBuilder within) {
         this.type = type;
-        this.name = createQueryBuilder.name();
+        name = createQueryBuilder.name();
         this.criteria = criteria;
         this.within = within;
     }
 
-    public static WithinClauseBuilder createWithinClause(String before, String after) {
+    public static WithinClauseBuilder createWithinClause(final String before, final String after) {
         return new WithinClauseBuilder(before, after);
     }
 
-    public static WithinClauseBuilder createWithinClause(String nTime) {
+    public static WithinClauseBuilder createWithinClause(final String nTime) {
         return new WithinClauseBuilder(nTime);
     }
 
@@ -56,12 +56,12 @@ public class JoinClauseBuilder {
         private String after;
         private String nTime;
 
-        WithinClauseBuilder(String before, String after) {
+        WithinClauseBuilder(final String before, final String after) {
             this.before = before;
             this.after = after;
         }
 
-        public WithinClauseBuilder(String nTime) {
+        public WithinClauseBuilder(final String nTime) {
             this.nTime = nTime;
         }
 

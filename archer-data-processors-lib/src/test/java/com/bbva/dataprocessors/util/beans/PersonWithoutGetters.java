@@ -5,10 +5,7 @@ public class PersonWithoutGetters {
     private String name;
     private String lastName;
     private String phone;
-
-    public PersonWithoutGetters() {
-    }
-
+    
     public PersonWithoutGetters(final String phone) {
         this.phone = phone;
     }

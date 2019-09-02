@@ -19,7 +19,7 @@ public class AnnotationUtilTest {
     public void getAllAnnotationsOk() {
         final List<Class> classes = AnnotationUtil.findAllAnnotatedClasses(RunWith.class);
 
-        Assertions.assertTrue(classes.size() > 0);
+        Assertions.assertFalse(classes.isEmpty());
     }
 
     @DisplayName("get all annotated classes ok")
@@ -27,7 +27,7 @@ public class AnnotationUtilTest {
     public void getAllAnnotationsWithHandlerOk() {
         final List<Class> classes = AnnotationUtil.findAllAnnotatedClasses(RunWith.class, new AutoConfiguredHandler());
 
-        Assertions.assertTrue(classes.size() > 0);
+        Assertions.assertFalse(classes.isEmpty());
     }
 
     @DisplayName("map aggregates ok")
@@ -36,7 +36,7 @@ public class AnnotationUtilTest {
         final Map<String, Class<? extends AggregateBase>> classes = AnnotationUtil.mapAggregates(new AutoConfiguredHandler());
 
         //Recover personal aggregate
-        Assertions.assertTrue(classes.size() >= 1);
+        Assertions.assertFalse(classes.isEmpty());
     }
 
 }

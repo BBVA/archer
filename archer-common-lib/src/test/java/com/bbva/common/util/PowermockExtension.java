@@ -73,7 +73,6 @@ public class PowermockExtension implements InstancePostProcessor, AfterEachExten
         registerProxyframework(defaultMockLoader);
 
         final Class<?> newTestClass = defaultMockLoader.loadClass(origClass.getName());
-        final Object newTestInstance = newTestClass.newInstance();
         Method newTestMethod = null;
         final String origSignature = origMethod.toGenericString();
         for (final Method mth : newTestClass.getDeclaredMethods()) {
@@ -87,7 +86,7 @@ public class PowermockExtension implements InstancePostProcessor, AfterEachExten
         }
 
         final Object testDescriptor = Whitebox.getInternalState(context, "testDescriptor");
-        Whitebox.setInternalState(context, "testInstance", newTestInstance);
+        Whitebox.setInternalState(context, "testInstance", newTestClass.newInstance());
         Whitebox.setInternalState(testDescriptor, "testClass", (Object) newTestClass);
         Whitebox.setInternalState(testDescriptor, "testMethod", newTestMethod);
     }

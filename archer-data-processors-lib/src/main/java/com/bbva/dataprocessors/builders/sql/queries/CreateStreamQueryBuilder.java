@@ -17,6 +17,7 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
     private StringBuilder query;
 
     public CreateStreamQueryBuilder(final String name) {
+        super();
         this.name = name;
     }
 
@@ -41,7 +42,7 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
     }
 
     public CreateStreamQueryBuilder partitionBy(final String partitionByField) {
-        this.partitionBy = partitionByField;
+        partitionBy = partitionByField;
         return this;
     }
 
@@ -52,7 +53,7 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
 
     @Override
     protected String build() {
-        StringBuilder columnsClause = new StringBuilder();
+        final StringBuilder columnsClause = new StringBuilder();
         if (!columnsDefinition.isEmpty()) {
             final List<String> columnsList = new ArrayList<>();
             for (final String prop : columnsDefinition.keySet()) {

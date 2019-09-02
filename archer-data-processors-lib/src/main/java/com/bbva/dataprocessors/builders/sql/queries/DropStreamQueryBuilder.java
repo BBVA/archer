@@ -8,7 +8,8 @@ public class DropStreamQueryBuilder extends QueryBuilder {
     private final String streamName;
     private final boolean deleteTopic;
 
-    public DropStreamQueryBuilder(String streamName, boolean deleteTopic) {
+    public DropStreamQueryBuilder(final String streamName, final boolean deleteTopic) {
+        super();
         this.streamName = streamName;
         this.deleteTopic = deleteTopic;
     }
