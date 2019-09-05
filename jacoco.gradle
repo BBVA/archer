@@ -45,6 +45,7 @@ def jacoco_exclusions = ['src/test/**',
                          '**/com/bbva/common/utils/serdes/**',
                          '**/com/bbva/archer/avro/gateway/**',
                          '**/com/bbva/avro/**',
+                         '**/com/bbva/ddd/domain/aggregates/**',
                          '**/model/**',
                          '**/exceptions/**',
                          '**/resources/**']

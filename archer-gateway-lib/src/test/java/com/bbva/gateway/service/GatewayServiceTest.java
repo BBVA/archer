@@ -128,10 +128,7 @@ public class GatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders));
 
-        final IGatewayService<Person> finalService = service;
-        Assertions.assertAll("GatewayService",
-                () -> Assertions.assertNotNull(finalService)
-        );
+        Assertions.assertNotNull(service);
     }
 
 }

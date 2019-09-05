@@ -22,37 +22,30 @@ public class PersonalData extends org.apache.avro.specific.SpecificRecordBase im
     /**
      * First name of the user
      */
-    @Deprecated
     public String name;
     /**
      * First family name of the user
      */
-    @Deprecated
     public String firstLastname;
     /**
      * Second family name of the user (not in all countries)
      */
-    @Deprecated
     public String secondLastname;
     /**
      * Nationality of the user
      */
-    @Deprecated
     public String nationality;
     /**
      * Identity document of the user
      */
-    @Deprecated
     public String identityDocument;
     /**
      * Country of birth of the user
      */
-    @Deprecated
     public String birthCountry;
     /**
      * Birth date of the user
      */
-    @Deprecated
     public String birthday;
 
     /**

@@ -93,10 +93,10 @@ public class CommandTest {
         HelperDomain.create(new ApplicationConfig());
         final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
 
-        Assertions.assertThrows(ApplicationException.class, () -> {
-            command.delete(null,
-                    PersonalData.class, new DefaultProducerCallback());
-        });
+        Assertions.assertThrows(ApplicationException.class, () ->
+                command.delete(null,
+                        PersonalData.class, new DefaultProducerCallback())
+        );
 
     }
 

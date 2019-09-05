@@ -1,6 +1,5 @@
-package com.bbva.dataprocessors.utils;
+package com.bbva.dataprocessors.util;
 
-import com.bbva.dataprocessors.util.ObjectUtils;
 import com.bbva.dataprocessors.util.beans.Person;
 import com.bbva.dataprocessors.util.beans.PersonNoDefaultConstructor;
 import com.bbva.dataprocessors.util.beans.PersonWithoutGetters;

@@ -99,7 +99,7 @@ public class Command {
         try {
             final String commandUUID = headers.find(CommandHeaderType.UUID_KEY).asString();
             recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, entityId);
-            logger.info("CommandRecord created: " + commandUUID);
+            logger.info("CommandRecord created: {}", commandUUID);
         } catch (final InterruptedException | ExecutionException e) {
             logger.error("Cannot resolve the promise", e);
             throw new ProduceException("Cannot resolve the promise", e);

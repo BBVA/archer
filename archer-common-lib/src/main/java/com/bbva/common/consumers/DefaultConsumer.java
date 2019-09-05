@@ -82,7 +82,7 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
 
                     if (lastOffset > 0) {
 
-                        replayConsumer.seekToBeginning(Arrays.asList(topicPartition));
+                        replayConsumer.seekToBeginning(Collections.singletonList(topicPartition));
 
                         replayConsumer.position(topicPartition);
 

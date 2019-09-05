@@ -58,7 +58,7 @@ public abstract class HttpGatewayService
 
         try {
             final HttpBean responseChangelog = new HttpBean(response.code(),
-                    response.body() != null ? ResponseBody.class.cast(response.body()).string() : "",
+                    response.body() != null ? ((ResponseBody) response.body()).string() : "",
                     response.headers().toMultimap());
             return om.writeValueAsString(responseChangelog);
         } catch (final IOException e) {

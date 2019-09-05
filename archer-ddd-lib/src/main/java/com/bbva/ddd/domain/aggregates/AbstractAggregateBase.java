@@ -14,7 +14,7 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     private ApplyRecordCallback applyRecordCallback;
     private DeleteRecordCallback<K, V> deleteRecordCallback;
 
-    public AbstractAggregateBase(final K id, final V data) {
+    AbstractAggregateBase(final K id, final V data) {
         this.id = id;
         this.data = data;
     }
@@ -41,11 +41,11 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
 
     @Override
     public final void setApplyRecordCallback(final ApplyRecordCallback apply) {
-        this.applyRecordCallback = apply;
+        applyRecordCallback = apply;
     }
 
     public final void setDeleteRecordCallback(final DeleteRecordCallback apply) {
-        this.deleteRecordCallback = apply;
+        deleteRecordCallback = apply;
     }
 
     @Override

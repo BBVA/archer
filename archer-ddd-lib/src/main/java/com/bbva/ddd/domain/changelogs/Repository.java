@@ -65,9 +65,9 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return baseName;
     }
 
-    public AggregateBase create(String key, final V value, final CommandRecord commandMessage,
+    public AggregateBase create(final String aggregateKey, final V value, final CommandRecord commandMessage,
                                 final ProducerCallback callback) {
-        key = (key == null) ? commandMessage.entityUuid() : key;
+        final String key = aggregateKey == null ? commandMessage.entityUuid() : aggregateKey;
 
         try {
             value.put("uuid", key);

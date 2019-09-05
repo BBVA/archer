@@ -21,7 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
-import static com.bbva.gateway.constants.Constants.*;
+import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;
+import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
 
 public abstract class GatewayService<T>
         implements IGatewayService<T> {
@@ -71,7 +72,7 @@ public abstract class GatewayService<T>
 
     private void saveChangelogAndProcessOutput(final CRecord record, final T response, final boolean replay) {
         if (!replay) {
-            saveChangelog(record, response, replay);
+            saveChangelog(record, response, false);
         }
         processResult(record, response);
     }
@@ -141,8 +142,7 @@ public abstract class GatewayService<T>
     }
 
     protected static Boolean isReplay(final CRecord record) {
-        return record.recordHeaders() != null
-                ? record.isReplayMode() : false;
+        return record.recordHeaders() != null && record.isReplayMode();
     }
 
     protected static void handleOutPutted(final Object o, final Exception e) {

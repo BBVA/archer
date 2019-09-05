@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain.commands.read;
+package com.bbva.ddd.domain.changelogs;
 
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
@@ -13,8 +13,8 @@ import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.exceptions.AggregateDependenciesException;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
-import com.bbva.ddd.domain.changelogs.Repository;
 import com.bbva.ddd.domain.changelogs.aggregate.PersonalDataAggregate;
+import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.commands.write.records.PersonalData;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;

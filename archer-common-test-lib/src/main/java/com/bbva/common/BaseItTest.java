@@ -16,7 +16,7 @@ public class BaseItTest {
     @ClassRule
     public static final KafkaTestResource kafkaTestResource = new KafkaTestResource();
 
-    protected static ApplicationConfig appConfig;
+    private static ApplicationConfig appConfig;
 
     @BeforeClass
     public static void setUpKafka() {

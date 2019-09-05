@@ -47,7 +47,7 @@ public class EntityTransformerTest {
                 () -> Assertions.assertNotNull(transformed),
                 () -> Assertions.assertEquals("key", transformed.key),
                 () -> Assertions.assertTrue(transformed.value instanceof Person),
-                () -> Assertions.assertEquals("name", Person.class.cast(transformed.value).getName())
+                () -> Assertions.assertEquals("name", ((Person) transformed.value).getName())
         );
     }
 
@@ -70,8 +70,8 @@ public class EntityTransformerTest {
                 () -> Assertions.assertNotNull(transformed),
                 () -> Assertions.assertEquals("key", transformed.key),
                 () -> Assertions.assertTrue(transformed.value instanceof Person),
-                () -> Assertions.assertEquals("name", Person.class.cast(transformed.value).getName()),
-                () -> Assertions.assertEquals("123456789", Person.class.cast(transformed.value).getPhone())
+                () -> Assertions.assertEquals("name", ((Person) transformed.value).getName()),
+                () -> Assertions.assertEquals("123456789", ((Person) transformed.value).getPhone())
         );
     }
 

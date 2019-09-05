@@ -108,7 +108,7 @@ public class PowermockExtension implements InstancePostProcessor, AfterEachExten
             proxyFrameworkClass = Class.forName("org.powermock.api.extension.proxyframework.ProxyFrameworkImpl", false, classLoader);
         } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(
-                    "Extension API internal error: org.powermock.api.extension.proxyframework.ProxyFrameworkImpl could not be located in classpath.");
+                    "Extension API internal error: org.powermock.api.extension.proxyframework.ProxyFrameworkImpl could not be located in classpath.", e);
         }
 
         final Class<?> proxyFrameworkRegistrar;
@@ -131,7 +131,7 @@ public class PowermockExtension implements InstancePostProcessor, AfterEachExten
             final String[] preliminaryClassesToLoadByMockClassloader,
             final String[] packagesToIgnore,
             final MockTransformer... extraMockTransformers) {
-        ClassLoader mockLoader = null;
+        final ClassLoader mockLoader;
         final String[] classesToLoadByMockClassloader = makeSureArrayContainsTestClassName(
                 preliminaryClassesToLoadByMockClassloader, testClass.getName());
         if ((classesToLoadByMockClassloader == null || classesToLoadByMockClassloader.length == 0) && !hasMockPolicyProvidedClasses(testClass)) {

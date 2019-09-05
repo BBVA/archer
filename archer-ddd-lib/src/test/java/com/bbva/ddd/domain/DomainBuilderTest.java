@@ -43,9 +43,7 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
 
-        Assertions.assertThrows(NullPointerException.class, () -> {
-            DomainBuilder.get();
-        });
+        Assertions.assertThrows(NullPointerException.class, () -> DomainBuilder.get());
     }
 
     @DisplayName("Add processors to domain ok")

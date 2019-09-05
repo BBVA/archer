@@ -17,11 +17,6 @@ public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {
     }
 
     @Override
-    public void postInitActions() {
-        super.postInitActions();
-    }
-
-    @Override
     public String getId(final Object response) {
         return null;
     }

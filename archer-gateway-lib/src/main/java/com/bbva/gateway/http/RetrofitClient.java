@@ -31,19 +31,19 @@ public class RetrofitClient {
                 .addConverterFactory(GsonConverterFactory.create(gson)).build();
     }
 
-    public static Response call(final Retrofit retrofitClient, final HttpRequest request, Map<String, String> queryParams) {
+    public static Response call(final Retrofit retrofitClient, final HttpRequest request, final Map<String, String> queryParams) {
         final Client client = retrofitClient.create(Client.class);
         final Call<ResponseBody> call;
-        queryParams = queryParams != null ? queryParams : new HashMap<>();
+        final Map<String, String> callQueryParams = queryParams != null ? queryParams : new HashMap<>();
         switch (request.getMethod()) {
             case HttpMethod.GET:
-                call = client.get(request.getHeaders(), queryParams);
+                call = client.get(request.getHeaders(), callQueryParams);
                 break;
             case HttpMethod.POST:
-                call = client.post(request.getBody(), request.getHeaders(), queryParams);
+                call = client.post(request.getBody(), request.getHeaders(), callQueryParams);
                 break;
             default:
-                call = client.post(request.getBody(), request.getHeaders(), queryParams);
+                call = client.post(request.getBody(), request.getHeaders(), callQueryParams);
                 break;
         }
 

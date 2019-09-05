@@ -36,8 +36,7 @@ public class AutoConfiguredHandler implements Handler {
         }
     }
 
-    private List<Method> setAnnotatedActions(Class<?> type) {
-        final List<Method> methods = new ArrayList<>();
+    private void setAnnotatedActions(Class<?> type) {
         while (type != Object.class) {
             final List<Method> allMethods = new ArrayList<>(Arrays.asList(type.getDeclaredMethods()));
             for (final Method method : allMethods) {
@@ -57,7 +56,6 @@ public class AutoConfiguredHandler implements Handler {
             }
             type = type.getSuperclass();
         }
-        return methods;
     }
 
     @Override
@@ -103,8 +101,9 @@ public class AutoConfiguredHandler implements Handler {
             try {
                 toExecuteMethod.invoke(null, record);
             } catch (final IllegalAccessException | InvocationTargetException e) {
-                logger.error("Error executing method: " + toExecuteMethod.getName(), e);
-                throw new ApplicationException("Error executing method: " + toExecuteMethod.getName(), e);
+                final String errorMsg = String.format("Error executing method: %s", toExecuteMethod.getName());
+                logger.error(errorMsg, e);
+                throw new ApplicationException(errorMsg, e);
             }
         } else {
             logger.info("Event not handled");

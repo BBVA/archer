@@ -9,16 +9,16 @@ public class ActionHandler {
 
     @Event(baseName = "eventName")
     public void processEvent() {
-
+        //Do nothing
     }
 
     @Command(baseName = "commandName", commandAction = "create")
     public static void processCommand(final CommandRecord commandRecord) {
-
+        //Do nothing
     }
 
     @Changelog(baseName = "eventName")
     public void processChangelog() {
-
+        //Do nothing
     }
 }

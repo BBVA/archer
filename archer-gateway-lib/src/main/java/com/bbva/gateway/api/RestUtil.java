@@ -22,13 +22,13 @@ public class RestUtil {
     public static final String LOCALHOST = "localhost";
 
     public static void startRestCallBack(final Map<String, Object> callbackConfig) {
-        final Integer port = callbackConfig.get(GATEWAY_REST_PORT) != null ? Integer.valueOf(callbackConfig.get(GATEWAY_REST_PORT).toString())
+        final int port = callbackConfig.get(GATEWAY_REST_PORT) != null ? Integer.valueOf(callbackConfig.get(GATEWAY_REST_PORT).toString())
                 : DEFAULT_PORT;
         final String resource = callbackConfig.get(GATEWAY_REST_RESOURCE) != null
                 ? (String) callbackConfig.get(GATEWAY_REST_RESOURCE) : DEFAULT_RESOURCE;
         startServer(port, resource);
 
-        logger.info("Rest endpoint callback " + resource + " started started at port: " + port);
+        logger.info("Rest endpoint callback {} started started at port: {}", resource, port);
 
         try {
             Thread.currentThread().join();

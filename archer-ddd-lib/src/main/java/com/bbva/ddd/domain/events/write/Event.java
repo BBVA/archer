@@ -27,7 +27,7 @@ public class Event {
     private final String topic;
 
     public Event(final String topicBaseName, final ApplicationConfig applicationConfig) {
-        this.topic = topicBaseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX;
+        topic = topicBaseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX;
         producer = new CachedProducer(applicationConfig);
     }
 
@@ -50,10 +50,11 @@ public class Event {
     }
 
     private <V extends SpecificRecord> EventRecordMetadata generateEvent(
-            String key, final String producerName, final V record,
+            final String eventKey, final String producerName, final V record,
             final ProducerCallback callback, final boolean replay, final CRecord referenceRecord, final String name) {
         logger.debug("Generating event by {}", producerName);
-        key = (key != null) ? key : UUID.randomUUID().toString();
+
+        final String key = eventKey != null ? eventKey : UUID.randomUUID().toString();
 
         final RecordHeaders headers = headers(producerName, replay, referenceRecord, name);
 

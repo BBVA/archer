@@ -109,7 +109,7 @@ public class CachedProducerTest {
 
         producer.add(new PRecord<>("test", new Integer(1), new Long(1), new RecordHeaders()), null);
         producer.add(new PRecord<>("test", new Bytes("bytes".getBytes()), ByteBuffer.allocate(1), new RecordHeaders()), null);
-        producer.add(new PRecord<>("test", "bytes".getBytes(), new Boolean(true), new RecordHeaders()), null);
+        producer.add(new PRecord<>("test", "bytes".getBytes(), Boolean.TRUE, new RecordHeaders()), null);
         final Future mockedFuture = producer.add(new PRecord<>("test", new GenericRecordImpl(), new SpecificRecordImpl(), new RecordHeaders()), null);
 
         Assertions.assertAll("producer",

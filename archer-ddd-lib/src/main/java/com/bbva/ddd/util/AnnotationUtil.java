@@ -66,11 +66,8 @@ public final class AnnotationUtil {
                         ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
 
-        for (final Class<?> aggregateClass : ref.getTypesAnnotatedWith(annotation)) {
-            handlers.add(aggregateClass);
-        }
+        handlers.addAll(ref.getTypesAnnotatedWith(annotation));
         return handlers;
     }
-
 
 }

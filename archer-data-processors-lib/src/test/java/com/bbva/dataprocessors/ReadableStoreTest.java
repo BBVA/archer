@@ -46,7 +46,7 @@ public class ReadableStoreTest {
         PowerMockito.when(keyValueStore, "get", Mockito.any(String.class)).thenReturn("value");
 
         final ReadableStore store = new ReadableStore("test_store", kafkaStreams);
-        final Boolean exists = store.exists("key");
+        final boolean exists = store.exists("key");
         final String value = (String) store.findById("key");
 
         Assertions.assertAll("stores",
@@ -65,11 +65,8 @@ public class ReadableStoreTest {
         PowerMockito.when(keyValueStore, "get", Mockito.any(String.class)).thenReturn(null);
 
         final ReadableStore store = new ReadableStore("test_store", kafkaStreams);
-        final Boolean exists = store.exists("key");
 
-        Assertions.assertAll("stores",
-                () -> Assertions.assertFalse(exists)
-        );
+        Assertions.assertFalse(store.exists("key"));
     }
 
     @DisplayName("Find all, tange and check num entries")

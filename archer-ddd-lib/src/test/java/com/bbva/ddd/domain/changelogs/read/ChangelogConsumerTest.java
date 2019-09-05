@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain.commands.read;
+package com.bbva.ddd.domain.changelogs.read;
 
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
@@ -6,8 +6,6 @@ import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
-import com.bbva.ddd.domain.changelogs.read.ChangelogConsumer;
-import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

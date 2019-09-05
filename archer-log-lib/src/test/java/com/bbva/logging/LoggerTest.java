@@ -1,6 +1,5 @@
-package com.bbva.gateway;
+package com.bbva.logging;
 
-import com.bbva.logging.Logger;
 import org.apache.log4j.MDC;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
