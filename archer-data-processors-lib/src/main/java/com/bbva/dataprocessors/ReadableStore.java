@@ -10,7 +10,7 @@ public class ReadableStore<K, V> {
     protected ReadOnlyKeyValueStore<K, V> store;
 
     ReadableStore(final String storeName, final KafkaStreams streams) {
-        store = streams.store(storeName, QueryableStoreTypes.<K, V>keyValueStore());
+        store = streams.store(storeName, QueryableStoreTypes.keyValueStore());
     }
 
     public ReadableStore() {

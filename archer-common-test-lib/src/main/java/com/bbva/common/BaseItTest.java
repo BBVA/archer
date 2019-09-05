@@ -16,13 +16,11 @@ public class BaseItTest {
     @ClassRule
     public static final KafkaTestResource kafkaTestResource = new KafkaTestResource();
 
-    private static ApplicationConfig appConfig;
-
     @BeforeClass
     public static void setUpKafka() {
         final int schemaRegistryPort = TestUtil.getFreePort(DEFAULT_SCHEMA_REGISTRY_PORT);
         final String bootstrapServer = kafkaTestResource.getKafkaConnectString();
-        appConfig = new AppConfiguration().init(BaseItTest.class.getAnnotation(Config.class));
+        final ApplicationConfig appConfig = new AppConfiguration().init(BaseItTest.class.getAnnotation(Config.class));
 
         appConfig.put(ApplicationConfig.SCHEMA_REGISTRY_URL, KafkaTestResource.HTTP_LOCALHOST + schemaRegistryPort);
         appConfig.put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);

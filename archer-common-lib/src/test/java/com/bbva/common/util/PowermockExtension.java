@@ -67,8 +67,8 @@ public class PowermockExtension implements InstancePostProcessor, AfterEachExten
         final ClassLoader defaultMockLoader = createNewClassloader(
                 origClass,
                 new ArrayMergerImpl().mergeArrays(String.class, prepareForTestClasses, stateTestClasses),
-                new ArrayMergerImpl().mergeArrays(String.class, ignorePackages, stateIgnorePackages),
-                new MockTransformer[0]);
+                new ArrayMergerImpl().mergeArrays(String.class, ignorePackages, stateIgnorePackages)
+        );
 
         registerProxyframework(defaultMockLoader);
 

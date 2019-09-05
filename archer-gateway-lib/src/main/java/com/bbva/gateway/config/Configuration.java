@@ -18,7 +18,6 @@ public class Configuration {
     private ApplicationConfig applicationConfig;
     private LinkedHashMap<String, Object> gateway;
     private LinkedHashMap<String, Object> custom;
-    private LinkedHashMap<String, Object> application;
     private static Configuration instance;
 
     public static Configuration get() {
@@ -53,7 +52,7 @@ public class Configuration {
 
         final Map<String, Object> config = getConfig(extraConfig);
         custom = (LinkedHashMap<String, Object>) config.get(GATEWAY_CUSTOM_PROPERTIES);
-        application = (LinkedHashMap<String, Object>) config.get(GATEWAY_APPLICATION_PROPERTIES);
+        final LinkedHashMap<String, Object> application = (LinkedHashMap<String, Object>) config.get(GATEWAY_APPLICATION_PROPERTIES);
         gateway = (LinkedHashMap<String, Object>) config.get(GATEWAY_GATEWAY_PROPERTIES);
 
         applicationConfig = new AppConfiguration().init(Configuration.class.getAnnotation(com.bbva.common.config.Config.class));

@@ -5,6 +5,7 @@
  */
 package com.bbva.ddd.domain.commands.write.records;
 
+import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.specific.SpecificData;
 
 /**
@@ -49,23 +50,19 @@ public class PersonalData extends org.apache.avro.specific.SpecificRecordBase im
     // Used by DatumWriter.  Applications should not call.
     @Override
     public Object get(final int field$) {
-        switch (field$) {
-            case 0:
-                return personalData;
-            default:
-                throw new org.apache.avro.AvroRuntimeException("Bad index");
+        if (field$ == 0) {
+            return personalData;
         }
+        throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
 
     // Used by DatumReader.  Applications should not call.
     @Override
     public void put(final int field$, final Object value$) {
-        switch (field$) {
-            case 0:
-                personalData = (PersonalData) value$;
-                break;
-            default:
-                throw new org.apache.avro.AvroRuntimeException("Bad index");
+        if (field$ == 0) {
+            personalData = (PersonalData) value$;
+        } else {
+            throw new AvroRuntimeException("Bad index");
         }
     }
 

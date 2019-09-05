@@ -1,22 +1,3 @@
-plugins {
-    id "com.commercehub.gradle.plugin.avro" version "0.9.0"
-}
-
-apply plugin: "com.commercehub.gradle.plugin.avro"
-
-sourceSets {
-    main {
-        java {
-            srcDir 'generated-sources/avro'
-            exclude 'com/bbva/examples/**'
-        }
-        resources {
-            exclude 'avro/**'
-            exclude 'examples/**'
-        }
-    }
-}
-
 dependencies {
     compile project(':data-processors-lib')
 
@@ -28,16 +9,4 @@ dependencies {
 
     testCompile project(path: ':common-lib', configuration: 'commonTestClasses')
 }
-
-task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
-    source("src/main/resources/avro/com/bbva")
-    outputDir = file("generated-sources/avro")
-}
-
-compileJava.source(generateAvro.outputs)
-
-jar {
-    exclude("**examples**")
-}
-
 

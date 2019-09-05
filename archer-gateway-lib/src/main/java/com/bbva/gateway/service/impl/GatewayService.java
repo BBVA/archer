@@ -30,7 +30,6 @@ public abstract class GatewayService<T>
 
     protected Configuration config;
     protected static ObjectMapper om = new ObjectMapper();
-    private LinkedHashMap<String, Object> retryPolicy;
     private Boolean retryEnabled = false;
     private int seconds;
     private int attemps;
@@ -40,7 +39,7 @@ public abstract class GatewayService<T>
     public void init(final Configuration configuration, final String gatewayBaseName) {
         config = configuration;
 
-        retryPolicy = config.getGateway().get(GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.getGateway().get(GATEWAY_RETRY) : null;
+        final LinkedHashMap<String, Object> retryPolicy = config.getGateway().get(GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.getGateway().get(GATEWAY_RETRY) : null;
         retryEnabled = retryPolicy != null && (Boolean) retryPolicy.get(GATEWAY_RETRY_ENABLED);
         if (retryEnabled) {
             seconds = Integer.parseInt(retryPolicy.get(GATEWAY_ATTEMP_SECONDS).toString());

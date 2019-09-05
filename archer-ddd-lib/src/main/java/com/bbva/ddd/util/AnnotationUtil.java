@@ -41,7 +41,7 @@ public final class AnnotationUtil {
     }
 
     private static <C extends Annotation> List<Class> findAnnotations(final String mainPackage, final Class<C> annotation) {
-        List<Class> handlers = (List<Class>) findClassesInPackage(mainPackage, annotation);
+        List<Class> handlers = findClassesInPackage(mainPackage, annotation);
         if (handlers.isEmpty()) {
             handlers = findInAllPackages(annotation);
         }
