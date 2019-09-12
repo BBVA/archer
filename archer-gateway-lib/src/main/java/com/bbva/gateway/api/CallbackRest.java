@@ -26,7 +26,6 @@ public class CallbackRest {
 
     private static final Logger logger = LoggerFactory.getLogger(CallbackRest.class);
     protected static Configuration config;
-    private static IAsyncGatewayService gateway;
 
     @PostConstruct
     public static void init() {
@@ -49,7 +48,6 @@ public class CallbackRest {
                 }
                 service.init(config, baseName);
                 service.postInitActions();
-                gateway = service;
                 return;
             }
         }

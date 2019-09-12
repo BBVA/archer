@@ -48,7 +48,7 @@ public final class AnnotationUtil {
         return handlers;
     }
 
-    private static <C extends Annotation> List<Class> findInAllPackages(final Class<C> annotation) {
+    public static <C extends Annotation> List<Class> findInAllPackages(final Class<C> annotation) {
         final List<Class> handlers = new ArrayList<>();
         final Package[] packages = Package.getPackages();
         for (final Package packageLoaded : packages) {

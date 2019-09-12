@@ -14,7 +14,7 @@ public abstract class AsyncGatewayService<T>
     @Override
     public void processRecord(final CRecord record) {
 
-        if (GatewayService.isReplay(record)) {
+        if (isReplay(record)) {
             final TransactionChangelog transactionChangelog = findChangelogByReference(record);
 
             if (transactionChangelog != null) {

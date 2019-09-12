@@ -6,6 +6,10 @@ import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.ddd.domain.annotations.Changelog;
+import com.bbva.ddd.domain.annotations.Command;
+import com.bbva.ddd.domain.annotations.Event;
+import com.bbva.ddd.domain.annotations.Handler;
 import com.bbva.ddd.domain.callback.ActionHandler;
 import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
@@ -30,6 +34,7 @@ import java.util.List;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PrepareForTest(AnnotationUtil.class)
+@Handler
 public class AutoConfiguredHandlerTest {
 
     @DisplayName("Create auto configured handler ok")
@@ -69,14 +74,15 @@ public class AutoConfiguredHandlerTest {
 
         Assertions.assertAll("AutoConfiguredHandler",
                 () -> Assertions.assertNotNull(handler),
-                () -> Assertions.assertEquals(0, handler.commandsSubscribed().size()),
-                () -> Assertions.assertEquals(0, handler.dataChangelogsSubscribed().size()),
-                () -> Assertions.assertEquals(0, handler.eventsSubscribed().size())
+                () -> Assertions.assertEquals(1, handler.commandsSubscribed().size()),
+                () -> Assertions.assertEquals(1, handler.dataChangelogsSubscribed().size()),
+                () -> Assertions.assertEquals(1, handler.eventsSubscribed().size())
         );
     }
 
     @DisplayName("process not handle command ok")
     @Test
+    @Command(commandAction = "action", baseName = "base")
     public void processCommand() throws Exception {
         final List<Class> lstClasses = new ArrayList<>();
         lstClasses.add(ActionHandler.class);
@@ -102,6 +108,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("process not handle command ok")
     @Test
+    @Event(baseName = "base")
     public void processEvent() {
         final AutoConfiguredHandler handler = new AutoConfiguredHandler();
         Exception ex = null;
@@ -119,6 +126,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("process not handle data changelog ok")
     @Test
+    @Changelog(baseName = "base")
     public void processDataChangelog() {
         final AutoConfiguredHandler handler = new AutoConfiguredHandler();
         Exception ex = null;

@@ -65,18 +65,14 @@ public class SelectQueryBuilder extends QueryBuilder {
     @Override
     protected String build() {
         final StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT ");
-        queryBuilder.append(select);
-        queryBuilder.append(" ");
-        queryBuilder.append(from.build());
-
-        queryBuilder.append(where != null && !where.isEmpty() ? "WHERE " + where + " " : "");
-
-        queryBuilder.append(groupBy != null && !groupBy.isEmpty() ? "GROUP BY " + groupBy + " " : "");
-
-        queryBuilder.append(having != null && !having.isEmpty() ? "HAVING " + having + " " : "");
-
-        queryBuilder.append(";");
+        queryBuilder.append("SELECT ")
+                .append(select)
+                .append(" ")
+                .append(from.build())
+                .append(where != null && !where.isEmpty() ? "WHERE " + where + " " : "")
+                .append(groupBy != null && !groupBy.isEmpty() ? "GROUP BY " + groupBy + " " : "")
+                .append(having != null && !having.isEmpty() ? "HAVING " + having + " " : "")
+                .append(";");
 
         query = queryBuilder.toString();
         return query;

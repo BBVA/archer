@@ -1,9 +1,11 @@
 package com.bbva.gateway.service;
 
+import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.ChangelogHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.AggregateFactory;
@@ -11,13 +13,16 @@ import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
+import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.annotations.Config;
+import com.bbva.gateway.service.impl.AsyncGatewayService;
 import com.bbva.gateway.service.impl.AsyncGatewayServiceImpl;
 import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.gateway.service.impl.beans.Person;
 import com.bbva.gateway.service.records.PersonalData;
 import org.apache.kafka.common.record.TimestampType;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -44,7 +49,7 @@ public class AsyncGatewayServiceTest {
         service.init(new Configuration().init(configAnnotation), "baseName");
         service.postInitActions();
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("AsyncGatewayService",
                 () -> Assertions.assertNotNull(service)
         );
     }
@@ -60,7 +65,7 @@ public class AsyncGatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 null, new RecordHeaders()));
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("AsyncGatewayService",
                 () -> Assertions.assertNotNull(service),
                 () -> Assertions.assertEquals("name", callResult.getName())
         );
@@ -92,7 +97,7 @@ public class AsyncGatewayServiceTest {
         );
     }
 
-    /*@DisplayName("Process reply record ok")
+    @DisplayName("Process reply record ok")
     @Test
     public void processReplyRecordOk() throws Exception {
         final ObjectMapper om = new ObjectMapper();
@@ -120,14 +125,28 @@ public class AsyncGatewayServiceTest {
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
         recordHeaders.add(ChangelogHeaderType.REFERENCE_RECORD_KEY, new ByteArrayValue("referenceKey"));
 
-        service.processRecord(new CRecord("topic", 1, 1,
-                new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.processRecord(new CRecord("topic", 1, 1,
+                    new Date().getTime(), TimestampType.CREATE_TIME, "key",
+                    new PersonalData(), recordHeaders));
+        });
+    }
+
+    @DisplayName("Save changelog ok")
+    @Test
+    public void saveChangelogOk() throws Exception {
+        PowerMockito.mockStatic(AggregateFactory.class);
+
+
+        PowerMockito.when(AggregateFactory.class, "load", Mockito.any(), Mockito.any()).thenReturn(new GatewayAggregate("iden", new TransactionChangelog()));
+
+        final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
+        AsyncGatewayService.saveChangelog("iden", "body");
 
         Assertions.assertAll("GatewayService",
                 () -> Assertions.assertNotNull(service)
         );
-    }*/
+    }
 
 }
 

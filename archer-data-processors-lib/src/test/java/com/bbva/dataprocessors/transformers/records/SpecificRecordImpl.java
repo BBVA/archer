@@ -28,7 +28,7 @@ public class SpecificRecordImpl extends SpecificRecordBase {
 
     @Override
     public Object get(final int i) {
-        return "value";
+        return values.get(i);
     }
 
     @Override
@@ -38,5 +38,9 @@ public class SpecificRecordImpl extends SpecificRecordBase {
 
     public String getName() {
         return (String) values.get("name");
+    }
+
+    public String getUuid() {
+        return "uuid";
     }
 }

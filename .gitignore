@@ -13,6 +13,8 @@ archer-gateway-lib/target/*
 archer-gateway-lib/tests/*
 archer-gateway-lib/out/*
 archer-log-lib/out/*
+archer-log-lib/target/*
+archer-log-lib/tests/*
 tests/*
 .idea
 *.iml

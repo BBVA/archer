@@ -30,12 +30,19 @@ public class AnnotationUtilTest {
         Assertions.assertFalse(classes.isEmpty());
     }
 
+    @DisplayName("get all annotated classes ok")
+    @Test
+    public void getAllAnnotationsInPackageOk() {
+        final List<Class> classes = AnnotationUtil.findInAllPackages(RunWith.class);
+
+        Assertions.assertFalse(classes.isEmpty());
+    }
+
     @DisplayName("map aggregates ok")
     @Test
     public void mapAggregatesOk() {
         final Map<String, Class<? extends AggregateBase>> classes = AnnotationUtil.mapAggregates(new AutoConfiguredHandler());
 
-        //Recover personal aggregate
         Assertions.assertFalse(classes.isEmpty());
     }
 

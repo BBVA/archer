@@ -40,15 +40,15 @@ task instrument(dependsOn: [classes, project.configurations.jacocoAnt]) {
 test.dependsOn instrument
 
 
-def jacoco_exclusions = ['src/test/**',
-                         '**com/bbva/common/consumers/**',
-                         '**/com/bbva/common/utils/serdes/**',
-                         '**/com/bbva/archer/avro/gateway/**',
-                         '**/com/bbva/avro/**',
-                         '**/com/bbva/ddd/domain/aggregates/**',
-                         '**/model/**',
-                         '**/exceptions/**',
-                         '**/resources/**']
+def jacoco_exclusions = [
+        '**/com/bbva/common/consumers/**', //abstract class tested in another libs
+        '**/avro/**',
+        '**/model/**',
+        '**/bean/**',
+        '**/exceptions/**',
+        '**/resources/**',
+        '**/constants/**'
+]
 
 jacocoTestReport {
     reports {
@@ -59,8 +59,8 @@ jacocoTestReport {
     }
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: jacoco_exclusions)
+            fileTree dir: it,
+                    exclude: jacoco_exclusions
         })
     }
 }
@@ -68,27 +68,27 @@ jacocoTestReport {
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it,
-                    exclude: jacoco_exclusions)
+            fileTree dir: it,
+                    exclude: jacoco_exclusions
         })
     }
     violationRules {
         rule {
             limit {
                 counter = "CLASS"
-                minimum = 0.6
+                minimum = 0.8
             }
             limit {
                 counter = "METHOD"
-                minimum = 0.6
+                minimum = 0.8
             }
             limit {
                 counter = "BRANCH"
-                minimum = 0.6
+                minimum = 0.7
             }
             limit {
                 counter = "LINE"
-                minimum = 0.6
+                minimum = 0.8
             }
         }
     }

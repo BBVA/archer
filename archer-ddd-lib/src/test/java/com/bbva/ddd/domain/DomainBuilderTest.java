@@ -8,6 +8,9 @@ import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.sql.queries.CreateStreamQueryBuilder;
 import com.bbva.ddd.domain.changelogs.Repository;
+import com.bbva.ddd.domain.changelogs.read.ChangelogConsumer;
+import com.bbva.ddd.domain.commands.read.CommandConsumer;
+import com.bbva.ddd.domain.events.read.EventConsumer;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -35,6 +38,15 @@ public class DomainBuilderTest {
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertEquals(domain, domainCached)
         );
+    }
+
+    @DisplayName("Create domain with get method ok")
+    @Test
+    public void getCreateDomain() throws Exception {
+        PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
+        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+
+        Assertions.assertThrows(NullPointerException.class, () -> DomainBuilder.get());
     }
 
     @DisplayName("Create domain ko")
@@ -84,10 +96,13 @@ public class DomainBuilderTest {
     public void startDomian() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
-        PowerMockito.mockStatic(TopicManager.class);
-        PowerMockito.mockStatic(Executors.class);
+        PowerMockito.whenNew(CommandConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(CommandConsumer.class));
+        PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
+        PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
 
-        final Domain domain = DomainBuilder.create(new ApplicationConfig());
+        PowerMockito.mockStatic(TopicManager.class);
+
+        final Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new ApplicationConfig());
         final HelperDomain helperDomain = domain.start();
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertNotNull(helperDomain)

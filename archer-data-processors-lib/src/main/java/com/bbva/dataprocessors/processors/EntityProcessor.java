@@ -7,7 +7,6 @@ import org.apache.kafka.streams.state.KeyValueStore;
 
 public class EntityProcessor<K, V> implements Processor<K, V> {
 
-    private ProcessorContext context;
     private KeyValueStore<K, V> stateStore;
     private final String stateStoreName;
 
@@ -17,9 +16,8 @@ public class EntityProcessor<K, V> implements Processor<K, V> {
 
     @Override
     public void init(final ProcessorContext context) {
-        this.context = context;
-
-        stateStore = (KeyValueStore<K, V>) this.context.getStateStore(stateStoreName);
+        final ProcessorContext localContext = context;
+        stateStore = (KeyValueStore<K, V>) localContext.getStateStore(stateStoreName);
     }
 
     @Override

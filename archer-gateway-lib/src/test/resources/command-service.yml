@@ -1,2 +1,4 @@
 commandAction: create
 type: command
+synchronous: false
+callback: http://localhost:8080
