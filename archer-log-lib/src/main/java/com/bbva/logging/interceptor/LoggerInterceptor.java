@@ -5,6 +5,9 @@ import org.slf4j.Marker;
 
 import java.io.Serializable;
 
+/**
+ * Logger interceptor
+ */
 public abstract class LoggerInterceptor implements Logger, Serializable {
 
     private static final long serialVersionUID = 7799143653351702744L;
@@ -20,7 +23,7 @@ public abstract class LoggerInterceptor implements Logger, Serializable {
      * @param slf4jLogger the logger to wrap
      */
     public LoggerInterceptor(final Logger slf4jLogger) {
-        this.logger = slf4jLogger;
+        logger = slf4jLogger;
     }
 
 
@@ -770,6 +773,9 @@ public abstract class LoggerInterceptor implements Logger, Serializable {
         logger.error(marker, msg, t);
     }
 
+    /**
+     * Intercept the log trace
+     */
     public abstract void intercept();
 
 }

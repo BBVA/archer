@@ -21,6 +21,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+/**
+ * Default consumer implementation
+ *
+ * @param <V> Type of Record schema
+ * @param <T> Type of Record
+ */
 public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CRecord> {
     private static final Logger logger = LoggerFactory.getLogger(DefaultConsumer.class);
 
@@ -32,7 +38,14 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     private final ApplicationConfig applicationConfig;
     private final SpecificAvroSerde<V> specificSerde;
 
-
+    /**
+     * Constructor
+     *
+     * @param id                consuer id
+     * @param topics            list of topics
+     * @param callback          callback to manag responses
+     * @param applicationConfig configuration
+     */
     public DefaultConsumer(final int id, final List<String> topics, final Consumer<T> callback, final ApplicationConfig applicationConfig) {
         this.id = id;
         this.topics = topics;
@@ -52,6 +65,11 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
     public abstract T message(String topic, int partition, long offset, long timestamp, TimestampType timestampType,
                               String key, V value, RecordHeaders headers);
 
+    /**
+     * Replay a list of topics
+     *
+     * @param topics list of topics
+     */
     public void replay(final List<String> topics) {
         logger.info("Consumer started in mode replay");
 
@@ -117,6 +135,9 @@ public abstract class DefaultConsumer<V extends SpecificRecordBase, T extends CR
         }
     }
 
+    /**
+     * Start to consume records
+     */
     public void play() {
         logger.info("Start normal play");
         try {

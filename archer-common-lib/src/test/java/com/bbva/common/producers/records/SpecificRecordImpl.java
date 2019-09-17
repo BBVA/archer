@@ -7,7 +7,7 @@ public class SpecificRecordImpl implements SpecificRecord {
 
     @Override
     public void put(final int i, final Object o) {
-
+        //Do nothing
     }
 
     @Override

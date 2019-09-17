@@ -16,12 +16,20 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+/**
+ * Utility class to populate system configurations
+ */
 public class AppConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(AppConfiguration.class);
 
     private ApplicationConfig applicationConfig;
     private static AppConfiguration instance;
 
+    /**
+     * Get instance of AppConfiguration
+     *
+     * @return appConfiguration instace
+     */
     public static AppConfiguration get() {
         return instance;
     }
@@ -30,6 +38,11 @@ public class AppConfiguration {
         return applicationConfig;
     }
 
+    /**
+     * Get config annotations and initialize the configuration
+     *
+     * @return configuration
+     */
     public ApplicationConfig init() {
         final SecureConfig secureConfig = getConfigAnnotation(SecureConfig.class);
         if (secureConfig != null) {
@@ -40,18 +53,38 @@ public class AppConfiguration {
         return init(extraConfig);
     }
 
+    /**
+     * Initialiaze secure configuration
+     *
+     * @param extraConfig secure extra configuration
+     * @return configuration
+     */
     public ApplicationConfig init(final SecureConfig extraConfig) {
         final Map<String, Object> config = getConfig("common-secure-config.yml", extraConfig != null ? extraConfig.file() : null);
 
         return configure(config);
     }
 
+    /**
+     * Initialize configuration with extra configuration file
+     *
+     * @param extraConfig configuration annotation
+     * @return configuration
+     */
     public ApplicationConfig init(final Config extraConfig) {
         final Map<String, Object> config = getConfig("common-config.yml", extraConfig != null ? extraConfig.file() : null);
 
         return configure(config);
     }
 
+    /**
+     * Get all config properties of a yaml file
+     *
+     * @param yaml        yaml properties
+     * @param classLoader class loader
+     * @param filename    file
+     * @return map of properties
+     */
     public Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
                                                  final String filename) {
         final Map<String, Object> properties;
@@ -65,6 +98,12 @@ public class AppConfiguration {
         return properties;
     }
 
+    /**
+     * Replace environment variables in properties
+     *
+     * @param properties properties
+     * @return replaced properties
+     */
     public Map<String, Object> replaceEnvVariables(final Map<String, Object> properties) {
         for (final Map.Entry property : properties.entrySet()) {
             if (property.getValue() instanceof String) {
@@ -79,6 +118,13 @@ public class AppConfiguration {
         return properties;
     }
 
+    /**
+     * Merge two map of properties
+     *
+     * @param common   source map
+     * @param specific extra properties
+     * @return merge map
+     */
     public Map mergeProperties(final Map common, final Map specific) {
         for (final Object key : specific.keySet()) {
             if (specific.get(key) instanceof Map && common.get(key) instanceof Map) {

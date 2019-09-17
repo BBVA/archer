@@ -7,6 +7,9 @@ import org.apache.kafka.streams.StreamsConfig;
 
 import java.util.Properties;
 
+/**
+ * Class that s torage all application config
+ */
 public class ApplicationConfig implements Cloneable {
 
     public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
@@ -32,50 +35,113 @@ public class ApplicationConfig implements Cloneable {
     private final KsqlProperties ksqlProperties = new KsqlProperties();
     private final DataflowProperties dataflowProperties = new DataflowProperties();
 
+    /**
+     * Clone the application properties un in memory map
+     *
+     * @param applicationProperties application properties
+     */
     public void put(final Properties applicationProperties) {
         this.applicationProperties = (Properties) applicationProperties.clone();
     }
 
+    /**
+     * Put a new key/value in the properties map
+     *
+     * @param key   key
+     * @param value value
+     * @param <V>   Type of the value
+     */
     public <V> void put(final String key, final V value) {
         applicationProperties.put(key, value);
     }
 
+    /**
+     * Get the value of the key
+     *
+     * @param key specific key
+     * @return the value
+     */
     public Object get(final String key) {
         return applicationProperties.getProperty(key);
     }
 
+    /**
+     * Check if the properties contains the key
+     *
+     * @param key key to find
+     * @return true/false
+     */
     public boolean contains(final String key) {
         return applicationProperties.containsKey(key);
     }
 
+    /**
+     * get intetger valuie of the key
+     *
+     * @param key key
+     * @return value
+     */
     public Integer getInteger(final String key) {
         return Integer.valueOf(applicationProperties.getProperty(key));
     }
 
+    /**
+     * Get application properties
+     *
+     * @return properties
+     */
     public Properties get() {
         return applicationProperties;
     }
 
+    /**
+     * Return producer properties
+     *
+     * @return properties
+     */
     public ProducerProperties producer() {
         return producerProperties;
     }
 
+    /**
+     * Return consumer properties
+     *
+     * @return properties
+     */
     public ConsumerProperties consumer() {
         return consumerProperties;
     }
 
+    /**
+     * Return stream properties
+     *
+     * @return properties
+     */
     public StreamsProperties streams() {
         return streamsProperties;
     }
 
+    /**
+     * Return ksql properties
+     *
+     * @return properties
+     */
     public KsqlProperties ksql() {
         return ksqlProperties;
     }
 
+    /**
+     * Return dataflow properties
+     *
+     * @return properties
+     */
     public DataflowProperties dataflow() {
         return dataflowProperties;
     }
 
+    /**
+     * Producer properties
+     */
     final public class ProducerProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
@@ -88,6 +154,9 @@ public class ApplicationConfig implements Cloneable {
 
     }
 
+    /**
+     * Consumer properties
+     */
     final public class ConsumerProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
@@ -102,6 +171,9 @@ public class ApplicationConfig implements Cloneable {
 
     }
 
+    /**
+     * Stream properties
+     */
     final public class StreamsProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
@@ -125,6 +197,9 @@ public class ApplicationConfig implements Cloneable {
 
     }
 
+    /**
+     * Ksql properties
+     */
     final public class KsqlProperties extends PropertiesClass {
 
         public static final String KSQL_PREFIX = "ksql_";
@@ -134,26 +209,55 @@ public class ApplicationConfig implements Cloneable {
 
     }
 
+    /**
+     * Dataflow properties
+     */
     final public class DataflowProperties extends PropertiesClass {
 
     }
 
+    /**
+     * General class for properties
+     */
     public class PropertiesClass {
 
         private Properties properties = new Properties();
 
+        /**
+         * Put custom properties in memory
+         *
+         * @param properties new properties
+         */
         public void put(final Properties properties) {
             this.properties = (Properties) properties.clone();
         }
 
+        /**
+         * Add/Replace specific property
+         *
+         * @param key   key
+         * @param value value
+         * @param <V>   class type of value
+         */
         public <V> void put(final String key, final V value) {
             properties.put(key, value);
         }
 
+        /**
+         * Get properties
+         *
+         * @return properties
+         */
         public Properties get() {
             return properties;
         }
 
+        /**
+         * Get value of property
+         *
+         * @param property key
+         * @return value
+         */
         public Object get(final String property) {
             return properties.get(property);
         }

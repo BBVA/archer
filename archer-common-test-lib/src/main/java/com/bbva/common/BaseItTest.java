@@ -9,13 +9,22 @@ import org.apache.kafka.clients.CommonClientConfigs;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 
+/**
+ * The class get up a kafka complete stack cluster in memory
+ */
 @Config(file = "app.yml")
 public class BaseItTest {
     private static final int DEFAULT_SCHEMA_REGISTRY_PORT = 8081;
 
+    /**
+     * Manag the kafka cluster and another components in memory
+     */
     @ClassRule
     public static final KafkaTestResource kafkaTestResource = new KafkaTestResource();
 
+    /**
+     * Configure the properties to get up the stack
+     */
     @BeforeClass
     public static void setUpKafka() {
         final int schemaRegistryPort = TestUtil.getFreePort(DEFAULT_SCHEMA_REGISTRY_PORT);

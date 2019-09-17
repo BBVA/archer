@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+/**
+ * Topic managment
+ */
 public class TopicManager {
     private static final Logger logger = LoggerFactory.getLogger(TopicManager.class);
 
@@ -44,6 +47,12 @@ public class TopicManager {
         configTypes = Collections.unmodifiableMap(configMap);
     }
 
+    /**
+     * Create topics
+     *
+     * @param topicNames map with names and types
+     * @param config     general configuration
+     */
     public static void createTopics(
             final Map<String, String> topicNames, final ApplicationConfig config) {
         final Collection<NewTopic> topics = new ArrayList<>();
@@ -54,6 +63,12 @@ public class TopicManager {
         createTopics(topics, config);
     }
 
+    /**
+     * Create topics wit specific configurations
+     *
+     * @param topicNamesWithConfig map with topic names and configurations
+     * @param config               general configuration
+     */
     public static void createTopicsWithConfig(
             final Map<String, Map<String, String>> topicNamesWithConfig, final ApplicationConfig config) {
         final Collection<NewTopic> topics = new ArrayList<>();

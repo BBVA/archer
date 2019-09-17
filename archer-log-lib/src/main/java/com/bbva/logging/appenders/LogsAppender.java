@@ -17,15 +17,21 @@ import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Log appender for send logs to event store
+ */
 @Plugin(name = "LogsAppender", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE)
 public class LogsAppender extends AppenderSkeleton {
 
-    public static final String DEFAULT_BASE_NAME = "logs_events";
+    private static final String DEFAULT_BASE_NAME = "logs_events";
     private CachedProducer logsProducer;
     private String hostName;
     private String logsSinkName;
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
 
+    /**
+     * Configure log sink name and create producer
+     */
     @Override
     public void activateOptions() {
         super.activateOptions();
@@ -44,18 +50,29 @@ public class LogsAppender extends AppenderSkeleton {
 
     }
 
-
+    /**
+     * Close the process
+     */
     @Override
     public void close() {
         executor.shutdown();
     }
 
-
+    /**
+     * Set requires layout to true
+     *
+     * @return true
+     */
     @Override
     public boolean requiresLayout() {
         return true;
     }
 
+    /**
+     * Send trace to event store
+     *
+     * @param event log trace
+     */
     @Override
     protected void append(final LoggingEvent event) {
         final LogEvent logEvent = LogEvent.newBuilder()

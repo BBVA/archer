@@ -20,6 +20,18 @@ public class CRecord {
     protected final SpecificRecord value;
     protected final RecordHeaders headers;
 
+    /**
+     * Class constructor
+     *
+     * @param topic         topic name
+     * @param partition     partition id
+     * @param offset        specific offset
+     * @param timestamp     time
+     * @param timestampType time type
+     * @param key           key
+     * @param value         value
+     * @param headers       record headers
+     */
     public CRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType, final String key,
                    final SpecificRecord value, final RecordHeaders headers) {
         this.topic = topic;
@@ -38,7 +50,7 @@ public class CRecord {
      * @return topic name
      */
     public String topic() {
-        return this.topic;
+        return topic;
     }
 
     /**
@@ -66,7 +78,7 @@ public class CRecord {
      * @return partition of the record
      */
     public int partition() {
-        return this.partition;
+        return partition;
     }
 
     /**
@@ -75,7 +87,7 @@ public class CRecord {
      * @return offset of the record
      */
     public long offset() {
-        return this.offset;
+        return offset;
     }
 
     /**
@@ -84,7 +96,7 @@ public class CRecord {
      * @return timestamp of the record
      */
     public long timestamp() {
-        return this.timestamp;
+        return timestamp;
     }
 
     /**
@@ -93,7 +105,7 @@ public class CRecord {
      * @return timestamp type of the record
      */
     public TimestampType timestampType() {
-        return this.timestampType;
+        return timestampType;
     }
 
     /**
@@ -102,7 +114,7 @@ public class CRecord {
      * @return headers of the record
      */
     public RecordHeaders recordHeaders() {
-        return this.headers;
+        return headers;
     }
 
     /**
@@ -111,7 +123,7 @@ public class CRecord {
      * @return optional headers of the record
      */
     public OptionalRecordHeaders optionalRecordHeaders() {
-        return new OptionalRecordHeaders(this.headers.getList());
+        return new OptionalRecordHeaders(headers.getList());
     }
 
     /**
@@ -120,6 +132,6 @@ public class CRecord {
      * @return if the record is in replay mode
      */
     public boolean isReplayMode() {
-        return this.headers.find(CommonHeaderType.FLAG_REPLAY_KEY).asBoolean();
+        return headers.find(CommonHeaderType.FLAG_REPLAY_KEY).asBoolean();
     }
 }
