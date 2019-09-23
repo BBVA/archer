@@ -134,6 +134,7 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
 
     @Override
     public void close() {
+        //Do nothing
     }
 
     private String getFieldNameMethod(final String fieldName, final boolean isGet) {

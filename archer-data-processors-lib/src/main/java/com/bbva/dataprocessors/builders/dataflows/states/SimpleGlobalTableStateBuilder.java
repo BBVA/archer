@@ -14,24 +14,48 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Builder to manage state as global tables
+ *
+ * @param <K> Key class type
+ * @param <V> Class type of record definition
+ */
 public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
     private final String sourceTopicName;
     private DataflowProcessorContext context;
 
+    /**
+     * Constructor
+     *
+     * @param sourceTopicName soruce base name
+     */
     public SimpleGlobalTableStateBuilder(final String sourceTopicName) {
         this.sourceTopicName = sourceTopicName;
     }
 
+    /**
+     * Initialize the builder
+     *
+     * @param context builder context
+     */
     @Override
     public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
+    /**
+     * Get the source base name
+     *
+     * @return source base name
+     */
     @Override
     public String sourceTopicName() {
-        return this.sourceTopicName;
+        return sourceTopicName;
     }
 
+    /**
+     * Build
+     */
     @Override
     public void build() {
 

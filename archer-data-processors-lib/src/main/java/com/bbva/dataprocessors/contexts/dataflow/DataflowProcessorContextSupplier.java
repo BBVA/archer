@@ -7,6 +7,9 @@ import org.apache.kafka.streams.StreamsBuilder;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Dataflow processor context implementation
+ */
 public class DataflowProcessorContextSupplier implements DataflowProcessorContext {
 
     private final ApplicationConfig config;
@@ -15,6 +18,12 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
     private final Map<String, String> serdeProps;
     private final String name;
 
+    /**
+     * Constructor
+     *
+     * @param name   processor name
+     * @param config application configuration
+     */
     public DataflowProcessorContextSupplier(final String name, final ApplicationConfig config) {
         this.name = name;
 
@@ -37,31 +46,49 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
         builder = new StreamsBuilder();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CachedSchemaRegistryClient schemaRegistryClient() {
         return schemaRegistry;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, String> serdeProperties() {
         return serdeProps;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ApplicationConfig configs() {
         return config;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StreamsBuilder streamsBuilder() {
         return builder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String name() {
         return name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String applicationId() {
         return config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_ID).toString();

@@ -2,39 +2,43 @@ package com.bbva.dataprocessors.builders.sql.queries;
 
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
 
+/**
+ * Create a set auto offset query
+ */
 public class AutoOffsetResetQueryBuilder extends QueryBuilder {
 
     public static final String EARLIEST = "earliest";
     public static final String LATEST = "latest";
+    private static final String AUTOOFFSET_RESET_QUERY = "SET 'auto.offset.reset' = '%s';";
 
     private final String resetType;
-    private String query;
 
+    /**
+     * Constructor with default earliest
+     */
     public AutoOffsetResetQueryBuilder() {
         super();
         resetType = EARLIEST;
     }
 
+    /**
+     * Constructor
+     *
+     * @param resetType reset type
+     */
     public AutoOffsetResetQueryBuilder(final String resetType) {
         this.resetType = resetType;
     }
 
-    public static AutoOffsetResetQueryBuilder create() {
-        return new AutoOffsetResetQueryBuilder();
-    }
 
-    public static AutoOffsetResetQueryBuilder create(final String resetType) {
-        return new AutoOffsetResetQueryBuilder(resetType);
-    }
-
-    @Override
-    protected String query() {
-        return query;
-    }
-
+    /**
+     * Build the query
+     *
+     * @return query generated
+     */
     @Override
     protected String build() {
-        query = "SET 'auto.offset.reset' = '" + resetType + "';";
-        return query;
+        query = new StringBuilder(String.format(AUTOOFFSET_RESET_QUERY, resetType));
+        return query.toString();
     }
 }

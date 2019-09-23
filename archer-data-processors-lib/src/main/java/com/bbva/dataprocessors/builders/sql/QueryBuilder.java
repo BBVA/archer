@@ -1,9 +1,26 @@
 package com.bbva.dataprocessors.builders.sql;
 
+/**
+ * Query builder abstract
+ */
 public abstract class QueryBuilder {
 
-    protected abstract String query();
+    protected StringBuilder query;
 
+    /**
+     * Get query
+     *
+     * @return query generated
+     */
+    protected String query() {
+        return query.toString();
+    }
+
+    /**
+     * Build the query
+     *
+     * @return
+     */
     protected abstract String build();
 
 }

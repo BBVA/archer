@@ -62,5 +62,6 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
 
     @Override
     public void close() {
+        //Do nothing
     }
 }

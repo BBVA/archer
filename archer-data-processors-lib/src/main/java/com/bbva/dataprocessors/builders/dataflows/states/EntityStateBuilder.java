@@ -19,27 +19,52 @@ import org.apache.kafka.streams.state.Stores;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Builder to manage internal state builders
+ *
+ * @param <K> Key class type
+ * @param <V> Class type of record definition
+ */
 public class EntityStateBuilder<K, V extends SpecificRecordBase> implements StateDataflowBuilder {
     private DataflowProcessorContext context;
     private final Class<K> keyClass;
     private final String snapshotTopicName;
 
+    /**
+     * Constructor
+     *
+     * @param keyClass class type of the key
+     */
     public EntityStateBuilder(final Class<K> keyClass) {
         this.keyClass = keyClass;
         snapshotTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
                 + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
     }
 
+    /**
+     * Constructor
+     *
+     * @param snapshotTopicName snapshot base name
+     * @param keyClass          class type of the key
+     */
     public EntityStateBuilder(final String snapshotTopicName, final Class<K> keyClass) {
         this.keyClass = keyClass;
         this.snapshotTopicName = snapshotTopicName;
     }
 
+    /**
+     * Initialize the builder
+     *
+     * @param context builder context
+     */
     @Override
     public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
+    /**
+     * Build
+     */
     @Override
     public void build() {
         final Serde<K> keySerde = Serdes.serdeFrom(keyClass);

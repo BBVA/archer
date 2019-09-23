@@ -12,6 +12,9 @@ import org.apache.avro.specific.SpecificRecord;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @param <V>
+ */
 public class GenericRecordList<V extends SpecificRecord> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericRecordList.class);
@@ -19,7 +22,7 @@ public class GenericRecordList<V extends SpecificRecord> {
     private final Schema listSchema;
 
     public GenericRecordList(final Class<V> itemClass) {
-        this.listSchema = generateSchema(itemClass);
+        listSchema = generateSchema(itemClass);
     }
 
     private Schema generateSchema(final Class<V> itemClass) {
@@ -43,7 +46,6 @@ public class GenericRecordList<V extends SpecificRecord> {
         return AggregatedList;
     }
 
-    @SuppressWarnings("unchecked")
     public List<V> getList(final GenericRecord record) {
         return (List<V>) SpecificData.get().deepCopy(((GenericData.Array) record.get(listField)).getSchema(), record.get(listField));
     }

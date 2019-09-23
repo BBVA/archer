@@ -7,44 +7,70 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Create table builder
+ */
 public class CreateTableQueryBuilder extends QueryBuilder implements CreateQueryBuilder {
 
     private final String name;
     private Map<String, String> columnsDefinition = new HashMap<>();
     private WithPropertiesClauseBuilder withProperties;
     private SelectQueryBuilder asSelect;
-    private StringBuilder query = new StringBuilder();
 
+    /**
+     * Constructor
+     *
+     * @param name name
+     */
     public CreateTableQueryBuilder(final String name) {
         super();
         this.name = name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String name() {
         return name;
     }
 
+    /**
+     * Set columns map
+     *
+     * @param columnsDefinition map with column definition
+     * @return builder
+     */
     public CreateTableQueryBuilder columns(final Map<String, String> columnsDefinition) {
         this.columnsDefinition = columnsDefinition;
         return this;
     }
 
+    /**
+     * Set with cluse
+     *
+     * @param withProperties with builder
+     * @return builder
+     */
     public CreateTableQueryBuilder with(final WithPropertiesClauseBuilder withProperties) {
         this.withProperties = withProperties;
         return this;
     }
 
+    /**
+     * Se select
+     *
+     * @param asSelect select
+     * @return builder
+     */
     public CreateTableQueryBuilder asSelect(final SelectQueryBuilder asSelect) {
         this.asSelect = asSelect;
         return this;
     }
 
-    @Override
-    protected String query() {
-        return query.toString();
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String build() {
 

@@ -20,14 +20,29 @@ import org.apache.kafka.streams.state.Stores;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Builder to manage unique fields
+ *
+ * @param <K>  Key class type
+ * @param <V>  Class type of record definition
+ * @param <K1> Key class type
+ */
 public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implements StateDataflowBuilder {
-    private DataflowProcessorContext context;
 
+    private DataflowProcessorContext context;
     private final Class<K> keyClass;
     private final Class<K1> key1Class;
     private final String fieldPath;
     private final String sourceTopicName;
 
+    /**
+     * Constructor
+     *
+     * @param sourceTopicName soruce base name
+     * @param fieldPath       field path
+     * @param keyClass        class type of the key
+     * @param key1Class       class ype of second key
+     */
     public UniqueFieldStateBuilder(final String sourceTopicName, final String fieldPath, final Class<K> keyClass,
                                    final Class<K1> key1Class) {
         this.sourceTopicName = sourceTopicName;
@@ -36,11 +51,19 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
         this.key1Class = key1Class;
     }
 
+    /**
+     * Initialize the builder
+     *
+     * @param context context of the builder
+     */
     @Override
     public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
+    /**
+     * Build
+     */
     @Override
     public void build() {
 

@@ -23,6 +23,12 @@ import org.apache.kafka.streams.state.Stores;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Builder to manage field groups
+ *
+ * @param <K> Key class type
+ * @param <V> Class type of record definition
+ */
 public class GroupByFieldStateBuilder<K, V extends SpecificRecord> implements StateDataflowBuilder {
 
     private DataflowProcessorContext context;
@@ -31,6 +37,14 @@ public class GroupByFieldStateBuilder<K, V extends SpecificRecord> implements St
     private final Class<V> valueClass;
     private final String foreignKeyFieldName;
 
+    /**
+     * Constructor
+     *
+     * @param sourceChangelogTopicName soruce base name
+     * @param keyClass                 class type of key
+     * @param valueClass               class type of value record
+     * @param foreignKeyFieldName      foreign field
+     */
     public GroupByFieldStateBuilder(final String sourceChangelogTopicName, final Class<K> keyClass, final Class<V> valueClass, final String foreignKeyFieldName) {
         this.sourceChangelogTopicName = sourceChangelogTopicName;
         this.keyClass = keyClass;
@@ -38,11 +52,19 @@ public class GroupByFieldStateBuilder<K, V extends SpecificRecord> implements St
         this.foreignKeyFieldName = foreignKeyFieldName;
     }
 
+    /**
+     * Initialize the builder
+     *
+     * @param context builder context
+     */
     @Override
     public void init(final DataflowProcessorContext context) {
         this.context = context;
     }
 
+    /**
+     * Build
+     */
     @Override
     public void build() {
         final Serde<K> keySerde = Serdes.serdeFrom(keyClass);

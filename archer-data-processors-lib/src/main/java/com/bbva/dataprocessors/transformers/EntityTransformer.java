@@ -42,6 +42,7 @@ public class EntityTransformer<K, V> implements Transformer<K, V, KeyValue<K, V>
 
     @Override
     public void close() {
+        //Do nothing
     }
 
 }
