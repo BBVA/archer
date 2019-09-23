@@ -5,7 +5,7 @@ package com.bbva.dataprocessors.builders.sql;
  */
 public abstract class QueryBuilder {
 
-    protected StringBuilder query;
+    protected StringBuilder query = new StringBuilder();
 
     /**
      * Get query

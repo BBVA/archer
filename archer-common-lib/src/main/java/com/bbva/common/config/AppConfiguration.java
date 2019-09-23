@@ -2,9 +2,6 @@ package com.bbva.common.config;
 
 import com.bbva.common.exceptions.ApplicationException;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -44,12 +41,15 @@ public class AppConfiguration {
      * @return configuration
      */
     public ApplicationConfig init() {
-        final SecureConfig secureConfig = getConfigAnnotation(SecureConfig.class);
+        String mainPackage = Thread.currentThread().getStackTrace()[2].getClassName();
+        mainPackage = removeLastPackage(mainPackage);
+
+        final SecureConfig secureConfig = findConfigAnnotation(SecureConfig.class, mainPackage);
         if (secureConfig != null) {
             return init(secureConfig);
         }
 
-        final Config extraConfig = getConfigAnnotation(Config.class);
+        final Config extraConfig = findConfigAnnotation(Config.class, mainPackage);
         return init(extraConfig);
     }
 
@@ -136,17 +136,19 @@ public class AppConfiguration {
         return common;
     }
 
-    private <C extends Annotation> C getConfigAnnotation(final Class<C> annotationClass) {
-        final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(AppConfiguration.class.getPackage().getName().split("\\.")[0],
-                        ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
-                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
+    private <C extends Annotation> C findConfigAnnotation(final Class<C> annotationClass, final String packageName) {
+        final Reflections ref = new Reflections(packageName);
         C configAnnotation = null;
         for (final Class<?> mainClass : ref.getTypesAnnotatedWith(annotationClass)) {
             configAnnotation = mainClass.getAnnotation(annotationClass);
         }
 
-        return configAnnotation;
+        if (configAnnotation != null) {
+            return configAnnotation;
+        } else if (packageName.indexOf(".") > 0) {
+            return findConfigAnnotation(annotationClass, removeLastPackage(packageName));
+        }
+        return null;
     }
 
     private ApplicationConfig configure(final Map<String, Object> config) {
@@ -204,4 +206,9 @@ public class AppConfiguration {
         }
     }
 
+    private String removeLastPackage(final String mainPackage) {
+        final int index = mainPackage.lastIndexOf(".");
+        final String basePackage = mainPackage.substring(0, index);
+        return basePackage;
+    }
 }
