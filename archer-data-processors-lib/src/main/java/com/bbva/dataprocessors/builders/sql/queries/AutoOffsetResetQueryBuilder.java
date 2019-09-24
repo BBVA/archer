@@ -27,6 +27,7 @@ public class AutoOffsetResetQueryBuilder extends QueryBuilder {
      * @param resetType reset type
      */
     public AutoOffsetResetQueryBuilder(final String resetType) {
+        super();
         this.resetType = resetType;
     }
 

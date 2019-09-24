@@ -91,9 +91,9 @@ public class CreateStreamQueryBuilder extends QueryBuilder implements CreateQuer
             for (final String prop : columnsDefinition.keySet()) {
                 columnsList.add(prop + " " + columnsDefinition.get(prop).toUpperCase());
             }
-            columnsClause.append(" (");
-            columnsClause.append(String.join(", ", columnsList));
-            columnsClause.append(")");
+            columnsClause.append(" (")
+                    .append(String.join(", ", columnsList))
+                    .append(")");
         }
 
         final String withClause = withProperties.build();

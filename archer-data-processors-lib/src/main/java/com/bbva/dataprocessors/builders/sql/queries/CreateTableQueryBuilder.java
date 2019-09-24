@@ -89,17 +89,17 @@ public class CreateTableQueryBuilder extends QueryBuilder implements CreateQuery
 
         final StringBuilder asSelectClause = new StringBuilder();
         if (asSelect != null) {
-            asSelectClause.append(" AS ");
-            asSelectClause.append(asSelect.build());
+            asSelectClause.append(" AS ")
+                    .append(asSelect.build());
         } else {
             asSelectClause.append(";");
         }
 
-        query = new StringBuilder("CREATE TABLE ");
-        query.append(name);
-        query.append(columnsClause);
-        query.append(withClause);
-        query.append(asSelectClause);
+        query = new StringBuilder("CREATE TABLE ")
+                .append(name)
+                .append(columnsClause)
+                .append(withClause)
+                .append(asSelectClause);
 
         return query.toString();
     }

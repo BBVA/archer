@@ -45,13 +45,7 @@ public class EntityProcessor<K, V> implements Processor<K, V> {
     @Override
     public void process(final K key, final V value) {
         final V oldValue = stateStore.get(key);
-        final V newValue;
-        if (oldValue == null || value == null) {
-            newValue = value;
-        } else {
-            newValue = (V) ObjectUtils.merge(oldValue, value);
-        }
-        stateStore.put(key, newValue);
+        stateStore.put(key, ObjectUtils.getNewMergedValue(oldValue, value));
     }
 
     /**

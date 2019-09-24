@@ -16,7 +16,7 @@ Gradle
 ```text/plain
 # build.gradle
 dependencies {
-	compile('bbva.ndb:lib-common-test:1.0.0-beta.1')
+	compile('bbva.ndb:lib-common-test:1.0.0-beta.2')
 }
 ```
 
@@ -27,7 +27,7 @@ Maven
     <dependency>
         <groupId>bbva.ndb</groupId>
         <artifactId>lib-common-test</artifactId>
-        <version>1.0.0-beta.1</version>
+        <version>1.0.0-beta.2</version>
     </dependency>
 </dependencies>
 ```

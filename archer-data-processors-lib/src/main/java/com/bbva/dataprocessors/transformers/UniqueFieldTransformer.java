@@ -7,21 +7,44 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 
+/**
+ * Transform to accomodate finds by a unique field
+ *
+ * @param <K>  Key class
+ * @param <V>  Value class
+ * @param <K1> Field class
+ */
 public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> implements Transformer<K, V, KeyValue<K1, K>> {
     private KeyValueStore<K1, K> stateStore;
     private final String stateStoreName;
     private final String fieldPath;
 
+    /**
+     * Coinstructor
+     *
+     * @param stateStoreName state store
+     * @param fieldPath      field for find
+     */
     public UniqueFieldTransformer(final String stateStoreName, final String fieldPath) {
         this.stateStoreName = stateStoreName;
         this.fieldPath = fieldPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(final ProcessorContext context) {
         stateStore = (KeyValueStore<K1, K>) context.getStateStore(stateStoreName);
     }
 
+    /**
+     * Index the keyvalue by the unique field
+     *
+     * @param key   record key
+     * @param value value
+     * @return new keyvalue pair
+     */
     @Override
     public KeyValue<K1, K> transform(final K key, final V value) {
         K1 uniqueFieldKey = null;
@@ -60,6 +83,9 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         //Do nothing

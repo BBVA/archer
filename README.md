@@ -54,6 +54,7 @@ This is the common library to interact with the event bus. Provide producer and 
 ### Data processorss
 
 It provide a specific simply language to launch interactive queries in real-time to event store and facilitates the use of processing APIs.
+[You see more about data processors](archer-data-processors-lib/README.md)
 
 ### Domain driven design
 

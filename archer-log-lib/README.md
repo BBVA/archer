@@ -15,7 +15,7 @@ Gradle
 ```text/plain
 # build.gradle
 dependencies {
-	compile('bbva.ndb:log-lib:1.0.0-beta.1')
+	compile('bbva.ndb:log-lib:1.0.0-beta.2')
 }
 ```
 
@@ -26,11 +26,14 @@ Maven
     <dependency>
         <groupId>bbva.ndb</groupId>
         <artifactId>log-lib</artifactId>
-        <version>1.0.0-beta.1</version>
+        <version>1.0.0-beta.2</version>
     </dependency>
 </dependencies>
 ```
 
+## Configuration
+
+This library use [common-lib](../archer-common-lib/README.md) configuration system.
 
 ## Usage
 To enable logging appender you need to specify the base package, log level and the specific archerAppender setting a environment variable LOG_APPENDER_CONFIG, as the example:

@@ -8,18 +8,38 @@ import org.apache.kafka.streams.KeyValue;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Transform to select by foreign key in a state
+ *
+ * @param <K> Key class
+ * @param <V> Value class
+ */
 public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends EntityTransformer<K, V> {
 
     private final String foreignKeyFieldName;
     private final Class<V> valueClass;
     private static final Logger logger = LoggerFactory.getLogger(SelectForeignKeyTransformer.class);
 
+    /**
+     * Constructor
+     *
+     * @param entityStoreName     state store
+     * @param foreignKeyFieldName field name of FK
+     * @param valueClass          Class type of value
+     */
     public SelectForeignKeyTransformer(final String entityStoreName, final String foreignKeyFieldName, final Class<V> valueClass) {
         super(entityStoreName);
         this.foreignKeyFieldName = foreignKeyFieldName;
         this.valueClass = valueClass;
     }
 
+    /**
+     * Index by the FK field
+     *
+     * @param key   record key
+     * @param value record value
+     * @return new keyvalue pair
+     */
     @Override
     public KeyValue<K, V> transform(final K key, final V value) {
         KeyValue<K, V> resultKeyValue = null;
@@ -31,7 +51,7 @@ public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends En
         try {
             final V objectToInvoke = newValue != null ? newValue : oldValue;
             final K foreignKeyValue = (K) valueClass
-                    .getMethod(getFieldNameMethod(foreignKeyFieldName, true))
+                    .getMethod(ObjectUtils.getFieldNameMethod(foreignKeyFieldName, true))
                     .invoke(objectToInvoke);
             resultKeyValue = KeyValue.pair(foreignKeyValue, newValue);
 
@@ -43,9 +63,5 @@ public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends En
         return resultKeyValue;
     }
 
-    private String getFieldNameMethod(final String fieldName, final boolean isGet) {
-        return (isGet ? "get" : "set") +
-                fieldName.substring(0, 1).toUpperCase() +
-                fieldName.substring(1);
-    }
+
 }
