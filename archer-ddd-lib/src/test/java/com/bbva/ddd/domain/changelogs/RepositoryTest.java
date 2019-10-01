@@ -66,11 +66,11 @@ public class RepositoryTest {
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, new ByteArrayValue("aggName"));
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, new ByteArrayValue("aggMethod"));
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
-
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
 
         final Repository repository = new Repository("topic", PersonalDataAggregate.class, configuration);
         final AggregateBase aggregateBase = repository.create("key", new PersonalData(), new CommandRecord("topic", 1, 1,
-                new Date().getTime(), TimestampType.CREATE_TIME, null,
+                new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders), new DefaultProducerCallback());
 
         Assertions.assertAll("ChangelogConsumer",
@@ -101,11 +101,11 @@ public class RepositoryTest {
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, new ByteArrayValue("aggName"));
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, new ByteArrayValue("aggMethod"));
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
-
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
 
         final Repository repository = new Repository("topic", PersonalDataAggregate.class, configuration);
         final AggregateBase aggregateBase = repository.create(null, new PersonalData(), new CommandRecord("topic", 1, 1,
-                new Date().getTime(), TimestampType.CREATE_TIME, null,
+                new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders), new DefaultProducerCallback());
 
         Assertions.assertAll("ChangelogConsumer",

@@ -28,7 +28,6 @@ public class EventConsumerTest {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(EventHeaderType.NAME_KEY, new ByteArrayValue("create"));
-        recordHeaders.add(EventHeaderType.REFERENCE_RECORD_KEY, new ByteArrayValue("key"));
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue("producerName"));
 
         final EventRecord eventRecord = eventConsumer.message("topic", 1, 1, new Date().getTime(),

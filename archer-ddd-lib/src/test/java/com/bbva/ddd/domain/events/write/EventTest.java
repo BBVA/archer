@@ -3,6 +3,9 @@ package com.bbva.ddd.domain.events.write;
 import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
+import com.bbva.common.utils.ByteArrayValue;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.commands.write.records.PersonalData;
@@ -95,8 +98,10 @@ public class EventTest {
         Assertions.assertThrows(ProduceException.class, () -> {
             HelperDomain.create(new ApplicationConfig());
             final Event event = new Event("topicBaseName", new ApplicationConfig());
+            final RecordHeaders headers = new RecordHeaders();
+            headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
             event.send("producerName", null, true, new CommandRecord("topic", 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", new PersonalData(), null), null);
+                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers), null);
         });
     }
 

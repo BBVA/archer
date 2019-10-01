@@ -6,11 +6,15 @@ import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.OptionalRecordHeaders;
+import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
+import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.commands.write.records.PersonalData;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -22,6 +26,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -144,7 +149,10 @@ public class CommandTest {
         Assertions.assertThrows(ProduceException.class, () -> {
             HelperDomain.create(new ApplicationConfig());
             final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
-            command.create(new PersonalData(), null, new DefaultProducerCallback());
+            final RecordHeaders headers = new RecordHeaders();
+            headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
+            command.create(new PersonalData(), new CommandRecord("topic", 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers), new DefaultProducerCallback());
         });
     }
 
