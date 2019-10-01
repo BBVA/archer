@@ -29,13 +29,34 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Initialize the domain with their data processors, repositories and configured handler.
+ * For example if have class with autoconfigure annotations we could do:
+ * <pre>
+ * {@code
+ * Domain domain = DomainBuilder.create(
+ *      new AnnotatedHandler(servicesPackage, config), applicationConfig());
+ *
+ * DataProcessor.get()
+ *      .add("processor-name", new ChangelogKeyBuilder("processor-name", "internal-store"));
+ *
+ * domain.start()
+ */
 public class DomainBuilder implements Domain {
+
     private static final Logger logger = LoggerFactory.getLogger(DomainBuilder.class);
+
     private final List<RunnableConsumer> consumers = new ArrayList<>();
     private final Handler handler;
     private final ApplicationConfig applicationConfig;
     private static Domain instance;
 
+    /**
+     * Constructor
+     *
+     * @param handler           handler implementation
+     * @param applicationConfig configuration
+     */
     protected DomainBuilder(final Handler handler, final ApplicationConfig applicationConfig) {
         this.handler = handler;
 
@@ -48,6 +69,13 @@ public class DomainBuilder implements Domain {
         this(new AutoConfiguredHandler(), applicationConfig);
     }
 
+    /**
+     * Create new instance of domain
+     *
+     * @param handler           handler implementation
+     * @param applicationConfig configuration
+     * @return domain instance
+     */
     public static Domain create(final Handler handler, final ApplicationConfig applicationConfig) {
         if (handler == null) {
             instance = new DomainBuilder(applicationConfig);
@@ -57,10 +85,21 @@ public class DomainBuilder implements Domain {
         return instance;
     }
 
+    /**
+     * Create new domian without handler
+     *
+     * @param applicationConfig configuration
+     * @return domain instance
+     */
     public static Domain create(final ApplicationConfig applicationConfig) {
         return DomainBuilder.create(null, applicationConfig);
     }
 
+    /**
+     * Get&Create a domain instance
+     *
+     * @return instance
+     */
     public static Domain get() {
         if (instance == null) {
             DomainBuilder.create(null, null);
@@ -68,12 +107,25 @@ public class DomainBuilder implements Domain {
         return instance;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param name    The name of the DataProcessor. This name will be accessible from the DataflowProcessorContext context
+     * @param builder A DataflowBuilder instance. It can be a custom DataflowBuilder or one of those defined in the framework
+     * @return domain instance
+     */
     @Override
     public Domain addDataProcessorBuilder(final String name, final DataflowBuilder builder) {
         DataProcessor.get().add(name, builder);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param queryBuilder A extended QueryBuilder instance like CreateStreamQueryBuilder.
+     * @return domain instance
+     */
     @Override
     public Domain addDataProcessorBuilder(final QueryBuilder queryBuilder) {
         DataProcessor.get().add(queryBuilder);
@@ -81,6 +133,15 @@ public class DomainBuilder implements Domain {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param basename Basename to get source changelog and to name readable table.
+     * @param keyClass Class type of the record key. It's used to serialize and deserialize key.
+     * @param <K>      Key type
+     * @param <V>      Value type
+     * @return domain instance
+     */
     @Override
     public <K, V extends SpecificRecordBase> Domain addEntityStateProcessor(final String basename, final Class<K> keyClass) {
         final String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
@@ -90,6 +151,19 @@ public class DomainBuilder implements Domain {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param storeName        Name of the readable store where the processed data will be stored.
+     * @param sourceStreamName Name of the source stream where raw data are.
+     * @param fieldPath        Path to field which will be indexed. For example, the path for a field bar in object foo will be foo-&#62;bar
+     * @param keyClass         Class of the source key
+     * @param resultKeyClass   Class of the result key
+     * @param <K>              Key type
+     * @param <V>              Value type
+     * @param <K1>             Field type
+     * @return domain instance
+     */
     @Override
     public <K, V extends SpecificRecordBase, K1> Domain indexFieldStateProcessor(
             final String storeName, final String sourceStreamName, final String fieldPath,
@@ -101,6 +175,18 @@ public class DomainBuilder implements Domain {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param storeName        Name of the readable store where the processed data will be stored.
+     * @param sourceStreamName Name of the source stream where raw data are.
+     * @param fieldName        Field in value to group values and used as key.
+     * @param keyClass         Class of both the source key and the field key
+     * @param valueClass       Class of the value
+     * @param <K>              Key type
+     * @param <V>              Value type
+     * @return domain instance
+     */
     @Override
     public <K, V extends SpecificRecordBase> Domain groupByFieldStateProcessor(
             final String storeName, final String sourceStreamName, final String fieldName
@@ -112,6 +198,9 @@ public class DomainBuilder implements Domain {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized HelperDomain start() {
 

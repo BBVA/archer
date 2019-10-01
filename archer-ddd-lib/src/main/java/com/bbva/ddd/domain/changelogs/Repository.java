@@ -34,6 +34,12 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * Class  to interact with the aggregates
+ *
+ * @param <K> Key class
+ * @param <V> Value class
+ */
 public final class Repository<K, V extends SpecificRecordBase> {
 
     private static final Logger logger = LoggerFactory.getLogger(Repository.class);
@@ -48,6 +54,14 @@ public final class Repository<K, V extends SpecificRecordBase> {
     private Field expectedParentField;
     private Class<? extends SpecificRecordBase> parentValueClass;
 
+    /**
+     * Constructor
+     *
+     * @param baseName          base name
+     * @param aggregateClass    aggregate
+     * @param applicationConfig configuration
+     * @throws AggregateDependenciesException aggregate custom exception
+     */
     public Repository(final String baseName, final Class<? extends AggregateBase> aggregateClass,
                       final ApplicationConfig applicationConfig) throws AggregateDependenciesException {
         aggregateUUID = UUID.randomUUID().toString();
@@ -61,10 +75,30 @@ public final class Repository<K, V extends SpecificRecordBase> {
         logger.info("Repository for {} initialized", aggregateClass.getName());
     }
 
+    /**
+     * get the repository base name
+     *
+     * @return base name
+     */
     public String getBaseName() {
         return baseName;
     }
 
+    /**
+     * Save a new record in the repository
+     * <pre>{@code
+     *  final Repository repository = new Repository(baseName, aggregateClass, applicationConfig)
+     *
+     *  // Create a record with key/value and the command reference
+     *  repository.create(key, value, commandRecord, callback);
+     *  }</pre>
+     *
+     * @param aggregateKey   key of the record
+     * @param value          value to save
+     * @param commandMessage reference command record
+     * @param callback       callback to manage the action response
+     * @return a aggregate
+     */
     public AggregateBase create(final String aggregateKey, final V value, final CommandRecord commandMessage,
                                 final ProducerCallback callback) {
         final String key = aggregateKey == null ? commandMessage.entityUuid() : aggregateKey;
@@ -85,6 +119,12 @@ public final class Repository<K, V extends SpecificRecordBase> {
         return aggregateBaseInstance;
     }
 
+    /**
+     * Get stored element in the repository
+     *
+     * @param key key to find
+     * @return aggregate founded
+     */
     public AggregateBase loadFromStore(final String key) {
         logger.debug("Loading from store {}", baseName);
 

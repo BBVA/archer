@@ -13,6 +13,7 @@ import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class EventConsumerTest {
     public void createEventConsumer() {
         final ApplicationConfig configuration = new AppConfiguration().init();
         final List<String> topics = new ArrayList<>();
-        final EventConsumer eventConsumer = new EventConsumer(1, topics, null, configuration);
+        final EventConsumer eventConsumer = new EventConsumer(1, Collections.singletonList("topic"), yourCallback, configuration);
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(EventHeaderType.NAME_KEY, new ByteArrayValue("create"));

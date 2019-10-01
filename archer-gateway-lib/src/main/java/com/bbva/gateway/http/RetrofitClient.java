@@ -17,10 +17,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Retrofit client
+ */
 public class RetrofitClient {
 
     private static final Logger logger = LoggerFactory.getLogger(RetrofitClient.class);
 
+    /**
+     * Buidl a client with gsonc onverter
+     *
+     * @param url client urlclient
+     * @return retrofit instance
+     */
     public static Retrofit build(final String url) {
         final Gson gson = new GsonBuilder().setLenient().create();
 
@@ -31,6 +40,14 @@ public class RetrofitClient {
                 .addConverterFactory(GsonConverterFactory.create(gson)).build();
     }
 
+    /**
+     * Call to http method
+     *
+     * @param retrofitClient client
+     * @param request        request to call
+     * @param queryParams    params
+     * @return response
+     */
     public static Response call(final Retrofit retrofitClient, final HttpRequest request, final Map<String, String> queryParams) {
         final Client client = retrofitClient.create(Client.class);
         final Call<ResponseBody> call;

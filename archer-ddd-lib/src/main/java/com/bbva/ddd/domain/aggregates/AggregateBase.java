@@ -6,6 +6,12 @@ import com.bbva.ddd.domain.commands.read.CommandRecord;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 
+/**
+ * Interface to define a aggregate methods
+ *
+ * @param <K> Key class
+ * @param <V> Value class
+ */
 public interface AggregateBase<K, V extends SpecificRecordBase> {
 
     /**

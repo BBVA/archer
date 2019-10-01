@@ -14,6 +14,9 @@ import java.util.Map;
 import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_PORT;
 import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_RESOURCE;
 
+/**
+ * Start http server and callback in asynchronous gateways
+ */
 public class RestUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(RestUtil.class);
@@ -21,6 +24,11 @@ public class RestUtil {
     public static final String DEFAULT_RESOURCE = "/";
     public static final String LOCALHOST = "localhost";
 
+    /**
+     * Start the callback
+     *
+     * @param callbackConfig configuration for callback
+     */
     public static void startRestCallBack(final Map<String, Object> callbackConfig) {
         final int port = callbackConfig.get(GATEWAY_REST_PORT) != null ? Integer.valueOf(callbackConfig.get(GATEWAY_REST_PORT).toString())
                 : DEFAULT_PORT;

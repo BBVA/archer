@@ -65,13 +65,13 @@ public interface Domain {
      *          );
      *
      *  DomainBuilder
-     *      .create(config)}
+     *      .create(config)
      *      <b>.addDataProcessorBuilder(fooStream);</b>
      *      <b>.addDataProcessorBuilder(fooFilteredStream);</b>
      *      .addDataProcessorBuilder("foo-filtered",
      *                             new SimpleGlobalTableStateBuilder(fooFilteredStream.name()))
      *      .start();
-     * </pre>
+     * }</pre>
      *
      * @param queryBuilder A extended QueryBuilder instance like CreateStreamQueryBuilder.
      * @return Domain

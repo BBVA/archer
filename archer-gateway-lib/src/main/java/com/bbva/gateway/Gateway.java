@@ -11,11 +11,19 @@ import com.bbva.gateway.consumer.builder.ChangelogKeyBuilder;
 import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;
 import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
 
+/**
+ * Main class to init gateway with your services
+ */
 public class Gateway {
     protected static Configuration config;
     protected static String servicesPackage;
     protected static Domain domain;
 
+    /**
+     * Initialize the domain of the gateway
+     *
+     * @throws RepositoryException exception
+     */
     public void init() throws RepositoryException {
         configure();
 
@@ -24,18 +32,29 @@ public class Gateway {
                 config.getApplicationConfig());
     }
 
+    /**
+     * Configure the gateway
+     *
+     * @param classType class to obtain base package
+     */
     protected void configure(final Class classType) {
         final Config configAnnotation = (Config) classType.getAnnotation(Config.class);
         config = new Configuration().init(configAnnotation);
         servicesPackage = configAnnotation.servicesPackage();
     }
 
+    /**
+     * Configure the gateway
+     */
     protected void configure() {
         final Config configAnnotation = Configuration.findConfigAnnotation();
         config = new Configuration().init(configAnnotation);
         servicesPackage = configAnnotation.servicesPackage();
     }
 
+    /**
+     * Start domain and processors
+     */
     protected void start() {
         DataProcessor.get()
                 .add(INTERNAL_SUFFIX + KEY_SUFFIX, new ChangelogKeyBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));

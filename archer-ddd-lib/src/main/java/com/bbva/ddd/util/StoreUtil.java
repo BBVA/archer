@@ -9,10 +9,22 @@ import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
 
+/**
+ * utility to manage readable stores
+ */
 public class StoreUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(HelperDomain.class);
 
+    /**
+     * Get store by name in the states
+     *
+     * @param store store name
+     * @param <K>   Key class in the store
+     * @param <V>   Value class in the store
+     * @return the store
+     * @throws StoreNotFoundException store not exists
+     */
     public static <K, V> ReadableStore<K, V> getStore(final String store) throws StoreNotFoundException {
         while (true) {
             try {
@@ -28,6 +40,12 @@ public class StoreUtil {
         }
     }
 
+    /**
+     * Check if store exists in the states
+     *
+     * @param store store name
+     * @return true/false
+     */
     public static boolean checkStoreStatus(final String store) {
         return States.get().getStoreState(store).isRunning();
     }

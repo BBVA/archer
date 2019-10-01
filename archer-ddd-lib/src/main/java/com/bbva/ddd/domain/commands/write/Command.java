@@ -21,6 +21,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * Manage the production of commands
+ */
 public class Command {
 
     public static final String CREATE_ACTION = "create";
@@ -31,6 +34,13 @@ public class Command {
     private final String topic;
     private final boolean persistent;
 
+    /**
+     * Constructor
+     *
+     * @param topic             topic name
+     * @param applicationConfig configuration
+     * @param persistent        flag to persist the actions
+     */
     public Command(final String topic, final ApplicationConfig applicationConfig, final boolean persistent) {
         this.topic = topic + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX;
         producer = new CachedProducer(applicationConfig);
@@ -49,27 +59,76 @@ public class Command {
         return create(data, null, callback);
     }
 
+    /**
+     * Send data with optional headers in a command stream. The action of the command will be Command.CREATE_ACTION
+     *
+     * @param data            Data to send as command in event store
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final OptionalRecordHeaders optionalHeaders,
                                                                    final ProducerCallback callback) {
         return generateCommand(Command.CREATE_ACTION, data, null, UUID.randomUUID().toString(), optionalHeaders,
                 callback);
     }
 
+    /**
+     * Send data  with specific action in a command stream.
+     *
+     * @param action   specific action for the command
+     * @param entityId entity affected
+     * @param data     Data to send as command in event store
+     * @param callback Callback executed when command is stored
+     * @param <V>      Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityId, final V data,
                                                                           final ProducerCallback callback) {
         return processAction(action, entityId, data, null, callback);
     }
 
+    /**
+     * Send data with specific action and optional headers in a command stream.
+     *
+     * @param action          specific action for the command
+     * @param entityId        entity affected
+     * @param data            Data to send as command in event store
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityId, final V data,
                                                                           final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
         return generateCommand(action, data, null, entityId, optionalHeaders, callback);
     }
 
+    /**
+     * Send data in a command stream. The action of the command will be Command.DELETE_ACTION
+     *
+     * @param entityId   entity affected in the action
+     * @param valueClass Class type of value
+     * @param callback   Callback executed when command is stored
+     * @param <V>        Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityId, final Class<V> valueClass,
                                                                    final ProducerCallback callback) {
         return delete(entityId, valueClass, null, callback);
     }
 
+    /**
+     * Send data with optional headers in a command stream. The action of the command will be Command.DELETE_ACTION
+     *
+     * @param entityId        entity affected in the action
+     * @param valueClass      Class type of value
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityId, final Class<V> valueClass,
                                                                    final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
         if (entityId == null) {

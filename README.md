@@ -59,10 +59,12 @@ It provide a specific simply language to launch interactive queries in real-time
 ### Domain driven design
 
 Simplify the develop of services with the pattern Domain-Driven-Design doing the applications more legibles and maintenables.
+[You see more about ddd](archer-ddd-lib/README.md)
 
 ### Gateway
 
 In teh Event Sourcing patter, the interaction with the external interfaces is carried out by gateways. This library facilitate the developt of gateways.
+[You see more about gateway](archer-gateway-lib/README.md)
 
 ### Logger
 
