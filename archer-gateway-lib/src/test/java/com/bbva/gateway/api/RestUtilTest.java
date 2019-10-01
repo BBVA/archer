@@ -17,6 +17,10 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map;
+
+import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_PORT;
+import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_RESOURCE;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -50,6 +54,35 @@ public class RestUtilTest {
         );
     }
 
+    @DisplayName("Start RestUtil with configok")
+    @Test
+    public void startRestWithConfigOk() {
+        Exception ex = null;
+        final RestUtil restUtil = new RestUtil();
+        try {
+            PowerMockito.mockStatic(HttpServer.class);
+            PowerMockito.mockStatic(RuntimeDelegate.class);
+            PowerMockito.mockStatic(Thread.class);
+
+            final HttpServer server = PowerMockito.mock(HttpServer.class);
+            PowerMockito.when(HttpServer.create(Mockito.any(InetSocketAddress.class), Mockito.any(int.class))).thenReturn(server);
+            PowerMockito.when(RuntimeDelegate.getInstance()).thenReturn(PowerMockito.mock(RuntimeDelegate.class));
+            PowerMockito.doNothing().when(server, "start");
+
+            final Map configuration = new HashMap<>();
+            configuration.put(GATEWAY_REST_PORT, "80");
+            configuration.put(GATEWAY_REST_RESOURCE, "resource");
+            RestUtil.startRestCallBack(configuration);
+        } catch (final Exception e) {
+            ex = e;
+        }
+
+        final Exception finalEx = ex;
+        Assertions.assertAll("RestUtil",
+                () -> Assertions.assertNull(finalEx),
+                () -> Assertions.assertNotNull(restUtil)
+        );
+    }
 
     @DisplayName("Start RestUtil ko")
     @Test

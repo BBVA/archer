@@ -45,3 +45,7 @@ You can configure the baseName of the topic in which you want save the logs.
 ```
 export LOG_SINK_NAME=log_events
 ```
+If you only want put in debug the service, for example:
+```
+export LOG_APPENDER_CONFIG=com.bbva=DEBUG
+```

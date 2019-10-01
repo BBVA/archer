@@ -49,6 +49,14 @@ public class TopicManager {
 
     /**
      * Create topics
+     * For example:
+     * <pre>
+     *  {@code
+     *      final Map<String, String> commandTopic = new HashMap<>();
+     *      commandTopic.put("topic" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, ApplicationConfig.COMMANDS_RECORD_TYPE);
+     *      TopicManager.createTopics(commandTopic, appConfiguration);
+     *  }
+     * </pre>
      *
      * @param topicNames map with names and types
      * @param config     general configuration

@@ -13,6 +13,19 @@ import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
 
 /**
  * Main class to init gateway with your services
+ * For example:
+ * <pre>
+ * {@code
+ *  @Config(file = "example.yml", servicesPackage = "com.example")
+ *  class ExampleGateway extends Gateway {
+ *      ExampleGateway() {
+ *          configure(ExampleGateway.class);
+ *          domain = new Domain(new ExampleHandler(servicesPackage, config), config.getApplicationConfig());
+ *          start();
+ *          new HelperApplication(config.getApplicationConfig());
+ *      }
+ *  }
+ * }</pre>
  */
 public class Gateway {
     protected static Configuration config;

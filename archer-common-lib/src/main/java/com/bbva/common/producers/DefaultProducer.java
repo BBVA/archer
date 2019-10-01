@@ -15,7 +15,13 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.Future;
 
 /**
- * Default producer implementation
+ * Default producer implementation.
+ * <pre>
+ *  {@code
+ *      final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+ *      final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
+ *  }
+ * </pre>
  *
  * @param <K> Type of Record schema
  * @param <V> Type of Record

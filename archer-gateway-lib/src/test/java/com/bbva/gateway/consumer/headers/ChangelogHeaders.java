@@ -1,6 +1,7 @@
 package com.bbva.gateway.consumer.headers;
 
 
+import com.bbva.common.utils.headers.RecordHeader;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
@@ -8,6 +9,11 @@ import java.util.Iterator;
 
 public class ChangelogHeaders implements Headers {
 
+    private RecordHeader lastHeader;
+
+    public void add(final RecordHeader header) {
+        lastHeader = header;
+    }
 
     @Override
     public Headers add(final Header header) throws IllegalStateException {
@@ -26,7 +32,7 @@ public class ChangelogHeaders implements Headers {
 
     @Override
     public Header lastHeader(final String s) {
-        return null;
+        return lastHeader;
     }
 
     @Override

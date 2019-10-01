@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
- * Improvment production caching the producers
+ * Improvement production caching the producers
  */
 public class CachedProducer {
 

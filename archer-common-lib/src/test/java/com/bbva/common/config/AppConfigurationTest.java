@@ -1,5 +1,6 @@
 package com.bbva.common.config;
 
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.util.PowermockExtension;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -8,6 +9,7 @@ import org.junit.gen5.api.extension.ExtendWith;
 import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
+import org.yaml.snakeyaml.Yaml;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -17,11 +19,13 @@ public class AppConfigurationTest {
     @Test
     public void initCommonConfigurationOk() {
         final ApplicationConfig configuration = new AppConfiguration().init();
-
+        final AppConfiguration appConfig = AppConfiguration.get();
         Assertions.assertAll("configurations",
                 () -> Assertions.assertEquals("", configuration.get().get("schema.registry.url")),
                 () -> Assertions.assertEquals("PLAINTEXT://", configuration.get().get("bootstrap.servers")),
-                () -> Assertions.assertEquals("1", configuration.get().get("replication.factor"))
+                () -> Assertions.assertEquals("1", configuration.get().get("replication.factor")),
+                () -> Assertions.assertNotNull(appConfig),
+                () -> Assertions.assertEquals(configuration, appConfig.getApplicationConfig())
         );
     }
 
@@ -41,7 +45,6 @@ public class AppConfigurationTest {
         );
     }
 
-
     @DisplayName("Initialize secure setting custom configuration")
     @Test
     public void initSecureConfigurationOk() {
@@ -58,5 +61,11 @@ public class AppConfigurationTest {
 
     }
 
-
+    @DisplayName("Get not found file config")
+    @Test
+    public void getConfigFromFileKo() {
+        Assertions.assertThrows(ApplicationException.class, () ->
+                new AppConfiguration().getConfigFromFile(new Yaml(), AppConfigurationTest.class.getClassLoader(), "not-found.yml")
+        );
+    }
 }

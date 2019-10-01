@@ -4,11 +4,13 @@ import com.bbva.common.config.ApplicationConfig;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.OptionalRecordHeaders;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
 import com.bbva.ddd.domain.commands.write.records.PersonalData;
 import com.bbva.ddd.domain.exceptions.ProduceException;
+import org.apache.kafka.common.header.Header;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -20,6 +22,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
@@ -37,7 +40,38 @@ public class CommandTest {
 
         HelperDomain.create(new ApplicationConfig());
         final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
-        final CommandRecordMetadata metadata = command.create(new PersonalData(), null, new DefaultProducerCallback());
+
+        final List<Header> lstHeaders = new ArrayList<>();
+        lstHeaders.add(new Header() {
+            @Override
+            public String key() {
+                return "key";
+            }
+
+            @Override
+            public byte[] value() {
+                return new ByteArrayValue("value").getBytes();
+            }
+        });
+        final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
+        final CommandRecordMetadata metadata = command.create(new PersonalData(), headers, new DefaultProducerCallback());
+
+        Assertions.assertAll("Command",
+                () -> Assertions.assertNotNull(metadata),
+                () -> Assertions.assertNotNull(metadata.commandId())
+        );
+    }
+
+    @DisplayName("Create command without headersok")
+    @Test
+    public void createCommandWithoutHeadersOk() throws Exception {
+        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
+        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
+        PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
+
+        HelperDomain.create(new ApplicationConfig());
+        final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
+        final CommandRecordMetadata metadata = command.create(new PersonalData(), new DefaultProducerCallback());
 
         Assertions.assertAll("Command",
                 () -> Assertions.assertNotNull(metadata),

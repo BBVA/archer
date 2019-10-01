@@ -23,12 +23,14 @@ public class PRecordMetadataTest {
                 1L, 1L, timestamp,
                 1L, 9, 0);
         final PRecordMetadata pRecordMetadata = new PRecordMetadata(recordMetadata);
+        final PRecordMetadata otherRecordMetadata = new PRecordMetadata();
 
         Assertions.assertAll("record metadata",
                 () -> Assertions.assertEquals("topic", pRecordMetadata.topic()),
                 () -> Assertions.assertEquals(2L, pRecordMetadata.offset()),
                 () -> Assertions.assertEquals(1, pRecordMetadata.partition()),
-                () -> Assertions.assertEquals(timestamp, pRecordMetadata.timestamp())
+                () -> Assertions.assertEquals(timestamp, pRecordMetadata.timestamp()),
+                () -> Assertions.assertNotNull(otherRecordMetadata)
         );
     }
 

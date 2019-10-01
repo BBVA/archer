@@ -25,9 +25,12 @@ public class HostStoreInfoTest {
 
         Assertions.assertAll("hostStoreInfo",
                 () -> Assertions.assertNotNull(hostStoreInfo),
+                () -> Assertions.assertNotNull(hostStoreInfo.getStoreNames()),
+                () -> Assertions.assertNotNull(hostStoreInfo.toString()),
                 () -> Assertions.assertTrue(hostStoreInfo.equals(hostStoreInfoCopy)),
                 () -> Assertions.assertTrue(hostStoreInfo.equals(hostStoreInfo)),
                 () -> Assertions.assertFalse(hostStoreInfo.equals(null)),
+                () -> Assertions.assertFalse(hostStoreInfo.equals("")),
                 () -> Assertions.assertNotNull(hostStoreInfo.hashCode()),
                 () -> Assertions.assertEquals(hostStoreInfo.getHost(), hostStoreInfoCopy.getHost()),
                 () -> Assertions.assertEquals(hostStoreInfo.getPort(), hostStoreInfoCopy.getPort())

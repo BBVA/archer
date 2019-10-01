@@ -106,4 +106,15 @@ public class RetrofitClientTest {
                 () -> Assertions.assertEquals(responseMock, response)
         );
     }
+
+    @DisplayName("Retrofit call to fake uri and return null ok")
+    @Test
+    public void fakeUriOk() {
+        final Retrofit retrofitClient = RetrofitClient.build("http://fake-uri");
+        final HttpRequest request = new HttpRequest();
+        request.setMethod(HttpMethod.GET);
+        request.setHeaders(new HashMap<>());
+        final Response response = RetrofitClient.call(retrofitClient, request, new HashMap<>());
+        Assertions.assertNull(response);
+    }
 }

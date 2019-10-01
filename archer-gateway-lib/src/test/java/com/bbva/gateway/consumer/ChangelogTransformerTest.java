@@ -51,4 +51,5 @@ public class ChangelogTransformerTest {
                 () -> Assertions.assertEquals("key", transformed.key)
         );
     }
+
 }

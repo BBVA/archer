@@ -34,4 +34,21 @@ public class DropStreamQueryBuilderTest {
         );
     }
 
+    @DisplayName("Create table build with no delete")
+    @Test
+    public void createTableQueryBuildernoDelete() throws Exception {
+        final DropStreamQueryBuilder dropStreamQueryBuilder = new DropStreamQueryBuilder("stream", false);
+        final QueryProcessorBuilder queryProcessorBuilder = new QueryProcessorBuilder(dropStreamQueryBuilder);
+
+        final SQLProcessorContext context = PowerMockito.mock(SQLProcessorContext.class);
+        PowerMockito.when(context, "ksqlContext").thenReturn(PowerMockito.mock(KsqlContext.class));
+
+        queryProcessorBuilder.init(context);
+        queryProcessorBuilder.build();
+        queryProcessorBuilder.start();
+
+        Assertions.assertAll("createStreamQueryBuilder",
+                () -> Assertions.assertNotNull(queryProcessorBuilder)
+        );
+    }
 }

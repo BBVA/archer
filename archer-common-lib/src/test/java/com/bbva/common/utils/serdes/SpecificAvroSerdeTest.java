@@ -49,4 +49,16 @@ public class SpecificAvroSerdeTest {
 
         Assertions.assertNotNull(specificAvroSerde);
     }
+
+    @DisplayName("Serializer and deserializer constructor")
+    @Test
+    public void serializerAndDeserializerOk() {
+
+        final SpecificAvroSerializer serializer = new SpecificAvroSerializer(PowerMockito.mock(SchemaRegistryClient.class));
+
+        final SpecificAvroDeserializer deserializer = new SpecificAvroDeserializer(PowerMockito.mock(SchemaRegistryClient.class));
+
+        Assertions.assertNotNull(serializer);
+        Assertions.assertNotNull(deserializer);
+    }
 }

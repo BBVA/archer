@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 /**
- * Serialize/deserialize the data in bytearray
+ * Serialize/deserialize the data in byte array
  */
 public class ByteArrayValue {
     private final byte[] data;

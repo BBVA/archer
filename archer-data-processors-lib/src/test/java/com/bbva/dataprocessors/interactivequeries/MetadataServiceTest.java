@@ -82,13 +82,10 @@ public class MetadataServiceTest {
 
         final MetadataService metadataService = new MetadataService(stream);
 
-        ApplicationException ex = null;
-        try {
-            metadataService.streamsMetadataForStoreAndKey("test_store", "key", null);
-        } catch (final ApplicationException e) {
-            ex = e;
-        }
+        final ApplicationException ex = null;
+        Assertions.assertThrows(ApplicationException.class, () ->
+                metadataService.streamsMetadataForStoreAndKey("test_store", "key", null)
+        );
 
-        Assertions.assertNotNull(ex);
     }
 }

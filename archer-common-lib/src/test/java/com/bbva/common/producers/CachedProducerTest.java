@@ -2,6 +2,7 @@ package com.bbva.common.producers;
 
 import com.bbva.common.config.AppConfiguration;
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.records.GenericRecordImpl;
 import com.bbva.common.producers.records.SpecificRecordImpl;
 import com.bbva.common.util.PowermockExtension;
@@ -125,6 +126,22 @@ public class CachedProducerTest {
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer),
                 () -> Assertions.assertNull(mockedFuture)
+        );
+    }
+
+    @DisplayName("Error serializing, no class to serialize")
+    @Test
+    public void addRecordSerializersKo() throws Exception {
+
+
+        final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
+
+        final ApplicationConfig configuration = new AppConfiguration().init();
+        final CachedProducer producer = new CachedProducer(configuration);
+
+        Assertions.assertThrows(ApplicationException.class, () ->
+                producer.add(new PRecord<>("test", true, null, new RecordHeaders()), null)
         );
     }
 }

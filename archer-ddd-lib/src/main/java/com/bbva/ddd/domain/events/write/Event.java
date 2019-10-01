@@ -129,7 +129,7 @@ public class Event {
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue(producerName));
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
         if (referenceRecord != null) {
-            recordHeaders.add(EventHeaderType.REFERENCE_RECORD_KEY, new ByteArrayValue(referenceRecord));
+            recordHeaders.add(EventHeaderType.REFERENCE_RECORD_KEY, new ByteArrayValue(referenceRecord.key()));
         }
 
         if (name != null) {

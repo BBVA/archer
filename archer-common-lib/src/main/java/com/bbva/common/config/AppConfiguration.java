@@ -5,6 +5,7 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +92,7 @@ public class AppConfiguration {
         try (final InputStream in = classLoader.getResourceAsStream(filename)) {
             properties = (Map<String, Object>) yaml.load(in);
 
-        } catch (final IOException e) {
+        } catch (final IOException | YAMLException e) {
             logger.error("Config file not exists", e);
             throw new ApplicationException("Config file not exists", e);
         }
