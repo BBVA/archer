@@ -15,7 +15,7 @@ public class ChangelogTransformer<K, V> extends EntityTransformer<K, V> {
 
     @Override
     protected KeyValue<K, V> setMergedKeyValue(final K key, final V newValue) {
-        final Header header = this.context.headers().lastHeader(ChangelogHeaderType.REFERENCE_RECORD_KEY.getName());
+        final Header header = this.context.headers().lastHeader(ChangelogHeaderType.UUID_KEY.getName());
         if (header != null) {
             final String newKey = new ByteArrayValue(header.value()).asString();
             this.stateStore.put((K) newKey, newValue);

@@ -47,7 +47,15 @@ public class CachedProducer {
 
     private <K, V> DefaultProducer<K, V> getProducer(final PRecord<K, V> record, final Class<V> valueClass) {
         final DefaultProducer<K, V> producer;
-        if (cachedProducers.containsKey(record.topic())) {
+
+        boolean exactlyOnce = false;
+        if (applicationConfig.producer().get(ApplicationConfig.ProducerProperties.ENABLE_IDEMPOTENCE).toString().equals("true")) {
+            final String transactionalIdPrefix = applicationConfig.producer().get(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
+            applicationConfig.producer().put(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID, transactionalIdPrefix + record.topic());
+            exactlyOnce = true;
+        }
+
+        if (!exactlyOnce && cachedProducers.containsKey(record.topic())) {
             logger.info("Recovered cached producer for topic {}", record.topic());
             producer = cachedProducers.get(record.topic());
 
@@ -66,16 +74,10 @@ public class CachedProducer {
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to {}", serializedValue.toString());
 
-            boolean exactlyOnce = false;
-            if (applicationConfig.producer().get(ApplicationConfig.ProducerProperties.ENABLE_IDEMPOTENCE).toString().equals("true")) {
-                final String transactionalIdPrefix = applicationConfig.producer().get(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
-                applicationConfig.producer().put(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID, transactionalIdPrefix + record.topic());
-                exactlyOnce = true;
-            }
-
             producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue, exactlyOnce);
             cachedProducers.put(record.topic(), producer);
         }
+
         return producer;
     }
 

@@ -120,6 +120,24 @@ public class CRecord {
      * @return if the record is in replay mode
      */
     public boolean isReplayMode() {
-        return this.headers.find(CommonHeaderType.FLAG_REPLAY_KEY).asBoolean();
+        return this.headers.find(CommonHeaderType.FLAG_REPLAY_KEY.getName()).asBoolean();
+    }
+
+    /**
+     * Get the record type that triggered it
+     *
+     * @return record type which triggered this event
+     */
+    public String referenceRecordType() {
+        return headers.find(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY.getName()).asString();
+    }
+
+    /**
+     * Get the record position that triggered it (topic-partition-offset)
+     *
+     * @return position of the record which triggered this event
+     */
+    public String referenceRecordPosition() {
+        return headers.find(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY.getName()).asString();
     }
 }

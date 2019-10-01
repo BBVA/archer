@@ -1,6 +1,7 @@
 package com.bbva.ddd.domain.commands.write;
 
 import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.consumers.CRecord;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
@@ -40,65 +41,117 @@ public class Command {
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param data     Data to send as command in event store
+     * @param data     Record to send as command in event store
      * @param callback Callback executed when command is stored
-     * @param <V>      Data type
+     * @param <V>      Record type
      * @return A command record metadata
      */
     public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final ProducerCallback callback) {
-        return create(data, null, callback);
+        return create(data, null, null, callback);
     }
 
-    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final OptionalRecordHeaders optionalHeaders,
+    /**
+     * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
+     *
+     * @param data     Record to send as command in event store
+     * @param callback Callback executed when command is stored
+     * @param <V>      Record type
+     * @return A command record metadata
+     */
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final CRecord referenceRecord, final ProducerCallback callback) {
+        return create(data, referenceRecord, null, callback);
+    }
+
+    /**
+     * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
+     *
+     * @param data     Record to send as command in event store
+     * @param callback Callback executed when command is stored
+     * @param <V>      Record type
+     * @return A command record metadata
+     */
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
+        return create(data, null, optionalHeaders, callback);
+    }
+
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final CRecord referenceRecord,
+                                                                   final OptionalRecordHeaders optionalHeaders,
                                                                    final ProducerCallback callback) {
-        return generateCommand(Command.CREATE_ACTION, data, null, UUID.randomUUID().toString(), optionalHeaders,
-                callback);
+        return generateCommand(Command.CREATE_ACTION, data, null, UUID.randomUUID().toString(), referenceRecord,
+                optionalHeaders, callback);
     }
 
-    public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityId, final V data,
+    public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
+                                                                          final V data, final ProducerCallback callback) {
+        return processAction(action, entityUuid, data, null, null, callback);
+    }
+
+    public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
+                                                                          final V data, final CRecord referenceRecord,
                                                                           final ProducerCallback callback) {
-        return processAction(action, entityId, data, null, callback);
+        return processAction(action, entityUuid, data, referenceRecord, null, callback);
     }
 
-    public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityId, final V data,
-                                                                          final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
-        return generateCommand(action, data, null, entityId, optionalHeaders, callback);
+    public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
+                                                                          final V data, final OptionalRecordHeaders optionalHeaders,
+                                                                          final ProducerCallback callback) {
+        return processAction(action, entityUuid, data, null, optionalHeaders, callback);
     }
 
-    public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityId, final Class<V> valueClass,
+    public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
+                                                                          final V value, final CRecord referenceRecord,
+                                                                          final OptionalRecordHeaders optionalHeaders,
+                                                                          final ProducerCallback callback) {
+        return generateCommand(action, value, null, entityUuid, referenceRecord, optionalHeaders, callback);
+    }
+
+    public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
                                                                    final ProducerCallback callback) {
-        return delete(entityId, valueClass, null, callback);
+        return delete(entityUuid, valueClass, null, null, callback);
     }
 
-    public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityId, final Class<V> valueClass,
-                                                                   final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
-        if (entityId == null) {
+    public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
+                                                                   final CRecord referenceRecord, final ProducerCallback callback) {
+        return delete(entityUuid, valueClass, referenceRecord, null, callback);
+    }
+
+    public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
+                                                                   final OptionalRecordHeaders optionalHeaders,
+                                                                   final ProducerCallback callback) {
+        return delete(entityUuid, valueClass, null, optionalHeaders, callback);
+    }
+
+    public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
+                                                                   final CRecord referenceRecord, final OptionalRecordHeaders optionalHeaders,
+                                                                   final ProducerCallback callback) {
+        if (entityUuid == null) {
             throw new ApplicationException("entityUuid can not be null");
         }
-        return generateCommand(Command.DELETE_ACTION, null, valueClass, entityId, optionalHeaders, callback);
+        return generateCommand(Command.DELETE_ACTION, null, valueClass, entityUuid, referenceRecord, optionalHeaders, callback);
     }
 
-    private <V extends SpecificRecord> CommandRecordMetadata generateCommand(
-            final String action, final V record,
-            final Class<V> recordClass, final String entityId, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
+    private <V extends SpecificRecord> CommandRecordMetadata generateCommand(final String action, final V newValue,
+                                                                             final Class<V> valueClass, final String entityUuid,
+                                                                             final CRecord referenceRecord, final OptionalRecordHeaders optionalHeaders,
+                                                                             final ProducerCallback callback) {
         logger.debug("Creating command of type {}", action);
         final String key = UUID.randomUUID().toString();
 
-        final RecordHeaders headers = headers(action, key, entityId, optionalHeaders);
+        final RecordHeaders headers = headers(action, key, entityUuid, referenceRecord, optionalHeaders);
 
         final Future<RecordMetadata> result;
-        if (record != null) {
-            result = producer.add(new PRecord<>(topic, key, record, headers), callback);
-        } else if (recordClass != null) {
-            result = producer.remove(new PRecord<>(topic, key, null, headers), recordClass, callback);
+        if (newValue != null) {
+            result = producer.add(new PRecord<>(topic, key, newValue, headers), callback);
+        } else if (valueClass != null) {
+            result = producer.remove(new PRecord<>(topic, key, null, headers), valueClass, callback);
         } else {
-            throw new ApplicationException("Record or recordClass params must be set");
+            throw new ApplicationException("One of the params 'value' or 'valueClass' must be set");
         }
 
         final CommandRecordMetadata recordedMessageMetadata;
         try {
             final String commandUUID = headers.find(CommandHeaderType.UUID_KEY).asString();
-            recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, entityId);
+            recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, entityUuid);
             logger.info("CommandRecord created: {}", commandUUID);
         } catch (final InterruptedException | ExecutionException e) {
             logger.error("Cannot resolve the promise", e);
@@ -109,16 +162,25 @@ public class Command {
         return recordedMessageMetadata;
     }
 
-    private RecordHeaders headers(final String name, final String key, final String entityId, final OptionalRecordHeaders optionalHeaders) {
+    private RecordHeaders headers(final String name, final String key, final String entityUuid,
+                                  final CRecord referenceRecord, final OptionalRecordHeaders optionalHeaders) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
-        recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue(key));
-        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue(name));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, CommandHeaderType.TYPE_VALUE);
+        recordHeaders.add(CommandHeaderType.UUID_KEY, key);
+        recordHeaders.add(CommandHeaderType.NAME_KEY, name);
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY,
                 new ByteArrayValue(HelperDomain.get().isReplayMode() && !persistent));
-        if (entityId != null) {
-            recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue(entityId));
+        if (entityUuid != null) {
+            recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid);
+        }
+
+        if (referenceRecord != null) {
+            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
+            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
+                    referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
+            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
+                    referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
         }
 
         if (optionalHeaders != null && optionalHeaders.getList().size() > 0) {

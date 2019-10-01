@@ -38,6 +38,10 @@ public class RecordHeaders {
         return value;
     }
 
+    public void add(final HeaderType key, final Object value) {
+        add(key, new ByteArrayValue(value));
+    }
+
     public void add(final HeaderType key, final HeaderType value) {
         add(key, new ByteArrayValue(value.getName()));
     }

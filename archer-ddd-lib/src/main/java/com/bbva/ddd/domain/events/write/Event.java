@@ -5,7 +5,6 @@ import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
-import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.common.utils.headers.types.EventHeaderType;
@@ -76,15 +75,20 @@ public class Event {
     private static RecordHeaders headers(final String producerName, final boolean replay, final CRecord referenceRecord, final String name) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(EventHeaderType.TYPE_VALUE));
-        recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue(producerName));
-        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(replay));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, EventHeaderType.TYPE_VALUE);
+        recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, producerName);
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, replay);
+
         if (referenceRecord != null) {
-            recordHeaders.add(EventHeaderType.REFERENCE_RECORD_KEY, new ByteArrayValue(referenceRecord));
+            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
+            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
+                    referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
+            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
+                    referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
         }
 
         if (name != null) {
-            recordHeaders.add(EventHeaderType.NAME_KEY, new ByteArrayValue(name));
+            recordHeaders.add(EventHeaderType.NAME_KEY, name);
         }
 
         logger.debug("CRecord getList: {}", recordHeaders.toString());

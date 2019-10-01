@@ -5,7 +5,6 @@ import com.bbva.common.utils.headers.HeaderType;
 public enum ChangelogHeaderType implements HeaderType {
     TYPE_VALUE("changelog"),
     UUID_KEY("uuid"),
-    REFERENCE_RECORD_KEY("reference.record"),
     AGGREGATE_UUID_KEY("aggregate.uuid"),
     AGGREGATE_NAME_KEY("aggregate.name"),
     AGGREGATE_METHOD_KEY("aggregate.method");

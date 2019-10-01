@@ -30,13 +30,13 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     }
 
     @Override
-    public void apply(final String method, final V value, final CommandRecord commandRecord,
+    public void apply(final String method, final V value, final CommandRecord referenceRecord,
                       final ProducerCallback callback) {
-        applyRecordCallback.apply(method, value, commandRecord, callback);
+        applyRecordCallback.apply(method, value, referenceRecord, callback);
     }
 
-    public void apply(final String method, final CRecord record, final ProducerCallback callback) {
-        deleteRecordCallback.apply(method, (Class<V>) data.getClass(), record, callback);
+    public void apply(final String method, final CRecord referenceRecord, final ProducerCallback callback) {
+        deleteRecordCallback.apply(method, (Class<V>) data.getClass(), referenceRecord, callback);
     }
 
     @Override
@@ -44,7 +44,7 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
         applyRecordCallback = apply;
     }
 
-    public final void setDeleteRecordCallback(final DeleteRecordCallback apply) {
+    public final void setDeleteRecordCallback(final DeleteRecordCallback<K, V> apply) {
         deleteRecordCallback = apply;
     }
 

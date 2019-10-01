@@ -54,19 +54,20 @@ public class DefaultProducer<K, V> {
             if (exactlyOnce) {
                 producer.commitTransaction();
             }
-            producer.flush();
+//            producer.flush();
 
             logger.debug("End of production");
 
         } catch (final ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
             // We can't recover from these exceptions, so our only option is to close the producer and exit.
-            producer.close();
             throw e;
         } catch (final KafkaException e) {
             logger.error(e.getMessage(), e);
             if (exactlyOnce) {
                 producer.abortTransaction();
             }
+        } finally {
+            producer.close();
         }
         return result;
     }
