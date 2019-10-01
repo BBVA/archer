@@ -51,7 +51,7 @@ public class Command {
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param value     Record data to send as command in event store
+     * @param value    Record data to send as command in event store
      * @param callback Callback executed when command is stored
      * @param <V>      Record type
      * @return A command record metadata
@@ -63,7 +63,7 @@ public class Command {
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param value     Record to send as command in event store
+     * @param value    Record to send as command in event store
      * @param callback Callback executed when command is stored
      * @param <V>      Record type
      * @return A command record metadata
@@ -75,7 +75,7 @@ public class Command {
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param value     Record to send as command in event store
+     * @param value    Record to send as command in event store
      * @param callback Callback executed when command is stored
      * @param <V>      Record type
      * @return A command record metadata
@@ -87,7 +87,7 @@ public class Command {
     /**
      * Send data with optional headers in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param value            Data to send as command in event store
+     * @param value           Data to send as command in event store
      * @param referenceRecord Reference record that triggers this event
      * @param optionalHeaders Optional headers for add to the command
      * @param callback        Callback executed when command is stored
@@ -106,7 +106,7 @@ public class Command {
      *
      * @param action     specific action for the command
      * @param entityUuid Entity affected
-     * @param value       Data to send as command in event store
+     * @param value      Data to send as command in event store
      * @param callback   Callback executed when command is stored
      * @param <V>        Data type
      * @return A command record metadata
@@ -121,7 +121,7 @@ public class Command {
      *
      * @param action          Specific action for the command
      * @param entityUuid      Entity affected
-     * @param value            Data to send as command in event store
+     * @param value           Data to send as command in event store
      * @param referenceRecord Reference record that triggers this event
      * @param callback        Callback executed when command is stored
      * @param <V>             Data type
@@ -138,7 +138,7 @@ public class Command {
      *
      * @param action          Specific action for the command
      * @param entityUuid      Entity affected
-     * @param value            Data to send as command in event store
+     * @param value           Data to send as command in event store
      * @param optionalHeaders Optional headers for add to the command
      * @param callback        Callback executed when command is stored
      * @param <V>             Data type

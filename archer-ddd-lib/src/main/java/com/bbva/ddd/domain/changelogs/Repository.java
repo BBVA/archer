@@ -92,10 +92,10 @@ public final class Repository<K, V extends SpecificRecordBase> {
      *  repository.create(key, value, commandRecord, callback);
      *  }</pre>
      *
-     * @param aggregateKey   key of the record
-     * @param value          value to save
+     * @param aggregateKey    key of the record
+     * @param value           value to save
      * @param referenceRecord reference command record
-     * @param callback       callback to manage the action response
+     * @param callback        callback to manage the action response
      * @return a aggregate
      */
     public AggregateBase create(final String aggregateKey, final V value, final CommandRecord referenceRecord,

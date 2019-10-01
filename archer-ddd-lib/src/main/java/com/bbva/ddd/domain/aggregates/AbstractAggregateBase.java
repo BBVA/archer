@@ -54,10 +54,10 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     /**
      * Apply new data in changelog
      *
-     * @param method        Name of the method which apply new data
-     * @param value         New value to apply
+     * @param method          Name of the method which apply new data
+     * @param value           New value to apply
      * @param referenceRecord Command record which has triggered the domain logic
-     * @param callback      Callback executed when message is stored in changelog
+     * @param callback        Callback executed when message is stored in changelog
      */
     @Override
     public void apply(final String method, final V value, final CommandRecord referenceRecord,
@@ -68,9 +68,9 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     /**
      * Apply new data in changelog
      *
-     * @param method   Name of the method which apply new data
-     * @param referenceRecord   New value to apply
-     * @param callback Callback executed when message is stored in changelog
+     * @param method          Name of the method which apply new data
+     * @param referenceRecord New value to apply
+     * @param callback        Callback executed when message is stored in changelog
      */
     public void apply(final String method, final CRecord referenceRecord, final ProducerCallback callback) {
         deleteRecordCallback.apply(method, (Class<V>) data.getClass(), referenceRecord, callback);
