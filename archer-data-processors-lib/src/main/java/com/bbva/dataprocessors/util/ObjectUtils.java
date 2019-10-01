@@ -9,10 +9,20 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Utility class to manage object and fields
+ */
 public final class ObjectUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ObjectUtils.class);
 
+    /**
+     * Merge two object properties in one new object
+     *
+     * @param lastObject old object
+     * @param newObject  new object properties
+     * @return merge object
+     */
     public static Object merge(final Object lastObject, final Object newObject) {
         Object result;
         try {
@@ -53,5 +63,36 @@ public final class ObjectUtils {
         }
 
         return result;
+    }
+
+    /**
+     * Return the merged object or the intial if it not exists previously
+     *
+     * @param oldValue old value
+     * @param value    new value
+     * @param <V>      Class type of value
+     * @return merged object
+     */
+    public static <V> V getNewMergedValue(final V oldValue, final V value) {
+        final V newValue;
+        if (oldValue == null || value == null) {
+            newValue = value;
+        } else {
+            newValue = (V) merge(oldValue, value);
+        }
+        return newValue;
+    }
+
+    /**
+     * Obtain the getter or setter of a property
+     *
+     * @param fieldName field name
+     * @param isGet     gettter/setter
+     * @return the method
+     */
+    public static String getFieldNameMethod(final String fieldName, final boolean isGet) {
+        return (isGet ? "get" : "set") +
+                fieldName.substring(0, 1).toUpperCase() +
+                fieldName.substring(1);
     }
 }

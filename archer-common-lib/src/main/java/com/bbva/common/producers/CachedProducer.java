@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+/**
+ * Improvment production caching the producers
+ */
 public class CachedProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(CachedProducer.class);
@@ -29,6 +32,11 @@ public class CachedProducer {
     private final CachedSchemaRegistryClient schemaRegistry;
     private final String schemaRegistryUrl;
 
+    /**
+     * Constructor
+     *
+     * @param applicationConfig configuration
+     */
     public CachedProducer(final ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
 
@@ -37,10 +45,29 @@ public class CachedProducer {
         schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 1000);
     }
 
+    /**
+     * Add new record message
+     *
+     * @param record   record to send
+     * @param callback callback to manage response
+     * @param <K>      class type of key
+     * @param <V>      class type of value
+     * @return future with production result
+     */
     public <K, V> Future<RecordMetadata> add(final PRecord<K, V> record, final ProducerCallback callback) {
         return getProducer(record, null).save(record, callback);
     }
 
+    /**
+     * Remove record message
+     *
+     * @param record     record to remove
+     * @param valueClass value
+     * @param callback   callback to manage response
+     * @param <K>        class type of key
+     * @param <V>        class type of value
+     * @return future with production result
+     */
     public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback) {
         return getProducer(record, valueClass).save(record, callback);
     }

@@ -15,6 +15,9 @@ import java.util.*;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
 
+/**
+ * Main handler of gateway
+ */
 public class GatewayHandler implements Handler {
     private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
 
@@ -25,6 +28,12 @@ public class GatewayHandler implements Handler {
     List<String> eventsSubscribed = new ArrayList<>();
     protected static Configuration config;
 
+    /**
+     * Constructor
+     *
+     * @param servicePackages package to find services
+     * @param generalConfig   configuration
+     */
     public GatewayHandler(final String servicePackages, final Configuration generalConfig) {
         final List<Class> serviceClasses = Configuration.getServiceClasses(servicePackages);
         config = generalConfig;
@@ -46,16 +55,27 @@ public class GatewayHandler implements Handler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> commandsSubscribed() {
         return commandsSubscribed;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> eventsSubscribed() {
         return eventsSubscribed;
     }
 
+    /**
+     * Call to service action for command
+     *
+     * @param command command received
+     */
     @Override
     public void processCommand(final CommandRecord command) {
         final String action = command.name();
@@ -64,6 +84,11 @@ public class GatewayHandler implements Handler {
         }
     }
 
+    /**
+     * Call to service action for event
+     *
+     * @param eventMessage Event consumed from the event store
+     */
     @Override
     public void processEvent(final EventRecord eventMessage) {
         if (eventServices.containsKey(eventMessage.topic())) {
@@ -92,10 +117,20 @@ public class GatewayHandler implements Handler {
         }
     }
 
+    /**
+     * Get the list of command services configured
+     *
+     * @return command services
+     */
     public Map<String, IGatewayService> getCommandServices() {
         return commandServices;
     }
 
+    /**
+     * Get the list of event services configured
+     *
+     * @return event services
+     */
     public Map<String, IGatewayService> getEventServices() {
         return eventServices;
     }

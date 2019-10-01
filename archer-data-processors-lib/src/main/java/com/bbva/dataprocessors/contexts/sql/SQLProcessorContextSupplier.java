@@ -11,7 +11,11 @@ import io.confluent.ksql.util.KsqlConfig;
 
 import java.util.Map;
 
+/**
+ * SQL processor context implementation
+ */
 public class SQLProcessorContextSupplier implements SQLProcessorContext {
+
     private static final Logger logger = LoggerFactory.getLogger(SQLProcessorContextSupplier.class);
 
     private final ApplicationConfig config;
@@ -19,6 +23,12 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
     private final String name;
     private final KsqlContext ksqlContext;
 
+    /**
+     * Constructor
+     *
+     * @param name   processor name
+     * @param config configurations
+     */
     public SQLProcessorContextSupplier(final String name, final ApplicationConfig config) {
         this.name = name;
 
@@ -30,31 +40,49 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
         ksqlContext = KsqlContext.create(new KsqlConfig(config.ksql().get()), ProcessingLogContext.create());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CachedSchemaRegistryClient schemaRegistryClient() {
         return schemaRegistry;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ApplicationConfig configs() {
         return config;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String name() {
         return name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String applicationId() {
         return config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_ID).toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public KsqlContext ksqlContext() {
         return ksqlContext;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void printDataSources() {
         logger.info("KSQL DataSources:");

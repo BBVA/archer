@@ -19,30 +19,79 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * Manage the production of events
+ */
 public class Event {
 
     private static final Logger logger = LoggerFactory.getLogger(Event.class);
     private final CachedProducer producer;
     private final String topic;
 
+    /**
+     * Constructor
+     *
+     * @param topicBaseName     to add specific suffix and interact with it
+     * @param applicationConfig configuration
+     */
     public Event(final String topicBaseName, final ApplicationConfig applicationConfig) {
         topic = topicBaseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX;
         producer = new CachedProducer(applicationConfig);
     }
 
+    /**
+     * Send data in a event stream.
+     *
+     * @param producerName producer identifier
+     * @param data         data to send
+     * @param callback     callback executed when command is stored
+     * @param <V>          data type
+     * @return A event record metadata
+     */
     public <V extends SpecificRecord> EventRecordMetadata send(final String producerName, final V data, final ProducerCallback callback) {
         return generateEvent(null, producerName, data, callback, HelperDomain.get().isReplayMode(), null, null);
     }
 
+    /**
+     * Send data in a event stream.
+     *
+     * @param producerName producer identifier
+     * @param data         data to send
+     * @param name         header populated in EventHeaderType.NAME_KEY
+     * @param callback     callback executed when command is stored
+     * @param <V>          data type
+     * @return A event record metadata
+     */
     public <V extends SpecificRecord> EventRecordMetadata send(final String producerName, final V data, final String name, final ProducerCallback callback) {
         return generateEvent(null, producerName, data, callback, HelperDomain.get().isReplayMode(), null, name);
     }
 
+    /**
+     * Send data in a event stream with a specific key
+     *
+     * @param key          specific key
+     * @param producerName producer identifier
+     * @param data         data to send
+     * @param callback     callback executed when command is stored
+     * @param <V>          data type
+     * @return A event record metadata
+     */
     public <V extends SpecificRecord> EventRecordMetadata send(final String key, final String producerName, final V data,
                                                                final ProducerCallback callback) {
         return generateEvent(key, producerName, data, callback, HelperDomain.get().isReplayMode(), null, null);
     }
 
+    /**
+     * Send data in a event stream
+     *
+     * @param producerName    producer identifier
+     * @param data            data to send
+     * @param replay          flag replay to populate header CommonHeaderType.FLAG_REPLAY_KEY
+     * @param referenceRecord reference command record
+     * @param callback        callback executed when command is stored
+     * @param <V>             data type
+     * @return A event record metadata
+     */
     public <V extends SpecificRecord> EventRecordMetadata send(
             final String producerName, final V data, final boolean replay, final CRecord referenceRecord, final ProducerCallback callback) {
         return generateEvent(null, producerName, data, callback, replay, referenceRecord, null);

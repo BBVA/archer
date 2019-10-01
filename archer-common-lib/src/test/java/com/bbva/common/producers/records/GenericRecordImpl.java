@@ -5,13 +5,16 @@ import org.apache.avro.generic.GenericRecord;
 
 public class GenericRecordImpl implements GenericRecord {
 
+    /**
+     * Constructor
+     */
     public GenericRecordImpl() {
-
+        super();
     }
 
     @Override
     public void put(final String s, final Object o) {
-
+        //Do nothing
     }
 
     @Override
@@ -21,7 +24,7 @@ public class GenericRecordImpl implements GenericRecord {
 
     @Override
     public void put(final int i, final Object o) {
-
+        //Do nothing
     }
 
     @Override

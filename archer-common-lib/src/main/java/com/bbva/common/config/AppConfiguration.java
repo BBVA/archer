@@ -2,9 +2,6 @@ package com.bbva.common.config;
 
 import com.bbva.common.exceptions.ApplicationException;
 import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -16,12 +13,20 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+/**
+ * Utility class to populate system configurations
+ */
 public class AppConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(AppConfiguration.class);
 
     private ApplicationConfig applicationConfig;
     private static AppConfiguration instance;
 
+    /**
+     * Get instance of AppConfiguration
+     *
+     * @return appConfiguration instace
+     */
     public static AppConfiguration get() {
         return instance;
     }
@@ -30,28 +35,56 @@ public class AppConfiguration {
         return applicationConfig;
     }
 
+    /**
+     * Get config annotations and initialize the configuration
+     *
+     * @return configuration
+     */
     public ApplicationConfig init() {
-        final SecureConfig secureConfig = getConfigAnnotation(SecureConfig.class);
+        String mainPackage = Thread.currentThread().getStackTrace()[2].getClassName();
+        mainPackage = removeLastPackage(mainPackage);
+
+        final SecureConfig secureConfig = findConfigAnnotation(SecureConfig.class, mainPackage);
         if (secureConfig != null) {
             return init(secureConfig);
         }
 
-        final Config extraConfig = getConfigAnnotation(Config.class);
+        final Config extraConfig = findConfigAnnotation(Config.class, mainPackage);
         return init(extraConfig);
     }
 
+    /**
+     * Initialiaze secure configuration
+     *
+     * @param extraConfig secure extra configuration
+     * @return configuration
+     */
     public ApplicationConfig init(final SecureConfig extraConfig) {
         final Map<String, Object> config = getConfig("common-secure-config.yml", extraConfig != null ? extraConfig.file() : null);
 
         return configure(config);
     }
 
+    /**
+     * Initialize configuration with extra configuration file
+     *
+     * @param extraConfig configuration annotation
+     * @return configuration
+     */
     public ApplicationConfig init(final Config extraConfig) {
         final Map<String, Object> config = getConfig("common-config.yml", extraConfig != null ? extraConfig.file() : null);
 
         return configure(config);
     }
 
+    /**
+     * Get all config properties of a yaml file
+     *
+     * @param yaml        yaml properties
+     * @param classLoader class loader
+     * @param filename    file
+     * @return map of properties
+     */
     public Map<String, Object> getConfigFromFile(final Yaml yaml, final ClassLoader classLoader,
                                                  final String filename) {
         final Map<String, Object> properties;
@@ -65,6 +98,12 @@ public class AppConfiguration {
         return properties;
     }
 
+    /**
+     * Replace environment variables in properties
+     *
+     * @param properties properties
+     * @return replaced properties
+     */
     public Map<String, Object> replaceEnvVariables(final Map<String, Object> properties) {
         for (final Map.Entry property : properties.entrySet()) {
             if (property.getValue() instanceof String) {
@@ -79,6 +118,13 @@ public class AppConfiguration {
         return properties;
     }
 
+    /**
+     * Merge two map of properties
+     *
+     * @param common   source map
+     * @param specific extra properties
+     * @return merge map
+     */
     public Map mergeProperties(final Map common, final Map specific) {
         for (final Object key : specific.keySet()) {
             if (specific.get(key) instanceof Map && common.get(key) instanceof Map) {
@@ -90,17 +136,19 @@ public class AppConfiguration {
         return common;
     }
 
-    private <C extends Annotation> C getConfigAnnotation(final Class<C> annotationClass) {
-        final Reflections ref = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(AppConfiguration.class.getPackage().getName().split("\\.")[0],
-                        ClasspathHelper.contextClassLoader(), ClasspathHelper.staticClassLoader()))
-                .filterInputsBy(new FilterBuilder().include(".+\\.class")));
+    private <C extends Annotation> C findConfigAnnotation(final Class<C> annotationClass, final String packageName) {
+        final Reflections ref = new Reflections(packageName);
         C configAnnotation = null;
         for (final Class<?> mainClass : ref.getTypesAnnotatedWith(annotationClass)) {
             configAnnotation = mainClass.getAnnotation(annotationClass);
         }
 
-        return configAnnotation;
+        if (configAnnotation != null) {
+            return configAnnotation;
+        } else if (packageName.indexOf(".") > 0) {
+            return findConfigAnnotation(annotationClass, removeLastPackage(packageName));
+        }
+        return null;
     }
 
     private ApplicationConfig configure(final Map<String, Object> config) {
@@ -158,4 +206,9 @@ public class AppConfiguration {
         }
     }
 
+    private String removeLastPackage(final String mainPackage) {
+        final int index = mainPackage.lastIndexOf(".");
+        final String basePackage = mainPackage.substring(0, index);
+        return basePackage;
+    }
 }

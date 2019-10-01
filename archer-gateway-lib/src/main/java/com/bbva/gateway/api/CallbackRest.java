@@ -19,6 +19,9 @@ import java.util.List;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
 
+/**
+ * Class to initialize the callback in async gateways
+ */
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,6 +30,9 @@ public class CallbackRest {
     private static final Logger logger = LoggerFactory.getLogger(CallbackRest.class);
     protected static Configuration config;
 
+    /**
+     * Post constructor actions
+     */
     @PostConstruct
     public static void init() {
         final Config annotationConfig = Configuration.findConfigAnnotation();
@@ -53,6 +59,12 @@ public class CallbackRest {
         }
     }
 
+    /**
+     * Endpoint enabled to manage callbacks
+     *
+     * @param request body
+     * @return response ok
+     */
     @POST
     public static Response callback(final String request) {
         logger.debug("Callback receive");

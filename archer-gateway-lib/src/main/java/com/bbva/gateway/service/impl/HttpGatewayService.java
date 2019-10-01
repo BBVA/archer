@@ -18,6 +18,9 @@ import java.util.Map;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
 
+/**
+ * Http gateway service implementation
+ */
 public abstract class HttpGatewayService
         extends GatewayService<Response> implements IGatewayService<Response> {
 
@@ -25,6 +28,9 @@ public abstract class HttpGatewayService
     private Retrofit retrofit;
     private Map<String, String> queryParams;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postInitActions() {
         retrofit = RetrofitClient.build((String) config.getGateway().get(GATEWAY_URI));
@@ -32,12 +38,21 @@ public abstract class HttpGatewayService
         om.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response call(final CRecord record) {
         final HttpRequest httpObject = traslateRecordToHttp(record);
         return RetrofitClient.call(retrofit, httpObject, queryParams);
     }
 
+    /**
+     * Translate record to http object
+     *
+     * @param record recor
+     * @return http object
+     */
     protected HttpRequest traslateRecordToHttp(final CRecord record) {
         final Map<String, Object> gatewayConfig = config.getGateway();
         final HttpRequest request = new HttpRequest();
@@ -48,11 +63,17 @@ public abstract class HttpGatewayService
         return request;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Boolean isSuccess(final Response response) {
         return response.isSuccessful();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String parseChangelogToString(final Response response) {
 
@@ -68,6 +89,9 @@ public abstract class HttpGatewayService
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response parseChangelogFromString(final String output) {
         try {

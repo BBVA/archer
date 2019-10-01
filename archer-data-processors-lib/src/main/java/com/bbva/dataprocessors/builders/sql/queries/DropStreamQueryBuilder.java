@@ -2,28 +2,36 @@ package com.bbva.dataprocessors.builders.sql.queries;
 
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
 
+/**
+ * Drop stream builder
+ */
 public class DropStreamQueryBuilder extends QueryBuilder {
 
-    private String query;
+    private static final String DROP_STREAM_QUERY = "DROP STREAM IF EXISTS %s";
+    private static final String DELETE_TOPIC = " DELETE TOPIC;";
+
     private final String streamName;
     private final boolean deleteTopic;
 
+    /**
+     * Constructor
+     *
+     * @param streamName  stream name
+     * @param deleteTopic flag for delete topic
+     */
     public DropStreamQueryBuilder(final String streamName, final boolean deleteTopic) {
         super();
         this.streamName = streamName;
         this.deleteTopic = deleteTopic;
     }
 
-    @Override
-    protected String query() {
-        return query;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String build() {
-
-        query = "DROP STREAM IF EXISTS " + streamName + (deleteTopic ? " DELETE TOPIC;" : ";");
-
-        return query;
+        query = new StringBuilder(String.format(DROP_STREAM_QUERY, streamName));
+        query.append(deleteTopic ? DELETE_TOPIC : ";");
+        return query.toString();
     }
 }

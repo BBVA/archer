@@ -12,6 +12,9 @@ import java.util.*;
 
 import static com.bbva.gateway.constants.ConfigConstants.*;
 
+/**
+ * Start the general and service config of the gateways
+ */
 @com.bbva.common.config.Config()
 public class Configuration {
 
@@ -20,34 +23,75 @@ public class Configuration {
     private LinkedHashMap<String, Object> custom;
     private static Configuration instance;
 
+    /**
+     * Get a configuration instance
+     *
+     * @return instance
+     */
     public static Configuration get() {
         return instance;
     }
 
+    /**
+     * Get the configuration
+     *
+     * @return configuration
+     */
     public ApplicationConfig getApplicationConfig() {
         return applicationConfig;
     }
 
+    /**
+     * Set the configuration
+     *
+     * @param appConfig configuration
+     */
     public void setApplicationConfig(final ApplicationConfig appConfig) {
         applicationConfig = appConfig;
     }
 
+    /**
+     * Set custom properties
+     *
+     * @param customConfig custom properties
+     */
     public void setCustom(final LinkedHashMap<String, Object> customConfig) {
         custom = customConfig;
     }
 
+    /**
+     * Get custom properties
+     *
+     * @return properties
+     */
     public Map<String, Object> getCustom() {
         return custom;
     }
 
+    /**
+     * Get gateway config
+     *
+     * @return properties
+     */
     public Map<String, Object> getGateway() {
         return gateway;
     }
 
+    /**
+     * Set gateway config
+     *
+     * @param config properties
+     */
     public void setGateway(final LinkedHashMap<String, Object> config) {
         gateway = config;
     }
 
+    /**
+     * Initialize gateway with extra config annotation
+     *
+     * @param extraConfig extra configuration
+     * @return configuration instance
+     */
     public Configuration init(final Config extraConfig) {
 
         final Map<String, Object> config = getConfig(extraConfig);
@@ -89,6 +133,11 @@ public class Configuration {
         return properties;
     }
 
+    /**
+     * Find gateway configuration annotation in all scafolding
+     *
+     * @return config annotation
+     */
     public static Config findConfigAnnotation() {
         final Reflections ref = new Reflections(Gateway.class.getPackage().getName().split("\\.")[0]);
         Config configAnnotation = null;
@@ -99,7 +148,12 @@ public class Configuration {
         return configAnnotation;
     }
 
-
+    /**
+     * Get all annotated service classes
+     *
+     * @param servicesPackage main package to find
+     * @return list of service classes
+     */
     public static List<Class> getServiceClasses(final String servicesPackage) {
         final Reflections ref = new Reflections(!"".equals(servicesPackage) ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0]);
         final List<Class> serviceClasses = new ArrayList<>();
@@ -109,6 +163,12 @@ public class Configuration {
         return serviceClasses;
     }
 
+    /**
+     * Get specific service configuration
+     *
+     * @param file file with config
+     * @return map of config
+     */
     public static LinkedHashMap<String, Object> getServiceConfig(final String file) {
         final Yaml yaml = new Yaml();
         final AppConfiguration appConfiguration = new AppConfiguration();

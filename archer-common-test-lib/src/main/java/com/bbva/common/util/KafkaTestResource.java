@@ -20,7 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-
+/**
+ * Class to get up a kafka cluster and schema registry in memory
+ */
 public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTestResource> implements TestRule {
     private static final Logger logger = LoggerFactory.getLogger(BaseItTest.class);
     public static final String HTTP_LOCALHOST = "http://localhost:";
@@ -28,6 +30,11 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
 
     private static SchemaRegistryRestApplication app;
 
+    /**
+     * Initialize the kafka cluster
+     *
+     * @throws Exception exception produced launching the stack
+     */
     private void before() throws Exception {
         logger.info("Starting kafka test server");
 
@@ -39,6 +46,11 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         }
     }
 
+    /**
+     * Get up a schema registry server
+     *
+     * @param schemaRegistryPort the port to open connection
+     */
     public void initSchemaRegistry(final int schemaRegistryPort) {
 
         final Properties defaultConfig = new Properties();
@@ -61,6 +73,11 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         }
     }
 
+    /**
+     * Stop all components
+     *
+     * @throws Exception exception produced stopping the stack
+     */
     private void after() throws Exception {
         logger.info("Shutting down kafka test server");
         app.stop();
@@ -84,6 +101,13 @@ public class KafkaTestResource extends AbstractKafkaTestResource<SharedKafkaTest
         }
     }
 
+    /**
+     * Test rule apply method to manage the launch
+     *
+     * @param base        statement
+     * @param description description
+     * @return statement result
+     */
     @Override
     public Statement apply(final Statement base, final Description description) {
         return new Statement() {

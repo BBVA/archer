@@ -11,6 +11,18 @@ import org.apache.kafka.common.record.TimestampType;
  */
 public class ChangelogRecord extends CRecord {
 
+    /**
+     * Constructor
+     *
+     * @param topic         topic name
+     * @param partition     partition in which the record is store
+     * @param offset        offset to find the element
+     * @param timestamp     time
+     * @param timestampType time type
+     * @param key           key off the record
+     * @param value         data of record
+     * @param headers       headers associates
+     */
     public ChangelogRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
                            final String key, final SpecificRecord value, final RecordHeaders headers) {
         super(topic, partition, offset, timestamp, timestampType, key, value, headers);

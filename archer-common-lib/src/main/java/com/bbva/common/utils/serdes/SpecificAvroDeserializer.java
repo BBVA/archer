@@ -30,20 +30,37 @@ public class SpecificAvroDeserializer<T extends SpecificRecord> implements Deser
     KafkaAvroDeserializer inner;
 
     /**
-     * Constructor used by Kafka Streams.
+     * Constructor
      */
     public SpecificAvroDeserializer() {
         inner = new KafkaAvroDeserializer();
     }
 
+    /**
+     * Constructor
+     *
+     * @param client schema registry client
+     */
     public SpecificAvroDeserializer(final SchemaRegistryClient client) {
         inner = new KafkaAvroDeserializer(client);
     }
 
+    /**
+     * Constructor
+     *
+     * @param client schema registry client
+     * @param props  configuration
+     */
     public SpecificAvroDeserializer(final SchemaRegistryClient client, final Map<String, ?> props) {
         inner = new KafkaAvroDeserializer(client, props);
     }
 
+    /**
+     * Configure the deserializer
+     *
+     * @param configs configurations
+     * @param isKey   true/false
+     */
     @Override
     public void configure(final Map<String, ?> configs, final boolean isKey) {
         final Map<String, Object> effectiveConfigs = new HashMap<>(configs);
@@ -51,11 +68,21 @@ public class SpecificAvroDeserializer<T extends SpecificRecord> implements Deser
         inner.configure(effectiveConfigs, isKey);
     }
 
+    /**
+     * Deserialize data
+     *
+     * @param s     key
+     * @param bytes value
+     * @return deserialized in T data
+     */
     @Override
     public T deserialize(final String s, final byte[] bytes) {
         return (T) inner.deserialize(s, bytes);
     }
 
+    /**
+     * Close the deserializer
+     */
     @Override
     public void close() {
         inner.close();

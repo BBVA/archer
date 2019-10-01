@@ -22,6 +22,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * Manage the production of commands
+ */
 public class Command {
 
     public static final String CREATE_ACTION = "create";
@@ -32,6 +35,13 @@ public class Command {
     private final String topic;
     private final boolean persistent;
 
+    /**
+     * Constructor
+     *
+     * @param topic             topic name
+     * @param applicationConfig configuration
+     * @param persistent        flag to persist the actions
+     */
     public Command(final String topic, final ApplicationConfig applicationConfig, final boolean persistent) {
         this.topic = topic + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX;
         producer = new CachedProducer(applicationConfig);
@@ -41,63 +51,117 @@ public class Command {
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param data     Record to send as command in event store
+     * @param value     Record data to send as command in event store
      * @param callback Callback executed when command is stored
      * @param <V>      Record type
      * @return A command record metadata
      */
-    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final ProducerCallback callback) {
-        return create(data, null, null, callback);
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V value, final ProducerCallback callback) {
+        return create(value, null, null, callback);
     }
 
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param data     Record to send as command in event store
+     * @param value     Record to send as command in event store
      * @param callback Callback executed when command is stored
      * @param <V>      Record type
      * @return A command record metadata
      */
-    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final CRecord referenceRecord, final ProducerCallback callback) {
-        return create(data, referenceRecord, null, callback);
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V value, final CRecord referenceRecord, final ProducerCallback callback) {
+        return create(value, referenceRecord, null, callback);
     }
 
     /**
      * Send data in a command stream. The action of the command will be Command.CREATE_ACTION
      *
-     * @param data     Record to send as command in event store
+     * @param value     Record to send as command in event store
      * @param callback Callback executed when command is stored
      * @param <V>      Record type
      * @return A command record metadata
      */
-    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
-        return create(data, null, optionalHeaders, callback);
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V value, final OptionalRecordHeaders optionalHeaders, final ProducerCallback callback) {
+        return create(value, null, optionalHeaders, callback);
     }
 
-    public <V extends SpecificRecord> CommandRecordMetadata create(final V data, final CRecord referenceRecord,
+    /**
+     * Send data with optional headers in a command stream. The action of the command will be Command.CREATE_ACTION
+     *
+     * @param value            Data to send as command in event store
+     * @param referenceRecord Reference record that triggers this event
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
+    public <V extends SpecificRecord> CommandRecordMetadata create(final V value, final CRecord referenceRecord,
                                                                    final OptionalRecordHeaders optionalHeaders,
                                                                    final ProducerCallback callback) {
-        return generateCommand(Command.CREATE_ACTION, data, null, UUID.randomUUID().toString(), referenceRecord,
+        return generateCommand(Command.CREATE_ACTION, value, null, UUID.randomUUID().toString(), referenceRecord,
                 optionalHeaders, callback);
     }
 
+    /**
+     * Send data  with specific action in a command stream.
+     *
+     * @param action     specific action for the command
+     * @param entityUuid Entity affected
+     * @param value       Data to send as command in event store
+     * @param callback   Callback executed when command is stored
+     * @param <V>        Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
-                                                                          final V data, final ProducerCallback callback) {
-        return processAction(action, entityUuid, data, null, null, callback);
+                                                                          final V value, final ProducerCallback callback) {
+        return processAction(action, entityUuid, value, null, null, callback);
     }
 
+    /**
+     * Send data with specific action and optional headers in a command stream.
+     *
+     * @param action          Specific action for the command
+     * @param entityUuid      Entity affected
+     * @param value            Data to send as command in event store
+     * @param referenceRecord Reference record that triggers this event
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
-                                                                          final V data, final CRecord referenceRecord,
+                                                                          final V value, final CRecord referenceRecord,
                                                                           final ProducerCallback callback) {
-        return processAction(action, entityUuid, data, referenceRecord, null, callback);
+        return processAction(action, entityUuid, value, referenceRecord, null, callback);
     }
 
+    /**
+     * Send data with specific action and optional headers in a command stream.
+     *
+     * @param action          Specific action for the command
+     * @param entityUuid      Entity affected
+     * @param value            Data to send as command in event store
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
-                                                                          final V data, final OptionalRecordHeaders optionalHeaders,
+                                                                          final V value, final OptionalRecordHeaders optionalHeaders,
                                                                           final ProducerCallback callback) {
-        return processAction(action, entityUuid, data, null, optionalHeaders, callback);
+        return processAction(action, entityUuid, value, null, optionalHeaders, callback);
     }
 
+    /**
+     * Send data with specific action and optional headers in a command stream.
+     *
+     * @param action          Specific action for the command
+     * @param entityUuid      Entity affected
+     * @param value           Data to send as command in event store
+     * @param referenceRecord Reference record that triggers this event
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata processAction(final String action, final String entityUuid,
                                                                           final V value, final CRecord referenceRecord,
                                                                           final OptionalRecordHeaders optionalHeaders,
@@ -105,22 +169,62 @@ public class Command {
         return generateCommand(action, value, null, entityUuid, referenceRecord, optionalHeaders, callback);
     }
 
+    /**
+     * Send data in a command stream. The action of the command will be Command.DELETE_ACTION
+     *
+     * @param entityUuid Entity affected in the action
+     * @param valueClass Class type of value
+     * @param callback   Callback executed when command is stored
+     * @param <V>        Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
                                                                    final ProducerCallback callback) {
         return delete(entityUuid, valueClass, null, null, callback);
     }
 
+    /**
+     * Send data with optional headers in a command stream. The action of the command will be Command.DELETE_ACTION
+     *
+     * @param entityUuid      Entity affected in the action
+     * @param valueClass      Class type of value
+     * @param referenceRecord Reference record that triggers this event
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
                                                                    final CRecord referenceRecord, final ProducerCallback callback) {
         return delete(entityUuid, valueClass, referenceRecord, null, callback);
     }
 
+    /**
+     * Send data with optional headers in a command stream. The action of the command will be Command.DELETE_ACTION
+     *
+     * @param entityUuid      Entity affected in the action
+     * @param valueClass      Class type of value
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
                                                                    final OptionalRecordHeaders optionalHeaders,
                                                                    final ProducerCallback callback) {
         return delete(entityUuid, valueClass, null, optionalHeaders, callback);
     }
 
+    /**
+     * Send data with optional headers in a command stream. The action of the command will be Command.DELETE_ACTION
+     *
+     * @param entityUuid      Entity affected in the action
+     * @param valueClass      Class type of value
+     * @param referenceRecord Reference record that triggers this event
+     * @param optionalHeaders Optional headers for add to the command
+     * @param callback        Callback executed when command is stored
+     * @param <V>             Data type
+     * @return A command record metadata
+     */
     public <V extends SpecificRecord> CommandRecordMetadata delete(final String entityUuid, final Class<V> valueClass,
                                                                    final CRecord referenceRecord, final OptionalRecordHeaders optionalHeaders,
                                                                    final ProducerCallback callback) {

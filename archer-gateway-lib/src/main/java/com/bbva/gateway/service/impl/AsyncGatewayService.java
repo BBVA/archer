@@ -7,10 +7,18 @@ import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.service.IAsyncGatewayService;
 
+/**
+ * Asynchronous gateway service implementation
+ *
+ * @param <T> Result type
+ */
 public abstract class AsyncGatewayService<T>
         extends GatewayService<T>
         implements IAsyncGatewayService<T> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processRecord(final CRecord record) {
 
@@ -27,6 +35,9 @@ public abstract class AsyncGatewayService<T>
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void saveChangelog(final CRecord originalRecord, final T response, final boolean replayMode) {
         final String id = getId(response);
@@ -39,6 +50,12 @@ public abstract class AsyncGatewayService<T>
         createListener(originalRecord, response);
     }
 
+    /**
+     * Return the id from response
+     *
+     * @param response response
+     * @return id
+     */
     public abstract String getId(T response);
 
     @Override
@@ -46,6 +63,12 @@ public abstract class AsyncGatewayService<T>
 
     }
 
+    /**
+     * Save the body by id in the changelog
+     *
+     * @param iden id
+     * @param body body
+     */
     public static void saveChangelog(final String iden, final String body) {
         final TransactionChangelog changelog = AggregateFactory.load(GatewayAggregate.class, iden).getData();
         if (changelog != null) {

@@ -14,23 +14,44 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Future;
 
+/**
+ * Default producer implementation
+ *
+ * @param <K> Type of Record schema
+ * @param <V> Type of Record
+ */
 public class DefaultProducer<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultProducer.class);
     private final Producer<K, V> producer;
     private final boolean exactlyOnce;
 
-    public DefaultProducer(final ApplicationConfig applicationConfig, final Serializer<K> serializedKey,
-                           final Serializer<V> serializedValue, final boolean exactlyOnce) {
+    /**
+     * Constructor
+     *
+     * @param applicationConfig general configuration
+     * @param keySerializer     serializer for the key
+     * @param valueSerializer   serializer for the value
+     * @param exactlyOnce       exactly once enable
+     */
+    public DefaultProducer(final ApplicationConfig applicationConfig, final Serializer<K> keySerializer,
+                           final Serializer<V> valueSerializer, final boolean exactlyOnce) {
 
         this.exactlyOnce = exactlyOnce;
-        producer = new KafkaProducer<>(applicationConfig.producer().get(), serializedKey, serializedValue);
+        producer = new KafkaProducer<>(applicationConfig.producer().get(), keySerializer, valueSerializer);
 
         if (exactlyOnce) {
             producer.initTransactions();
         }
     }
 
+    /**
+     * Save the record
+     *
+     * @param record   record to save
+     * @param callback callback to manag response
+     * @return future with production result
+     */
     public Future<RecordMetadata> save(final PRecord<K, V> record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
 
@@ -59,7 +80,8 @@ public class DefaultProducer<K, V> {
             logger.debug("End of production");
 
         } catch (final ProducerFencedException | OutOfOrderSequenceException | AuthorizationException e) {
-            // We can't recover from these exceptions, so our only option is to close the producer and exit.
+            // We can't recover from these exceptions,
+            // so our only option is to close the producer and exit.
             throw e;
         } catch (final KafkaException e) {
             logger.error(e.getMessage(), e);

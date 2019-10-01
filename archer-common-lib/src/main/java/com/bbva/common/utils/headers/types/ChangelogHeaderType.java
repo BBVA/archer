@@ -2,6 +2,9 @@ package com.bbva.common.utils.headers.types;
 
 import com.bbva.common.utils.headers.HeaderType;
 
+/**
+ * Changelog header types
+ */
 public enum ChangelogHeaderType implements HeaderType {
     TYPE_VALUE("changelog"),
     UUID_KEY("uuid"),
@@ -11,10 +14,20 @@ public enum ChangelogHeaderType implements HeaderType {
 
     private final String name;
 
+    /**
+     * Constructor
+     *
+     * @param name name of type
+     */
     ChangelogHeaderType(final String name) {
         this.name = name;
     }
 
+    /**
+     * Get type name
+     *
+     * @return the name
+     */
     @Override
     public String getName() {
         return name;

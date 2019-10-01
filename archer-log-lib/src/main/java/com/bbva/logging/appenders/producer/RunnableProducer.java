@@ -5,6 +5,9 @@ import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 
+/**
+ * Runnable producer
+ */
 public class RunnableProducer implements Runnable {
 
     private final LogEvent eventLog;
@@ -12,12 +15,22 @@ public class RunnableProducer implements Runnable {
     private final LogsAppenderCallback logsAppenderCallback = new LogsAppenderCallback();
     private final String sourceName;
 
+    /**
+     * Constructor
+     *
+     * @param baseName topic name
+     * @param logEvent log event
+     * @param producer producer
+     */
     public RunnableProducer(final String baseName, final LogEvent logEvent, final CachedProducer producer) {
         eventLog = logEvent;
         logsProducer = producer;
         sourceName = baseName;
     }
 
+    /**
+     * Save log event
+     */
     @Override
     public void run() {
         final PRecord<String, LogEvent> record = new PRecord<>(

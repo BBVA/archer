@@ -19,8 +19,8 @@ public class AutoOffsetResetTest {
     @DisplayName("Create SQLProcessor with autooffsetreset build")
     @Test
     public void createDataProcessorAndGetOk() throws Exception {
-        AutoOffsetResetQueryBuilder autoOffsetResetQueryBuilder = AutoOffsetResetQueryBuilder.create();
-        autoOffsetResetQueryBuilder = AutoOffsetResetQueryBuilder.create(AutoOffsetResetQueryBuilder.LATEST);
+        AutoOffsetResetQueryBuilder autoOffsetResetQueryBuilder = new AutoOffsetResetQueryBuilder();
+        autoOffsetResetQueryBuilder = new AutoOffsetResetQueryBuilder(AutoOffsetResetQueryBuilder.LATEST);
         final QueryProcessorBuilder queryProcessorBuilder = new QueryProcessorBuilder(autoOffsetResetQueryBuilder);
 
         final SQLProcessorContext context = PowerMockito.mock(SQLProcessorContext.class);

@@ -2,6 +2,9 @@ package com.bbva.gateway.http;
 
 import java.util.Map;
 
+/**
+ * Object to serialize http requests
+ */
 public class HttpRequest {
     private Object body;
     private Map<String, String> headers;

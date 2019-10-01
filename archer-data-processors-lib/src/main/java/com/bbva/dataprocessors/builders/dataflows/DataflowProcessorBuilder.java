@@ -8,27 +8,47 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.TopologyDescription;
 
+/**
+ * Dataflow processor builder
+ */
 public class DataflowProcessorBuilder implements ProcessorBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(DataflowProcessorBuilder.class);
+
     private final DataflowBuilder stateBuilder;
     private DataflowProcessorContext context;
     private KafkaStreams streams;
 
+    /**
+     * Constructor
+     *
+     * @param stateBuilder builder
+     */
     public DataflowProcessorBuilder(final DataflowBuilder stateBuilder) {
         this.stateBuilder = stateBuilder;
     }
 
+    /**
+     * Initialize the builder
+     *
+     * @param context builder context
+     */
     public void init(final DataflowProcessorContext context) {
         this.context = context;
         stateBuilder.init(context);
     }
 
+    /**
+     * Build the builder
+     */
     @Override
     public void build() {
         stateBuilder.build();
     }
 
+    /**
+     * Start the processor
+     */
     @Override
     public void start() {
         final Topology topology = context.streamsBuilder().build();
@@ -48,16 +68,29 @@ public class DataflowProcessorBuilder implements ProcessorBuilder {
         streams.start();
     }
 
+    /**
+     * Return the streams
+     *
+     * @return streams
+     */
     @Override
     public KafkaStreams streams() {
         return streams;
     }
 
+    /**
+     * Close the streams
+     */
     @Override
     public void close() {
         streams.close();
     }
 
+    /**
+     * get context name
+     *
+     * @return the name
+     */
     public String getName() {
         return context.name();
     }

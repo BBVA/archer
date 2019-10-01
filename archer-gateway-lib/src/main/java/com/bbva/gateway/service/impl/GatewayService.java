@@ -24,6 +24,11 @@ import static com.bbva.gateway.constants.ConfigConstants.*;
 import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;
 import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
 
+/**
+ * Gateway service implementation
+ *
+ * @param <T> Response type
+ */
 public abstract class GatewayService<T>
         implements IGatewayService<T> {
     private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
@@ -35,6 +40,9 @@ public abstract class GatewayService<T>
     private int attemps;
     protected static String baseName;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(final Configuration configuration, final String gatewayBaseName) {
         config = configuration;
@@ -51,6 +59,9 @@ public abstract class GatewayService<T>
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void processRecord(final CRecord record) {
         if (isReplay(record)) {
@@ -65,6 +76,12 @@ public abstract class GatewayService<T>
         }
     }
 
+    /**
+     * Search a changelog by a reference
+     *
+     * @param record record with reference
+     * @return changelog
+     */
     protected static TransactionChangelog findChangelogByReference(final CRecord record) {
         return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommonHeaderType.REFERENCE_RECORD_KEY_KEY.getName()).asString());
     }
@@ -76,6 +93,13 @@ public abstract class GatewayService<T>
         processResult(record, response);
     }
 
+    /**
+     * Call attemp
+     *
+     * @param record    record for call
+     * @param attempNum number of attemp
+     * @return response
+     */
     protected T attemp(final CRecord record, final int attempNum) {
         final T response = call(record);
 
@@ -90,10 +114,28 @@ public abstract class GatewayService<T>
         return response;
     }
 
+    /**
+     * Call to external component
+     *
+     * @param record record
+     * @return response
+     */
     public abstract T call(CRecord record);
 
+    /**
+     * Check if the call is success in the response
+     *
+     * @param response call response
+     * @return true/false
+     */
     protected abstract Boolean isSuccess(T response);
 
+    /**
+     * Parse output string to response
+     *
+     * @param output json string
+     * @return response
+     */
     public T parseChangelogFromString(final String output) {
         try {
             return om.readValue(output, new TypeReference() {
@@ -104,6 +146,12 @@ public abstract class GatewayService<T>
         }
     }
 
+    /**
+     * Parse response to string
+     *
+     * @param response response
+     * @return json sring
+     */
     public String parseChangelogToString(final T response) {
         try {
             return om.writeValueAsString(response);
@@ -113,10 +161,25 @@ public abstract class GatewayService<T>
         }
     }
 
+    /**
+     * Send evet with the original record and response
+     *
+     * @param originalRecord original record
+     * @param outputEvent    response
+     * @param <O>            Response type
+     */
     protected static <O extends SpecificRecord> void sendEvent(final CRecord originalRecord, final O outputEvent) {
         sendEvent(baseName, originalRecord, outputEvent);
     }
 
+    /**
+     * Send event to a base name
+     *
+     * @param eventBaseName  base name
+     * @param originalRecord original record
+     * @param outputEvent    output
+     * @param <O>            Output type
+     */
     protected static <O extends SpecificRecord> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
 
         if (originalRecord != null) {
@@ -127,9 +190,19 @@ public abstract class GatewayService<T>
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public abstract void processResult(CRecord originRecord, T result);
 
+    /**
+     * Save a changelog with original record and response
+     *
+     * @param originRecord original record
+     * @param response     response
+     * @param replayMode   true/false
+     */
     protected void saveChangelog(final CRecord originRecord, final T response, final boolean replayMode) {
         final String id = UUID.randomUUID().toString();
         final TransactionChangelog outputEvent = new TransactionChangelog(id, originRecord.value().toString(), parseChangelogToString(response));
@@ -140,10 +213,22 @@ public abstract class GatewayService<T>
         AggregateFactory.create(GatewayAggregate.class, id, outputEvent, record, GatewayService::handleOutPutted);
     }
 
+    /**
+     * Check if the recprd is in replay
+     *
+     * @param record record
+     * @return true/false
+     */
     protected static Boolean isReplay(final CRecord record) {
         return record.recordHeaders() != null && record.isReplayMode();
     }
 
+    /**
+     * Manage output response
+     *
+     * @param o Output
+     * @param e Exception
+     */
     protected static void handleOutPutted(final Object o, final Exception e) {
         if (e != null) {
             // TODO retry?

@@ -8,6 +8,9 @@ import com.bbva.ddd.domain.events.write.Event;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Commons helper methods
+ */
 public class CommonHelper {
 
     protected final ApplicationConfig applicationConfig;
@@ -15,6 +18,11 @@ public class CommonHelper {
     protected final Map<String, Command> cacheCommandPersistence;
     protected final Map<String, Event> cacheEvents;
 
+    /**
+     * Constructor
+     *
+     * @param applicationConfig configuration
+     */
     public CommonHelper(final ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
         cacheCommandPersistence = new HashMap<>();
@@ -39,7 +47,7 @@ public class CommonHelper {
      * @return An instance of Command producer
      */
     public synchronized Command persistsCommandTo(final String name) {
-        return this.writeCommandTo(name, true);
+        return writeCommandTo(name, true);
     }
 
     /**
@@ -49,7 +57,7 @@ public class CommonHelper {
      * @return An instance of Command producer
      */
     public synchronized Command sendCommandTo(final String name) {
-        return this.writeCommandTo(name, false);
+        return writeCommandTo(name, false);
     }
 
     /**

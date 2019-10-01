@@ -11,6 +11,18 @@ import org.apache.kafka.common.record.TimestampType;
  */
 public class EventRecord extends CRecord {
 
+    /**
+     * Constructor
+     *
+     * @param topic         topic name
+     * @param partition     partition in which the record is stored
+     * @param offset        offset to find the element
+     * @param timestamp     time
+     * @param timestampType time type
+     * @param key           record key
+     * @param value         record data
+     * @param headers       headers
+     */
     public EventRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
                        final String key, final SpecificRecord value, final RecordHeaders headers) {
         super(topic, partition, offset, timestamp, timestampType, key, value, headers);

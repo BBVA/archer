@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
 
+/**
+ * Logger factory class
+ */
 public final class LoggerFactory {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LoggerFactory.class);
 
@@ -49,6 +52,12 @@ public final class LoggerFactory {
         return logPorperties;
     }
 
+    /**
+     * Get logger by class
+     *
+     * @param mainClass class to get logger
+     * @return logger instance
+     */
     public static Logger getLogger(final Class mainClass) {
         if (instance == null) {
             instance = new LoggerFactory();

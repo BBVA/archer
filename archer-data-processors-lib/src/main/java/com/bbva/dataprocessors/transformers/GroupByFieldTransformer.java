@@ -3,6 +3,7 @@ package com.bbva.dataprocessors.transformers;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
 import com.bbva.dataprocessors.records.GenericRecordList;
+import com.bbva.dataprocessors.util.ObjectUtils;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.avro.generic.GenericRecord;
@@ -19,26 +20,49 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Transformer for grpoup by a field in a entity state
+ *
+ * @param <K> Key class
+ * @param <V> Value class
+ */
 public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Transformer<K, V, KeyValue<K, GenericRecord>> {
+
+    private static final Logger logger = LoggerFactory.getLogger(GroupByFieldTransformer.class);
+    private static final String uuidFieldName = "uuid";
 
     protected ProcessorContext context;
     private KeyValueStore<K, GenericRecord> stateStore;
     private final String stateStoreName;
-    private static final Logger logger = LoggerFactory.getLogger(GroupByFieldTransformer.class);
-    private static final String uuidFieldName = "uuid";
     private final GenericRecordList<V> genericRecordList;
 
+    /**
+     * Constructor
+     *
+     * @param stateStoreName state store
+     * @param valueClass     Class type of value
+     */
     public GroupByFieldTransformer(final String stateStoreName, final Class<V> valueClass) {
         this.stateStoreName = stateStoreName;
         genericRecordList = new GenericRecordList<>(valueClass);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void init(final ProcessorContext context) {
         this.context = context;
         stateStore = (KeyValueStore<K, GenericRecord>) this.context.getStateStore(stateStoreName);
     }
 
+    /**
+     * Add/Update the new record to the list grouping by the pivot field
+     *
+     * @param newKey   record key
+     * @param newValue record
+     * @return new key/value pair
+     */
     @Override
     public KeyValue<K, GenericRecord> transform(final K newKey, final V newValue) {
         K resultKey = null;
@@ -62,7 +86,7 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
                         final Method resultValueListItemIdMethod = resultValueList
                                 .get(0)
                                 .getClass()
-                                .getMethod(getFieldNameMethod(uuidFieldName, true));
+                                .getMethod(ObjectUtils.getFieldNameMethod(uuidFieldName, true));
                         String uuid;
                         int i = 0;
                         while (i < resultValueList.size() && !found.get()) {
@@ -96,7 +120,7 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
                         final Method resultListItemIdMethod = ((V) resultList
                                 .get(0))
                                 .getClass()
-                                .getMethod(getFieldNameMethod(uuidFieldName, true));
+                                .getMethod(ObjectUtils.getFieldNameMethod(uuidFieldName, true));
                         final String newUuid = (String) resultListItemIdMethod.invoke(newValue);
                         String storedUuid;
                         int i = 0;
@@ -132,13 +156,12 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
         return resultKeyValue;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
+        //Do nothing
     }
 
-    private String getFieldNameMethod(final String fieldName, final boolean isGet) {
-        return (isGet ? "get" : "set") +
-                fieldName.substring(0, 1).toUpperCase() +
-                fieldName.substring(1);
-    }
 }
