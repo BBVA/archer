@@ -54,26 +54,26 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
     /**
      * Apply new data in changelog
      *
-     * @param method        Name of the method which apply new data
-     * @param value         New value to apply
-     * @param commandRecord Command record which has triggered the domain logic
-     * @param callback      Callback executed when message is stored in changelog
+     * @param method          Name of the method which apply new data
+     * @param value           New value to apply
+     * @param referenceRecord Command record which has triggered the domain logic
+     * @param callback        Callback executed when message is stored in changelog
      */
     @Override
-    public void apply(final String method, final V value, final CommandRecord commandRecord,
+    public void apply(final String method, final V value, final CommandRecord referenceRecord,
                       final ProducerCallback callback) {
-        applyRecordCallback.apply(method, value, commandRecord, callback);
+        applyRecordCallback.apply(method, value, referenceRecord, callback);
     }
 
     /**
      * Apply new data in changelog
      *
-     * @param method   Name of the method which apply new data
-     * @param record   New value to apply
-     * @param callback Callback executed when message is stored in changelog
+     * @param method          Name of the method which apply new data
+     * @param referenceRecord New value to apply
+     * @param callback        Callback executed when message is stored in changelog
      */
-    public void apply(final String method, final CRecord record, final ProducerCallback callback) {
-        deleteRecordCallback.apply(method, (Class<V>) data.getClass(), record, callback);
+    public void apply(final String method, final CRecord referenceRecord, final ProducerCallback callback) {
+        deleteRecordCallback.apply(method, (Class<V>) data.getClass(), referenceRecord, callback);
     }
 
     /**
@@ -91,7 +91,7 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
      *
      * @param apply a callback
      */
-    public final void setDeleteRecordCallback(final DeleteRecordCallback apply) {
+    public final void setDeleteRecordCallback(final DeleteRecordCallback<K, V> apply) {
         deleteRecordCallback = apply;
     }
 

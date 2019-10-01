@@ -34,16 +34,7 @@ public class ChangelogRecord extends CRecord {
      * @return uuid of the changelog record
      */
     public String uuid() {
-        return headers.find(ChangelogHeaderType.UUID_KEY).asString();
-    }
-
-    /**
-     * Get the record that triggered it
-     *
-     * @return record which triggered this event
-     */
-    public CRecord referenceRecord() {
-        return (CRecord) headers.find(ChangelogHeaderType.REFERENCE_RECORD_KEY).as();
+        return headers.find(ChangelogHeaderType.UUID_KEY.getName()).asString();
     }
 
     /**
@@ -52,7 +43,7 @@ public class ChangelogRecord extends CRecord {
      * @return aggregate identifier of the changelog record
      */
     public String aggregateUuid() {
-        return headers.find(ChangelogHeaderType.AGGREGATE_UUID_KEY).asString();
+        return headers.find(ChangelogHeaderType.AGGREGATE_UUID_KEY.getName()).asString();
     }
 
     /**
@@ -61,7 +52,7 @@ public class ChangelogRecord extends CRecord {
      * @return name of the aggregate of the changelog record
      */
     public String aggregateName() {
-        return headers.find(ChangelogHeaderType.AGGREGATE_NAME_KEY).asString();
+        return headers.find(ChangelogHeaderType.AGGREGATE_NAME_KEY.getName()).asString();
     }
 
     /**
@@ -70,7 +61,7 @@ public class ChangelogRecord extends CRecord {
      * @return method of the aggregate of the changelog record
      */
     public String aggregateMethod() {
-        return headers.find(ChangelogHeaderType.AGGREGATE_METHOD_KEY).asString();
+        return headers.find(ChangelogHeaderType.AGGREGATE_METHOD_KEY.getName()).asString();
     }
 
 }

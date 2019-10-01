@@ -15,7 +15,7 @@ public class CommonHelper {
 
     protected final ApplicationConfig applicationConfig;
     protected static CommonHelper instance;
-    protected final Map<String, Command> cacheCommandPersistance;
+    protected final Map<String, Command> cacheCommandPersistence;
     protected final Map<String, Event> cacheEvents;
 
     /**
@@ -25,7 +25,7 @@ public class CommonHelper {
      */
     public CommonHelper(final ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
-        cacheCommandPersistance = new HashMap<>();
+        cacheCommandPersistence = new HashMap<>();
         cacheEvents = new HashMap<>();
         instance = this;
     }
@@ -68,15 +68,15 @@ public class CommonHelper {
      * @return An instance of Command producer
      */
     public synchronized Command writeCommandTo(final String name, final boolean persist) {
-        if (cacheCommandPersistance.containsKey(name)) {
-            return cacheCommandPersistance.get(name);
+        if (cacheCommandPersistence.containsKey(name)) {
+            return cacheCommandPersistence.get(name);
         } else {
             final Map<String, String> commandTopic = new HashMap<>();
             commandTopic.put(name + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, ApplicationConfig.COMMANDS_RECORD_TYPE);
             TopicManager.createTopics(commandTopic, applicationConfig);
 
             final Command command = new Command(name, applicationConfig, persist);
-            cacheCommandPersistance.put(name, command);
+            cacheCommandPersistence.put(name, command);
             return command;
         }
     }

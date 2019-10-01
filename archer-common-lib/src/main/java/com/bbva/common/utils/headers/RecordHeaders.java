@@ -70,6 +70,16 @@ public class RecordHeaders {
      * Add header with header types
      *
      * @param key   key
+     * @param value Any object as value
+     */
+    public void add(final HeaderType key, final Object value) {
+        add(key, new ByteArrayValue(value));
+    }
+
+    /**
+     * Add header with header types
+     *
+     * @param key   key
      * @param value header type with name as value
      */
     public void add(final HeaderType key, final HeaderType value) {

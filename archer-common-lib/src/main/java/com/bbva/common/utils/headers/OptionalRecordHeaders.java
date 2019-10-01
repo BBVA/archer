@@ -15,6 +15,13 @@ public class OptionalRecordHeaders extends RecordHeaders {
 
     /**
      * Constructor
+     */
+    public OptionalRecordHeaders() {
+        super();
+    }
+
+    /**
+     * Constructor
      *
      * @param headers list of optional headers
      */

@@ -34,7 +34,7 @@ public class EventRecord extends CRecord {
      * @return producer name of the event record
      */
     public String producerName() {
-        return headers.find(EventHeaderType.PRODUCER_NAME_KEY).asString();
+        return headers.find(EventHeaderType.PRODUCER_NAME_KEY.getName()).asString();
     }
 
     /**
@@ -43,16 +43,7 @@ public class EventRecord extends CRecord {
      * @return name of the event record
      */
     public String name() {
-        return headers.find(EventHeaderType.NAME_KEY).asString();
-    }
-
-    /**
-     * Get the record that triggered it
-     *
-     * @return record which triggered this event
-     */
-    public CRecord referenceRecord() {
-        return (CRecord) headers.find(EventHeaderType.REFERENCE_RECORD_KEY).as();
+        return headers.find(EventHeaderType.NAME_KEY.getName()).asString();
     }
 
 }

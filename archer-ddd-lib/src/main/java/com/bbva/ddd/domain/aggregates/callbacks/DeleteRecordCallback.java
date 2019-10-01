@@ -12,10 +12,10 @@ public interface DeleteRecordCallback<K, V extends SpecificRecordBase> {
     /**
      * Method to apply the deletion
      *
-     * @param method      invoked
-     * @param recordClass class type of record
-     * @param record      record to delete
-     * @param callback    to manage apply response
+     * @param method          Method Invoked
+     * @param valueClass      Class type of the value
+     * @param referenceRecord Reference record that triggers the event
+     * @param callback        To manage apply response
      */
-    void apply(String method, Class<V> recordClass, CRecord record, ProducerCallback callback);
+    void apply(String method, Class<V> valueClass, CRecord referenceRecord, ProducerCallback callback);
 }

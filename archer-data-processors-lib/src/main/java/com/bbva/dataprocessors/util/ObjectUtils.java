@@ -44,7 +44,7 @@ public final class ObjectUtils {
                         try {
                             if (newValue == null) {
                                 pd.getWriteMethod().invoke(result, lastValue);
-                            } else if (newValue instanceof SpecificRecord) {
+                            } else if (newValue instanceof SpecificRecord && lastValue != null) {
                                 pd.getWriteMethod().invoke(result, merge(lastValue, newValue));
                             } else {
                                 pd.getWriteMethod().invoke(result, newValue);
