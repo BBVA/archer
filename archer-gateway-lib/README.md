@@ -3,7 +3,7 @@ Gateway
 
 ## Overview
 
-Gateway is an accommodation to simplify development the external connector in the Event sourcing paradigm.
+In the Event Sourcing pattern, the interaction with the external interfaces is carried out by gateways. This library facilitate the develop of gateways.
 
 ## Requirements
 

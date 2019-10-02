@@ -6,6 +6,10 @@ import com.bbva.gateway.service.impl.beans.Person;
 
 public class GatewayServiceImpl extends GatewayService<Person> {
 
+    public GatewayServiceImpl() {
+        handleOutPutted("value", null);
+        handleOutPutted("value", new Exception());
+    }
 
     @Override
     public Person call(final CRecord record) {

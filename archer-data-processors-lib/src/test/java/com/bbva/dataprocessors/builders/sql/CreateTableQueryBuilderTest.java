@@ -62,4 +62,31 @@ public class CreateTableQueryBuilderTest {
         );
     }
 
+    @DisplayName("Create table build")
+    @Test
+    public void createTableQueryBuilderWithoutClauses() throws Exception {
+        final CreateTableQueryBuilder createTableQueryBuilder = new CreateTableQueryBuilder("table");
+        final WithPropertiesClauseBuilder withPropertiesClauseBuilder = new WithPropertiesClauseBuilder();
+        withPropertiesClauseBuilder.replicas(3);
+        withPropertiesClauseBuilder.kafkaTopic("topic");
+        withPropertiesClauseBuilder.key("key");
+        withPropertiesClauseBuilder.partitions(3);
+        withPropertiesClauseBuilder.timestamp(new Date().getTime());
+        withPropertiesClauseBuilder.timestampFormat("dd/MM/yyyy");
+        withPropertiesClauseBuilder.valueFormat("format");
+        createTableQueryBuilder.with(withPropertiesClauseBuilder);
+
+        final QueryProcessorBuilder queryProcessorBuilder = new QueryProcessorBuilder(createTableQueryBuilder);
+
+        final SQLProcessorContext context = PowerMockito.mock(SQLProcessorContext.class);
+        PowerMockito.when(context, "ksqlContext").thenReturn(PowerMockito.mock(KsqlContext.class));
+
+        queryProcessorBuilder.init(context);
+        queryProcessorBuilder.build();
+        queryProcessorBuilder.start();
+
+        Assertions.assertAll("createStreamQueryBuilder",
+                () -> Assertions.assertNotNull(queryProcessorBuilder)
+        );
+    }
 }

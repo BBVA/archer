@@ -27,4 +27,28 @@ public class LoggerFactoryTest {
         Assertions.assertNotNull(logger);
     }
 
+
+    @DisplayName("Create logger with bad appender format ok")
+    @Test
+    public void createLoggerApopenderWithoutFormat() {
+
+        PowerMockito.mockStatic(System.class);
+        PowerMockito.when(System.getenv("LOG_APPENDER_CONFIG")).thenReturn("com.bbva.logging, archerAppender");
+
+        final Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
+        logger.error("error msg");
+        Assertions.assertNotNull(logger);
+    }
+
+    @DisplayName("Create logger without appender ok")
+    @Test
+    public void createLoggerWithoutAppender() {
+
+        PowerMockito.mockStatic(System.class);
+        PowerMockito.when(System.getenv("LOG_APPENDER_CONFIG")).thenReturn(null);
+
+        final Logger logger = LoggerFactory.getLogger(LoggerFactoryTest.class);
+        logger.error("error msg");
+        Assertions.assertNotNull(logger);
+    }
 }

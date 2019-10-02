@@ -59,4 +59,35 @@ public class ObjectUtilsTest {
                 () -> Assertions.assertNotNull(person)
         );
     }
+
+    @DisplayName("Get merged value")
+    @Test
+    public void getMergedValue() {
+
+        final String nullField = ObjectUtils.getNewMergedValue(null, null);
+        final String field1 = ObjectUtils.getNewMergedValue("field1", null);
+        final String field2 = ObjectUtils.getNewMergedValue(null, "field2");
+        final String merged = ObjectUtils.getNewMergedValue(field1, field2);
+
+        Assertions.assertAll("getMergedValue",
+                () -> Assertions.assertEquals(null, field1),
+                () -> Assertions.assertEquals("field2", field2),
+                () -> Assertions.assertEquals("field2", merged),
+                () -> Assertions.assertEquals(null, nullField)
+        );
+    }
+
+
+    @DisplayName("Get field getter and setter")
+    @Test
+    public void getFieldMethod() {
+
+        final String getter = ObjectUtils.getFieldNameMethod("field", true);
+        final String setter = ObjectUtils.getFieldNameMethod("field", false);
+
+        Assertions.assertAll("getFieldMethod",
+                () -> Assertions.assertEquals("getField", getter),
+                () -> Assertions.assertEquals("setField", setter)
+        );
+    }
 }

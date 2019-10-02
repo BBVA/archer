@@ -50,6 +50,25 @@ public class SelectForeignKeyTransformerTest {
         );
     }
 
+    @DisplayName("Transform object without old value ok")
+    @Test
+    public void transformWithoutNewValueOk() throws Exception {
+        final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);
+        final KeyValueStore keyValueStore = PowerMockito.mock(KeyValueStore.class);
+
+        PowerMockito.when(processorContext, "getStateStore", Mockito.any(String.class)).thenReturn(keyValueStore);
+        PowerMockito.when(keyValueStore, "get", Mockito.any(String.class)).thenReturn(createRecord("old-name"));
+
+        final SelectForeignKeyTransformer selectForeignKeyTransformer = new SelectForeignKeyTransformer("transformer", "name", SpecificRecordImpl.class);
+        selectForeignKeyTransformer.init(processorContext);
+        final KeyValue transformed = selectForeignKeyTransformer.transform("key", null);
+
+        Assertions.assertAll("transformed",
+                () -> Assertions.assertNotNull(transformed),
+                () -> Assertions.assertEquals("old-name", transformed.key)
+        );
+    }
+
     @DisplayName("Transform object withnot existing foreign keyok")
     @Test
     public void transformWithNotExistsFk() throws Exception {

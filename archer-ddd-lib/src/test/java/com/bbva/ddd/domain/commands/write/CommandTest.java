@@ -75,7 +75,7 @@ public class CommandTest {
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
         HelperDomain.create(new ApplicationConfig());
-        final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
+        final Command command = new Command("topicBaseName", new ApplicationConfig(), true);
         final CommandRecordMetadata metadata = command.create(new PersonalData(), new DefaultProducerCallback());
 
         Assertions.assertAll("Command",

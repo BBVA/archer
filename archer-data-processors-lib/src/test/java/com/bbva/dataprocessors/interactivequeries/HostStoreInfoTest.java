@@ -9,6 +9,7 @@ import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -22,12 +23,18 @@ public class HostStoreInfoTest {
         hostStoreInfo.setPort(1234);
         hostStoreInfo.setStoreNames(new HashSet<>());
         final HostStoreInfo hostStoreInfoCopy = new HostStoreInfo("host", 1234, new HashSet<>());
+        final HostStoreInfo hostStoreInfoOtheCopy = new HostStoreInfo("host2", 1234, new HashSet<>());
+        Set storeNames = new HashSet<>();
+        storeNames.add("store");
+        final HostStoreInfo hostStoreInfoOtheCopy2 = new HostStoreInfo("host", 1234, storeNames);
 
         Assertions.assertAll("hostStoreInfo",
                 () -> Assertions.assertNotNull(hostStoreInfo),
                 () -> Assertions.assertNotNull(hostStoreInfo.getStoreNames()),
                 () -> Assertions.assertNotNull(hostStoreInfo.toString()),
                 () -> Assertions.assertTrue(hostStoreInfo.equals(hostStoreInfoCopy)),
+                () -> Assertions.assertFalse(hostStoreInfo.equals(hostStoreInfoOtheCopy)),
+                () -> Assertions.assertFalse(hostStoreInfo.equals(hostStoreInfoOtheCopy2)),
                 () -> Assertions.assertTrue(hostStoreInfo.equals(hostStoreInfo)),
                 () -> Assertions.assertFalse(hostStoreInfo.equals(null)),
                 () -> Assertions.assertFalse(hostStoreInfo.equals("")),

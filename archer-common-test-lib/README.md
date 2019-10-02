@@ -3,8 +3,9 @@ Common lib test
 
 ## Overview
 
-This is the common test library to get up a complete kafka stack in memory and simulate the real event bus insfraestruture in the test environment.
-It launchs a complete kafka stack and schema registry.
+This is the common test library to get up a complete kafka stack in memory and simulate the real event bus infrastructure in the test environment.
+
+It releases a complete kafka stack and schema registry.
 
 ## Requirements
 
@@ -34,7 +35,7 @@ Maven
 
 
 ## Usage and examples
-To use the kafka stack in mmemory you only need to extends of BaseItTest.
+To use the kafka stack in memory you only need to extends of BaseItTest.
 
 ```java
 public class MyTest extends BaseItTest {

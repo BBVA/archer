@@ -147,5 +147,20 @@ public class AsyncGatewayServiceTest {
         );
     }
 
+    @DisplayName("Save null changelog ok")
+    @Test
+    public void saveNullChangelogOk() throws Exception {
+        PowerMockito.mockStatic(AggregateFactory.class);
+
+        PowerMockito.when(AggregateFactory.class, "load", Mockito.any(), Mockito.any()).thenReturn(new GatewayAggregate("iden", null));
+
+        final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
+        AsyncGatewayService.saveChangelog("iden", "body");
+
+        Assertions.assertAll("GatewayService",
+                () -> Assertions.assertNotNull(service)
+        );
+    }
+
 }
 

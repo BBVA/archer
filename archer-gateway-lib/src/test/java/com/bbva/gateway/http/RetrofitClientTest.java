@@ -18,6 +18,7 @@ import retrofit2.Retrofit;
 
 import javax.ws.rs.HttpMethod;
 import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -116,5 +117,30 @@ public class RetrofitClientTest {
         request.setHeaders(new HashMap<>());
         final Response response = RetrofitClient.call(retrofitClient, request, new HashMap<>());
         Assertions.assertNull(response);
+    }
+
+    @DisplayName("Retrofit call to get ok")
+    @Test
+    public void getWithParamasOk() throws Exception {
+        final Client client = PowerMockito.mock(Client.class);
+        final Call<ResponseBody> call = PowerMockito.mock(Call.class);
+        final Response responseMock = PowerMockito.mock(Response.class);
+        final Retrofit retrofitClient = PowerMockito.mock(Retrofit.class);
+        PowerMockito.when(retrofitClient, "create", Mockito.any(Client.class)).thenReturn(client);
+        PowerMockito.when(client, "get", Mockito.any(), Mockito.any()).thenReturn(call);
+        PowerMockito.when(call, "execute").thenReturn(responseMock);
+
+        final HttpRequest request = new HttpRequest();
+        request.setMethod(HttpMethod.GET);
+        request.setHeaders(new HashMap<>());
+        final Map params = new HashMap();
+        params.put("field", "value");
+        final Response response = RetrofitClient.call(retrofitClient, request, params);
+        Assertions.assertNotNull(response);
+
+        Assertions.assertAll("Retrofit",
+                () -> Assertions.assertNotNull(response),
+                () -> Assertions.assertEquals(responseMock, response)
+        );
     }
 }

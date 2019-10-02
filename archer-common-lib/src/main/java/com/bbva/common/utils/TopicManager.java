@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Topic managment
+ * Topic creation with specific properties
  */
 public class TopicManager {
     private static final Logger logger = LoggerFactory.getLogger(TopicManager.class);

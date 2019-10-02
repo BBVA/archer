@@ -14,6 +14,7 @@ import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.annotations.Config;
+import com.bbva.gateway.constants.ConfigConstants;
 import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.gateway.service.impl.GatewayServiceImpl;
 import com.bbva.gateway.service.impl.beans.Person;
@@ -31,6 +32,8 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -56,7 +59,32 @@ public class GatewayServiceTest {
     public void callOk() {
         final IGatewayService service = new GatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+
+        final Configuration configuration = new Configuration().init(configAnnotation);
+        configuration.getGateway().put(ConfigConstants.GATEWAY_RETRY, null);
+        service.init(configuration, "baseName");
+
+        final Person callResult = ((GatewayServiceImpl) service).call(new CRecord("topic", 1, 1,
+                new Date().getTime(), TimestampType.CREATE_TIME, "key",
+                null, new RecordHeaders()));
+
+        Assertions.assertAll("GatewayService",
+                () -> Assertions.assertNotNull(service),
+                () -> Assertions.assertEquals("result", callResult.getName())
+        );
+    }
+
+    @DisplayName("Service call ok")
+    @Test
+    public void callWithoutRetryOk() {
+        final IGatewayService service = new GatewayServiceImpl();
+        final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
+
+        final Configuration configuration = new Configuration().init(configAnnotation);
+        final Map retryPolicy = new LinkedHashMap();
+        retryPolicy.put(ConfigConstants.GATEWAY_RETRY_ENABLED, false);
+        configuration.getGateway().put(ConfigConstants.GATEWAY_RETRY, retryPolicy);
+        service.init(configuration, "baseName");
 
         final Person callResult = ((GatewayServiceImpl) service).call(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
@@ -94,7 +122,6 @@ public class GatewayServiceTest {
         );
     }
 
-
     @DisplayName("Process reply record ok")
     @Test
     public void processReplyOk() throws Exception {
@@ -130,4 +157,39 @@ public class GatewayServiceTest {
         Assertions.assertNotNull(service);
     }
 
+
+    @DisplayName("Process reply record without changelog ok")
+    @Test
+    public void processReplyWithoutChangelogOk() throws Exception {
+        PowerMockito.mockStatic(AggregateFactory.class);
+        PowerMockito.mockStatic(HelperDomain.class);
+        PowerMockito.mockStatic(StoreUtil.class);
+
+        final ReadableStore store = PowerMockito.mock(ReadableStore.class);
+
+        final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
+        PowerMockito.when(HelperDomain.get()).thenReturn(helperDomain);
+        PowerMockito.when(helperDomain, "sendEventTo", Mockito.anyString()).thenReturn(PowerMockito.mock(Event.class));
+        PowerMockito.when(StoreUtil.getStore(Mockito.any())).thenReturn(store);
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final TransactionChangelog transactionChangelog = new TransactionChangelog();
+        transactionChangelog.setOutput(mapper.writeValueAsString(new Person("name")));
+        PowerMockito.when(store, "findById", Mockito.any()).thenReturn(null);
+
+        final GatewayServiceImpl service = PowerMockito.spy(new GatewayServiceImpl());
+        final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
+        service.init(new Configuration().init(configAnnotation), "baseName");
+        PowerMockito.doReturn(new Person("name")).when(service, "parseChangelogFromString", Mockito.anyString());
+
+        final RecordHeaders recordHeaders = new RecordHeaders();
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
+        recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, new ByteArrayValue("referenceKey"));
+
+        service.processRecord(new CRecord("topic", 1, 1,
+                new Date().getTime(), TimestampType.CREATE_TIME, "key",
+                new PersonalData(), recordHeaders));
+
+        Assertions.assertNotNull(service);
+    }
 }

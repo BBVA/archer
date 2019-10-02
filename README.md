@@ -48,22 +48,30 @@ Maven
 
 ### Common
 
-This is the common library to interact with the event bus. Provide producer and consumers of events, the infraestructure conectivity/usage and the utilities to serialize/deserialize the data.
+This is the common library to interact directly with the event bus. 
+
+Provide classes for produce and consume of events, too  simplify the infrastructure connectivity/usage and the utilities to serialize/deserialize the data from/to the bus.
+
 [You see more about common](archer-common-lib/README.md)
 
 ### Data processorss
 
-It provide a specific simply language to launch interactive queries in real-time to event store and facilitates the use of processing APIs.
+Processing data is simplify by this library with the implementation of dataflow and sql processors, provide multiple builders to create processors. 
+
+Provide a interactive queries system and Readable stores to launch queries to the data.
+
 [You see more about data processors](archer-data-processors-lib/README.md)
 
 ### Domain driven design
 
-Simplify the develop of services with the pattern Domain-Driven-Design doing the applications more legibles and maintenables.
+ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintenables.
+
 [You see more about ddd](archer-ddd-lib/README.md)
 
 ### Gateway
 
-In teh Event Sourcing patter, the interaction with the external interfaces is carried out by gateways. This library facilitate the developt of gateways.
+In the Event Sourcing pattern, the interaction with the external interfaces is carried out by gateways. This library facilitate the develop of gateways.
+
 [You see more about gateway](archer-gateway-lib/README.md)
 
 ### Logger
@@ -72,5 +80,8 @@ Commons logger employing log4j to add appenders to event store for facilitate th
 [You see more about logger lib](archer-log-lib/README.md)
 ### Common test
 
-Utilities to get up a kafka ecosytem in memory to test the applications.
+This is the common test library to get up a complete kafka stack in memory and simulate the real event bus infrastructure in the test environment.
+
+It releases a complete kafka stack and schema registry.
+
 [You see more about common test](archer-common-test-lib/README.md)

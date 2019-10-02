@@ -8,7 +8,6 @@ import com.bbva.common.utils.headers.RecordHeaders;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.errors.ProducerFencedException;
 import org.apache.kafka.common.serialization.Serdes;
 import org.junit.gen5.api.Assertions;
@@ -38,7 +37,7 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final ApplicationConfig configuration = new AppConfiguration().init();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer());
 
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer)
@@ -53,7 +52,7 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final ApplicationConfig configuration = new AppConfiguration().init();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer());
         final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), new DefaultProducerCallback());
         Assertions.assertAll("producer",
                 () -> Assertions.assertNull(result)
@@ -71,28 +70,13 @@ public class DefaultProducerTest {
             PowerMockito.when(kafkaProducer, "send", Mockito.any(ProducerRecord.class), Mockito.any(Callback.class)).thenThrow(new ProducerFencedException("ProducerFencedException"));
 
             final ApplicationConfig configuration = new AppConfiguration().init();
-            final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+            final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer());
             producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), new DefaultProducerCallback());
         });
     }
 
-    @DisplayName("Add record with exactly once flag")
-    @Test
-    public void saveRecordExactlyOnceKafkaExceptionOk() throws Exception {
 
-        final KafkaProducer kafkaProducer = Mockito.mock(KafkaProducer.class);
-        PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
-        PowerMockito.when(kafkaProducer, "send", Mockito.any(ProducerRecord.class), Mockito.any(Callback.class)).thenThrow(new KafkaException("KafkaException"));
-
-        final ApplicationConfig configuration = new AppConfiguration().init();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
-        final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), new DefaultProducerCallback());
-        Assertions.assertAll("producer",
-                () -> Assertions.assertNull(result)
-        );
-    }
-
-    @DisplayName("Add record without exactly once flag")
+    @DisplayName("Add record")
     @Test
     public void saveRecordOk() throws Exception {
 
@@ -100,7 +84,7 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final ApplicationConfig configuration = new AppConfiguration().init();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer());
         final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), new DefaultProducerCallback());
         Assertions.assertAll("producer",
                 () -> Assertions.assertNull(result)

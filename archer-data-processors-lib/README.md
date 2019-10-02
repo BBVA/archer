@@ -3,7 +3,9 @@ Data processors
 
 ## Overview
 
-Processing data is simplify by this library with the implementation of dataflow and sql processors. Too provide a interactive queries.
+Processing data is simplify by this library with the implementation of dataflow and sql processors, provide multiple builders to create processors. Too facilitate the use of kafka processor API.
+
+Provide a interactive queries system and Readable stores to launch queries to the data.
 
 ## Requirements
 

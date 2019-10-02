@@ -56,4 +56,36 @@ public class RepositoryCacheTest {
                 () -> Assertions.assertNotNull(data)
         );
     }
+
+    @DisplayName("Create repository cache and update state ok")
+    @Test
+    public void createRepositoryAndUpdateState2() {
+        final RepositoryCache<PersonalData> repositoryCache = new RepositoryCache<>();
+
+        repositoryCache.updateState("key", new PersonalData(), null);
+
+        repositoryCache.getCurrentState("personal-data", "key");
+        repositoryCache.updateState("key", null, null);
+        final RepositoryCache.Record data = repositoryCache.getRecord("key");
+
+        Assertions.assertAll("RepositoryCache",
+                () -> Assertions.assertNotNull(data)
+        );
+    }
+
+    @DisplayName("Create repository cache and update state ok")
+    @Test
+    public void createRepositoryAndUpdateState3() {
+        final RepositoryCache<PersonalData> repositoryCache = new RepositoryCache<>();
+
+        repositoryCache.updateState("key", null, null);
+
+        repositoryCache.getCurrentState("personal-data", "key");
+        repositoryCache.updateState("key", new PersonalData(), null);
+        final RepositoryCache.Record data = repositoryCache.getRecord("key");
+
+        Assertions.assertAll("RepositoryCache",
+                () -> Assertions.assertNotNull(data)
+        );
+    }
 }

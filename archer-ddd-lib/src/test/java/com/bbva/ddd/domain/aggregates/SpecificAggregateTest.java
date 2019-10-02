@@ -28,7 +28,8 @@ public class SpecificAggregateTest {
     @Test
     public void createAggregate() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-
+        personalData.onCompleteTest();
+        
         Assertions.assertAll("PersonalDataAggregate",
                 () -> Assertions.assertNotNull(personalData.getData()),
                 () -> Assertions.assertNotNull(personalData.getId())

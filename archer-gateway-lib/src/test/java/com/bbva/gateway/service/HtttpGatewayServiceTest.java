@@ -17,6 +17,8 @@ import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.gateway.service.impl.HttpGatewayServiceImpl;
 import com.bbva.gateway.service.records.PersonalData;
 import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.ResponseBody;
 import org.apache.kafka.common.record.TimestampType;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.gen5.api.Assertions;
@@ -134,6 +136,21 @@ public class HtttpGatewayServiceTest {
         Assertions.assertAll("HttpGatewayService",
                 () -> Assertions.assertNotNull(service),
                 () -> Assertions.assertNull(resp)
+        );
+    }
+
+    @DisplayName("Parse changelog to string ok")
+    @Test
+    public void parseChangelogToStringException() throws Exception {
+        final HttpGatewayServiceImpl service = new HttpGatewayServiceImpl();
+
+        final Response response = PowerMockito.mock(Response.class);
+        PowerMockito.when(response, "headers").thenReturn(new Headers.Builder().build());
+        PowerMockito.when(response, "body").thenReturn(ResponseBody.create(MediaType.get("application/json"), "{}"));
+        final String resp = service.parseChangelogToString(response);
+
+        Assertions.assertAll("HttpGatewayService",
+                () -> Assertions.assertNotNull(resp)
         );
     }
 
