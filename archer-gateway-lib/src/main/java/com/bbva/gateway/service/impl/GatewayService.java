@@ -2,7 +2,7 @@ package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.CRecord;
-import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
@@ -14,9 +14,9 @@ import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecord;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
@@ -83,7 +83,7 @@ public abstract class GatewayService<T>
      * @return changelog
      */
     protected static TransactionChangelog findChangelogByReference(final CRecord record) {
-        return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommonHeaderType.REFERENCE_RECORD_KEY_KEY.getName()).asString());
+        return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY.getName()).asString());
     }
 
     private void saveChangelogAndProcessOutput(final CRecord record, final T response, final boolean replay) {
@@ -138,9 +138,9 @@ public abstract class GatewayService<T>
      */
     public T parseChangelogFromString(final String output) {
         try {
-            return om.readValue(output, new TypeReference() {
-            });
-        } catch (final IOException e) {
+            final Class classType = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            return (T) om.readValue(output, classType);
+        } catch (final IOException | IllegalArgumentException e) {
             logger.error("Cannot parse to string changelog", e);
             return null;
         }

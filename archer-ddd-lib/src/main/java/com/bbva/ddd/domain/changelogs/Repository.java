@@ -265,7 +265,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
         recordHeaders.add(CommonHeaderType.TYPE_KEY, ChangelogHeaderType.TYPE_VALUE);
 
         if (referenceRecord != null) {
-            recordHeaders.add(ChangelogHeaderType.UUID_KEY, referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY));
+            recordHeaders.add(ChangelogHeaderType.UUID_KEY, referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY).asString());
             recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
             recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
                     referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());

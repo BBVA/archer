@@ -5,7 +5,9 @@ import com.bbva.common.consumers.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.PRecord;
 import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.common.utils.headers.types.EventHeaderType;
 import com.bbva.ddd.domain.HelperDomain;
@@ -129,6 +131,10 @@ public class Event {
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, replay);
 
         if (referenceRecord != null) {
+            final ByteArrayValue entityUuid = referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY);
+            if (entityUuid != null) {
+                recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid.asString());
+            }
             recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
             recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
                     referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
