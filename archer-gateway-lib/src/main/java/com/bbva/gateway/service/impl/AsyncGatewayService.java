@@ -7,6 +7,9 @@ import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.service.IAsyncGatewayService;
 
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+
 /**
  * Asynchronous gateway service implementation
  *
@@ -34,6 +37,23 @@ public abstract class AsyncGatewayService<T>
             saveChangelog(record, response, false);
         }
     }
+
+    /**
+     * Parse output string to response
+     *
+     * @param output json string
+     * @return response
+     */
+    @Override
+    public T parseChangelogFromString(final String output) {
+        try {
+            final Class classType = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            return (T) om.readValue(output, classType);
+        } catch (final IOException | IllegalArgumentException e) {
+            return null;
+        }
+    }
+
 
     /**
      * {@inheritDoc}

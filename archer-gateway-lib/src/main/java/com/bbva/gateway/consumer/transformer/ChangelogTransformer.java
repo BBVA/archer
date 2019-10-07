@@ -2,7 +2,7 @@ package com.bbva.gateway.consumer.transformer;
 
 
 import com.bbva.common.utils.ByteArrayValue;
-import com.bbva.common.utils.headers.types.ChangelogHeaderType;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.dataprocessors.transformers.EntityTransformer;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.streams.KeyValue;
@@ -33,9 +33,9 @@ public class ChangelogTransformer<K, V> extends EntityTransformer<K, V> {
      */
     @Override
     protected KeyValue<K, V> setMergedKeyValue(final K key, final V newValue) {
-        final Header header = context.headers().lastHeader(ChangelogHeaderType.UUID_KEY.getName());
+        final Header header = context.headers().lastHeader(CommandHeaderType.UUID_KEY.getName());
         if (header != null) {
-            final String newKey = new ByteArrayValue(header.value()).asString();
+            final String newKey = new ByteArrayValue(header.value(), true).asString();
             stateStore.put((K) newKey, newValue);
             return (KeyValue<K, V>) KeyValue.pair(newKey, newValue);
         }
