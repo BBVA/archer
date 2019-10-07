@@ -1,19 +1,17 @@
-Archer framework
-==================
+Archer, an event-sourcing framework
+===================================
 
 ## Overview
 
-Archer is a research product conceived within BBVA New digital business - R&D that provides convenient libraries to develop a Event sourcing system. We provide simplicity, adaptability and efficiently to develop a event-driven architecture. 
+Archer is a research framework conceived within BBVA New Digital Businesses - R&D that provides convenient components to develop event sourcing systems. We provide simplicity, adaptability and efficiently to develop event-driven architectures.
 
 
-Installs the packages in your project and can use this libraries,
+The main components are:
 
- * Common
- * Data processorss
- * Domain driven design
- * Gateway
- * Logger
- * Common test
+ * Data Processors Library
+ * Domain Driven Design Library
+ * Gateway Library
+ 
 
 
 Getting Started
@@ -29,7 +27,7 @@ Gradle
 ```text/plain
 # build.gradle
 dependencies {
-	compile('bbva.ndb:lib-ddd:1.0.0-beta.1')
+	compile('bbva.ndb:ddd-lib:1.0.0-beta.1')
 }
 ```
 
@@ -39,7 +37,7 @@ Maven
 <dependencies>
     <dependency>
         <groupId>bbva.ndb</groupId>
-        <artifactId>lib-ddd</artifactId>
+        <artifactId>ddd-lib</artifactId>
         <version>1.0.0-beta.1</version>
     </dependency>
 </dependencies>

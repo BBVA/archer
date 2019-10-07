@@ -9,11 +9,11 @@ app:
     client.id: $UUID
     enable.auto.commit: ${ARCHER_ENABLE_AUTO_COMMIT:false}
     auto.offset.reset: ${ARCHER_AUTO_OFFSET_RESET:earliest}
-    isolation.level: ${ARCHER_CONSUMER_ISOLATION_LEVEL:read_committed}
+    isolation.level: ${ARCHER_CONSUMER_ISOLATION_LEVEL:read_uncommitted}
   producer:
     acks: ${ARCHER_PRODUCER_ACKS:all}
     retries: ${ARCHER_PRODUCER_RETRIES:1}
-    enable.idempotence: ${ARCHER_PRODUCER_ENABLE_IDEMPOTENCE:true}
+    enable.idempotence: ${ARCHER_PRODUCER_ENABLE_IDEMPOTENCE:false}
     transactional.id.prefix: ${ARCHER_PRODUCER_TRANSACTIONAL_ID_PREFIX}
   streams:
     application.server: ${ARCHER_APPLICATION_SERVER}
