@@ -1,8 +1,9 @@
 package com.bbva.common.producers;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.producers.records.GenericRecordImpl;
 import com.bbva.common.producers.records.SpecificRecordImpl;
 import com.bbva.common.util.PowermockExtension;
@@ -37,7 +38,7 @@ public class CachedProducerTest {
         final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
         Assertions.assertAll("producer",
@@ -52,7 +53,7 @@ public class CachedProducerTest {
         final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
         final Future mockedFuture = producer.add(new PRecord<>("test", "key", "value", new RecordHeaders()), null);
@@ -69,7 +70,7 @@ public class CachedProducerTest {
         final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
         final Future mockedFuture = producer.add(new PRecord<>("test", "key", "value", new RecordHeaders()), null);
@@ -87,7 +88,7 @@ public class CachedProducerTest {
         final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
         producer.add(new PRecord<>("test", "key", "value", new RecordHeaders()), null);
@@ -107,7 +108,7 @@ public class CachedProducerTest {
         final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
         producer.add(new PRecord<>("test", Integer.valueOf(1), Long.valueOf(1), new RecordHeaders()), null);
@@ -137,7 +138,7 @@ public class CachedProducerTest {
         final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
         Assertions.assertThrows(ApplicationException.class, () ->

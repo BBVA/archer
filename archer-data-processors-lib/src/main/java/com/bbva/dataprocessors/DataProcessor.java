@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.dataflows.DataflowProcessorBuilder;
@@ -33,7 +33,7 @@ public final class DataProcessor {
 
     private final Map<String, ProcessorBuilder> processors = new LinkedHashMap<>();
     private final SQLProcessorContext sqlProcessorContext;
-    private final ApplicationConfig config;
+    private final AppConfig config;
     private static DataProcessor instance;
 
     /**
@@ -41,7 +41,7 @@ public final class DataProcessor {
      *
      * @param config application config
      */
-    private DataProcessor(final ApplicationConfig config) {
+    private DataProcessor(final AppConfig config) {
         this.config = config;
         sqlProcessorContext = new SQLProcessorContextSupplier(KSQL_STATE_NAME, config);
     }
@@ -52,7 +52,7 @@ public final class DataProcessor {
      * @param configs application configuration
      * @return the instance
      */
-    public static DataProcessor create(final ApplicationConfig configs) {
+    public static DataProcessor create(final AppConfig configs) {
         instance = new DataProcessor(configs);
         return instance;
     }

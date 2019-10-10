@@ -1,6 +1,6 @@
 package com.bbva.common.utils;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
@@ -27,22 +27,22 @@ public class TopicManager {
         commandOrEventConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
         commandOrEventConfig.put(TopicConfig.RETENTION_BYTES_CONFIG, "-1");
         commandOrEventConfig.put(TopicConfig.RETENTION_MS_CONFIG, "-1");
-        configMap.put(ApplicationConfig.EVENTS_RECORD_TYPE, commandOrEventConfig);
-        configMap.put(ApplicationConfig.COMMANDS_RECORD_TYPE, commandOrEventConfig);
+        configMap.put(AppConfig.EVENTS_RECORD_TYPE, commandOrEventConfig);
+        configMap.put(AppConfig.COMMANDS_RECORD_TYPE, commandOrEventConfig);
 
         final Map<String, String> changelogConfig = new HashMap<>();
         changelogConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
         changelogConfig.put(TopicConfig.RETENTION_BYTES_CONFIG, "-1");
         changelogConfig.put(TopicConfig.RETENTION_MS_CONFIG, "-1");
-        configMap.put(ApplicationConfig.CHANGELOG_RECORD_TYPE, changelogConfig);
+        configMap.put(AppConfig.CHANGELOG_RECORD_TYPE, changelogConfig);
 
         final Map<String, String> snapshotConfig = new HashMap<>();
         snapshotConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
         snapshotConfig.put(TopicConfig.MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0");
         snapshotConfig.put(TopicConfig.MIN_COMPACTION_LAG_MS_CONFIG, "0");
-        configMap.put(ApplicationConfig.SNAPSHOT_RECORD_TYPE, snapshotConfig);
+        configMap.put(AppConfig.SNAPSHOT_RECORD_TYPE, snapshotConfig);
 
-        configMap.put(ApplicationConfig.COMMON_RECORD_TYPE, Collections.emptyMap());
+        configMap.put(AppConfig.COMMON_RECORD_TYPE, Collections.emptyMap());
 
         configTypes = Collections.unmodifiableMap(configMap);
     }
@@ -53,7 +53,7 @@ public class TopicManager {
      * <pre>
      *  {@code
      *      final Map<String, String> commandTopic = new HashMap<>();
-     *      commandTopic.put("topic" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, ApplicationConfig.COMMANDS_RECORD_TYPE);
+     *      commandTopic.put("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, AppConfig.COMMANDS_RECORD_TYPE);
      *      TopicManager.createTopics(commandTopic, appConfiguration);
      *  }
      * </pre>
@@ -62,7 +62,7 @@ public class TopicManager {
      * @param config     general configuration
      */
     public static void createTopics(
-            final Map<String, String> topicNames, final ApplicationConfig config) {
+            final Map<String, String> topicNames, final AppConfig config) {
         final Collection<NewTopic> topics = new ArrayList<>();
         for (final String topicName : topicNames.keySet()) {
             topics.add(createTopic(config, topicName, configTypes.get(topicNames.get(topicName))));
@@ -78,7 +78,7 @@ public class TopicManager {
      * @param config               general configuration
      */
     public static void createTopicsWithConfig(
-            final Map<String, Map<String, String>> topicNamesWithConfig, final ApplicationConfig config) {
+            final Map<String, Map<String, String>> topicNamesWithConfig, final AppConfig config) {
         final Collection<NewTopic> topics = new ArrayList<>();
         for (final String topicName : topicNamesWithConfig.keySet()) {
             topics.add(createTopic(config, topicName, topicNamesWithConfig.get(topicName)));
@@ -88,15 +88,15 @@ public class TopicManager {
     }
 
     private static NewTopic createTopic(
-            final ApplicationConfig config,
+            final AppConfig config,
             final String topicName,
             final Map<String, String> topicConfig) {
         final NewTopic newTopic;
         newTopic =
                 new NewTopic(
                         topicName,
-                        getProperty(config, ApplicationConfig.PARTITIONS, DEFAULT_PARTITIONS),
-                        (short) getProperty(config, ApplicationConfig.REPLICATION_FACTOR, DEFAULT_REPLICATION));
+                        getProperty(config, AppConfig.PARTITIONS, DEFAULT_PARTITIONS),
+                        (short) getProperty(config, AppConfig.REPLICATION_FACTOR, DEFAULT_REPLICATION));
         if (topicConfig != null && !topicConfig.isEmpty()) {
             newTopic.configs(topicConfig);
         }
@@ -104,14 +104,14 @@ public class TopicManager {
     }
 
     private static void createTopics(
-            final Collection<NewTopic> topics, final ApplicationConfig config) {
+            final Collection<NewTopic> topics, final AppConfig config) {
         final AdminClient adminClient = AdminClient.create(config.get());
         adminClient.createTopics(topics);
         adminClient.close();
     }
 
     private static int getProperty(
-            final ApplicationConfig config, final String property, final int defaultValue) {
+            final AppConfig config, final String property, final int defaultValue) {
         return config.contains(property)
                 ? Integer.valueOf(config.get(property).toString())
                 : defaultValue;

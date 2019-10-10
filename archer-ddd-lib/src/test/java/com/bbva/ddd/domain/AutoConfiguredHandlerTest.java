@@ -1,6 +1,7 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -11,9 +12,9 @@ import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.annotations.Event;
 import com.bbva.ddd.domain.annotations.Handler;
 import com.bbva.ddd.domain.callback.ActionHandler;
-import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.domain.events.read.EventRecord;
+import com.bbva.ddd.domain.changelogs.read.ChangelogHandlerContext;
+import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
+import com.bbva.ddd.domain.events.read.EventHandlerContext;
 import com.bbva.ddd.util.AnnotationUtil;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
@@ -98,8 +99,8 @@ public class AutoConfiguredHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
-            handler.processCommand(new CommandRecord("commandName" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders));
+            handler.processCommand(new CommandHandlerContext(new CRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
         }
@@ -116,8 +117,8 @@ public class AutoConfiguredHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
-            handler.processEvent(new EventRecord("topic" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders));
+            handler.processEvent(new EventHandlerContext(new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
         }
@@ -134,8 +135,8 @@ public class AutoConfiguredHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
-            handler.processDataChangelog(new ChangelogRecord("topic" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders));
+            handler.processDataChangelog(new ChangelogHandlerContext(new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
         }

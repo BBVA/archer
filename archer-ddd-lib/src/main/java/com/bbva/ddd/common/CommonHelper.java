@@ -1,6 +1,6 @@
 package com.bbva.ddd.common;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.ddd.domain.commands.write.Command;
 import com.bbva.ddd.domain.events.write.Event;
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class CommonHelper {
 
-    protected final ApplicationConfig applicationConfig;
+    protected final AppConfig appConfig;
     protected static CommonHelper instance;
     protected final Map<String, Command> cacheCommandPersistence;
     protected final Map<String, Event> cacheEvents;
@@ -21,10 +21,10 @@ public class CommonHelper {
     /**
      * Constructor
      *
-     * @param applicationConfig configuration
+     * @param appConfig configuration
      */
-    public CommonHelper(final ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
+    public CommonHelper(final AppConfig appConfig) {
+        this.appConfig = appConfig;
         cacheCommandPersistence = new HashMap<>();
         cacheEvents = new HashMap<>();
         instance = this;
@@ -35,8 +35,8 @@ public class CommonHelper {
      *
      * @return current configuration
      */
-    public ApplicationConfig getConfig() {
-        return applicationConfig;
+    public AppConfig getConfig() {
+        return appConfig;
     }
 
     /**
@@ -72,10 +72,14 @@ public class CommonHelper {
             return cacheCommandPersistence.get(name);
         } else {
             final Map<String, String> commandTopic = new HashMap<>();
-            commandTopic.put(name + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, ApplicationConfig.COMMANDS_RECORD_TYPE);
-            TopicManager.createTopics(commandTopic, applicationConfig);
+            commandTopic.put(name + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, AppConfig.COMMANDS_RECORD_TYPE);
+            TopicManager.createTopics(commandTopic, appConfig);
 
-            final Command command = new Command(name, applicationConfig, persist);
+            //TODO to remove
+            final Command command =
+                    new Command.Builder(null)
+                            .action(Command.CREATE_ACTION)
+                            .build();
             cacheCommandPersistence.put(name, command);
             return command;
         }
@@ -92,10 +96,12 @@ public class CommonHelper {
             return cacheEvents.get(name);
         } else {
             final Map<String, String> eventTopic = new HashMap<>();
-            eventTopic.put(name + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, ApplicationConfig.EVENTS_RECORD_TYPE);
-            TopicManager.createTopics(eventTopic, applicationConfig);
+            eventTopic.put(name + AppConfig.EVENTS_RECORD_NAME_SUFFIX, AppConfig.EVENTS_RECORD_TYPE);
+            TopicManager.createTopics(eventTopic, appConfig);
 
-            final Event eventWriter = new Event(name, applicationConfig);
+            //TODO to remove
+            final Event eventWriter = new Event.Builder(null)
+                    .name(name).producerName(name).build();
             cacheEvents.put(name, eventWriter);
             return eventWriter;
         }

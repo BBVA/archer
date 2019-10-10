@@ -1,9 +1,9 @@
 package com.bbva.gateway;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.ddd.domain.Handler;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.domain.events.read.EventRecord;
+import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
+import com.bbva.ddd.domain.events.read.EventHandlerContext;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IGatewayService;
@@ -46,11 +46,11 @@ public class GatewayHandler implements Handler {
             final String commandAction = (String) gatewayConfig.get(GATEWAY_COMMAND_ACTION);
             final String event = (String) gatewayConfig.get(GATEWAY_EVENT_NAME);
             if (commandAction != null) {
-                commandsSubscribed.add(baseName + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX);
+                commandsSubscribed.add(baseName + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 initActionService(serviceClass, gatewayConfig, commandAction, null);
             } else if (event != null) {
-                eventsSubscribed.add(event + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX);
-                initActionService(serviceClass, gatewayConfig, null, event + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX);
+                eventsSubscribed.add(event + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
+                initActionService(serviceClass, gatewayConfig, null, event + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
             }
         }
     }
@@ -74,25 +74,25 @@ public class GatewayHandler implements Handler {
     /**
      * Call to service action for command
      *
-     * @param command command received
+     * @param context command received
      */
     @Override
-    public void processCommand(final CommandRecord command) {
-        final String action = command.name();
+    public void processCommand(final CommandHandlerContext context) {
+        final String action = context.consumedRecord().name();
         if (commandServices.containsKey(action)) {
-            new Thread(() -> commandServices.get(action).processRecord(command)).start();
+            new Thread(() -> commandServices.get(action).processRecord(context)).start();
         }
     }
 
     /**
      * Call to service action for event
      *
-     * @param eventMessage Event consumed from the event store
+     * @param context Event consumed from the event store
      */
     @Override
-    public void processEvent(final EventRecord eventMessage) {
-        if (eventServices.containsKey(eventMessage.topic())) {
-            new Thread(() -> eventServices.get(eventMessage.topic()).processRecord(eventMessage)).start();
+    public void processEvent(final EventHandlerContext context) {
+        if (eventServices.containsKey(context.consumedRecord().topic())) {
+            new Thread(() -> eventServices.get(context.consumedRecord().topic()).processRecord(context)).start();
         }
     }
 
@@ -100,7 +100,7 @@ public class GatewayHandler implements Handler {
         final Configuration newConfig;
         newConfig = new Configuration();
         newConfig.setGateway(gatewayConfig);
-        newConfig.setApplicationConfig(config.getApplicationConfig());
+        newConfig.setAppConfig(config.getAppConfig());
         newConfig.setCustom((LinkedHashMap<String, Object>) config.getCustom());
         IGatewayService service = null;
         try {

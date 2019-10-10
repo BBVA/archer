@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.aggregates;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
@@ -29,7 +29,7 @@ public class SpecificAggregateTest {
     public void createAggregate() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
         personalData.onCompleteTest();
-        
+
         Assertions.assertAll("PersonalDataAggregate",
                 () -> Assertions.assertNotNull(personalData.getData()),
                 () -> Assertions.assertNotNull(personalData.getId())

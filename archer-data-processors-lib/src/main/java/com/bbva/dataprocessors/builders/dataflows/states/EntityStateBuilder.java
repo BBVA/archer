@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.builders.dataflows.states;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
@@ -37,8 +37,8 @@ public class EntityStateBuilder<K, V extends SpecificRecordBase> implements Stat
      */
     public EntityStateBuilder(final Class<K> keyClass) {
         this.keyClass = keyClass;
-        snapshotTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+        snapshotTopicName = AppConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
     }
 
     /**
@@ -72,21 +72,21 @@ public class EntityStateBuilder<K, V extends SpecificRecordBase> implements Stat
                 context.serdeProperties());
         valueSerde.configure(context.serdeProperties(), false);
 
-        final String sourceChangelogTopicName = context.name() + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
-        final String internalLocalStoreName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX;
-        final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String sourceChangelogTopicName = context.name() + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+        final String internalLocalStoreName = AppConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX;
+        final String applicationGlobalStoreName = context.name() + AppConfig.STORE_NAME_SUFFIX;
 
         final Map<String, String> topics = new HashMap<>();
-        topics.put(snapshotTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
-        topics.put(sourceChangelogTopicName, ApplicationConfig.CHANGELOG_RECORD_TYPE);
+        topics.put(snapshotTopicName, AppConfig.SNAPSHOT_RECORD_TYPE);
+        topics.put(sourceChangelogTopicName, AppConfig.CHANGELOG_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
 
         final org.apache.kafka.streams.StreamsBuilder builder = context.streamsBuilder();
 
         final StoreBuilder<KeyValueStore<K, V>> entityStore = Stores
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalLocalStoreName), keySerde, valueSerde)
-                .withLoggingEnabled(TopicManager.configTypes.get(ApplicationConfig.SNAPSHOT_RECORD_TYPE));
+                .withLoggingEnabled(TopicManager.configTypes.get(AppConfig.SNAPSHOT_RECORD_TYPE));
 
         builder.addStateStore(entityStore)
                 .stream(sourceChangelogTopicName, Consumed.with(keySerde, valueSerde))

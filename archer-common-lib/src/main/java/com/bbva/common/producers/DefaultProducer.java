@@ -1,6 +1,8 @@
 package com.bbva.common.producers;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.producers.callback.ProducerCallback;
+import com.bbva.common.producers.record.PRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -22,7 +24,7 @@ import java.util.concurrent.Future;
  * @param <K> Type of Record schema
  * @param <V> Type of Record
  */
-public class DefaultProducer<K, V> {
+public class DefaultProducer<K, V> implements com.bbva.common.producers.Producer<K, V> {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultProducer.class);
     private final Producer<K, V> producer;
@@ -30,14 +32,14 @@ public class DefaultProducer<K, V> {
     /**
      * Constructor
      *
-     * @param applicationConfig general configuration
-     * @param keySerializer     serializer for the key
-     * @param valueSerializer   serializer for the value
+     * @param appConfig       general configuration
+     * @param keySerializer   serializer for the key
+     * @param valueSerializer serializer for the value
      */
-    public DefaultProducer(final ApplicationConfig applicationConfig, final Serializer<K> keySerializer,
+    public DefaultProducer(final AppConfig appConfig, final Serializer<K> keySerializer,
                            final Serializer<V> valueSerializer) {
 
-        producer = new KafkaProducer<>(applicationConfig.producer().get(), keySerializer, valueSerializer);
+        producer = new KafkaProducer<>(appConfig.producer(), keySerializer, valueSerializer);
     }
 
     /**
@@ -47,7 +49,8 @@ public class DefaultProducer<K, V> {
      * @param callback callback to manag response
      * @return future with production result
      */
-    public Future<RecordMetadata> save(final PRecord<K, V> record, final ProducerCallback callback) {
+    @Override
+    public Future<RecordMetadata> send(final PRecord<K, V> record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
 
         final Future<RecordMetadata> result = producer.send(record, (metadata, e) -> {

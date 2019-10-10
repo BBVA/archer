@@ -1,9 +1,9 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.consumers.CRecord;
-import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.domain.events.read.EventRecord;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.ddd.domain.changelogs.read.ChangelogHandlerContext;
+import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
+import com.bbva.ddd.domain.events.read.EventHandlerContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -70,25 +70,25 @@ public interface Handler {
     /**
      * This method is call when command messages arrived from event store
      *
-     * @param commandMessage Command consumed from the event store
+     * @param commandHandlerContext Command consumed from the event store
      */
-    default void processCommand(final CommandRecord commandMessage) {
+    default void processCommand(final CommandHandlerContext commandHandlerContext) {
     }
 
     /**
      * This method is call when event messages arrived from event store
      *
-     * @param eventMessage Event consumed from the event store
+     * @param eventHandlerContext Event consumed from the event store
      */
-    default void processEvent(final EventRecord eventMessage) {
+    default void processEvent(final EventHandlerContext eventHandlerContext) {
     }
 
     /**
      * This method is call when changelog messages arrived from event store
      *
-     * @param changelogMessage Changelog event consumed from the event store
+     * @param changelogHandlerContext Changelog event consumed from the event store
      */
-    default void processDataChangelog(final ChangelogRecord changelogMessage) {
+    default void processDataChangelog(final ChangelogHandlerContext changelogHandlerContext) {
 
     }
 

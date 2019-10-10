@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
@@ -33,7 +33,7 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
 
-        final Domain domain = DomainBuilder.create(new ApplicationConfig());
+        final Domain domain = DomainBuilder.create(new AppConfig());
         final Domain domainCached = DomainBuilder.get();
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertEquals(domain, domainCached)
@@ -65,7 +65,7 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
 
-        Domain domain = DomainBuilder.create(new ApplicationConfig());
+        Domain domain = DomainBuilder.create(new AppConfig());
         domain = domain.addDataProcessorBuilder(new CreateStreamQueryBuilder("query-builder"));
         domain = domain.addDataProcessorBuilder("dataflow", PowerMockito.mock(DataflowBuilder.class));
         domain = domain.addEntityStateProcessor("entity", String.class);
@@ -81,7 +81,7 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
 
-        Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new ApplicationConfig());
+        Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new AppConfig());
         domain = domain.indexFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
                 String.class, String.class);
         domain = domain.groupByFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
@@ -102,7 +102,7 @@ public class DomainBuilderTest {
 
         PowerMockito.mockStatic(TopicManager.class);
 
-        final Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new ApplicationConfig());
+        final Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new AppConfig());
         final HelperDomain helperDomain = domain.start();
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertNotNull(helperDomain)

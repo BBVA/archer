@@ -1,7 +1,6 @@
 package com.bbva.ddd.domain.commands.write;
 
-import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
@@ -40,11 +39,9 @@ public class CommandTest {
     @Test
     public void createCommandOk() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new ApplicationConfig());
-        final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
+        HelperDomain.create(new AppConfig());
 
         final List<Header> lstHeaders = new ArrayList<>();
         lstHeaders.add(new Header() {
@@ -59,7 +56,10 @@ public class CommandTest {
             }
         });
         final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
-        final CommandRecordMetadata metadata = command.create(new PersonalData(), headers, new DefaultProducerCallback());
+        final CommandRecordMetadata metadata = new Command.Builder(producer, null)
+                .action(Command.CREATE_ACTION).to("topicBaseName")
+                .value(new PersonalData()).headers(headers).build()
+                .send(new DefaultProducerCallback());
 
         Assertions.assertAll("Command",
                 () -> Assertions.assertNotNull(metadata),
@@ -71,12 +71,14 @@ public class CommandTest {
     @Test
     public void createCommandWithoutHeadersOk() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new ApplicationConfig());
-        final Command command = new Command("topicBaseName", new ApplicationConfig(), true);
-        final CommandRecordMetadata metadata = command.create(new PersonalData(), new DefaultProducerCallback());
+        HelperDomain.create(new AppConfig());
+
+        final CommandRecordMetadata metadata = new Command.Builder(producer, null)
+                .action(Command.CREATE_ACTION).to("topicBaseName")
+                .value(new PersonalData()).persistent().build()
+                .send(new DefaultProducerCallback());
 
         Assertions.assertAll("Command",
                 () -> Assertions.assertNotNull(metadata),
@@ -88,13 +90,15 @@ public class CommandTest {
     @Test
     public void processsActionOk() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new ApplicationConfig());
-        final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
-        final CommandRecordMetadata metadata = command.processAction("action", "entityId",
-                new PersonalData(), new DefaultProducerCallback());
+        HelperDomain.create(new AppConfig());
+
+        final Command command = new Command.Builder(producer, null)
+                .action("action").to("topicBaseName")
+                .uuid("entityId").value(new PersonalData())
+                .build();
+        final CommandRecordMetadata metadata = command.send(new DefaultProducerCallback());
 
         Assertions.assertAll("Command",
                 () -> Assertions.assertNotNull(metadata),
@@ -107,13 +111,15 @@ public class CommandTest {
     @Test
     public void deleteOk() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "remove", Mockito.any(), Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new ApplicationConfig());
-        final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
-        final CommandRecordMetadata metadata = command.delete("entityId",
-                PersonalData.class, new DefaultProducerCallback());
+        HelperDomain.create(new AppConfig());
+
+        final Command command = new Command.Builder(producer, null)
+                .action(Command.DELETE_ACTION).to("topicBaseName")
+                .uuid("entityId")
+                .build();
+        final CommandRecordMetadata metadata = command.send(new DefaultProducerCallback());
 
         Assertions.assertAll("Command",
                 () -> Assertions.assertNotNull(metadata),
@@ -126,47 +132,39 @@ public class CommandTest {
     @Test
     public void deleteKo() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "remove", Mockito.any(), Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new ApplicationConfig());
-        final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
+        HelperDomain.create(new AppConfig());
 
-        Assertions.assertThrows(ApplicationException.class, () ->
-                command.delete(null,
-                        PersonalData.class, new DefaultProducerCallback())
+        final Command command = new Command.Builder(producer, null)
+                .action(Command.DELETE_ACTION).to("topicBaseName")
+                .build();
+
+        final CommandRecordMetadata metadata = command.send(new DefaultProducerCallback());
+
+        Assertions.assertAll("Command",
+                () -> Assertions.assertNotNull(metadata),
+                () -> Assertions.assertNotNull(metadata.commandId()),
+                () -> Assertions.assertNotNull("entityId", metadata.entityId())
         );
-
     }
 
     @DisplayName("Create event and send produce ProduceException ko")
     @Test
     public void createCommandKoProduceException() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new ApplicationConfig());
-            final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
+            HelperDomain.create(new AppConfig());
             final RecordHeaders headers = new RecordHeaders();
             headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
-            command.create(new PersonalData(), new CommandRecord("topic", 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers), new DefaultProducerCallback());
-        });
-    }
 
-    @DisplayName("Create event and send produce ApplicationException ko")
-    @Test
-    public void createCommandKo() throws Exception {
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
+            final Command command = new Command.Builder(producer, new CommandRecord("topic", 1, 1, new Date().getTime(), TimestampType.CREATE_TIME, "key", new PersonalData(), headers))
+                    .to("topicBaseName").value(new PersonalData()).action(Command.CREATE_ACTION)
+                    .build();
+            command.send(new DefaultProducerCallback());
 
-        Assertions.assertThrows(ApplicationException.class, () -> {
-            HelperDomain.create(new ApplicationConfig());
-            final Command command = new Command("topicBaseName", new ApplicationConfig(), false);
-            final OptionalRecordHeaders optionalHeaders = new OptionalRecordHeaders(new ArrayList<>());
-            command.create(null, optionalHeaders, new DefaultProducerCallback());
         });
     }
 

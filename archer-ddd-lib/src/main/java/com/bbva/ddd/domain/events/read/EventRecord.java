@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.events.read;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.EventHeaderType;
 import org.apache.avro.specific.SpecificRecord;
@@ -26,6 +26,10 @@ public class EventRecord extends CRecord {
     public EventRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
                        final String key, final SpecificRecord value, final RecordHeaders headers) {
         super(topic, partition, offset, timestamp, timestampType, key, value, headers);
+    }
+
+    public EventRecord(final CRecord record) {
+        super(record.topic(), record.partition(), record.offset(), record.timestamp(), record.timestampType(), record.key(), record.value(), record.recordHeaders());
     }
 
     /**

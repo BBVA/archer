@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * <pre>
  * {@code
  * Domain domain = DomainBuilder.create(
- *      new AnnotatedHandler(servicesPackage, config), applicationConfig());
+ *      new AnnotatedHandler(servicesPackage, config), appConfig());
  *
  * DataProcessor.get()
  *      .add("processor-name", new ChangelogKeyBuilder("processor-name", "internal-store"));
@@ -48,39 +48,39 @@ public class DomainBuilder implements Domain {
 
     private final List<RunnableConsumer> consumers = new ArrayList<>();
     private final Handler handler;
-    private final ApplicationConfig applicationConfig;
+    private final AppConfig appConfig;
     private static Domain instance;
 
     /**
      * Constructor
      *
-     * @param handler           handler implementation
-     * @param applicationConfig configuration
+     * @param handler   handler implementation
+     * @param appConfig configuration
      */
-    protected DomainBuilder(final Handler handler, final ApplicationConfig applicationConfig) {
+    protected DomainBuilder(final Handler handler, final AppConfig appConfig) {
         this.handler = handler;
 
-        this.applicationConfig = applicationConfig;
-        DataProcessor.create(this.applicationConfig);
+        this.appConfig = appConfig;
+        DataProcessor.create(this.appConfig);
         initRepositories();
     }
 
-    protected DomainBuilder(final ApplicationConfig applicationConfig) {
-        this(new AutoConfiguredHandler(), applicationConfig);
+    protected DomainBuilder(final AppConfig appConfig) {
+        this(new AutoConfiguredHandler(), appConfig);
     }
 
     /**
      * Create new instance of domain
      *
-     * @param handler           handler implementation
-     * @param applicationConfig configuration
+     * @param handler   handler implementation
+     * @param appConfig configuration
      * @return domain instance
      */
-    public static Domain create(final Handler handler, final ApplicationConfig applicationConfig) {
+    public static Domain create(final Handler handler, final AppConfig appConfig) {
         if (handler == null) {
-            instance = new DomainBuilder(applicationConfig);
+            instance = new DomainBuilder(appConfig);
         } else {
-            instance = new DomainBuilder(handler, applicationConfig);
+            instance = new DomainBuilder(handler, appConfig);
         }
         return instance;
     }
@@ -88,11 +88,11 @@ public class DomainBuilder implements Domain {
     /**
      * Create new domian without handler
      *
-     * @param applicationConfig configuration
+     * @param appConfig configuration
      * @return domain instance
      */
-    public static Domain create(final ApplicationConfig applicationConfig) {
-        return DomainBuilder.create(null, applicationConfig);
+    public static Domain create(final AppConfig appConfig) {
+        return DomainBuilder.create(null, appConfig);
     }
 
     /**
@@ -144,7 +144,7 @@ public class DomainBuilder implements Domain {
      */
     @Override
     public <K, V extends SpecificRecordBase> Domain addEntityStateProcessor(final String basename, final Class<K> keyClass) {
-        final String snapshotTopicName = applicationConfig.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME)
+        final String snapshotTopicName = appConfig.streams(AppConfig.StreamsProperties.APPLICATION_NAME)
                 + "_" + basename;
         DataProcessor.get().add(basename, new EntityStateBuilder<K, V>(snapshotTopicName, keyClass));
         logger.info("Local state {} added", basename);
@@ -209,7 +209,7 @@ public class DomainBuilder implements Domain {
         DataProcessor.get().start();
         logger.info("States have been started");
 
-        final HelperDomain app = HelperDomain.create(applicationConfig);
+        final HelperDomain app = HelperDomain.create(appConfig);
 
         final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
 
@@ -244,7 +244,7 @@ public class DomainBuilder implements Domain {
                 throw new ApplicationException("Aggregate cannot be null");
             }
             try {
-                repositories.put(baseName, new Repository(baseName, aggregateClass, applicationConfig));
+                repositories.put(baseName, new Repository(baseName, aggregateClass, appConfig));
             } catch (final AggregateDependenciesException e) {
                 logger.error("Error aggregating dependencies", e);
             }
@@ -268,31 +268,31 @@ public class DomainBuilder implements Domain {
 
         final Map<String, String> consumerTopics =
                 Stream.of(commandsSubscribed, eventsSubscribed, dataChangelogsSubscribed).flatMap(Collection::stream)
-                        .collect(Collectors.toMap(Function.identity(), type -> ApplicationConfig.COMMON_RECORD_TYPE,
+                        .collect(Collectors.toMap(Function.identity(), type -> AppConfig.COMMON_RECORD_TYPE,
                                 (command1, command2) -> command1));
 
-        TopicManager.createTopics(consumerTopics, applicationConfig);
+        TopicManager.createTopics(consumerTopics, appConfig);
 
         logger.info("Necessary consumer topics created");
 
         if (!commandsSubscribed.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
-                consumers.add(new CommandConsumer<>(i, handler.commandsSubscribed(), handler::processCommand,
-                        applicationConfig));
+                consumers.add(new CommandConsumer(i, handler.commandsSubscribed(), handler::processCommand,
+                        appConfig));
             }
         }
 
         if (!eventsSubscribed.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
                 consumers.add(
-                        new EventConsumer<>(i, handler.eventsSubscribed(), handler::processEvent, applicationConfig));
+                        new EventConsumer(i, handler.eventsSubscribed(), handler::processEvent, appConfig));
             }
         }
 
         if (!dataChangelogsSubscribed.isEmpty()) {
             for (int i = 0; i < numConsumers; i++) {
-                consumers.add(new ChangelogConsumer<>(i, handler.dataChangelogsSubscribed(),
-                        handler::processDataChangelog, applicationConfig));
+                consumers.add(new ChangelogConsumer(i, handler.dataChangelogsSubscribed(),
+                        handler::processDataChangelog, appConfig));
             }
         }
         logger.info("Handlers initialized");

@@ -1,6 +1,6 @@
 package com.bbva.gateway.service.impl;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.gateway.http.HttpRequest;
 import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.service.IAsyncGatewayService;

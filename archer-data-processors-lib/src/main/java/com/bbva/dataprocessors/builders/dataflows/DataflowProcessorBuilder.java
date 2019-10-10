@@ -52,7 +52,7 @@ public class DataflowProcessorBuilder implements ProcessorBuilder {
     @Override
     public void start() {
         final Topology topology = context.streamsBuilder().build();
-        streams = new KafkaStreams(topology, context.configs().streams().get());
+        streams = new KafkaStreams(topology, context.configs().streams());
 
         final TopologyDescription topologyDescription = topology.describe();
         logger.info("******************************** Topology Description for: {}", context.name());

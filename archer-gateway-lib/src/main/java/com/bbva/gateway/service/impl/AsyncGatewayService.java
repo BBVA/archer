@@ -1,9 +1,10 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.service.IAsyncGatewayService;
 
@@ -23,8 +24,8 @@ public abstract class AsyncGatewayService<T>
      * {@inheritDoc}
      */
     @Override
-    public void processRecord(final CRecord record) {
-
+    public void processRecord(final HandlerContextImpl context) {
+        final CRecord record = context.consumedRecord();
         if (isReplay(record)) {
             final TransactionChangelog transactionChangelog = findChangelogByReference(record);
 

@@ -1,6 +1,6 @@
 package com.bbva.gateway.service.impl;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 
 
 public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {

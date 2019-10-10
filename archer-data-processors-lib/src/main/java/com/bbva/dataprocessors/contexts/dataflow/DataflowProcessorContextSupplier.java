@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.contexts.dataflow;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.kafka.streams.StreamsBuilder;
 
@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class DataflowProcessorContextSupplier implements DataflowProcessorContext {
 
-    private final ApplicationConfig config;
+    private final AppConfig config;
     private final StreamsBuilder builder;
     private final CachedSchemaRegistryClient schemaRegistry;
     private final Map<String, String> serdeProps;
@@ -24,24 +24,24 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
      * @param name   processor name
      * @param config application configuration
      */
-    public DataflowProcessorContextSupplier(final String name, final ApplicationConfig config) {
+    public DataflowProcessorContextSupplier(final String name, final AppConfig config) {
         this.name = name;
 
-        this.config = new ApplicationConfig();
+        this.config = new AppConfig();
         this.config.put(config.get());
-        this.config.consumer().put(config.consumer().get());
-        this.config.producer().put(config.producer().get());
-        this.config.streams().put(config.streams().get());
-        this.config.streams().get().putAll(config.dataflow().get());
+        this.config.consumer().putAll(config.consumer());
+        this.config.producer().putAll(config.producer());
+        this.config.streams().putAll(config.streams());
+        this.config.dataflow().putAll(config.dataflow());
 
-        final String applicationName = config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_NAME).toString();
-        this.config.streams().put(ApplicationConfig.StreamsProperties.APPLICATION_ID, applicationName + "_" + name);
+        final String applicationName = config.streams(AppConfig.StreamsProperties.APPLICATION_NAME).toString();
+        this.config.streams().put(AppConfig.StreamsProperties.APPLICATION_ID, applicationName + "_" + name);
 
-        final String schemaRegistryUrl = this.config.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
+        final String schemaRegistryUrl = this.config.get(AppConfig.SCHEMA_REGISTRY_URL).toString();
 
         schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
 
-        serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL, schemaRegistryUrl);
+        serdeProps = Collections.singletonMap(AppConfig.SCHEMA_REGISTRY_URL, schemaRegistryUrl);
 
         builder = new StreamsBuilder();
     }
@@ -66,7 +66,7 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
      * {@inheritDoc}
      */
     @Override
-    public ApplicationConfig configs() {
+    public AppConfig configs() {
         return config;
     }
 
@@ -91,7 +91,7 @@ public class DataflowProcessorContextSupplier implements DataflowProcessorContex
      */
     @Override
     public String applicationId() {
-        return config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_ID).toString();
+        return config.streams(AppConfig.StreamsProperties.APPLICATION_ID).toString();
     }
 
 }

@@ -3,7 +3,7 @@ package com.bbva.ddd.domain.callback;
 import com.bbva.ddd.domain.annotations.Changelog;
 import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.annotations.Event;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
 
 public class ActionHandler {
 
@@ -13,7 +13,7 @@ public class ActionHandler {
     }
 
     @Command(baseName = "commandName", commandAction = "create")
-    public static void processCommand(final CommandRecord commandRecord) {
+    public static void processCommand(final CommandHandlerContext commandRecord) {
         //Do nothing
     }
 

@@ -1,6 +1,6 @@
 package com.bbva.gateway.util;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.gateway.service.impl.GatewayService;

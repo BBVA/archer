@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.commands.read;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import org.apache.avro.specific.SpecificRecord;
@@ -14,6 +14,10 @@ public class CommandRecord extends CRecord {
     public CommandRecord(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType,
                          final String key, final SpecificRecord value, final RecordHeaders headers) {
         super(topic, partition, offset, timestamp, timestampType, key, value, headers);
+    }
+
+    public CommandRecord(final CRecord record) {
+        super(record.topic(), record.partition(), record.offset(), record.timestamp(), record.timestampType(), record.key(), record.value(), record.recordHeaders());
     }
 
     /**

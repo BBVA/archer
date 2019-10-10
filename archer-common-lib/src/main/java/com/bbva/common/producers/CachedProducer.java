@@ -1,7 +1,9 @@
 package com.bbva.common.producers;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.common.producers.callback.ProducerCallback;
+import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.serdes.GenericAvroSerializer;
 import com.bbva.common.utils.serdes.SpecificAvroSerializer;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
@@ -27,20 +29,20 @@ public class CachedProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(CachedProducer.class);
 
-    private final Map<String, DefaultProducer> cachedProducers = new HashMap<>();
-    private final ApplicationConfig applicationConfig;
+    private final Map<String, Producer> cachedProducers = new HashMap<>();
+    private final AppConfig appConfig;
     private final CachedSchemaRegistryClient schemaRegistry;
     private final String schemaRegistryUrl;
 
     /**
      * Constructor
      *
-     * @param applicationConfig configuration
+     * @param appConfig configuration
      */
-    public CachedProducer(final ApplicationConfig applicationConfig) {
-        this.applicationConfig = applicationConfig;
+    public CachedProducer(final AppConfig appConfig) {
+        this.appConfig = appConfig;
 
-        schemaRegistryUrl = applicationConfig.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
+        schemaRegistryUrl = appConfig.get(AppConfig.SCHEMA_REGISTRY_URL).toString();
 
         schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 1000);
     }
@@ -55,7 +57,7 @@ public class CachedProducer {
      * @return future with production result
      */
     public <K, V> Future<RecordMetadata> add(final PRecord<K, V> record, final ProducerCallback callback) {
-        return getProducer(record, null).save(record, callback);
+        return getProducer(record, null).send(record, callback);
     }
 
     /**
@@ -69,15 +71,15 @@ public class CachedProducer {
      * @return future with production result
      */
     public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback) {
-        return getProducer(record, valueClass).save(record, callback);
+        return getProducer(record, valueClass).send(record, callback);
     }
 
-    private <K, V> DefaultProducer<K, V> getProducer(final PRecord<K, V> record, final Class<V> valueClass) {
-        final DefaultProducer<K, V> producer;
+    private <K, V> Producer<K, V> getProducer(final PRecord<K, V> record, final Class<V> valueClass) {
+        final Producer<K, V> producer;
 
-        if (applicationConfig.producer().get(ApplicationConfig.ProducerProperties.ENABLE_IDEMPOTENCE).toString().equals("true")) {
-            final String transactionalIdPrefix = applicationConfig.producer().get(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
-            applicationConfig.producer().put(ApplicationConfig.ProducerProperties.TRANSACTIONAL_ID, transactionalIdPrefix + record.topic());
+        if (appConfig.producer(AppConfig.ProducerProperties.ENABLE_IDEMPOTENCE).toString().equals("true")) {
+            final String transactionalIdPrefix = appConfig.producer(AppConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
+            appConfig.producer().put(AppConfig.ProducerProperties.TRANSACTIONAL_ID, transactionalIdPrefix + record.topic());
         }
 
         if (cachedProducers.containsKey(record.topic())) {
@@ -87,7 +89,7 @@ public class CachedProducer {
         } else {
 
             logger.info("Cached producer not found for topic {}", record.topic());
-            final Map<String, String> serdeProps = Collections.singletonMap(ApplicationConfig.SCHEMA_REGISTRY_URL,
+            final Map<String, String> serdeProps = Collections.singletonMap(AppConfig.SCHEMA_REGISTRY_URL,
                     schemaRegistryUrl);
 
             final Serializer<K> serializedKey = serializeFrom(record.key().getClass());
@@ -99,7 +101,7 @@ public class CachedProducer {
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to {}", serializedValue.toString());
 
-            producer = new DefaultProducer<>(applicationConfig, serializedKey, serializedValue);
+            producer = new DefaultProducer<>(appConfig, serializedKey, serializedValue);
             cachedProducers.put(record.topic(), producer);
         }
 

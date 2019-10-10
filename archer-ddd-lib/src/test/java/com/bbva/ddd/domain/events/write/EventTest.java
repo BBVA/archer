@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.events.write;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
@@ -33,12 +33,14 @@ public class EventTest {
     @Test
     public void createEventOk() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new ApplicationConfig());
-        final Event event = new Event("topicBaseName", new ApplicationConfig());
-        final EventRecordMetadata metadata = event.send("producerName", new PersonalData(), null);
+        HelperDomain.create(new AppConfig());
+
+        final Event event = new Event.Builder(producer, null)
+                .to("topicBaseName").producerName("producerName").value(new PersonalData())
+                .build();
+        final EventRecordMetadata metadata = event.send(null);
 
         Assertions.assertAll("Command",
                 () -> Assertions.assertNotNull(metadata),
@@ -50,13 +52,15 @@ public class EventTest {
     @Test
     public void createEventKo() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new ApplicationConfig());
-            final Event event = new Event("topicBaseName", new ApplicationConfig());
-            event.send("producerName", null, null);
+            HelperDomain.create(new AppConfig());
+
+            final Event event = new Event.Builder(producer, null)
+                    .to("topicBaseName").producerName("producerName")
+                    .build();
+            event.send(null);
         });
     }
 
@@ -64,13 +68,14 @@ public class EventTest {
     @Test
     public void createEventKeyKo() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new ApplicationConfig());
-            final Event event = new Event("topicBaseName", new ApplicationConfig());
-            event.send("key", "producerName", null, null);
+            HelperDomain.create(new AppConfig());
+            final Event event = new Event.Builder(producer, null)
+                    .to("topicBaseName").producerName("producerName").key("key")
+                    .build();
+            event.send(null);
         });
     }
 
@@ -78,13 +83,14 @@ public class EventTest {
     @Test
     public void createEvent2Ko() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new ApplicationConfig());
-            final Event event = new Event("topicBaseName", new ApplicationConfig());
-            event.send("producerName", null, "name", null);
+            HelperDomain.create(new AppConfig());
+            final Event event = new Event.Builder(producer, null)
+                    .to("topicBaseName").producerName("producerName").name("name")
+                    .build();
+            event.send(null);
         });
     }
 
@@ -92,16 +98,19 @@ public class EventTest {
     @Test
     public void createEvent3Ko() throws Exception {
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new ApplicationConfig());
-            final Event event = new Event("topicBaseName", new ApplicationConfig());
+            HelperDomain.create(new AppConfig());
             final RecordHeaders headers = new RecordHeaders();
             headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
-            event.send("producerName", null, true, new CommandRecord("topic", 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers), null);
+
+            final Event event = new Event.Builder(producer, new CommandRecord("topic", 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers))
+                    .to("topicBaseName").producerName("producerName").name("name")
+                    .replay()
+                    .build();
+            event.send(null);
         });
     }
 

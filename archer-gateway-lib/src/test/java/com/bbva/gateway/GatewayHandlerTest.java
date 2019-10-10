@@ -1,11 +1,13 @@
 package com.bbva.gateway;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.domain.events.read.EventHandlerContext;
 import com.bbva.ddd.domain.events.read.EventRecord;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.config.annotations.Config;
@@ -73,8 +75,8 @@ public class GatewayHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
-            handler.processCommand(new CommandRecord("commandName" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders));
+            handler.processCommand(new CommandHandlerContext(new CommandRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
         }
@@ -92,8 +94,8 @@ public class GatewayHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
-            handler.processEvent(new EventRecord("topic" + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders));
+            handler.processEvent(new EventHandlerContext(new EventRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
         }

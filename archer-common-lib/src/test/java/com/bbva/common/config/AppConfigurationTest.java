@@ -1,5 +1,8 @@
 package com.bbva.common.config;
 
+import com.bbva.common.config.annotations.Config;
+import com.bbva.common.config.annotations.SecureConfig;
+import com.bbva.common.config.util.ConfigurationUtil;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.util.PowermockExtension;
 import org.junit.gen5.api.Assertions;
@@ -18,14 +21,14 @@ public class AppConfigurationTest {
     @DisplayName("Initialize common configuration")
     @Test
     public void initCommonConfigurationOk() {
-        final ApplicationConfig configuration = new AppConfiguration().init();
-        final AppConfiguration appConfig = AppConfiguration.get();
+        final AppConfig configuration = ConfigBuilder.create();
+        final AppConfig appConfig = ConfigBuilder.get();
         Assertions.assertAll("configurations",
                 () -> Assertions.assertEquals("", configuration.get().get("schema.registry.url")),
                 () -> Assertions.assertEquals("PLAINTEXT://", configuration.get().get("bootstrap.servers")),
                 () -> Assertions.assertEquals("1", configuration.get().get("replication.factor")),
                 () -> Assertions.assertNotNull(appConfig),
-                () -> Assertions.assertEquals(configuration, appConfig.getApplicationConfig())
+                () -> Assertions.assertEquals(configuration, appConfig)
         );
     }
 
@@ -36,7 +39,7 @@ public class AppConfigurationTest {
 
         final Config customConfig = PowerMockito.mock(Config.class);
         PowerMockito.when(customConfig.file()).thenReturn("custom-config.yml");
-        final ApplicationConfig configuration = new AppConfiguration().init(customConfig);
+        final AppConfig configuration = ConfigBuilder.create(customConfig);
 
         Assertions.assertAll("configurations",
                 () -> Assertions.assertEquals("http://localhost:8081", configuration.get().get("schema.registry.url")),
@@ -51,7 +54,7 @@ public class AppConfigurationTest {
 
         final SecureConfig customConfig = PowerMockito.mock(SecureConfig.class);
         PowerMockito.when(customConfig.file()).thenReturn("secure-config.yml");
-        final ApplicationConfig configuration = new AppConfiguration().init(customConfig);
+        final AppConfig configuration = ConfigBuilder.create(customConfig);
 
         Assertions.assertAll("configurations",
                 () -> Assertions.assertEquals("jas-config", configuration.get().get("sasl.jaas.config")),
@@ -65,7 +68,7 @@ public class AppConfigurationTest {
     @Test
     public void getConfigFromFileKo() {
         Assertions.assertThrows(ApplicationException.class, () ->
-                new AppConfiguration().getConfigFromFile(new Yaml(), AppConfigurationTest.class.getClassLoader(), "not-found.yml")
+                ConfigurationUtil.getConfigFromFile(new Yaml(), AppConfigurationTest.class.getClassLoader(), "not-found.yml")
         );
     }
 }

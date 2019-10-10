@@ -1,9 +1,8 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.DefaultConsumer;
-import org.apache.avro.specific.SpecificRecordBase;
+import com.bbva.common.consumers.contexts.ConsumerContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.function.Consumer;
  *  executor.submit(consumer);
  * }</pre>
  */
-public abstract class RunnableConsumer<V extends SpecificRecordBase, T extends CRecord> extends DefaultConsumer<V, T>
+public abstract class RunnableConsumer<T extends ConsumerContext> extends DefaultConsumer<T>
         implements Runnable {
 
     private final String[] replayTopics;
@@ -32,15 +31,15 @@ public abstract class RunnableConsumer<V extends SpecificRecordBase, T extends C
     /**
      * Constructor
      *
-     * @param id                consumer id
-     * @param topics            list of topics to subscribe
-     * @param callback          callback to manage new events
-     * @param applicationConfig configuration
+     * @param id        consumer id
+     * @param topics    list of topics to subscribe
+     * @param callback  callback to manage new events
+     * @param appConfig configuration
      */
-    public RunnableConsumer(final int id, final List<String> topics, final Consumer<T> callback, final ApplicationConfig applicationConfig) {
-        super(id, topics, callback, applicationConfig);
-        replayTopics = (applicationConfig.get(ApplicationConfig.REPLAY_TOPICS) != null)
-                ? applicationConfig.get(ApplicationConfig.REPLAY_TOPICS).toString().split(",") : new String[]{};
+    public RunnableConsumer(final int id, final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {
+        super(id, topics, callback, appConfig);
+        replayTopics = (appConfig.get(AppConfig.REPLAY_TOPICS) != null)
+                ? appConfig.get(AppConfig.REPLAY_TOPICS).toString().split(",") : new String[]{};
     }
 
     /**

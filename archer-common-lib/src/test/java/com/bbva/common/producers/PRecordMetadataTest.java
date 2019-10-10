@@ -1,5 +1,6 @@
 package com.bbva.common.producers;
 
+import com.bbva.common.producers.record.PRecordMetadata;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.gen5.api.Assertions;

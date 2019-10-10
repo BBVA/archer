@@ -8,9 +8,9 @@ import org.apache.kafka.streams.StreamsConfig;
 import java.util.Properties;
 
 /**
- * Class that s torage all application config
+ * Class that storage all application config
  */
-public class ApplicationConfig implements Cloneable {
+public class AppConfig implements Cloneable {
 
     public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
     public static final String REPLAY_TOPICS = "replay.topics";
@@ -99,8 +99,17 @@ public class ApplicationConfig implements Cloneable {
      *
      * @return properties
      */
-    public ProducerProperties producer() {
-        return producerProperties;
+    public Properties producer() {
+        return producerProperties.get();
+    }
+
+    /**
+     * Return specific producer property
+     *
+     * @return properties
+     */
+    public Object producer(final String property) {
+        return producerProperties.get(property);
     }
 
     /**
@@ -108,17 +117,35 @@ public class ApplicationConfig implements Cloneable {
      *
      * @return properties
      */
-    public ConsumerProperties consumer() {
-        return consumerProperties;
+    public Properties consumer() {
+        return consumerProperties.get();
+    }
+
+    /**
+     * Return specific consumer property
+     *
+     * @return properties
+     */
+    public Object consumer(final String property) {
+        return consumerProperties.get(property);
     }
 
     /**
      * Return stream properties
      *
+     * @return property value
+     */
+    public Properties streams() {
+        return streamsProperties.get();
+    }
+
+    /**
+     * Return specific stream property
+     *
      * @return properties
      */
-    public StreamsProperties streams() {
-        return streamsProperties;
+    public Object streams(final String property) {
+        return streamsProperties.get(property);
     }
 
     /**
@@ -126,8 +153,17 @@ public class ApplicationConfig implements Cloneable {
      *
      * @return properties
      */
-    public KsqlProperties ksql() {
-        return ksqlProperties;
+    public Properties ksql() {
+        return ksqlProperties.get();
+    }
+
+    /**
+     * Return specific ksql property
+     *
+     * @return properties
+     */
+    public Object ksql(final String property) {
+        return ksqlProperties.get(property);
     }
 
     /**
@@ -135,8 +171,17 @@ public class ApplicationConfig implements Cloneable {
      *
      * @return properties
      */
-    public DataflowProperties dataflow() {
-        return dataflowProperties;
+    public Properties dataflow() {
+        return dataflowProperties.get();
+    }
+
+    /**
+     * Return specific dataflow property
+     *
+     * @return properties
+     */
+    public Object dataflow(final String property) {
+        return dataflowProperties.get(property);
     }
 
     /**

@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.Assumptions;
 import org.junit.gen5.api.DisplayName;
@@ -16,7 +16,7 @@ public class HelperDomainTest {
     public void createHelperDomainOk() {
         Assumptions.assumeFalse(HelperDomain.isInstantiated());
 
-        final ApplicationConfig appConfig = new ApplicationConfig();
+        final AppConfig appConfig = new AppConfig();
         final HelperDomain helper = HelperDomain.create(appConfig);
         helper.setReplayMode(true);
 

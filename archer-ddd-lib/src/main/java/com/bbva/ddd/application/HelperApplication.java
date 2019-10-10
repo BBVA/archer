@@ -1,6 +1,6 @@
 package com.bbva.ddd.application;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.ddd.common.CommonHelper;
 
 /**
@@ -13,10 +13,10 @@ public final class HelperApplication extends CommonHelper {
     /**
      * Constructor
      *
-     * @param applicationConfig general configuration
+     * @param appConfig general configuration
      */
-    private HelperApplication(final ApplicationConfig applicationConfig) {
-        super(applicationConfig);
+    private HelperApplication(final AppConfig appConfig) {
+        super(appConfig);
     }
 
     /**
@@ -25,7 +25,7 @@ public final class HelperApplication extends CommonHelper {
      * @param configs configuration
      * @return instance
      */
-    public static HelperApplication create(final ApplicationConfig configs) {
+    public static HelperApplication create(final AppConfig configs) {
         instance = new HelperApplication(configs);
         return instance;
     }

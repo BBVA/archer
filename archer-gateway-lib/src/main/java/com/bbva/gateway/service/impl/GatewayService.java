@@ -1,18 +1,20 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.ddd.domain.AggregateFactory;
-import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
+import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.config.Configuration;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -39,6 +41,7 @@ public abstract class GatewayService<T>
     private int seconds;
     private int attemps;
     protected static String baseName;
+    protected static CachedProducer producer;
 
     /**
      * {@inheritDoc}
@@ -63,7 +66,8 @@ public abstract class GatewayService<T>
      * {@inheritDoc}
      */
     @Override
-    public void processRecord(final CRecord record) {
+    public void processRecord(final HandlerContextImpl context) {
+        final CRecord record = context.consumedRecord();
         if (isReplay(record)) {
             final TransactionChangelog transactionChangelog = findChangelogByReference(record);
             if (transactionChangelog != null) {
@@ -168,7 +172,7 @@ public abstract class GatewayService<T>
      * @param outputEvent    response
      * @param <O>            Response type
      */
-    protected static <O extends SpecificRecord> void sendEvent(final CRecord originalRecord, final O outputEvent) {
+    protected static <O extends SpecificRecordBase> void sendEvent(final CRecord originalRecord, final O outputEvent) {
         sendEvent(baseName, originalRecord, outputEvent);
     }
 
@@ -180,14 +184,14 @@ public abstract class GatewayService<T>
      * @param outputEvent    output
      * @param <O>            Output type
      */
-    protected static <O extends SpecificRecord> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
+    protected static <O extends SpecificRecordBase> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
+        final Event.Builder eventBuilder = new Event.Builder(producer, originalRecord)
+                .to(eventBaseName).producerName("gateway").value(outputEvent);
 
-        if (originalRecord != null) {
-            HelperDomain.get().sendEventTo(eventBaseName).send("gateway", outputEvent, isReplay(originalRecord), originalRecord, GatewayService::handleOutPutted);
-        } else {
-            HelperDomain.get().sendEventTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted);
+        if (originalRecord != null && isReplay(originalRecord)) {
+            eventBuilder.replay();
         }
-
+        eventBuilder.build().send(GatewayService::handleOutPutted);
     }
 
     /**

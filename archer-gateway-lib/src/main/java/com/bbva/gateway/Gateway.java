@@ -20,9 +20,9 @@ import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
  *  class ExampleGateway extends Gateway {
  *      ExampleGateway() {
  *          configure(ExampleGateway.class);
- *          domain = new Domain(new ExampleHandler(servicesPackage, config), config.getApplicationConfig());
+ *          domain = new Domain(new ExampleHandler(servicesPackage, config), config.getAppConfig());
  *          start();
- *          new HelperApplication(config.getApplicationConfig());
+ *          new HelperApplication(config.getAppConfig());
  *      }
  *  }
  * }</pre>
@@ -42,7 +42,7 @@ public class Gateway {
 
         domain = DomainBuilder.create(
                 new GatewayHandler(servicesPackage, config),
-                config.getApplicationConfig());
+                config.getAppConfig());
     }
 
     /**

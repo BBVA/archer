@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.aggregates.callbacks;
 
-import com.bbva.common.consumers.CRecord;
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.callback.ProducerCallback;
 import org.apache.avro.specific.SpecificRecordBase;
 
 /**

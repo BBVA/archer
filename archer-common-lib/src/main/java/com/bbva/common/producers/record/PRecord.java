@@ -1,4 +1,4 @@
-package com.bbva.common.producers;
+package com.bbva.common.producers.record;
 
 import com.bbva.common.utils.headers.RecordHeaders;
 import org.apache.kafka.clients.producer.ProducerRecord;

@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.ddd.common.CommonHelper;
 
 /**
@@ -15,7 +15,7 @@ public final class HelperDomain extends CommonHelper {
      *
      * @param configs configuration
      */
-    private HelperDomain(final ApplicationConfig configs) {
+    private HelperDomain(final AppConfig configs) {
         super(configs);
     }
 
@@ -25,7 +25,7 @@ public final class HelperDomain extends CommonHelper {
      * @param configs configuration
      * @return instance
      */
-    public static HelperDomain create(final ApplicationConfig configs) {
+    public static HelperDomain create(final AppConfig configs) {
         instance = new HelperDomain(configs);
         return instance;
     }

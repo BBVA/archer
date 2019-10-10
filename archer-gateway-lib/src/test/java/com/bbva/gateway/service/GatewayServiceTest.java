@@ -1,7 +1,7 @@
 package com.bbva.gateway.service;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -10,6 +10,7 @@ import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
@@ -38,7 +39,7 @@ import java.util.Map;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({AggregateFactory.class, HelperDomain.class, GatewayServiceImpl.class, GatewayService.class, StoreUtil.class, ReadableStore.class})
+@PrepareForTest({AggregateFactory.class, HelperDomain.class, Event.class, GatewayServiceImpl.class, GatewayService.class, StoreUtil.class, ReadableStore.class})
 public class GatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -103,9 +104,7 @@ public class GatewayServiceTest {
         PowerMockito.mockStatic(AggregateFactory.class);
         PowerMockito.mockStatic(HelperDomain.class);
 
-        final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
-        PowerMockito.when(HelperDomain.get()).thenReturn(helperDomain);
-        PowerMockito.when(helperDomain, "sendEventTo", Mockito.anyString()).thenReturn(PowerMockito.mock(Event.class));
+        PowerMockito.whenNew(Event.class).withAnyArguments().thenReturn(PowerMockito.mock(Event.class));
 
         final GatewayServiceImpl service = new GatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
@@ -113,10 +112,11 @@ public class GatewayServiceTest {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type"));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders)));
 
         Assertions.assertAll("GatewayService",
                 () -> Assertions.assertNotNull(service)
@@ -129,6 +129,8 @@ public class GatewayServiceTest {
         PowerMockito.mockStatic(AggregateFactory.class);
         PowerMockito.mockStatic(HelperDomain.class);
         PowerMockito.mockStatic(StoreUtil.class);
+
+        PowerMockito.whenNew(Event.class).withAnyArguments().thenReturn(PowerMockito.mock(Event.class));
 
         final ReadableStore store = PowerMockito.mock(ReadableStore.class);
 
@@ -150,10 +152,11 @@ public class GatewayServiceTest {
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("referenceKey"));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type"));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders)));
 
         Assertions.assertNotNull(service);
     }
@@ -187,9 +190,9 @@ public class GatewayServiceTest {
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("referenceKey"));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders)));
 
         Assertions.assertNotNull(service);
     }

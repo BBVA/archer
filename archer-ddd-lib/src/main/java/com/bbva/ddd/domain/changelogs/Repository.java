@@ -1,11 +1,11 @@
 package com.bbva.ddd.domain.changelogs;
 
-import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.CachedProducer;
-import com.bbva.common.producers.PRecord;
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.producers.callback.ProducerCallback;
+import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
@@ -55,18 +55,18 @@ public final class Repository<K, V extends SpecificRecordBase> {
     /**
      * Constructor
      *
-     * @param baseName          base name
-     * @param aggregateClass    aggregate
-     * @param applicationConfig configuration
+     * @param baseName       base name
+     * @param aggregateClass aggregate
+     * @param appConfig      configuration
      * @throws AggregateDependenciesException aggregate custom exception
      */
     public Repository(final String baseName, final Class<? extends AggregateBase> aggregateClass,
-                      final ApplicationConfig applicationConfig) throws AggregateDependenciesException {
+                      final AppConfig appConfig) throws AggregateDependenciesException {
         aggregateUUID = UUID.randomUUID().toString();
         this.aggregateClass = aggregateClass;
-        producer = new CachedProducer(applicationConfig);
+        producer = new CachedProducer(appConfig);
         this.baseName = baseName;
-        changelogName = baseName + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+        changelogName = baseName + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
         repositoryCache = new RepositoryCache<>();
 
         setDependencies();
@@ -86,7 +86,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
     /**
      * Save a new record in the repository
      * <pre>{@code
-     *  final Repository repository = new Repository(baseName, aggregateClass, applicationConfig)
+     *  final Repository repository = new Repository(baseName, aggregateClass, appConfig)
      *
      *  // Create a record with key/value and the command reference
      *  repository.create(key, value, commandRecord, callback);
@@ -151,7 +151,7 @@ public final class Repository<K, V extends SpecificRecordBase> {
                 if (Modifier.isPublic(parentField.getModifiers())
                         && childValueClass.isAssignableFrom(parentField.getType())) {
                     parentChangelogName = parentClass.getAnnotation(Aggregate.class).baseName()
-                            + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+                            + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
                     expectedParentField = parentField;
                     break;
                 }

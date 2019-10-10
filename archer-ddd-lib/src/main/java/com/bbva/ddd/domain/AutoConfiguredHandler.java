@@ -1,14 +1,15 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.ddd.domain.annotations.Changelog;
 import com.bbva.ddd.domain.annotations.Command;
 import com.bbva.ddd.domain.annotations.Event;
-import com.bbva.ddd.domain.changelogs.read.ChangelogRecord;
+import com.bbva.ddd.domain.changelogs.read.ChangelogHandlerContext;
+import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.domain.events.read.EventRecord;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
+import com.bbva.ddd.domain.events.read.EventHandlerContext;
 import com.bbva.ddd.util.AnnotationUtil;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -123,32 +124,32 @@ public class AutoConfiguredHandler implements Handler {
     /**
      * Handle command produced
      *
-     * @param command command record
+     * @param commandHandlerContext command record
      */
     @Override
-    public void processCommand(final CommandRecord command) {
-        final String actionToExecute = command.topic().replace(ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(command);
-        executeMethod(command, commandMethods.get(actionToExecute));
+    public void processCommand(final CommandHandlerContext commandHandlerContext) {
+        final String actionToExecute = commandHandlerContext.consumedRecord().topic().replace(AppConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(commandHandlerContext.consumedRecord());
+        executeMethod(commandHandlerContext, commandMethods.get(actionToExecute));
     }
 
     /**
      * Handle event produced
      *
-     * @param eventMessage event record
+     * @param eventHandlerContext event record
      */
     @Override
-    public void processEvent(final EventRecord eventMessage) {
-        executeMethod(eventMessage, eventMethods.get(eventMessage.topic().replace(ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
+    public void processEvent(final EventHandlerContext eventHandlerContext) {
+        executeMethod(eventHandlerContext, eventMethods.get(eventHandlerContext.consumedRecord().topic().replace(AppConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
     }
 
     /**
      * Handle changelog produced
      *
-     * @param changelogMessage changelog record
+     * @param changelogHandlerContext changelog record
      */
     @Override
-    public void processDataChangelog(final ChangelogRecord changelogMessage) {
-        executeMethod(changelogMessage, changelogMethods.get(changelogMessage.topic().replace(ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
+    public void processDataChangelog(final ChangelogHandlerContext changelogHandlerContext) {
+        executeMethod(changelogHandlerContext, changelogMethods.get(changelogHandlerContext.consumedRecord().topic().replace(AppConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
     }
 
     private static List<String> cleanList(final List<String> list) {
@@ -158,10 +159,10 @@ public class AutoConfiguredHandler implements Handler {
         return list;
     }
 
-    private static <CR extends CRecord> void executeMethod(final CR record, final Method toExecuteMethod) {
+    private static <C extends HandlerContextImpl> void executeMethod(final C context, final Method toExecuteMethod) {
         if (toExecuteMethod != null) {
             try {
-                toExecuteMethod.invoke(null, record);
+                toExecuteMethod.invoke(null, context);
             } catch (final IllegalAccessException | InvocationTargetException e) {
                 final String errorMsg = String.format("Error executing method: %s", toExecuteMethod.getName());
                 logger.error(errorMsg, e);
@@ -183,15 +184,15 @@ public class AutoConfiguredHandler implements Handler {
                 if (method.isAnnotationPresent(Command.class)) {
                     final Command annotatedAction = method.getAnnotation(Command.class);
                     commandMethods.put(annotatedAction.baseName() + "::" + annotatedAction.commandAction(), method);
-                    commandsSubscribed.add(annotatedAction.baseName() + ApplicationConfig.COMMANDS_RECORD_NAME_SUFFIX);
+                    commandsSubscribed.add(annotatedAction.baseName() + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Event.class)) {
                     final Event annotatedEvent = method.getAnnotation(Event.class);
                     eventMethods.put(annotatedEvent.baseName(), method);
-                    eventsSubscribed.add(annotatedEvent.baseName() + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX);
+                    eventsSubscribed.add(annotatedEvent.baseName() + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Changelog.class)) {
                     final Changelog annotatedChangelog = method.getAnnotation(Changelog.class);
                     changelogMethods.put(annotatedChangelog.baseName(), method);
-                    dataChangelogsSubscribed.add(annotatedChangelog.baseName() + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX);
+                    dataChangelogsSubscribed.add(annotatedChangelog.baseName() + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX);
                 }
             }
             type = type.getSuperclass();

@@ -105,7 +105,7 @@ executor.submit(commandConsumer);
 ```
 and for produce:
 ```java
-HelperApplication helperApplication = new HelperApplication(applicationConfig);
+HelperApplication helperApplication = new HelperApplication(appConfig);
 final CommandRecordMetadata recordMetadata =
     helperApplication.persistsCommandTo("entity_base_name")
         .create(entity, headers,
@@ -127,7 +127,7 @@ executor.submit(eventConsumer);
 ```
 and for produce:
 ```java
-HelperDomain helperDomain = new HelperDomain(applicationConfig);
+HelperDomain helperDomain = new HelperDomain(appConfig);
 helperDomain.sendEventTo("event_base_name")
     .send("producer_id", eventEntity, yourCallback);
 ```

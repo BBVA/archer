@@ -2,7 +2,7 @@ package com.bbva.logging.appenders.producer;
 
 import com.bbva.avro.LogEvent;
 import com.bbva.common.producers.CachedProducer;
-import com.bbva.common.producers.PRecord;
+import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 
 /**

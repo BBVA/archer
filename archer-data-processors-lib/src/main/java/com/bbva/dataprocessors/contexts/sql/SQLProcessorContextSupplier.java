@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.contexts.sql;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
@@ -18,7 +18,7 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
 
     private static final Logger logger = LoggerFactory.getLogger(SQLProcessorContextSupplier.class);
 
-    private final ApplicationConfig config;
+    private final AppConfig config;
     private final CachedSchemaRegistryClient schemaRegistry;
     private final String name;
     private final KsqlContext ksqlContext;
@@ -29,15 +29,15 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
      * @param name   processor name
      * @param config configurations
      */
-    public SQLProcessorContextSupplier(final String name, final ApplicationConfig config) {
+    public SQLProcessorContextSupplier(final String name, final AppConfig config) {
         this.name = name;
 
         this.config = config;
-        final String schemaRegistryUrl = this.config.get(ApplicationConfig.SCHEMA_REGISTRY_URL).toString();
+        final String schemaRegistryUrl = this.config.get(AppConfig.SCHEMA_REGISTRY_URL).toString();
 
         schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
 
-        ksqlContext = KsqlContext.create(new KsqlConfig(config.ksql().get()), ProcessingLogContext.create());
+        ksqlContext = KsqlContext.create(new KsqlConfig(config.ksql()), ProcessingLogContext.create());
     }
 
     /**
@@ -52,7 +52,7 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
      * {@inheritDoc}
      */
     @Override
-    public ApplicationConfig configs() {
+    public AppConfig configs() {
         return config;
     }
 
@@ -69,7 +69,7 @@ public class SQLProcessorContextSupplier implements SQLProcessorContext {
      */
     @Override
     public String applicationId() {
-        return config.streams().get(ApplicationConfig.StreamsProperties.APPLICATION_ID).toString();
+        return config.streams(AppConfig.StreamsProperties.APPLICATION_ID).toString();
     }
 
     /**

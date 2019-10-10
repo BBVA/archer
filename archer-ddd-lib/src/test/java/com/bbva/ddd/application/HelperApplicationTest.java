@@ -1,6 +1,6 @@
 package com.bbva.ddd.application;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.Assumptions;
 import org.junit.gen5.api.DisplayName;
@@ -16,7 +16,7 @@ public class HelperApplicationTest {
     public void createHelperApplicationOk() {
         Assumptions.assumeFalse(HelperApplication.isInstantiated());
 
-        final ApplicationConfig appConfig = new ApplicationConfig();
+        final AppConfig appConfig = new AppConfig();
         final HelperApplication helper = HelperApplication.create(appConfig);
 
         Assertions.assertAll("HelperApplication",

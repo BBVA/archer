@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.callback;
 
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.producers.callback.ProducerCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

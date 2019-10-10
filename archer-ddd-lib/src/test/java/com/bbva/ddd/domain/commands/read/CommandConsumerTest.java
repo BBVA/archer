@@ -1,7 +1,8 @@
 package com.bbva.ddd.domain.commands.read;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
@@ -22,7 +23,7 @@ public class CommandConsumerTest {
     @DisplayName("Create command consumer and message ok")
     @Test
     public void createCommandConsumer() {
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final List<String> topics = new ArrayList<>();
         final CommandConsumer commandConsumer = new CommandConsumer(1, topics, null, configuration);
 
@@ -31,15 +32,15 @@ public class CommandConsumerTest {
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euuid"));
 
-        final CommandRecord commandRecord = commandConsumer.message("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", null, recordHeaders);
+        final CommandHandlerContext commandHandlerContext = commandConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+                TimestampType.CREATE_TIME, "key", null, recordHeaders));
 
         Assertions.assertAll("EventConsumer",
                 () -> Assertions.assertNotNull(commandConsumer),
-                () -> Assertions.assertNotNull(commandRecord),
-                () -> Assertions.assertEquals("create", commandRecord.name()),
-                () -> Assertions.assertEquals("euuid", commandRecord.entityUuid()),
-                () -> Assertions.assertEquals("key", commandRecord.uuid())
+                () -> Assertions.assertNotNull(commandHandlerContext),
+                () -> Assertions.assertEquals("create", commandHandlerContext.consumedRecord().name()),
+                () -> Assertions.assertEquals("euuid", commandHandlerContext.consumedRecord().entityUuid()),
+                () -> Assertions.assertEquals("key", commandHandlerContext.consumedRecord().uuid())
         );
     }
 

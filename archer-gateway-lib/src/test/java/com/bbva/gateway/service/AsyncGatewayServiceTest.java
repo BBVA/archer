@@ -1,7 +1,7 @@
 package com.bbva.gateway.service;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -10,6 +10,7 @@ import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
@@ -88,9 +89,9 @@ public class AsyncGatewayServiceTest {
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders)));
 
         Assertions.assertAll("GatewayService",
                 () -> Assertions.assertNotNull(service)
@@ -125,9 +126,9 @@ public class AsyncGatewayServiceTest {
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("referenceKey"));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders)));
 
         Assertions.assertNotNull(service);
     }

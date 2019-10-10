@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.builders.dataflows.states;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
@@ -73,15 +73,15 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
                 context.serdeProperties());
         valueSerde.configure(context.serdeProperties(), false);
 
-        final String sinkInternalChangelogTopicName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
-        final String internalLocalStoreName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX;
-        final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String sinkInternalChangelogTopicName = AppConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+        final String internalLocalStoreName = AppConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX;
+        final String applicationGlobalStoreName = context.name() + AppConfig.STORE_NAME_SUFFIX;
 
         final Map<String, String> topics = new HashMap<>();
-        topics.put(sinkInternalChangelogTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
-        topics.put(sourceTopicName, ApplicationConfig.CHANGELOG_RECORD_TYPE);
+        topics.put(sinkInternalChangelogTopicName, AppConfig.SNAPSHOT_RECORD_TYPE);
+        topics.put(sourceTopicName, AppConfig.CHANGELOG_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
 
 

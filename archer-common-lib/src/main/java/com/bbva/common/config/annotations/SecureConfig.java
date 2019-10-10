@@ -1,4 +1,4 @@
-package com.bbva.common.config;
+package com.bbva.common.config.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Config {
+public @interface SecureConfig {
 
     String file() default "";
 

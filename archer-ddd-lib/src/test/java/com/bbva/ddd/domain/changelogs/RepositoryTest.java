@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.changelogs;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
@@ -38,7 +38,7 @@ public class RepositoryTest {
     @DisplayName("Create repository ok")
     @Test
     public void createRepository() throws AggregateDependenciesException {
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final Repository repository = new Repository("topic", PersonalDataAggregate.class, configuration);
 
         Assertions.assertAll("ChangelogConsumer",
@@ -55,7 +55,7 @@ public class RepositoryTest {
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final HelperDomain helper = HelperDomain.create(configuration);
         helper.setReplayMode(false);
 
@@ -90,7 +90,7 @@ public class RepositoryTest {
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final HelperDomain helper = HelperDomain.create(configuration);
         helper.setReplayMode(false);
 
@@ -125,7 +125,7 @@ public class RepositoryTest {
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final HelperDomain helper = HelperDomain.create(configuration);
         helper.setReplayMode(false);
 
@@ -159,7 +159,7 @@ public class RepositoryTest {
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final HelperDomain helper = HelperDomain.create(configuration);
         helper.setReplayMode(false);
 

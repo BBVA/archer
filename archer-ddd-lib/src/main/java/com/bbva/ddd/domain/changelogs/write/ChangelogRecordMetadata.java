@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.changelogs.write;
 
-import com.bbva.common.producers.PRecordMetadata;
+import com.bbva.common.producers.record.PRecordMetadata;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 /**

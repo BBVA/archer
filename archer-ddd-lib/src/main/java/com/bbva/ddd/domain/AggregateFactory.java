@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.ddd.domain.aggregates.AggregateBase;
 import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.changelogs.Repository;

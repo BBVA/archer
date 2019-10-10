@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.aggregates;
 
-import com.bbva.common.consumers.CRecord;
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.ddd.domain.aggregates.callbacks.ApplyRecordCallback;
 import com.bbva.ddd.domain.aggregates.callbacks.DeleteRecordCallback;
 import com.bbva.ddd.domain.commands.read.CommandRecord;

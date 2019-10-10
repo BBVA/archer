@@ -1,20 +1,19 @@
 package com.bbva.ddd.domain.events.write;
 
-import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.CachedProducer;
-import com.bbva.common.producers.PRecord;
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.producers.callback.ProducerCallback;
+import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.common.utils.headers.types.EventHeaderType;
-import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.util.UUID;
@@ -27,88 +26,29 @@ import java.util.concurrent.Future;
 public class Event {
 
     private static final Logger logger = LoggerFactory.getLogger(Event.class);
+
     private final CachedProducer producer;
     private final String topic;
+    private final String key;
+    private final String producerName;
+    private final SpecificRecordBase value;
+    private final RecordHeaders headers;
+    final CRecord referenceRecord;
 
-    /**
-     * Constructor
-     *
-     * @param topicBaseName     to add specific suffix and interact with it
-     * @param applicationConfig configuration
-     */
-    public Event(final String topicBaseName, final ApplicationConfig applicationConfig) {
-        topic = topicBaseName + ApplicationConfig.EVENTS_RECORD_NAME_SUFFIX;
-        producer = new CachedProducer(applicationConfig);
+    private Event(final CachedProducer producer, final String topic, final String key, final String producerName, final SpecificRecordBase value, final CRecord referenceRecord, final RecordHeaders headers) {
+        this.producer = producer;
+        this.topic = topic;
+        this.key = key;
+        this.producerName = producerName;
+        this.value = value;
+        this.referenceRecord = referenceRecord;
+        this.headers = headers;
     }
 
-    /**
-     * Send data in a event stream.
-     *
-     * @param producerName producer identifier
-     * @param data         data to send
-     * @param callback     callback executed when command is stored
-     * @param <V>          data type
-     * @return A event record metadata
-     */
-    public <V extends SpecificRecord> EventRecordMetadata send(final String producerName, final V data, final ProducerCallback callback) {
-        return generateEvent(null, producerName, data, callback, HelperDomain.get().isReplayMode(), null, null);
-    }
-
-    /**
-     * Send data in a event stream.
-     *
-     * @param producerName producer identifier
-     * @param data         data to send
-     * @param name         header populated in EventHeaderType.NAME_KEY
-     * @param callback     callback executed when command is stored
-     * @param <V>          data type
-     * @return A event record metadata
-     */
-    public <V extends SpecificRecord> EventRecordMetadata send(final String producerName, final V data, final String name, final ProducerCallback callback) {
-        return generateEvent(null, producerName, data, callback, HelperDomain.get().isReplayMode(), null, name);
-    }
-
-    /**
-     * Send data in a event stream with a specific key
-     *
-     * @param key          specific key
-     * @param producerName producer identifier
-     * @param data         data to send
-     * @param callback     callback executed when command is stored
-     * @param <V>          data type
-     * @return A event record metadata
-     */
-    public <V extends SpecificRecord> EventRecordMetadata send(final String key, final String producerName, final V data,
-                                                               final ProducerCallback callback) {
-        return generateEvent(key, producerName, data, callback, HelperDomain.get().isReplayMode(), null, null);
-    }
-
-    /**
-     * Send data in a event stream
-     *
-     * @param producerName    producer identifier
-     * @param data            data to send
-     * @param replay          flag replay to populate header CommonHeaderType.FLAG_REPLAY_KEY
-     * @param referenceRecord reference command record
-     * @param callback        callback executed when command is stored
-     * @param <V>             data type
-     * @return A event record metadata
-     */
-    public <V extends SpecificRecord> EventRecordMetadata send(
-            final String producerName, final V data, final boolean replay, final CRecord referenceRecord, final ProducerCallback callback) {
-        return generateEvent(null, producerName, data, callback, replay, referenceRecord, null);
-    }
-
-    private <V extends SpecificRecord> EventRecordMetadata generateEvent(
-            final String eventKey, final String producerName, final V record,
-            final ProducerCallback callback, final boolean replay, final CRecord referenceRecord, final String name) {
+    public EventRecordMetadata send(final ProducerCallback callback) {
         logger.debug("Generating event by {}", producerName);
 
-        final String key = eventKey != null ? eventKey : UUID.randomUUID().toString();
-
-        final RecordHeaders headers = headers(producerName, replay, referenceRecord, name);
-
-        final Future<RecordMetadata> result = producer.add(new PRecord<>(topic, key, record, headers), callback);
+        final Future<RecordMetadata> result = producer.add(new PRecord<>(topic, key, value, headers), callback);
 
         final EventRecordMetadata recordedMessageMetadata;
         try {
@@ -119,35 +59,95 @@ public class Event {
         }
 
         logger.info("Event created: {}", key);
-
         return recordedMessageMetadata;
     }
 
-    private static RecordHeaders headers(final String producerName, final boolean replay, final CRecord referenceRecord, final String name) {
+    public static class Builder {
 
-        final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommonHeaderType.TYPE_KEY, EventHeaderType.TYPE_VALUE);
-        recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, producerName);
-        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, replay);
+        private final CachedProducer producer;
+        private String producerName;
+        private String to;
+        private String name;
+        private String key;
+        private SpecificRecordBase value;
+        private final CRecord referenceRecord;
+        private boolean replay = false;
 
-        if (referenceRecord != null) {
-            final ByteArrayValue entityUuid = referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY);
-            if (entityUuid != null) {
-                recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid.asString());
+
+        public Builder(final CRecord record) {
+            producer = new CachedProducer(ConfigBuilder.get());
+            referenceRecord = record;
+        }
+
+        public Builder(final CachedProducer producer, final CRecord record) {
+            this.producer = producer;
+            referenceRecord = record;
+        }
+
+        public Event.Builder producerName(final String producerName) {
+            this.producerName = producerName;
+            return this;
+        }
+
+        public Event.Builder to(final String to) {
+            this.to = to;
+            return this;
+        }
+
+        public Event.Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Event.Builder key(final String key) {
+            this.key = key;
+            return this;
+        }
+
+        public Event.Builder value(final SpecificRecordBase value) {
+            this.value = value;
+            return this;
+        }
+
+        public Event.Builder replay() {
+            replay = true;
+            return this;
+        }
+
+        public Event build() {
+            final String key = this.key != null ? this.key : UUID.randomUUID().toString();
+
+            return new Event(producer, to, key, producerName, value, referenceRecord,
+                    headers(producerName, replay, referenceRecord, name));
+        }
+
+        private RecordHeaders headers(final String producerName, final boolean replay, final CRecord referenceRecord, final String name) {
+
+            final RecordHeaders recordHeaders = new RecordHeaders();
+            recordHeaders.add(CommonHeaderType.TYPE_KEY, EventHeaderType.TYPE_VALUE);
+            recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, producerName);
+            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, replay);
+
+            if (referenceRecord != null) {
+                final ByteArrayValue entityUuid = referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY);
+                if (entityUuid != null) {
+                    recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid.asString());
+                }
+                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
+                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
+                        referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
+                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
+                        referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
             }
-            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
-            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
-                    referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
-            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
-                    referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
+
+            if (name != null) {
+                recordHeaders.add(EventHeaderType.NAME_KEY, name);
+            }
+
+            logger.debug("CRecord getList: {}", recordHeaders.toString());
+
+            return recordHeaders;
         }
 
-        if (name != null) {
-            recordHeaders.add(EventHeaderType.NAME_KEY, name);
-        }
-
-        logger.debug("CRecord getList: {}", recordHeaders.toString());
-
-        return recordHeaders;
     }
 }

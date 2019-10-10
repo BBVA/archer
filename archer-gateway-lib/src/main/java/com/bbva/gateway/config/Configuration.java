@@ -1,7 +1,8 @@
 package com.bbva.gateway.config;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.config.util.ConfigurationUtil;
 import com.bbva.gateway.Gateway;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.config.annotations.ServiceConfig;
@@ -15,10 +16,10 @@ import static com.bbva.gateway.constants.ConfigConstants.*;
 /**
  * Start the general and service config of the gateways
  */
-@com.bbva.common.config.Config()
+@com.bbva.common.config.annotations.Config()
 public class Configuration {
 
-    private ApplicationConfig applicationConfig;
+    private AppConfig appConfig;
     private LinkedHashMap<String, Object> gateway;
     private LinkedHashMap<String, Object> custom;
     private static Configuration instance;
@@ -37,8 +38,8 @@ public class Configuration {
      *
      * @return configuration
      */
-    public ApplicationConfig getApplicationConfig() {
-        return applicationConfig;
+    public AppConfig getAppConfig() {
+        return appConfig;
     }
 
     /**
@@ -46,8 +47,8 @@ public class Configuration {
      *
      * @param appConfig configuration
      */
-    public void setApplicationConfig(final ApplicationConfig appConfig) {
-        applicationConfig = appConfig;
+    public void setAppConfig(final AppConfig appConfig) {
+        this.appConfig = appConfig;
     }
 
     /**
@@ -99,14 +100,14 @@ public class Configuration {
         final LinkedHashMap<String, Object> application = (LinkedHashMap<String, Object>) config.get(GATEWAY_APPLICATION_PROPERTIES);
         gateway = (LinkedHashMap<String, Object>) config.get(GATEWAY_GATEWAY_PROPERTIES);
 
-        applicationConfig = new AppConfiguration().init(Configuration.class.getAnnotation(com.bbva.common.config.Config.class));
+        appConfig = ConfigBuilder.create(Configuration.class.getAnnotation(com.bbva.common.config.annotations.Config.class));
 
-        addConfigProperties(application, applicationConfig.get(), GATEWAY_APP_PROPERTIES);
-        addConfigProperties(application, applicationConfig.consumer().get(), GATEWAY_CONSUMER_PROPERTIES);
-        addConfigProperties(application, applicationConfig.producer().get(), GATEWAY_PRODUCER_PROPERTIES);
-        addConfigProperties(application, applicationConfig.streams().get(), GATEWAY_STREAM_PROPERTIES);
-        addConfigProperties(application, applicationConfig.ksql().get(), GATEWAY_KSQL_PROPERTIES);
-        addConfigProperties(application, applicationConfig.dataflow().get(), GATEWAY_DATAFLOW_PROPERTIES);
+        addConfigProperties(application, appConfig.get(), GATEWAY_APP_PROPERTIES);
+        addConfigProperties(application, appConfig.consumer(), GATEWAY_CONSUMER_PROPERTIES);
+        addConfigProperties(application, appConfig.producer(), GATEWAY_PRODUCER_PROPERTIES);
+        addConfigProperties(application, appConfig.streams(), GATEWAY_STREAM_PROPERTIES);
+        addConfigProperties(application, appConfig.ksql(), GATEWAY_KSQL_PROPERTIES);
+        addConfigProperties(application, appConfig.dataflow(), GATEWAY_DATAFLOW_PROPERTIES);
 
         instance = this;
         return this;
@@ -122,14 +123,13 @@ public class Configuration {
 
     private static Map<String, Object> getConfig(final Config extraConfig) {
         final Yaml yaml = new Yaml();
-        final AppConfiguration appConfiguration = new AppConfiguration();
         final ClassLoader classLoader = Gateway.class.getClassLoader();
-        Map<String, Object> properties = appConfiguration.getConfigFromFile(yaml, classLoader, COMMON_CONFIG);
+        Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, COMMON_CONFIG);
         if (extraConfig != null) {
-            properties = appConfiguration.mergeProperties(properties, appConfiguration.getConfigFromFile(yaml, classLoader, extraConfig.file()));
+            properties = ConfigurationUtil.mergeProperties(properties, ConfigurationUtil.getConfigFromFile(yaml, classLoader, extraConfig.file()));
         }
 
-        properties = appConfiguration.replaceEnvVariables(properties);
+        properties = ConfigurationUtil.replaceEnvVariables(properties);
         return properties;
     }
 
@@ -171,11 +171,10 @@ public class Configuration {
      */
     public static LinkedHashMap<String, Object> getServiceConfig(final String file) {
         final Yaml yaml = new Yaml();
-        final AppConfiguration appConfiguration = new AppConfiguration();
         final ClassLoader classLoader = Gateway.class.getClassLoader();
-        Map<String, Object> properties = appConfiguration.getConfigFromFile(yaml, classLoader, file);
+        Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, file);
 
-        properties = appConfiguration.replaceEnvVariables(properties);
+        properties = ConfigurationUtil.replaceEnvVariables(properties);
         return (LinkedHashMap<String, Object>) properties;
     }
 }

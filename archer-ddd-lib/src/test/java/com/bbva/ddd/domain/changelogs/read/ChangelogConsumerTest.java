@@ -1,7 +1,8 @@
 package com.bbva.ddd.domain.changelogs.read;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -31,7 +32,7 @@ public class ChangelogConsumerTest {
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final List<String> topics = new ArrayList<>();
         final ChangelogConsumer changelogConsumer = new ChangelogConsumer(1, topics, null, configuration);
 
@@ -41,16 +42,16 @@ public class ChangelogConsumerTest {
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, new ByteArrayValue("aggName"));
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, new ByteArrayValue("aggMethod"));
 
-        final ChangelogRecord changelogRecord = changelogConsumer.message("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", null, recordHeaders);
+        final ChangelogHandlerContext changelogHandlerContext = changelogConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+                TimestampType.CREATE_TIME, "key", null, recordHeaders));
 
         Assertions.assertAll("ChangelogConsumer",
                 () -> Assertions.assertNotNull(changelogConsumer),
-                () -> Assertions.assertNotNull(changelogRecord),
-                () -> Assertions.assertEquals("key", changelogRecord.uuid()),
-                () -> Assertions.assertEquals("euuid", changelogRecord.aggregateUuid()),
-                () -> Assertions.assertEquals("aggName", changelogRecord.aggregateName()),
-                () -> Assertions.assertEquals("aggMethod", changelogRecord.aggregateMethod())
+                () -> Assertions.assertNotNull(changelogHandlerContext),
+                () -> Assertions.assertEquals("key", changelogHandlerContext.consumedRecord().uuid()),
+                () -> Assertions.assertEquals("euuid", changelogHandlerContext.consumedRecord().aggregateUuid()),
+                () -> Assertions.assertEquals("aggName", changelogHandlerContext.consumedRecord().aggregateName()),
+                () -> Assertions.assertEquals("aggMethod", changelogHandlerContext.consumedRecord().aggregateMethod())
         );
     }
 

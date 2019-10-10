@@ -1,17 +1,15 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.DefaultConsumer;
+import com.bbva.common.consumers.contexts.ConsumerContext;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
-import com.bbva.common.utils.headers.RecordHeaders;
-import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -35,10 +33,10 @@ public class RunnableConsumerTest {
     @DisplayName("Create Consumer ok")
     @Test
     public void createConsumerOk() {
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public CRecord message(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType, final String key, final SpecificRecordBase value, final RecordHeaders headers) {
+            public ConsumerContext context(final CRecord c) {
                 return null;
             }
         };
@@ -58,11 +56,11 @@ public class RunnableConsumerTest {
         records.put(new TopicPartition("topic", 0), consumerRecords);
         PowerMockito.when(kafkaConsumer, "poll", Mockito.any()).thenReturn(new ConsumerRecords<>(records));
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
-        configuration.put(ApplicationConfig.REPLAY_TOPICS, "topic1,topic2");
+        final AppConfig configuration = ConfigBuilder.create();
+        configuration.put(AppConfig.REPLAY_TOPICS, "topic1,topic2");
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public CRecord message(final String topic, final int partition, final long offset, final long timestamp, final TimestampType timestampType, final String key, final SpecificRecordBase value, final RecordHeaders headers) {
+            public ConsumerContext context(final CRecord c) {
                 return null;
             }
         };

@@ -1,12 +1,13 @@
 package com.bbva.gateway.service;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.bean.HttpBean;
@@ -40,7 +41,7 @@ import java.util.HashMap;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest({AggregateFactory.class, HelperDomain.class, GatewayService.class, RetrofitClient.class, Response.class})
+@PrepareForTest({AggregateFactory.class, HelperDomain.class, Event.class, GatewayService.class, RetrofitClient.class, Response.class})
 public class HtttpGatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -88,6 +89,7 @@ public class HtttpGatewayServiceTest {
         final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
         PowerMockito.when(HelperDomain.get()).thenReturn(helperDomain);
         PowerMockito.when(helperDomain, "sendEventTo", Mockito.anyString()).thenReturn(PowerMockito.mock(Event.class));
+        PowerMockito.whenNew(Event.class).withAnyArguments().thenReturn(PowerMockito.mock(Event.class));
 
         final Response response = PowerMockito.mock(Response.class);
         PowerMockito.when(response, "headers").thenReturn(new Headers.Builder().build());
@@ -100,9 +102,9 @@ public class HtttpGatewayServiceTest {
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders)));
 
         Assertions.assertAll("HttpGatewayService",
                 () -> Assertions.assertNotNull(service)

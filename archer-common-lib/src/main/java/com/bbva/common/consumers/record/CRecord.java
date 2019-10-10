@@ -1,4 +1,4 @@
-package com.bbva.common.consumers;
+package com.bbva.common.consumers.record;
 
 import com.bbva.common.utils.headers.OptionalRecordHeaders;
 import com.bbva.common.utils.headers.RecordHeaders;

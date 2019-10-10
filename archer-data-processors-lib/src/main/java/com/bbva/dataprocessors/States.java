@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
 import org.apache.kafka.streams.KafkaStreams;
@@ -52,7 +52,7 @@ public final class States {
      * @throws StoreNotFoundException if store not exists
      */
     public <K, V> ReadableStore<K, V> getStore(final String name) throws StoreNotFoundException {
-        final String storeName = name + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String storeName = name + AppConfig.STORE_NAME_SUFFIX;
         final ReadableStore<K, V> store;
 
         if (readableStores.containsKey(storeName)) {

@@ -1,6 +1,7 @@
 package com.bbva.gateway.service;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.gateway.config.Configuration;
 
 /**
@@ -28,7 +29,7 @@ public interface IGatewayService<T> {
      *
      * @param record record to process
      */
-    void processRecord(CRecord record);
+    void processRecord(HandlerContextImpl record);
 
     /**
      * Process call result
