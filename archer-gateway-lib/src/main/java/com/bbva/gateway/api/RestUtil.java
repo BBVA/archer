@@ -1,6 +1,7 @@
 package com.bbva.gateway.api;
 
 import com.bbva.common.exceptions.ApplicationException;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import com.sun.net.httpserver.HttpHandler;
@@ -10,9 +11,6 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
-
-import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_PORT;
-import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_RESOURCE;
 
 /**
  * Start http server and callback in asynchronous gateways
@@ -30,10 +28,10 @@ public class RestUtil {
      * @param callbackConfig configuration for callback
      */
     public static void startRestCallBack(final Map<String, Object> callbackConfig) {
-        final int port = callbackConfig.get(GATEWAY_REST_PORT) != null ? Integer.valueOf(callbackConfig.get(GATEWAY_REST_PORT).toString())
+        final int port = callbackConfig.get(GatewayConfig.GatewayProperties.GATEWAY_REST_PORT) != null ? Integer.valueOf(callbackConfig.get(GatewayConfig.GatewayProperties.GATEWAY_REST_PORT).toString())
                 : DEFAULT_PORT;
-        final String resource = callbackConfig.get(GATEWAY_REST_RESOURCE) != null
-                ? (String) callbackConfig.get(GATEWAY_REST_RESOURCE) : DEFAULT_RESOURCE;
+        final String resource = callbackConfig.get(GatewayConfig.GatewayProperties.GATEWAY_REST_RESOURCE) != null
+                ? (String) callbackConfig.get(GatewayConfig.GatewayProperties.GATEWAY_REST_RESOURCE) : DEFAULT_RESOURCE;
         startServer(port, resource);
 
         logger.info("Rest endpoint callback {} started started at port: {}", resource, port);

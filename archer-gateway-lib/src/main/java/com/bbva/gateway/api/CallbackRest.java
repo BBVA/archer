@@ -1,6 +1,7 @@
 package com.bbva.gateway.api;
 
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IAsyncGatewayService;
@@ -17,8 +18,6 @@ import javax.ws.rs.core.Response;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.bbva.gateway.constants.ConfigConstants.*;
-
 /**
  * Class to initialize the callback in async gateways
  */
@@ -28,24 +27,24 @@ import static com.bbva.gateway.constants.ConfigConstants.*;
 public class CallbackRest {
 
     private static final Logger logger = LoggerFactory.getLogger(CallbackRest.class);
-    protected static Configuration config;
+    protected static GatewayConfig config;
 
     /**
      * Post constructor actions
      */
     @PostConstruct
     public static void init() {
-        final Config annotationConfig = Configuration.findConfigAnnotation();
-        final List<Class> serviceClasses = Configuration.getServiceClasses(annotationConfig.servicesPackage());
-        config = new Configuration().init(annotationConfig);
+        final Config annotationConfig = ConfigBuilder.findConfigAnnotation();
+        final List<Class> serviceClasses = ConfigBuilder.getServiceClasses(annotationConfig.servicesPackage());
+        config = ConfigBuilder.create(annotationConfig);
         for (final Class serviceClass : serviceClasses) {
             final ServiceConfig serviceConfig = (ServiceConfig) serviceClass.getAnnotation(ServiceConfig.class);
 
-            final LinkedHashMap<String, Object> gatewayConfig = Configuration.getServiceConfig(serviceConfig.file());
+            final LinkedHashMap<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
             final String commandAction = (String) gatewayConfig.get("commandAction");
-            final String baseName = (String) config.getCustom().get(GATEWAY_TOPIC);
-            config.setGateway(gatewayConfig);
-            if (commandAction != null && config.getGateway().get(GATEWAY_SYNC) != null && !(Boolean) config.getGateway().get(GATEWAY_SYNC) && config.getGateway().get(GATEWAY_CALLBACK) != null) {
+            final String baseName = (String) config.custom(GatewayConfig.CustomProperties.GATEWAY_TOPIC);
+            config.gateway().putAll(gatewayConfig);
+            if (commandAction != null && config.gateway(GatewayConfig.GatewayProperties.GATEWAY_SYNC) != null && !(Boolean) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_SYNC) && config.gateway(GatewayConfig.GatewayProperties.GATEWAY_CALLBACK) != null) {
                 IAsyncGatewayService service = null;
                 try {
                     service = (IAsyncGatewayService) serviceClass.newInstance();

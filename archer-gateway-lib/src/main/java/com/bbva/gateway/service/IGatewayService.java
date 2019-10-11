@@ -2,7 +2,7 @@ package com.bbva.gateway.service;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.consumers.HandlerContextImpl;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.GatewayConfig;
 
 /**
  * Gateway service interface
@@ -17,7 +17,7 @@ public interface IGatewayService<T> {
      * @param configuration configuration
      * @param baseName      base name
      */
-    void init(Configuration configuration, String baseName);
+    void init(GatewayConfig configuration, String baseName);
 
     /**
      * Actions post initialization

@@ -61,7 +61,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
         specificSerde.configure(serdeProps, false);
     }
 
-    public abstract T context(CRecord c);
+    public abstract T context(CRecord consumedRecord);
 
     /**
      * Replay a list of topics

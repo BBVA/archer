@@ -23,8 +23,6 @@ public class ChangelogTransformerTest {
 
         final ChangelogTransformer changelogTransformer = new ChangelogTransformer("base");
 
-        //changelogTransformer.transform("key", "value");
-
         Assertions.assertAll("ChangelogTransformer",
                 () -> Assertions.assertNotNull(changelogTransformer)
         );

@@ -11,7 +11,7 @@ import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.bean.HttpBean;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.service.impl.GatewayService;
@@ -50,7 +50,7 @@ public class HtttpGatewayServiceTest {
         final IGatewayService service = new HttpGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
         Assertions.assertAll("HttpGatewayService",
@@ -67,7 +67,7 @@ public class HtttpGatewayServiceTest {
 
         final IGatewayService service = new HttpGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final Response callResult = ((HttpGatewayServiceImpl) service).call(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
@@ -97,7 +97,7 @@ public class HtttpGatewayServiceTest {
 
         final HttpGatewayServiceImpl service = new HttpGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));

@@ -1,7 +1,6 @@
 package com.bbva.gateway.config;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.config.util.ConfigurationUtil;
 import com.bbva.gateway.Gateway;
 import com.bbva.gateway.config.annotations.Config;
@@ -11,80 +10,44 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.util.*;
 
-import static com.bbva.gateway.constants.ConfigConstants.*;
-
 /**
  * Start the general and service config of the gateways
  */
 @com.bbva.common.config.annotations.Config()
-public class Configuration {
+public class ConfigBuilder {
 
-    private AppConfig appConfig;
-    private LinkedHashMap<String, Object> gateway;
-    private LinkedHashMap<String, Object> custom;
-    private static Configuration instance;
+    private GatewayConfig gatewayConfig;
+    private static ConfigBuilder instance;
 
     /**
-     * Get a configuration instance
-     *
-     * @return instance
-     */
-    public static Configuration get() {
-        return instance;
-    }
-
-    /**
-     * Get the configuration
+     * Create and init application configuration
      *
      * @return configuration
      */
-    public AppConfig getAppConfig() {
-        return appConfig;
+    public static GatewayConfig create(final Class classType) {
+        instance = new ConfigBuilder();
+        final Config configAnnotation = (Config) classType.getAnnotation(Config.class);
+        return init(configAnnotation);
     }
 
     /**
-     * Set the configuration
+     * Create and init application configuration
      *
-     * @param appConfig configuration
+     * @return configuration
      */
-    public void setAppConfig(final AppConfig appConfig) {
-        this.appConfig = appConfig;
+    public static GatewayConfig create() {
+        instance = new ConfigBuilder();
+        final Config configAnnotation = ConfigBuilder.findConfigAnnotation();
+        return init(configAnnotation);
     }
 
     /**
-     * Set custom properties
+     * Create and init application configuration
      *
-     * @param customConfig custom properties
+     * @return configuration
      */
-    public void setCustom(final LinkedHashMap<String, Object> customConfig) {
-        custom = customConfig;
-    }
-
-    /**
-     * Get custom properties
-     *
-     * @return properties
-     */
-    public Map<String, Object> getCustom() {
-        return custom;
-    }
-
-    /**
-     * Get gateway config
-     *
-     * @return properties
-     */
-    public Map<String, Object> getGateway() {
-        return gateway;
-    }
-
-    /**
-     * Set gateway config
-     *
-     * @param config properties
-     */
-    public void setGateway(final LinkedHashMap<String, Object> config) {
-        gateway = config;
+    public static GatewayConfig create(final Config extraConfig) {
+        return init(extraConfig);
     }
 
     /**
@@ -93,30 +56,34 @@ public class Configuration {
      * @param extraConfig extra configuration
      * @return configuration instance
      */
-    public Configuration init(final Config extraConfig) {
+    private static GatewayConfig init(final Config extraConfig) {
+        final GatewayConfig gatewayConfig = new GatewayConfig();
 
         final Map<String, Object> config = getConfig(extraConfig);
-        custom = (LinkedHashMap<String, Object>) config.get(GATEWAY_CUSTOM_PROPERTIES);
-        final LinkedHashMap<String, Object> application = (LinkedHashMap<String, Object>) config.get(GATEWAY_APPLICATION_PROPERTIES);
-        gateway = (LinkedHashMap<String, Object>) config.get(GATEWAY_GATEWAY_PROPERTIES);
+        final LinkedHashMap<String, Object> application = (LinkedHashMap<String, Object>) config.get(GatewayConfig.GATEWAY_APPLICATION_PROPERTIES);
 
-        appConfig = ConfigBuilder.create(Configuration.class.getAnnotation(com.bbva.common.config.annotations.Config.class));
+        final AppConfig appConfig = com.bbva.common.config.ConfigBuilder.create(ConfigBuilder.class.getAnnotation(com.bbva.common.config.annotations.Config.class));
 
-        addConfigProperties(application, appConfig.get(), GATEWAY_APP_PROPERTIES);
-        addConfigProperties(application, appConfig.consumer(), GATEWAY_CONSUMER_PROPERTIES);
-        addConfigProperties(application, appConfig.producer(), GATEWAY_PRODUCER_PROPERTIES);
-        addConfigProperties(application, appConfig.streams(), GATEWAY_STREAM_PROPERTIES);
-        addConfigProperties(application, appConfig.ksql(), GATEWAY_KSQL_PROPERTIES);
-        addConfigProperties(application, appConfig.dataflow(), GATEWAY_DATAFLOW_PROPERTIES);
+        addConfigProperties(gatewayConfig.get(), application, GatewayConfig.GATEWAY_APP_PROPERTIES, appConfig.get());
+        addConfigProperties(gatewayConfig.consumer(), application, GatewayConfig.GATEWAY_CONSUMER_PROPERTIES, appConfig.consumer());
+        addConfigProperties(gatewayConfig.producer(), application, GatewayConfig.GATEWAY_PRODUCER_PROPERTIES, appConfig.producer());
+        addConfigProperties(gatewayConfig.streams(), application, GatewayConfig.GATEWAY_STREAM_PROPERTIES, appConfig.streams());
+        addConfigProperties(gatewayConfig.ksql(), application, GatewayConfig.GATEWAY_KSQL_PROPERTIES, appConfig.ksql());
+        addConfigProperties(gatewayConfig.dataflow(), application, GatewayConfig.GATEWAY_DATAFLOW_PROPERTIES, appConfig.dataflow());
 
-        instance = this;
-        return this;
+        gatewayConfig.custom().putAll((LinkedHashMap<String, Object>) config.get(GatewayConfig.GATEWAY_CUSTOM_PROPERTIES));
+        gatewayConfig.gateway().putAll((LinkedHashMap<String, Object>) config.get(GatewayConfig.GATEWAY_GATEWAY_PROPERTIES));
+
+        return gatewayConfig;
     }
 
-    private static void addConfigProperties(final LinkedHashMap<String, Object> config, final Properties properties,
-                                            final String applicationProperties) {
+    private static void addConfigProperties(final Properties properties, final LinkedHashMap<String, Object> config,
+                                            final String applicationProperties, final Properties originalProperties) {
+        if (originalProperties != null) {
+            properties.putAll(originalProperties);
+        }
         if (config.get(applicationProperties) != null) {
-            properties.putAll((Map<?, ?>) config.get(GATEWAY_COMMON_PROPERTIES));
+            properties.putAll((Map<?, ?>) config.get(GatewayConfig.GATEWAY_COMMON_PROPERTIES));
             properties.putAll((Map<?, ?>) config.get(applicationProperties));
         }
     }
@@ -124,7 +91,7 @@ public class Configuration {
     private static Map<String, Object> getConfig(final Config extraConfig) {
         final Yaml yaml = new Yaml();
         final ClassLoader classLoader = Gateway.class.getClassLoader();
-        Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, COMMON_CONFIG);
+        Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, GatewayConfig.COMMON_CONFIG);
         if (extraConfig != null) {
             properties = ConfigurationUtil.mergeProperties(properties, ConfigurationUtil.getConfigFromFile(yaml, classLoader, extraConfig.file()));
         }
@@ -132,6 +99,7 @@ public class Configuration {
         properties = ConfigurationUtil.replaceEnvVariables(properties);
         return properties;
     }
+
 
     /**
      * Find gateway configuration annotation in all scafolding

@@ -4,16 +4,17 @@ import com.bbva.common.config.AppConfig;
 import com.bbva.ddd.domain.Handler;
 import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
 import com.bbva.ddd.domain.events.read.EventHandlerContext;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
+import org.apache.commons.beanutils.BeanUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-
-import static com.bbva.gateway.constants.ConfigConstants.*;
 
 /**
  * Main handler of gateway
@@ -26,25 +27,25 @@ public class GatewayHandler implements Handler {
     private static final Map<String, IGatewayService> eventServices = new HashMap<>();
     List<String> commandsSubscribed = new ArrayList<>();
     List<String> eventsSubscribed = new ArrayList<>();
-    protected static Configuration config;
+    protected static GatewayConfig config;
 
     /**
      * Constructor
      *
      * @param servicePackages package to find services
-     * @param generalConfig   configuration
+     * @param configuration   configuration
      */
-    public GatewayHandler(final String servicePackages, final Configuration generalConfig) {
-        final List<Class> serviceClasses = Configuration.getServiceClasses(servicePackages);
-        config = generalConfig;
-        baseName = (String) config.getCustom().get(GATEWAY_TOPIC);
+    public GatewayHandler(final String servicePackages, final GatewayConfig configuration) {
+        final List<Class> serviceClasses = ConfigBuilder.getServiceClasses(servicePackages);
+        config = configuration;
+        baseName = (String) config.custom(GatewayConfig.CustomProperties.GATEWAY_TOPIC);
 
         for (final Class serviceClass : serviceClasses) {
             final ServiceConfig serviceConfig = (ServiceConfig) serviceClass.getAnnotation(ServiceConfig.class);
 
-            final LinkedHashMap<String, Object> gatewayConfig = Configuration.getServiceConfig(serviceConfig.file());
-            final String commandAction = (String) gatewayConfig.get(GATEWAY_COMMAND_ACTION);
-            final String event = (String) gatewayConfig.get(GATEWAY_EVENT_NAME);
+            final LinkedHashMap<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
+            final String commandAction = (String) gatewayConfig.get(GatewayConfig.GATEWAY_COMMAND_ACTION);
+            final String event = (String) gatewayConfig.get(GatewayConfig.GATEWAY_EVENT_NAME);
             if (commandAction != null) {
                 commandsSubscribed.add(baseName + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 initActionService(serviceClass, gatewayConfig, commandAction, null);
@@ -97,11 +98,15 @@ public class GatewayHandler implements Handler {
     }
 
     private static void initActionService(final Class serviceClass, final LinkedHashMap<String, Object> gatewayConfig, final String commandAction, final String event) {
-        final Configuration newConfig;
-        newConfig = new Configuration();
-        newConfig.setGateway(gatewayConfig);
-        newConfig.setAppConfig(config.getAppConfig());
-        newConfig.setCustom((LinkedHashMap<String, Object>) config.getCustom());
+        //TODO clone en only one line
+        GatewayConfig newConfig = new GatewayConfig();
+        try {
+            newConfig = (GatewayConfig) BeanUtils.cloneBean(config);
+        } catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            logger.error("Error copying properties", e);
+        }
+        newConfig.gateway().putAll(gatewayConfig);
+
         IGatewayService service = null;
         try {
             service = (IGatewayService) serviceClass.newInstance();

@@ -1,6 +1,7 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.http.HttpRequest;
 import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.service.IAsyncGatewayService;
@@ -8,8 +9,7 @@ import org.codehaus.jackson.JsonParser;
 import retrofit2.Retrofit;
 
 import java.util.Map;
-
-import static com.bbva.gateway.constants.ConfigConstants.*;
+import java.util.Properties;
 
 /**
  * Http asynchronous gateway implementation
@@ -27,8 +27,8 @@ public abstract class HttpAsyncGatewayService<T>
      */
     @Override
     public void postInitActions() {
-        retrofit = RetrofitClient.build((String) config.getGateway().get(GATEWAY_URI));
-        queryParams = (Map<String, String>) config.getGateway().get(GATEWAY_QUERY_PARAMS);
+        retrofit = RetrofitClient.build((String) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_URI));
+        queryParams = (Map<String, String>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_QUERY_PARAMS);
         om.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     }
 
@@ -48,10 +48,10 @@ public abstract class HttpAsyncGatewayService<T>
      * @return http object
      */
     protected HttpRequest traslateRecordToHttp(final CRecord record) {
-        final Map<String, Object> gatewayConfig = config.getGateway();
+        final Properties gatewayConfig = config.gateway();
         final HttpRequest request = new HttpRequest();
-        request.setHeaders((Map<String, String>) gatewayConfig.get(GATEWAY_HTTP_HEADERS));
-        request.setMethod((String) gatewayConfig.get(GATEWAY_HTTP_METHOD));
+        request.setHeaders((Map<String, String>) gatewayConfig.get(GatewayConfig.GatewayProperties.GATEWAY_HTTP_HEADERS));
+        request.setMethod((String) gatewayConfig.get(GatewayConfig.GatewayProperties.GATEWAY_HTTP_METHOD));
         request.setBody(record.value().toString());
 
         return request;

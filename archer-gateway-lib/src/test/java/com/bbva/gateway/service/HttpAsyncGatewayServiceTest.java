@@ -6,7 +6,7 @@ import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.gateway.GatewayTest;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.service.impl.GatewayService;
@@ -39,7 +39,7 @@ public class HttpAsyncGatewayServiceTest {
         final IAsyncGatewayService service = new HttpAsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
         Assertions.assertAll("GatewayService",
@@ -56,7 +56,7 @@ public class HttpAsyncGatewayServiceTest {
 
         final IGatewayService service = new HttpAsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final Object callResult = ((HttpAsyncGatewayServiceImpl) service).call(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",

@@ -15,7 +15,7 @@ import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.aggregates.GatewayAggregate;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.service.impl.AsyncGatewayService;
 import com.bbva.gateway.service.impl.AsyncGatewayServiceImpl;
@@ -47,7 +47,7 @@ public class AsyncGatewayServiceTest {
         final IAsyncGatewayService service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
         Assertions.assertAll("AsyncGatewayService",
@@ -60,7 +60,7 @@ public class AsyncGatewayServiceTest {
     public void callOk() {
         final IGatewayService service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final Person callResult = ((AsyncGatewayServiceImpl) service).call(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
@@ -84,7 +84,7 @@ public class AsyncGatewayServiceTest {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
@@ -120,7 +120,7 @@ public class AsyncGatewayServiceTest {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));

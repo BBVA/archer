@@ -9,7 +9,7 @@ import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
 import com.bbva.ddd.domain.events.read.EventHandlerContext;
 import com.bbva.ddd.domain.events.read.EventRecord;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.util.CommandService;
 import org.apache.kafka.common.record.TimestampType;
@@ -35,7 +35,7 @@ public class GatewayHandlerTest {
 
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
-        final GatewayHandler handler = new GatewayHandler("com.bbva", new Configuration().init(configAnnotation));
+        final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));
 
         Assertions.assertAll("AutoConfiguredHandler",
                 () -> Assertions.assertNotNull(handler)
@@ -46,7 +46,7 @@ public class GatewayHandlerTest {
     @Test
     public void getSubscriptions() {
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        final GatewayHandler handler = new GatewayHandler("com.bbva", new Configuration().init(configAnnotation));
+        final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));
 
         Assertions.assertAll("AutoConfiguredHandler",
                 () -> Assertions.assertNotNull(handler),
@@ -63,12 +63,12 @@ public class GatewayHandlerTest {
         final List<Class> lstClasses = new ArrayList<>();
         lstClasses.add(CommandService.class);
 
-        PowerMockito.spy(Configuration.class);
-        final Method m = Whitebox.getMethod(Configuration.class, "getServiceClasses", String.class);
-        PowerMockito.doReturn(lstClasses).when(Configuration.class, m).withArguments("com.bbva");
+        PowerMockito.spy(ConfigBuilder.class);
+        final Method m = Whitebox.getMethod(ConfigBuilder.class, "getServiceClasses", String.class);
+        PowerMockito.doReturn(lstClasses).when(ConfigBuilder.class, m).withArguments("com.bbva");
 
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        final GatewayHandler handler = new GatewayHandler("com.bbva", new Configuration().init(configAnnotation));
+        final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));
 
         Exception ex = null;
         try {
@@ -87,7 +87,7 @@ public class GatewayHandlerTest {
     @Test
     public void processEvent() {
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        final GatewayHandler handler = new GatewayHandler("com.bbva", new Configuration().init(configAnnotation));
+        final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));
 
         Exception ex = null;
         try {

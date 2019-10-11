@@ -2,7 +2,7 @@ package com.bbva.gateway;
 
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.DomainBuilder;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -28,7 +28,7 @@ public class GatewayTest {
         gateway.configure();
         gateway.init();
 
-        new Configuration().init(null);
+        ConfigBuilder.create();
 
         Assertions.assertNotNull(gateway);
     }

@@ -10,7 +10,7 @@ import com.bbva.ddd.domain.consumers.HandlerContextImpl;
 import com.bbva.ddd.domain.events.write.Event;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -22,7 +22,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-import static com.bbva.gateway.constants.ConfigConstants.*;
 import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;
 import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
 
@@ -35,7 +34,7 @@ public abstract class GatewayService<T>
         implements IGatewayService<T> {
     private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
 
-    protected Configuration config;
+    protected GatewayConfig config;
     protected static ObjectMapper om = new ObjectMapper();
     private Boolean retryEnabled = false;
     private int seconds;
@@ -47,14 +46,14 @@ public abstract class GatewayService<T>
      * {@inheritDoc}
      */
     @Override
-    public void init(final Configuration configuration, final String gatewayBaseName) {
+    public void init(final GatewayConfig configuration, final String gatewayBaseName) {
         config = configuration;
 
-        final LinkedHashMap<String, Object> retryPolicy = config.getGateway().get(GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.getGateway().get(GATEWAY_RETRY) : null;
-        retryEnabled = retryPolicy != null && (Boolean) retryPolicy.get(GATEWAY_RETRY_ENABLED);
+        final LinkedHashMap<String, Object> retryPolicy = config.gateway(GatewayConfig.GatewayProperties.GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_RETRY) : null;
+        retryEnabled = retryPolicy != null && (Boolean) retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_RETRY_ENABLED);
         if (retryEnabled) {
-            seconds = Integer.parseInt(retryPolicy.get(GATEWAY_ATTEMP_SECONDS).toString());
-            attemps = Integer.valueOf(retryPolicy.get(GATEWAY_ATTEMPS).toString());
+            seconds = Integer.parseInt(retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_ATTEMP_SECONDS).toString());
+            attemps = Integer.valueOf(retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_ATTEMPS).toString());
         }
 
         baseName = gatewayBaseName;
