@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain.consumers;
+package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.changelogs.Repository;
@@ -30,7 +30,7 @@ public class HandlerContextImpl implements HandlerContext {
     }
 
     @Override
-    public Command.Builder command(String action) {
+    public Command.Builder command(final String action) {
         return null;
     }
 
@@ -45,7 +45,7 @@ public class HandlerContextImpl implements HandlerContext {
     }
 
     @Override
-    public Event.Builder event(String name) {
+    public Event.Builder event(final String name) {
         return null;
     }
 }

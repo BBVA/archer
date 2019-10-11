@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.commands.read;
 
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.ddd.domain.consumers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 
 public class CommandHandlerContext extends HandlerContextImpl {
 

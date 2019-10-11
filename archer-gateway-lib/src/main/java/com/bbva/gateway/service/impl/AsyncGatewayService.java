@@ -4,7 +4,7 @@ import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.AggregateFactory;
 import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.domain.consumers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.service.IAsyncGatewayService;
 

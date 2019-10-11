@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain.consumers;
+package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.ddd.domain.changelogs.Repository;
