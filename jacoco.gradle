@@ -42,6 +42,7 @@ test.dependsOn instrument
 
 def jacoco_exclusions = [
         '**/com/bbva/common/consumers/**', //abstract class tested in another libs
+        '**/com/bbva/common/producers/CachedProducer**', //TODO will remove in the next feature
         '**/avro/**',
         '**/model/**',
         '**/bean/**',

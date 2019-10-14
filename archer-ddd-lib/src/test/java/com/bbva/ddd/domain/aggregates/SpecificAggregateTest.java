@@ -4,10 +4,10 @@ import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
-import com.bbva.ddd.domain.changelogs.Repository;
 import com.bbva.ddd.domain.changelogs.aggregate.PersonalDataAggregate;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.domain.commands.write.records.PersonalData;
+import com.bbva.ddd.domain.changelogs.repository.Repository;
+import com.bbva.ddd.domain.commands.consumers.CommandRecord;
+import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -40,7 +40,7 @@ public class SpecificAggregateTest {
     @Test
     public void applyAggregate() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-        personalData.setDeleteRecordCallback((method, recordClass, record, callback) -> {
+        personalData.setDeleteRecordCallback((method, record, callback) -> {
             //Do nothing
         });
         personalData.apply("method", new CRecord("topic", 1, 1, new Date().getTime(),
@@ -90,7 +90,7 @@ public class SpecificAggregateTest {
     @Test
     public void deleteOK() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-        personalData.setDeleteRecordCallback((method, recordClass, record, callback) -> {
+        personalData.setDeleteRecordCallback((method, record, callback) -> {
             //Do nothing
         });
         personalData.delete(new CommandRecord("topic", 1, 1, new Date().getTime(),

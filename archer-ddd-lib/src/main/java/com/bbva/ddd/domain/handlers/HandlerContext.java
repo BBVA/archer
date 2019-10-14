@@ -1,9 +1,9 @@
 package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.consumers.contexts.ConsumerContext;
-import com.bbva.ddd.domain.changelogs.Repository;
-import com.bbva.ddd.domain.commands.write.Command;
-import com.bbva.ddd.domain.events.write.Event;
+import com.bbva.ddd.domain.changelogs.repository.Repository;
+import com.bbva.ddd.domain.commands.producers.Command;
+import com.bbva.ddd.domain.events.producers.Event;
 
 public interface HandlerContext extends ConsumerContext {
 
@@ -11,9 +11,7 @@ public interface HandlerContext extends ConsumerContext {
 
     Command.Builder command(String action);
 
-    Command.Builder createCommand();
-
-    Command.Builder deleteCommand();
+    Command.Builder command(Command.Action action);
 
     Event.Builder event(String name);
 

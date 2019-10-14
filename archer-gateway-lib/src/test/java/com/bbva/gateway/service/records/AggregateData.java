@@ -4,9 +4,9 @@ package com.bbva.gateway.service.records;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.producers.callback.ProducerCallback;
-import com.bbva.ddd.domain.aggregates.AggregateBase;
-import com.bbva.ddd.domain.aggregates.callbacks.ApplyRecordCallback;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks.ApplyRecordCallback;
+import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 

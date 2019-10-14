@@ -6,6 +6,7 @@ import com.bbva.common.consumers.DefaultConsumer;
 import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
+import com.bbva.ddd.domain.consumers.RunnableConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

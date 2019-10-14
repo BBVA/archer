@@ -1,8 +1,8 @@
 package com.bbva.ddd.domain.changelogs.aggregate;
 
-import com.bbva.ddd.domain.aggregates.SpecificAggregate;
-import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
-import com.bbva.ddd.domain.commands.write.records.PersonalData;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.SpecificAggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
+import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 
 @Aggregate(baseName = "aggregateBaseNameParent")
 public class PersonalDataParentAggregate extends SpecificAggregate<String, PersonalData> {
@@ -16,7 +16,7 @@ public class PersonalDataParentAggregate extends SpecificAggregate<String, Perso
         return personalData;
     }
 
-    public void setPersonalData(PersonalData personalData) {
+    public void setPersonalData(final PersonalData personalData) {
         this.personalData = personalData;
     }
 }

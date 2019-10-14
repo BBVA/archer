@@ -2,15 +2,10 @@ package com.bbva.common.producers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
-import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.record.PRecord;
-import com.bbva.common.producers.records.GenericRecordImpl;
-import com.bbva.common.producers.records.SpecificRecordImpl;
+import com.bbva.common.producers.records.SpecificRecordBaseImpl;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.headers.RecordHeaders;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.avro.specific.SpecificRecord;
-import org.apache.kafka.common.utils.Bytes;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -22,7 +17,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
@@ -56,7 +50,7 @@ public class CachedProducerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
-        final Future mockedFuture = producer.add(new PRecord<>("test", "key", "value", new RecordHeaders()), null);
+        final Future mockedFuture = producer.add(new PRecord("test", "key", new SpecificRecordBaseImpl(), new RecordHeaders()), null);
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer),
                 () -> Assertions.assertNull(mockedFuture)
@@ -73,7 +67,7 @@ public class CachedProducerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
-        final Future mockedFuture = producer.add(new PRecord<>("test", "key", "value", new RecordHeaders()), null);
+        final Future mockedFuture = producer.add(new PRecord("test", "key", new SpecificRecordBaseImpl(), new RecordHeaders()), null);
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer),
                 () -> Assertions.assertNull(mockedFuture)
@@ -91,8 +85,7 @@ public class CachedProducerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final CachedProducer producer = new CachedProducer(configuration);
 
-        producer.add(new PRecord<>("test", "key", "value", new RecordHeaders()), null);
-        final Future mockedFuture = producer.remove(new PRecord<>("test", "key", "value", new RecordHeaders()), String.class, null);
+        final Future mockedFuture = producer.add(new PRecord("test", "key", new SpecificRecordBaseImpl(), new RecordHeaders()), null);
 
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer),
@@ -100,49 +93,4 @@ public class CachedProducerTest {
         );
     }
 
-
-    @DisplayName("Add message to producer with different serializers")
-    @Test
-    public void addRecordSerializersOk() throws Exception {
-
-        final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
-
-        final AppConfig configuration = ConfigBuilder.create();
-        final CachedProducer producer = new CachedProducer(configuration);
-
-        producer.add(new PRecord<>("test", Integer.valueOf(1), Long.valueOf(1), new RecordHeaders()), null);
-        producer.add(new PRecord<>("test1", new Bytes("bytes".getBytes()), ByteBuffer.allocate(1), new RecordHeaders()), null);
-        producer.add(new PRecord<>("test2", ByteBuffer.allocate(1), new Bytes("bytes".getBytes()), new RecordHeaders()), null);
-        producer.add(new PRecord<>("test4", new Double(0), "bytes".getBytes(), new RecordHeaders()), null);
-
-        producer.remove((new PRecord<>("test5", "bytes", new Double(0), new RecordHeaders())), Double.class, null);
-        producer.remove((new PRecord<>("test6", "bytes", ByteBuffer.allocate(1), new RecordHeaders())), ByteBuffer.class, null);
-        producer.remove((new PRecord<>("test7", "bytes", new Bytes("bytes".getBytes()), new RecordHeaders())), Bytes.class, null);
-        producer.remove((new PRecord<>("test8", "bytes", new SpecificRecordImpl(), new RecordHeaders())), SpecificRecord.class, null);
-        producer.remove((new PRecord<>("test9", "bytes", new GenericRecordImpl(), new RecordHeaders())), GenericRecord.class, null);
-
-        final Future mockedFuture = producer.add(new PRecord<>("test", new GenericRecordImpl(), new SpecificRecordImpl(), new RecordHeaders()), null);
-
-        Assertions.assertAll("producer",
-                () -> Assertions.assertNotNull(producer),
-                () -> Assertions.assertNull(mockedFuture)
-        );
-    }
-
-    @DisplayName("Error serializing, no class to serialize")
-    @Test
-    public void addRecordSerializersKo() throws Exception {
-
-
-        final DefaultProducer defaultProducer = Mockito.mock(DefaultProducer.class);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(defaultProducer);
-
-        final AppConfig configuration = ConfigBuilder.create();
-        final CachedProducer producer = new CachedProducer(configuration);
-
-        Assertions.assertThrows(ApplicationException.class, () ->
-                producer.add(new PRecord<>("test", true, null, new RecordHeaders()), null)
-        );
-    }
 }

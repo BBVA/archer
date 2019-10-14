@@ -1,13 +1,13 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.ddd.domain.changelogs.Repository;
+import com.bbva.ddd.domain.changelogs.repository.Repository;
 
 import java.util.Map;
 
 /**
  * Store a map of repositories by name
  */
-final class Repositories {
+public final class Repositories {
 
     private static final Repositories instance = new Repositories();
     private Map<String, Repository> repositories;
@@ -36,7 +36,7 @@ final class Repositories {
      * @param baseName repository name
      * @return repository
      */
-    static Repository get(final String baseName) {
+    public static Repository get(final String baseName) {
         return instance.repositories.get(baseName);
     }
 }

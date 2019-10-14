@@ -1,6 +1,7 @@
 package com.bbva.common.producers.record;
 
 import com.bbva.common.utils.headers.RecordHeaders;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 /**
@@ -9,7 +10,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
  * @param <K> Type of Record schema
  * @param <V> Type of Record
  */
-public class PRecord<K, V> extends ProducerRecord<K, V> {
+public class PRecord extends ProducerRecord<String, SpecificRecordBase> {
 
     /**
      * Constructor
@@ -19,7 +20,7 @@ public class PRecord<K, V> extends ProducerRecord<K, V> {
      * @param value   value
      * @param headers headers
      */
-    public PRecord(final String topic, final K key, final V value, final RecordHeaders headers) {
+    public PRecord(final String topic, final String key, final SpecificRecordBase value, final RecordHeaders headers) {
         super(topic, null, key, value, headers.getList());
     }
 

@@ -3,9 +3,13 @@ package com.bbva.common.producers;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.common.producers.record.PRecord;
+import com.bbva.common.utils.serdes.SpecificAvroSerializer;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +24,11 @@ import java.util.concurrent.Future;
  *      final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
  *  }
  * </pre>
- *
- * @param <K> Type of Record schema
- * @param <V> Type of Record
  */
-public class DefaultProducer<K, V> implements com.bbva.common.producers.Producer<K, V> {
+public class DefaultProducer implements com.bbva.common.producers.Producer {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultProducer.class);
-    private final Producer<K, V> producer;
+    private final Producer producer;
 
     /**
      * Constructor
@@ -36,11 +37,30 @@ public class DefaultProducer<K, V> implements com.bbva.common.producers.Producer
      * @param keySerializer   serializer for the key
      * @param valueSerializer serializer for the value
      */
-    public DefaultProducer(final AppConfig appConfig, final Serializer<K> keySerializer,
-                           final Serializer<V> valueSerializer) {
+    public DefaultProducer(final AppConfig appConfig, final Serializer<String> keySerializer,
+                           final Serializer<SpecificRecordBase> valueSerializer) {
 
         producer = new KafkaProducer<>(appConfig.producer(), keySerializer, valueSerializer);
     }
+
+    /**
+     * Constructor
+     *
+     * @param appConfig       general configuration
+     * @param keySerializer   serializer for the key
+     * @param valueSerializer serializer for the value
+     */
+    public DefaultProducer(final AppConfig appConfig) {
+        final CachedSchemaRegistryClient schemaRegistry;
+        final String schemaRegistryUrl = appConfig.get(AppConfig.SCHEMA_REGISTRY_URL).toString();
+        schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 1000);
+
+        final Serializer keySerializer = Serdes.String().serializer();
+        final Serializer valueSerializer = new SpecificAvroSerializer<>(schemaRegistry);
+
+        producer = new KafkaProducer<>(appConfig.producer(), keySerializer, valueSerializer);
+    }
+
 
     /**
      * Save the record
@@ -50,7 +70,7 @@ public class DefaultProducer<K, V> implements com.bbva.common.producers.Producer
      * @return future with production result
      */
     @Override
-    public Future<RecordMetadata> send(final PRecord<K, V> record, final ProducerCallback callback) {
+    public Future<RecordMetadata> send(final PRecord record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
 
         final Future<RecordMetadata> result = producer.send(record, (metadata, e) -> {

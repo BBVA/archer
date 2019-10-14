@@ -1,9 +1,9 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.ddd.domain.changelogs.read.ChangelogHandlerContext;
-import com.bbva.ddd.domain.commands.read.CommandHandlerContext;
-import com.bbva.ddd.domain.events.read.EventHandlerContext;
+import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
+import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
+import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
 
 import java.util.Collections;
 import java.util.List;

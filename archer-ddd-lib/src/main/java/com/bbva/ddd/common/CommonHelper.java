@@ -2,8 +2,8 @@ package com.bbva.ddd.common;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
-import com.bbva.ddd.domain.commands.write.Command;
-import com.bbva.ddd.domain.events.write.Event;
+import com.bbva.ddd.domain.commands.producers.Command;
+import com.bbva.ddd.domain.events.producers.Event;
 
 import java.util.HashMap;
 import java.util.Map;

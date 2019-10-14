@@ -7,7 +7,6 @@ import com.bbva.common.consumers.record.CRecord;
  */
 public interface ConsumerContext {
 
-    void consumedRecord(CRecord record);
-
     CRecord consumedRecord();
+
 }

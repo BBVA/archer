@@ -1,8 +1,8 @@
 package com.bbva.gateway.aggregates;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.ddd.domain.aggregates.SpecificAggregate;
-import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.SpecificAggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
 import com.bbva.gateway.constants.Constants;
 
 /**

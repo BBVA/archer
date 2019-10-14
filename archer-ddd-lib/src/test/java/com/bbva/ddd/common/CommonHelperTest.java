@@ -2,11 +2,12 @@ package com.bbva.ddd.common;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.commands.write.Command;
-import com.bbva.ddd.domain.events.write.Event;
+import com.bbva.ddd.domain.commands.producers.Command;
+import com.bbva.ddd.domain.events.producers.Event;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -18,7 +19,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, CommonHelper.class})
+@PrepareForTest({TopicManager.class, CommonHelper.class, Command.class})
 public class CommonHelperTest {
 
     @DisplayName("Create common helper ok")
@@ -38,12 +39,15 @@ public class CommonHelperTest {
     public void sendCommandOk() throws Exception {
         PowerMockito.mockStatic(TopicManager.class);
         PowerMockito.whenNew(Command.class).withAnyArguments().thenReturn(PowerMockito.mock(Command.class));
-        AppConfig appConfig = ConfigBuilder.create();
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
-        final CommonHelper helper = new CommonHelper(appConfig);
-        final HelperDomain helperDomain = HelperDomain.create(appConfig);
+        ConfigBuilder.create();
+
+        final CommonHelper helper = new CommonHelper(new AppConfig());
+        final HelperDomain helperDomain = HelperDomain.create(new AppConfig());
         final Command command = helper.sendCommandTo("command");
         final Command commandWrite = helper.persistsCommandTo("command");
+
         Assertions.assertAll("sendCommandTo",
                 () -> Assertions.assertNotNull(command),
                 () -> Assertions.assertEquals(command, commandWrite)

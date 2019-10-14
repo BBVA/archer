@@ -1,11 +1,11 @@
 package com.bbva.ddd.domain.changelogs.aggregate;
 
 import com.bbva.common.exceptions.ApplicationException;
-import com.bbva.ddd.domain.aggregates.SpecificAggregate;
-import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
-import com.bbva.ddd.domain.aggregates.annotations.AggregateParent;
 import com.bbva.ddd.domain.callback.DefaultAggregateCallback;
-import com.bbva.ddd.domain.commands.write.records.PersonalData;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.SpecificAggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.AggregateParent;
+import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 
 @Aggregate(baseName = "aggregateBaseName")
 @AggregateParent(value = PersonalDataParentAggregate.class)

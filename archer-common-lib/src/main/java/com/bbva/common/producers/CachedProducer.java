@@ -9,6 +9,7 @@ import com.bbva.common.utils.serdes.SpecificAvroSerializer;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
@@ -56,7 +57,7 @@ public class CachedProducer {
      * @param <V>      class type of value
      * @return future with production result
      */
-    public <K, V> Future<RecordMetadata> add(final PRecord<K, V> record, final ProducerCallback callback) {
+    public Future<RecordMetadata> add(final PRecord record, final ProducerCallback callback) {
         return getProducer(record, null).send(record, callback);
     }
 
@@ -70,12 +71,12 @@ public class CachedProducer {
      * @param <V>        class type of value
      * @return future with production result
      */
-    public <K, V> Future<RecordMetadata> remove(final PRecord<K, V> record, final Class<V> valueClass, final ProducerCallback callback) {
+    public Future<RecordMetadata> remove(final PRecord record, final Class<SpecificRecordBase> valueClass, final ProducerCallback callback) {
         return getProducer(record, valueClass).send(record, callback);
     }
 
-    private <K, V> Producer<K, V> getProducer(final PRecord<K, V> record, final Class<V> valueClass) {
-        final Producer<K, V> producer;
+    private Producer getProducer(final PRecord record, final Class<SpecificRecordBase> valueClass) {
+        final Producer producer;
 
         if (appConfig.producer(AppConfig.ProducerProperties.ENABLE_IDEMPOTENCE).toString().equals("true")) {
             final String transactionalIdPrefix = appConfig.producer(AppConfig.ProducerProperties.TRANSACTIONAL_ID_PREFIX).toString();
@@ -92,16 +93,16 @@ public class CachedProducer {
             final Map<String, String> serdeProps = Collections.singletonMap(AppConfig.SCHEMA_REGISTRY_URL,
                     schemaRegistryUrl);
 
-            final Serializer<K> serializedKey = serializeFrom(record.key().getClass());
+            final Serializer<String> serializedKey = serializeFrom(record.key().getClass());
             serializedKey.configure(serdeProps, true);
             logger.info("Serializing key to {}", serializedKey.toString());
 
-            final Serializer<V> serializedValue = serializeFrom(record.value() != null ? record.value().getClass() : valueClass);
+            final Serializer<SpecificRecordBase> serializedValue = serializeFrom(record.value() != null ? record.value().getClass() : valueClass);
 
             serializedValue.configure(serdeProps, false);
             logger.info("Serializing value to {}", serializedValue.toString());
 
-            producer = new DefaultProducer<>(appConfig, serializedKey, serializedValue);
+            producer = new DefaultProducer(appConfig, serializedKey, serializedValue);
             cachedProducers.put(record.topic(), producer);
         }
 

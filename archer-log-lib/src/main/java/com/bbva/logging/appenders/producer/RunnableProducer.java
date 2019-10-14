@@ -33,7 +33,7 @@ public class RunnableProducer implements Runnable {
      */
     @Override
     public void run() {
-        final PRecord<String, LogEvent> record = new PRecord<>(
+        final PRecord record = new PRecord(
                 sourceName, eventLog.getTime().toString(), eventLog, new RecordHeaders());
 
         logsProducer.add(record, logsAppenderCallback);
