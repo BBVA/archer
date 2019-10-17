@@ -15,9 +15,9 @@ import com.bbva.ddd.domain.annotations.Event;
 import com.bbva.ddd.domain.annotations.Handler;
 import com.bbva.ddd.domain.callback.ActionHandler;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
-import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.ddd.util.AnnotationUtil;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
@@ -37,7 +37,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({AnnotationUtil.class, RepositoryImpl.class})
+@PrepareForTest({AnnotationUtil.class, HandlerContextImpl.class})
 @Handler
 public class AutoConfiguredHandlerTest {
 

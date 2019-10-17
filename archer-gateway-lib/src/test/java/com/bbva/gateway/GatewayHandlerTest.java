@@ -7,11 +7,11 @@ import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
-import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventRecord;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.util.CommandService;
@@ -31,7 +31,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({RepositoryImpl.class})
+@PrepareForTest({HandlerContextImpl.class})
 public class GatewayHandlerTest {
 
     @DisplayName("Create auto configured handler ok")

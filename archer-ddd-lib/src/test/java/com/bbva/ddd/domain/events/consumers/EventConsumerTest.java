@@ -8,8 +8,8 @@ import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.EventHeaderType;
-import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({Event.class, RepositoryImpl.class})
+@PrepareForTest({Event.class, HandlerContextImpl.class})
 public class EventConsumerTest {
 
     @DisplayName("Create event consumer and message ok")

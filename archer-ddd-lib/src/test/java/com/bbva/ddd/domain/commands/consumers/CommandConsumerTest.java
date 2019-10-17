@@ -8,8 +8,8 @@ import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
-import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.producers.Command;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({Command.class, RepositoryImpl.class})
+@PrepareForTest({Command.class, HandlerContextImpl.class})
 public class CommandConsumerTest {
 
     @DisplayName("Create command consumer and message ok")

@@ -51,14 +51,16 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
 
     private final CRecord referenceRecord;
 
-
     public RepositoryImpl(final CRecord referenceRecord) {
+        this(referenceRecord, new DefaultProducer(ConfigBuilder.get()));
+    }
+
+    public RepositoryImpl(final CRecord referenceRecord, final Producer producer) {
         aggregateUUID = UUID.randomUUID().toString();
-        producer = new DefaultProducer(ConfigBuilder.get());
+        this.producer = producer;
         repositoryCache = new RepositoryCache<>();
         this.referenceRecord = referenceRecord;
     }
-
 
     private void setDependencies(final Class<? extends AggregateBase> aggregateClass) {
 

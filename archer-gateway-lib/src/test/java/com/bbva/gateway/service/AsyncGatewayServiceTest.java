@@ -2,6 +2,7 @@ package com.bbva.gateway.service;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -74,6 +75,7 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Process record ok")
     @Test
     public void processRecordOk() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
 
         PowerMockito.mockStatic(HelperDomain.class);
@@ -101,6 +103,7 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Process reply record ok")
     @Test
     public void processReplyRecordOk() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
 
         final ObjectMapper om = new ObjectMapper();

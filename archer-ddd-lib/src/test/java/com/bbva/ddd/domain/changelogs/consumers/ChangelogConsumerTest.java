@@ -9,7 +9,7 @@ import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
-import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
+import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -28,7 +28,7 @@ import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({RepositoryImpl.class})
+@PrepareForTest({HandlerContextImpl.class})
 public class ChangelogConsumerTest {
 
     @DisplayName("Create changelog consumer and message ok")
