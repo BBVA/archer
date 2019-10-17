@@ -8,8 +8,8 @@ import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.EventHeaderType;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({Event.class, HandlerContextImpl.class})
+@PrepareForTest({Event.class, RepositoryImpl.class})
 public class EventConsumerTest {
 
     @DisplayName("Create event consumer and message ok")
@@ -42,7 +42,7 @@ public class EventConsumerTest {
         recordHeaders.add(EventHeaderType.NAME_KEY, new ByteArrayValue("create"));
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue("producerName"));
 
-        final EventHandlerContext eventHandlerContext = eventConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+        final EventHandlerContext eventHandlerContext = eventConsumer.context(null, new CRecord("topic", 1, 1, new Date().getTime(),
                 TimestampType.CREATE_TIME, "key", null, recordHeaders));
 
         Assertions.assertAll("EventConsumer",

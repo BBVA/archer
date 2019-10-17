@@ -1,8 +1,6 @@
 package com.bbva.ddd.domain.handlers;
 
-import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.producers.Producer;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
@@ -15,10 +13,15 @@ public class HandlerContextImpl implements HandlerContext {
     protected Repository repository;
     protected final Producer producer;
 
-    public HandlerContextImpl(final CRecord consumedRecord) {
+    public HandlerContextImpl(final Producer producer, final CRecord consumedRecord) {
         this.consumedRecord = consumedRecord;
-        producer = new DefaultProducer(ConfigBuilder.get());
-        repository = new RepositoryImpl<>(consumedRecord, producer);
+        this.producer = producer;
+        if (producer != null) {
+            repository = new RepositoryImpl<>(consumedRecord, producer);
+        } else {
+            repository = new RepositoryImpl<>(consumedRecord);
+        }
+
     }
 
     @Override

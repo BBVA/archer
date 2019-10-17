@@ -5,6 +5,7 @@ import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.DefaultConsumer;
 import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.Producer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.HelperDomain;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -37,7 +38,7 @@ public class RunnableConsumerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public ConsumerContext context(final CRecord c) {
+            public ConsumerContext context(final Producer producer, final CRecord c) {
                 return null;
             }
         };
@@ -60,7 +61,7 @@ public class RunnableConsumerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public ConsumerContext context(final CRecord c) {
+            public ConsumerContext context(final Producer producer, final CRecord c) {
                 return null;
             }
         };
@@ -88,7 +89,7 @@ public class RunnableConsumerTest {
         configuration.put(AppConfig.REPLAY_TOPICS, "topic1,topic2");
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public ConsumerContext context(final CRecord c) {
+            public ConsumerContext context(final Producer producer, final CRecord c) {
                 return null;
             }
         };

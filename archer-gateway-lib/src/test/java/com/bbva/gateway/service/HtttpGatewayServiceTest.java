@@ -107,7 +107,7 @@ public class HtttpGatewayServiceTest {
         recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("uuid"));
 
-        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(null, new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders)));
 

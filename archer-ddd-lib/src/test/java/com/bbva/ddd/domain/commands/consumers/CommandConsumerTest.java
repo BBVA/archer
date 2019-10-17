@@ -8,8 +8,8 @@ import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.producers.Command;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -26,7 +26,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({Command.class, HandlerContextImpl.class})
+@PrepareForTest({Command.class, RepositoryImpl.class})
 public class CommandConsumerTest {
 
     @DisplayName("Create command consumer and message ok")
@@ -43,7 +43,7 @@ public class CommandConsumerTest {
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
 
-        final CommandHandlerContext commandHandlerContext = commandConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+        final CommandHandlerContext commandHandlerContext = commandConsumer.context(null, new CRecord("topic", 1, 1, new Date().getTime(),
                 TimestampType.CREATE_TIME, "key", null, recordHeaders));
 
         Assertions.assertAll("EventConsumer",

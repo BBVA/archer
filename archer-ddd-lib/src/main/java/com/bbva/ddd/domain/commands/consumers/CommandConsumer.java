@@ -2,6 +2,7 @@ package com.bbva.ddd.domain.commands.consumers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.Producer;
 import com.bbva.ddd.domain.consumers.RunnableConsumer;
 
 import java.util.List;
@@ -27,8 +28,8 @@ public class CommandConsumer extends RunnableConsumer<CommandHandlerContext> {
     }
 
     @Override
-    public CommandHandlerContext context(final CRecord record) {
-        final CommandHandlerContext commandHandlerContext = new CommandHandlerContext(record);
+    public CommandHandlerContext context(final Producer producer, final CRecord record) {
+        final CommandHandlerContext commandHandlerContext = new CommandHandlerContext(producer, record);
         return commandHandlerContext;
     }
 

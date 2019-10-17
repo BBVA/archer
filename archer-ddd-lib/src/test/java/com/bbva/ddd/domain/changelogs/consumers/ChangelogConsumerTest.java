@@ -9,7 +9,6 @@ import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -19,7 +18,6 @@ import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,13 +26,11 @@ import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({HandlerContextImpl.class})
 public class ChangelogConsumerTest {
 
     @DisplayName("Create changelog consumer and message ok")
     @Test
     public void createChangelogConsumer() throws Exception {
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
@@ -51,7 +47,7 @@ public class ChangelogConsumerTest {
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, new ByteArrayValue("aggName"));
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, new ByteArrayValue("aggMethod"));
 
-        final ChangelogHandlerContext changelogHandlerContext = changelogConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+        final ChangelogHandlerContext changelogHandlerContext = changelogConsumer.context(PowerMockito.mock(DefaultProducer.class), new CRecord("topic", 1, 1, new Date().getTime(),
                 TimestampType.CREATE_TIME, "key", null, recordHeaders));
 
         Assertions.assertAll("ChangelogConsumer",

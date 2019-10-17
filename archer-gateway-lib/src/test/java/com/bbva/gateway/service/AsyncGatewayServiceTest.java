@@ -38,7 +38,7 @@ import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({HelperDomain.class, GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, StoreUtil.class, ReadableStore.class})
+@PrepareForTest({HelperDomain.class, GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, RepositoryImpl.class, StoreUtil.class, ReadableStore.class})
 public class AsyncGatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -91,7 +91,7 @@ public class AsyncGatewayServiceTest {
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
 
-        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(null, new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders)));
 
@@ -130,7 +130,7 @@ public class AsyncGatewayServiceTest {
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("referenceKey"));
 
-        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(null, new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders)));
 

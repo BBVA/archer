@@ -2,6 +2,7 @@ package com.bbva.ddd.domain.changelogs.consumers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.Producer;
 import com.bbva.ddd.domain.consumers.RunnableConsumer;
 
 import java.util.List;
@@ -28,8 +29,8 @@ public class ChangelogConsumer extends RunnableConsumer<ChangelogHandlerContext>
     }
 
     @Override
-    public ChangelogHandlerContext context(final CRecord record) {
-        final ChangelogHandlerContext changelogHandlerContext = new ChangelogHandlerContext(record);
+    public ChangelogHandlerContext context(final Producer producer, final CRecord record) {
+        final ChangelogHandlerContext changelogHandlerContext = new ChangelogHandlerContext(producer, record);
         return changelogHandlerContext;
     }
 }

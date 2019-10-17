@@ -2,6 +2,7 @@ package com.bbva.ddd.domain.events.consumers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.Producer;
 import com.bbva.ddd.domain.consumers.RunnableConsumer;
 
 import java.util.List;
@@ -26,8 +27,8 @@ public class EventConsumer extends RunnableConsumer<EventHandlerContext> {
     }
 
     @Override
-    public EventHandlerContext context(final CRecord record) {
-        final EventHandlerContext eventHandlerContext = new EventHandlerContext(record);
+    public EventHandlerContext context(final Producer producer, final CRecord record) {
+        final EventHandlerContext eventHandlerContext = new EventHandlerContext(producer, record);
         return eventHandlerContext;
     }
 

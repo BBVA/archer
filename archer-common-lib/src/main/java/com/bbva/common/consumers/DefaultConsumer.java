@@ -3,6 +3,7 @@ package com.bbva.common.consumers;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.Producer;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
@@ -61,7 +62,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
         specificSerde.configure(serdeProps, false);
     }
 
-    public abstract T context(CRecord consumedRecord);
+    public abstract T context(Producer producer, CRecord consumedRecord);
 
     /**
      * Replay a list of topics
@@ -110,7 +111,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                             for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
                                 currentOffset = record.offset();
                                 if (currentOffset <= lastOffset - 1) {
-                                    callback.accept(context(new CRecord(record.topic(), record.partition(), record.offset(),
+                                    callback.accept(context(null, new CRecord(record.topic(), record.partition(), record.offset(),
                                             record.timestamp(), record.timestampType(), record.key(), record.value(),
                                             new RecordHeaders(record.headers()))));
 
@@ -152,7 +153,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
             while (!closed.get()) {
                 final ConsumerRecords<String, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
                 for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
-                    callback.accept(context(new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
+                    callback.accept(context(null, new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
                             record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers()))));
 
                     currentOffsets.put(

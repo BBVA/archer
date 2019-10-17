@@ -15,9 +15,9 @@ import com.bbva.ddd.domain.annotations.Event;
 import com.bbva.ddd.domain.annotations.Handler;
 import com.bbva.ddd.domain.callback.ActionHandler;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.ddd.util.AnnotationUtil;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
@@ -37,7 +37,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({AnnotationUtil.class, HandlerContextImpl.class})
+@PrepareForTest({AnnotationUtil.class, RepositoryImpl.class})
 @Handler
 public class AutoConfiguredHandlerTest {
 
@@ -105,7 +105,7 @@ public class AutoConfiguredHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
-            handler.processCommand(new CommandHandlerContext(new CRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+            handler.processCommand(new CommandHandlerContext(null, new CRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
@@ -126,7 +126,7 @@ public class AutoConfiguredHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
-            handler.processEvent(new EventHandlerContext(new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+            handler.processEvent(new EventHandlerContext(null, new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
@@ -146,7 +146,7 @@ public class AutoConfiguredHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
-            handler.processDataChangelog(new ChangelogHandlerContext(new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+            handler.processDataChangelog(new ChangelogHandlerContext(null, new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", null, recordHeaders)));
         } catch (final Exception e) {
             ex = e;
