@@ -4,9 +4,9 @@ import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.ddd.domain.Domain;
 import com.bbva.ddd.domain.DomainBuilder;
 import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
+import com.bbva.gateway.builders.dataflows.states.HeaderAsKeyStateBuilder;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
-import com.bbva.gateway.consumer.builder.ChangelogKeyBuilder;
 
 import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;
 import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
@@ -65,7 +65,7 @@ public class Gateway {
      */
     protected void start() {
         DataProcessor.get()
-                .add(INTERNAL_SUFFIX + KEY_SUFFIX, new ChangelogKeyBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
+                .add(INTERNAL_SUFFIX + KEY_SUFFIX, new HeaderAsKeyStateBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
 
         domain.start();
     }

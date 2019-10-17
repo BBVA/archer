@@ -4,7 +4,6 @@ import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateFactory;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
@@ -30,7 +29,7 @@ import java.util.Date;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest({AggregateFactory.class, HelperDomain.class, GatewayService.class, Response.class, RetrofitClient.class})
+@PrepareForTest({HelperDomain.class, GatewayService.class, Response.class, RetrofitClient.class})
 public class HttpAsyncGatewayServiceTest {
 
     @DisplayName("Create service ok")

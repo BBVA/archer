@@ -2,7 +2,7 @@ package com.bbva.logging.appenders;
 
 import com.bbva.avro.LogEvent;
 import com.bbva.common.config.ConfigBuilder;
-import com.bbva.common.producers.CachedProducer;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.logging.appenders.producer.RunnableProducer;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.MDC;
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 public class LogsAppender extends AppenderSkeleton {
 
     private static final String DEFAULT_BASE_NAME = "logs_events";
-    private CachedProducer logsProducer;
+    private DefaultProducer logsProducer;
     private String hostName;
     private String logsSinkName;
     private final ExecutorService executor = Executors.newFixedThreadPool(1);
@@ -44,7 +44,7 @@ public class LogsAppender extends AppenderSkeleton {
             hostName = "UnknownHost";
         }
 
-        logsProducer = new CachedProducer(ConfigBuilder.create());
+        logsProducer = new DefaultProducer(ConfigBuilder.create());
 
     }
 

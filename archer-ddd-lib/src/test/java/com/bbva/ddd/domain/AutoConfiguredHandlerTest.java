@@ -1,7 +1,9 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -13,6 +15,7 @@ import com.bbva.ddd.domain.annotations.Event;
 import com.bbva.ddd.domain.annotations.Handler;
 import com.bbva.ddd.domain.callback.ActionHandler;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
 import com.bbva.ddd.util.AnnotationUtil;
@@ -34,7 +37,7 @@ import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest(AnnotationUtil.class)
+@PrepareForTest({AnnotationUtil.class, RepositoryImpl.class})
 @Handler
 public class AutoConfiguredHandlerTest {
 
@@ -85,6 +88,9 @@ public class AutoConfiguredHandlerTest {
     @Test
     @Command(commandAction = "action", baseName = "base")
     public void processCommand() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        ConfigBuilder.create();
+
         final List<Class> lstClasses = new ArrayList<>();
         lstClasses.add(ActionHandler.class);
 
@@ -107,10 +113,13 @@ public class AutoConfiguredHandlerTest {
         Assertions.assertNull(ex);
     }
 
-    @DisplayName("process not handle command ok")
+    @DisplayName("process not handle event ok")
     @Test
     @Event(baseName = "base")
-    public void processEvent() {
+    public void processEvent() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        ConfigBuilder.create();
+
         final AutoConfiguredHandler handler = new AutoConfiguredHandler();
         Exception ex = null;
         try {
@@ -128,7 +137,9 @@ public class AutoConfiguredHandlerTest {
     @DisplayName("process not handle data changelog ok")
     @Test
     @Changelog(baseName = "base")
-    public void processDataChangelog() {
+    public void processDataChangelog() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        ConfigBuilder.create();
         final AutoConfiguredHandler handler = new AutoConfiguredHandler();
         Exception ex = null;
         try {

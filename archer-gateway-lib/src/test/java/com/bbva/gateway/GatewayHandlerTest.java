@@ -1,10 +1,13 @@
 package com.bbva.gateway;
 
 import com.bbva.common.config.AppConfig;
+import com.bbva.common.producers.DefaultProducer;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
@@ -16,17 +19,19 @@ import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
+import org.junit.gen5.api.extension.ExtendWith;
 import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.reflect.Whitebox;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @RunWith(JUnit5.class)
+@ExtendWith(PowermockExtension.class)
+@PrepareForTest({RepositoryImpl.class})
 public class GatewayHandlerTest {
 
     @DisplayName("Create auto configured handler ok")
@@ -60,12 +65,10 @@ public class GatewayHandlerTest {
     @DisplayName("process not handle command ok")
     @Test
     public void processCommand() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+
         final List<Class> lstClasses = new ArrayList<>();
         lstClasses.add(CommandService.class);
-
-        PowerMockito.spy(ConfigBuilder.class);
-        final Method m = Whitebox.getMethod(ConfigBuilder.class, "getServiceClasses", String.class);
-        PowerMockito.doReturn(lstClasses).when(ConfigBuilder.class, m).withArguments("com.bbva");
 
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
         final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));
@@ -85,7 +88,8 @@ public class GatewayHandlerTest {
 
     @DisplayName("process not handle event ok")
     @Test
-    public void processEvent() {
+    public void processEvent() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
         final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));
 

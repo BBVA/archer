@@ -2,6 +2,7 @@ package com.bbva.ddd.domain.events.producers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.CachedProducer;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
@@ -32,8 +33,8 @@ public class EventTest {
     @DisplayName("Create event and send produce ok")
     @Test
     public void createEventOk() throws Exception {
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
         HelperDomain.create(new AppConfig());
 
@@ -51,8 +52,8 @@ public class EventTest {
     @DisplayName("Create event and send produce ProduceException ok")
     @Test
     public void createEventKo() throws Exception {
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
             HelperDomain.create(new AppConfig());
@@ -67,8 +68,8 @@ public class EventTest {
     @DisplayName("Create event and send produce ProduceException ok")
     @Test
     public void createEventKeyKo() throws Exception {
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
             HelperDomain.create(new AppConfig());
@@ -82,8 +83,8 @@ public class EventTest {
     @DisplayName("Create event and send produce ProduceException ok")
     @Test
     public void createEvent2Ko() throws Exception {
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
             HelperDomain.create(new AppConfig());
@@ -97,8 +98,8 @@ public class EventTest {
     @DisplayName("Create event and send produce ProduceException ok")
     @Test
     public void createEvent3Ko() throws Exception {
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.doThrow(new ProduceException()).when(producer, "add", Mockito.any(), Mockito.any());
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
             HelperDomain.create(new AppConfig());

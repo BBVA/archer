@@ -2,10 +2,8 @@ package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.common.producers.CachedProducer;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateFactory;
-import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.events.producers.Event;
 import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.ddd.util.StoreUtil;
@@ -40,7 +38,7 @@ public abstract class GatewayService<T>
     private int seconds;
     private int attemps;
     protected static String baseName;
-    protected static CachedProducer producer;
+    protected static DefaultProducer producer;
 
     /**
      * {@inheritDoc}
@@ -71,11 +69,11 @@ public abstract class GatewayService<T>
             final TransactionChangelog transactionChangelog = findChangelogByReference(record);
             if (transactionChangelog != null) {
                 final T response = parseChangelogFromString(transactionChangelog.getOutput());
-                saveChangelogAndProcessOutput(record, response, true);
+                saveChangelogAndProcessOutput(context, response, true);
             }
         } else {
             final T response = attemp(record, 0);
-            saveChangelogAndProcessOutput(record, response, false);
+            saveChangelogAndProcessOutput(context, response, false);
         }
     }
 
@@ -89,11 +87,11 @@ public abstract class GatewayService<T>
         return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY.getName()).asString());
     }
 
-    private void saveChangelogAndProcessOutput(final CRecord record, final T response, final boolean replay) {
+    private void saveChangelogAndProcessOutput(final HandlerContextImpl context, final T response, final boolean replay) {
         if (!replay) {
-            saveChangelog(record, response, false);
+            saveChangelog(context, response);
         }
-        processResult(record, response);
+        processResult(context.consumedRecord(), response);
     }
 
     /**
@@ -202,18 +200,15 @@ public abstract class GatewayService<T>
     /**
      * Save a changelog with original record and response
      *
-     * @param originRecord original record
-     * @param response     response
-     * @param replayMode   true/false
+     * @param context  original context
+     * @param response response
      */
-    protected void saveChangelog(final CRecord originRecord, final T response, final boolean replayMode) {
+    protected void saveChangelog(final HandlerContextImpl context, final T response) {
+        final CRecord originalRecord = context.consumedRecord();
         final String id = UUID.randomUUID().toString();
-        final TransactionChangelog outputEvent = new TransactionChangelog(id, originRecord.value().toString(), parseChangelogToString(response));
+        final TransactionChangelog outputEvent = new TransactionChangelog(id, originalRecord.value().toString(), parseChangelogToString(response));
 
-        final CommandRecord record = new CommandRecord(originRecord.topic(), originRecord.partition(), originRecord.offset(), originRecord.timestamp(),
-                originRecord.timestampType(), originRecord.key(), originRecord.value(), originRecord.recordHeaders());
-
-        AggregateFactory.create(GatewayAggregate.class, id, outputEvent, record, GatewayService::handleOutPutted);
+        context.repository().create(GatewayAggregate.class, id, outputEvent, GatewayService::handleOutPutted);
     }
 
     /**

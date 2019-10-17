@@ -19,7 +19,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, CommonHelper.class, Command.class})
+@PrepareForTest({TopicManager.class, CommonHelper.class, Command.class, Event.class})
 public class CommonHelperTest {
 
     @DisplayName("Create common helper ok")
@@ -60,7 +60,10 @@ public class CommonHelperTest {
     public void sendEventOk() throws Exception {
         PowerMockito.mockStatic(TopicManager.class);
         PowerMockito.whenNew(Event.class).withAnyArguments().thenReturn(PowerMockito.mock(Event.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+
         ConfigBuilder.create();
+
         final CommonHelper helper = new CommonHelper(new AppConfig());
         final Event event = helper.sendEventTo("event");
         final Event eventCached = helper.sendEventTo("event");

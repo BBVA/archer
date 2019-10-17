@@ -1,4 +1,4 @@
-package com.bbva.gateway.consumer.transformer;
+package com.bbva.gateway.transformers;
 
 
 import com.bbva.common.utils.ByteArrayValue;
@@ -13,14 +13,14 @@ import org.apache.kafka.streams.KeyValue;
  * @param <K> Key type
  * @param <V> Value type
  */
-public class ChangelogTransformer<K, V> extends EntityTransformer<K, V> {
+public class HeaderAsKeyStateTransformer<K, V> extends EntityTransformer<K, V> {
 
     /**
      * Constructor
      *
      * @param stateStoreName state store
      */
-    public ChangelogTransformer(final String stateStoreName) {
+    public HeaderAsKeyStateTransformer(final String stateStoreName) {
         super(stateStoreName);
     }
 

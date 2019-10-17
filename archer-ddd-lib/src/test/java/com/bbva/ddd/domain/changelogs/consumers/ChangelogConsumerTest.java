@@ -4,17 +4,22 @@ import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.CachedProducer;
+import com.bbva.common.producers.DefaultProducer;
+import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
+import org.junit.gen5.api.extension.ExtendWith;
 import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,11 +27,15 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
+@ExtendWith(PowermockExtension.class)
+@PrepareForTest({RepositoryImpl.class})
 public class ChangelogConsumerTest {
 
     @DisplayName("Create changelog consumer and message ok")
     @Test
     public void createChangelogConsumer() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+
         final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
         PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
         PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));

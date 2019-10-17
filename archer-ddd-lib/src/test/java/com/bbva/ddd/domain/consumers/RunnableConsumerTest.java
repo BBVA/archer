@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain;
+package com.bbva.ddd.domain.consumers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
@@ -6,7 +6,7 @@ import com.bbva.common.consumers.DefaultConsumer;
 import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
-import com.bbva.ddd.domain.consumers.RunnableConsumer;
+import com.bbva.ddd.domain.HelperDomain;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -50,6 +50,33 @@ public class RunnableConsumerTest {
     @DisplayName("Create Consumer ok")
     @Test
     public void runConsumerOk() throws Exception {
+        final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
+        PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
+        final Map<TopicPartition, List<ConsumerRecord<String, String>>> records = new HashMap<>();
+        final List<ConsumerRecord<String, String>> consumerRecords = new ArrayList<>();
+        records.put(new TopicPartition("topic", 0), consumerRecords);
+        PowerMockito.when(kafkaConsumer, "poll", Mockito.any()).thenReturn(new ConsumerRecords<>(records));
+
+        final AppConfig configuration = ConfigBuilder.create();
+        final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
+            @Override
+            public ConsumerContext context(final CRecord c) {
+                return null;
+            }
+        };
+        HelperDomain.create(configuration);
+        new Thread(() -> consumer.run()).start();
+        Thread.sleep(500);
+        consumer.shutdown();
+
+        Assertions.assertAll("RunnableConsumer",
+                () -> Assertions.assertNotNull(consumer)
+        );
+    }
+
+    @DisplayName("Create Consumer with replay ok")
+    @Test
+    public void runConsumerWitReplayOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
         final Map<TopicPartition, List<ConsumerRecord<String, String>>> records = new HashMap<>();

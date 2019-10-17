@@ -1,7 +1,6 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
@@ -10,19 +9,17 @@ import com.bbva.dataprocessors.builders.dataflows.states.GroupByFieldStateBuilde
 import com.bbva.dataprocessors.builders.dataflows.states.UniqueFieldStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogConsumer;
-import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
-import com.bbva.ddd.domain.changelogs.repository.Repository;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.exceptions.AggregateDependenciesException;
 import com.bbva.ddd.domain.commands.consumers.CommandConsumer;
 import com.bbva.ddd.domain.consumers.RunnableConsumer;
 import com.bbva.ddd.domain.events.consumers.EventConsumer;
-import com.bbva.ddd.util.AnnotationUtil;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -63,7 +60,7 @@ public class DomainBuilder implements Domain {
 
         this.appConfig = appConfig;
         DataProcessor.create(this.appConfig);
-        initRepositories();
+        //initRepositories();
     }
 
     protected DomainBuilder(final AppConfig appConfig) {
@@ -236,7 +233,7 @@ public class DomainBuilder implements Domain {
         return app;
     }
 
-    protected void initRepositories() {
+    /*protected void initRepositories() {
         final Map<String, Class<? extends AggregateBase>> aggregatesMap = AnnotationUtil.mapAggregates(handler);
         final Map<String, Repository> repositories = new HashMap<>();
 
@@ -245,7 +242,7 @@ public class DomainBuilder implements Domain {
                 throw new ApplicationException("Aggregate cannot be null");
             }
             try {
-                repositories.put(baseName, new Repository(baseName, aggregateClass, appConfig));
+                repositories.put(baseName, new RepositoryImpl(null));
             } catch (final AggregateDependenciesException e) {
                 logger.error("Error aggregating dependencies", e);
             }
@@ -259,7 +256,7 @@ public class DomainBuilder implements Domain {
         Repositories.getInstance().setRepositories(repositories);
 
         logger.info("Repositories initialized with Aggregates");
-    }
+    }*/
 
     protected void initHandlers() {
         final int numConsumers = 1;

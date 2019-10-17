@@ -1,9 +1,7 @@
-package com.bbva.ddd.domain.changelogs;
+package com.bbva.ddd.domain.changelogs.repository;
 
 import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
-import com.bbva.ddd.domain.changelogs.repository.Repository;
-import com.bbva.ddd.domain.changelogs.repository.RepositoryCache;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;

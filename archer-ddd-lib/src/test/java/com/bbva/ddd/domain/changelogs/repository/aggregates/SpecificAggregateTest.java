@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain.aggregates;
+package com.bbva.ddd.domain.changelogs.repository.aggregates;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.CachedProducer;

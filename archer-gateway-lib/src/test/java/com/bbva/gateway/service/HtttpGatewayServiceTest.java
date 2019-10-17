@@ -1,12 +1,14 @@
 package com.bbva.gateway.service;
 
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateFactory;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
 import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.gateway.GatewayTest;
@@ -41,7 +43,7 @@ import java.util.HashMap;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest({AggregateFactory.class, HelperDomain.class, Event.class, GatewayService.class, RetrofitClient.class, Response.class})
+@PrepareForTest({RepositoryImpl.class, HelperDomain.class, Event.class, HandlerContextImpl.class, GatewayService.class, RetrofitClient.class, Response.class})
 public class HtttpGatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -82,9 +84,10 @@ public class HtttpGatewayServiceTest {
     @DisplayName("Process record ok")
     @Test
     public void processRecordOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         PowerMockito.mockStatic(HelperDomain.class);
         PowerMockito.mockStatic(RetrofitClient.class);
+        PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
 
         final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
         PowerMockito.when(HelperDomain.get()).thenReturn(helperDomain);
@@ -101,6 +104,8 @@ public class HtttpGatewayServiceTest {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type"));
+        recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("uuid"));
 
         service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",

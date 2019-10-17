@@ -2,14 +2,15 @@ package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateFactory;
-import com.bbva.ddd.domain.commands.consumers.CommandRecord;
+import com.bbva.ddd.domain.changelogs.repository.Repository;
 import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.service.IAsyncGatewayService;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Asynchronous gateway service implementation
@@ -19,6 +20,8 @@ import java.lang.reflect.ParameterizedType;
 public abstract class AsyncGatewayService<T>
         extends GatewayService<T>
         implements IAsyncGatewayService<T> {
+
+    private static final Map<String, Repository> respositoryCached = new HashMap<>();
 
     /**
      * {@inheritDoc}
@@ -31,11 +34,11 @@ public abstract class AsyncGatewayService<T>
 
             if (transactionChangelog != null) {
                 final T response = parseChangelogFromString(transactionChangelog.getOutput());
-                saveChangelog(record, response, true);
+                saveChangelog(context, response);
             }
         } else {
             final T response = attemp(record, 0);
-            saveChangelog(record, response, false);
+            saveChangelog(context, response);
         }
     }
 
@@ -60,14 +63,14 @@ public abstract class AsyncGatewayService<T>
      * {@inheritDoc}
      */
     @Override
-    protected void saveChangelog(final CRecord originalRecord, final T response, final boolean replayMode) {
+    protected void saveChangelog(final HandlerContextImpl context, final T response) {
+        final CRecord originalRecord = context.consumedRecord();
         final String id = getId(response);
+        respositoryCached.put(id, context.repository());
         final TransactionChangelog outputEvent = new TransactionChangelog(id, originalRecord.value().toString(), parseChangelogToString(response));
 
-        final CommandRecord record = new CommandRecord(originalRecord.topic(), originalRecord.partition(), originalRecord.offset(), originalRecord.timestamp(),
-                originalRecord.timestampType(), originalRecord.key(), originalRecord.value(), originalRecord.recordHeaders());
+        context.repository().create(GatewayAggregate.class, id, outputEvent, GatewayService::handleOutPutted);
 
-        AggregateFactory.create(GatewayAggregate.class, id, outputEvent, record, GatewayService::handleOutPutted);
         createListener(originalRecord, response);
     }
 
@@ -91,11 +94,16 @@ public abstract class AsyncGatewayService<T>
      * @param body body
      */
     public static void saveChangelog(final String iden, final String body) {
-        final TransactionChangelog changelog = AggregateFactory.load(GatewayAggregate.class, iden).getData();
-        if (changelog != null) {
-            final TransactionChangelog outputEvent = new TransactionChangelog(iden, changelog.getOutput(), body);
+        final Repository callRepository = respositoryCached.get(iden);
+        if (callRepository != null) {
+            final TransactionChangelog changelog = callRepository.load(GatewayAggregate.class, iden).getData();
+            if (changelog != null) {
+                final TransactionChangelog outputEvent = new TransactionChangelog(iden, changelog.getOutput(), body);
 
-            AggregateFactory.create(GatewayAggregate.class, iden, outputEvent, null, GatewayService::handleOutPutted);
+                callRepository.create(GatewayAggregate.class, iden, outputEvent, GatewayService::handleOutPutted);
+            }
+            respositoryCached.remove(iden);
         }
+
     }
 }

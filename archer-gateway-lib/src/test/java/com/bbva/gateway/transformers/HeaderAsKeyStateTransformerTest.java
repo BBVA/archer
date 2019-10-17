@@ -1,7 +1,6 @@
-package com.bbva.gateway.consumer;
+package com.bbva.gateway.transformers;
 
-import com.bbva.gateway.consumer.headers.ChangelogHeaders;
-import com.bbva.gateway.consumer.transformer.ChangelogTransformer;
+import com.bbva.gateway.transformers.headers.ChangelogHeaders;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.processor.ProcessorContext;
@@ -15,13 +14,13 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 
 @RunWith(JUnit5.class)
-public class ChangelogTransformerTest {
+public class HeaderAsKeyStateTransformerTest {
 
     @DisplayName("Create changelog transformer and merge keys ok")
     @Test
     public void createTransformerAndMergeKeysOk() {
 
-        final ChangelogTransformer changelogTransformer = new ChangelogTransformer("base");
+        final HeaderAsKeyStateTransformer changelogTransformer = new HeaderAsKeyStateTransformer("base");
 
         Assertions.assertAll("ChangelogTransformer",
                 () -> Assertions.assertNotNull(changelogTransformer)
@@ -40,7 +39,7 @@ public class ChangelogTransformerTest {
         PowerMockito.when(processorContext, "headers").thenReturn(headers);
         PowerMockito.when(keyValueStore, "get", Mockito.any(String.class)).thenReturn(null);
 
-        final ChangelogTransformer uniqueFieldTransformer = new ChangelogTransformer("base");
+        final HeaderAsKeyStateTransformer uniqueFieldTransformer = new HeaderAsKeyStateTransformer("base");
         uniqueFieldTransformer.init(processorContext);
         final KeyValue transformed = uniqueFieldTransformer.transform("key", "new-value");
 

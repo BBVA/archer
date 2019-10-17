@@ -2,6 +2,7 @@ package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.CachedProducer;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
@@ -31,7 +32,7 @@ public class DomainBuilderTest {
     @Test
     public void createDomain() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         final Domain domain = DomainBuilder.create(new AppConfig());
         final Domain domainCached = DomainBuilder.get();
@@ -44,18 +45,18 @@ public class DomainBuilderTest {
     @Test
     public void getCreateDomain() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
-        Assertions.assertThrows(NullPointerException.class, () -> DomainBuilder.get());
+        Assertions.assertNotNull(DomainBuilder.get());
     }
 
     @DisplayName("Create domain ko")
     @Test
     public void getCreateDomainWithoutConfig() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
-        Assertions.assertThrows(NullPointerException.class, () -> DomainBuilder.get());
+        Assertions.assertNotNull(DomainBuilder.get());
     }
 
     @DisplayName("Add processors to domain ok")
@@ -63,7 +64,7 @@ public class DomainBuilderTest {
     public void addProcessors() throws Exception {
 
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         Domain domain = DomainBuilder.create(new AppConfig());
         domain = domain.addDataProcessorBuilder(new CreateStreamQueryBuilder("query-builder"));
@@ -79,7 +80,7 @@ public class DomainBuilderTest {
     public void indexFieldAndGroupBy() throws Exception {
 
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new AppConfig());
         domain = domain.indexFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
@@ -95,7 +96,7 @@ public class DomainBuilderTest {
     @Test
     public void startDomian() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedProducer.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         PowerMockito.whenNew(CommandConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(CommandConsumer.class));
         PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
         PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));

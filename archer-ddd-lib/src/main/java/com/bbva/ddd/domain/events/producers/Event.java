@@ -2,7 +2,8 @@ package com.bbva.ddd.domain.events.producers;
 
 import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.common.producers.CachedProducer;
+import com.bbva.common.producers.DefaultProducer;
+import com.bbva.common.producers.Producer;
 import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.ByteArrayValue;
@@ -27,7 +28,7 @@ public class Event {
 
     private static final Logger logger = LoggerFactory.getLogger(Event.class);
 
-    private final CachedProducer producer;
+    private final Producer producer;
     private final String topic;
     private final String key;
     private final String producerName;
@@ -35,7 +36,7 @@ public class Event {
     private final RecordHeaders headers;
     final CRecord referenceRecord;
 
-    private Event(final CachedProducer producer, final String topic, final String key, final String producerName, final SpecificRecordBase value, final CRecord referenceRecord, final RecordHeaders headers) {
+    private Event(final Producer producer, final String topic, final String key, final String producerName, final SpecificRecordBase value, final CRecord referenceRecord, final RecordHeaders headers) {
         this.producer = producer;
         this.topic = topic;
         this.key = key;
@@ -48,7 +49,7 @@ public class Event {
     public EventRecordMetadata send(final ProducerCallback callback) {
         logger.debug("Generating event by {}", producerName);
 
-        final Future<RecordMetadata> result = producer.add(new PRecord(topic, key, value, headers), callback);
+        final Future<RecordMetadata> result = producer.send(new PRecord(topic, key, value, headers), callback);
 
         final EventRecordMetadata recordedMessageMetadata;
         try {
@@ -64,7 +65,7 @@ public class Event {
 
     public static class Builder {
 
-        private final CachedProducer producer;
+        private final Producer producer;
         private String producerName;
         private String to;
         private String name;
@@ -75,11 +76,11 @@ public class Event {
 
 
         public Builder(final CRecord record) {
-            producer = new CachedProducer(ConfigBuilder.get());
+            producer = new DefaultProducer(ConfigBuilder.get());
             referenceRecord = record;
         }
 
-        public Builder(final CachedProducer producer, final CRecord record) {
+        public Builder(final Producer producer, final CRecord record) {
             this.producer = producer;
             referenceRecord = record;
         }

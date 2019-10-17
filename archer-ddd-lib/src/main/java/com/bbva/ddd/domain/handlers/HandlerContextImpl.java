@@ -2,15 +2,18 @@ package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.producers.Command;
 import com.bbva.ddd.domain.events.producers.Event;
 
 public class HandlerContextImpl implements HandlerContext {
 
     protected CRecord consumedRecord;
+    protected Repository repository;
 
     public HandlerContextImpl(final CRecord consumedRecord) {
         this.consumedRecord = consumedRecord;
+        repository = new RepositoryImpl<>(consumedRecord);
     }
 
     @Override
@@ -21,7 +24,7 @@ public class HandlerContextImpl implements HandlerContext {
 
     @Override
     public Repository repository() {
-        return null;
+        return repository;
     }
 
     @Override

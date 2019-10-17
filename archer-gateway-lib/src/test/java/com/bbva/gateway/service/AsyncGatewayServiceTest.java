@@ -9,12 +9,11 @@ import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateFactory;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
 import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
-import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.service.impl.AsyncGatewayService;
@@ -38,7 +37,7 @@ import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({AggregateFactory.class, HelperDomain.class, GatewayService.class, StoreUtil.class, ReadableStore.class})
+@PrepareForTest({HelperDomain.class, GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, StoreUtil.class, ReadableStore.class})
 public class AsyncGatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -75,7 +74,8 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Process record ok")
     @Test
     public void processRecordOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
+        PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
+
         PowerMockito.mockStatic(HelperDomain.class);
 
         final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
@@ -101,9 +101,10 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Process reply record ok")
     @Test
     public void processReplyRecordOk() throws Exception {
+        PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
+
         final ObjectMapper om = new ObjectMapper();
 
-        PowerMockito.mockStatic(AggregateFactory.class);
         PowerMockito.mockStatic(HelperDomain.class);
         PowerMockito.mockStatic(StoreUtil.class);
 
@@ -135,11 +136,7 @@ public class AsyncGatewayServiceTest {
 
     @DisplayName("Save changelog ok")
     @Test
-    public void saveChangelogOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
-
-
-        PowerMockito.when(AggregateFactory.class, "load", Mockito.any(), Mockito.any()).thenReturn(new GatewayAggregate("iden", new TransactionChangelog()));
+    public void saveChangelogOk() {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         AsyncGatewayService.saveChangelog("iden", "body");
@@ -151,10 +148,7 @@ public class AsyncGatewayServiceTest {
 
     @DisplayName("Save null changelog ok")
     @Test
-    public void saveNullChangelogOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
-
-        PowerMockito.when(AggregateFactory.class, "load", Mockito.any(), Mockito.any()).thenReturn(new GatewayAggregate("iden", null));
+    public void saveNullChangelogOk() {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         AsyncGatewayService.saveChangelog("iden", "body");
