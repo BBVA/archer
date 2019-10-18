@@ -2,7 +2,6 @@ package com.bbva.ddd.domain.changelogs.repository;
 
 import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.exceptions.ApplicationException;
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.producers.records.SpecificRecordBaseImpl;
 import com.bbva.common.util.PowermockExtension;
@@ -30,7 +29,7 @@ import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({CachedProducer.class, RepositoryImpl.class})
+@PrepareForTest({RepositoryImpl.class})
 public class RepositoryImplTest {
 
     @DisplayName("Create repository ok")
@@ -105,7 +104,7 @@ public class RepositoryImplTest {
         final Repository repository = new RepositoryImpl<>(referenceRecord);
         repository.create(PersonalDataAggregate.class, "key", new SpecificRecordBaseImpl(), null);
         repository.create(PersonalDataAggregate.class, "key", new SpecificRecordBaseImpl(), null);
-        
+
         final AggregateBase aggregateBase = repository.load(PersonalDataAggregate.class, "key");
 
         Assertions.assertNotNull(aggregateBase);

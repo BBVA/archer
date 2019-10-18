@@ -1,7 +1,6 @@
 package com.bbva.ddd.domain.changelogs.repository.aggregates;
 
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
 import com.bbva.ddd.domain.changelogs.aggregate.PersonalDataAggregate;
@@ -21,7 +20,7 @@ import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({CachedProducer.class, Repository.class})
+@PrepareForTest({Repository.class})
 public class SpecificAggregateTest {
 
     @DisplayName("Create aggregate ok")

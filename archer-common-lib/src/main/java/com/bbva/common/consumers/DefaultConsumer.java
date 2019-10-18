@@ -23,8 +23,7 @@ import java.util.function.Consumer;
 /**
  * Default consumer implementation
  *
- * @param <V> Type of Record schema
- * @param <T> Type of Record
+ * @param <T> Consumer context type to manage new messages
  */
 public abstract class DefaultConsumer<T extends ConsumerContext> {
     private static final Logger logger = LoggerFactory.getLogger(DefaultConsumer.class);
@@ -62,6 +61,13 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
         specificSerde.configure(serdeProps, false);
     }
 
+    /**
+     * Create context to manage new message
+     *
+     * @param producer       producer
+     * @param consumedRecord record message
+     * @return context
+     */
     public abstract T context(Producer producer, CRecord consumedRecord);
 
     /**
@@ -118,7 +124,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                                     currentOffsets.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
                                     consumer.commitAsync(currentOffsets, (offsets, e) -> {
                                         if (e != null) {
-                                            logger.error("Commit failed for offsets {}", offsets, e);
+                                            logger.error("Commit failed for offsets " + offsets, e);
                                         }
                                     });
 
@@ -161,7 +167,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                             new OffsetAndMetadata(record.offset() + 1));
                     consumer.commitAsync(currentOffsets, (offsets, e) -> {
                         if (e != null) {
-                            logger.error("Commit failed for offsets {}", offsets, e);
+                            logger.error("Commit failed for offsets " + offsets, e);
                         }
                     });
                 }

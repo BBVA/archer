@@ -1,6 +1,5 @@
 package com.bbva.ddd.domain.changelogs.repository;
 
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 import org.junit.gen5.api.Assertions;
@@ -13,7 +12,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({CachedProducer.class, Repository.class})
+@PrepareForTest({Repository.class})
 public class RepositoryCacheTest {
 
     @DisplayName("Create repository cache and get state ok")

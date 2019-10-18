@@ -50,7 +50,7 @@ In addition, you have the possibility to configure the library to interact with 
 
 Once we have annotated our class with the configuration, we have to start the configuration and store it in memory to share it with the rest of the system.
 ```java
-ApplicationConfig appConfig = ConfigBuilder().create();
+AppConfig appConfig = ConfigBuilder().create();
 ```
 
 with this initial configuration you need to specify a environment variables set required for the system. For example, you can configure in front a local environment:
@@ -79,8 +79,8 @@ To consume events from a topic, the library provide a abstract class DefaultCons
 public class ExampleConsumer extends DefaultConsumer<ConsumerContextImpl> {
 
     @Override
-    public ConsumerContextImpl context(final CRecord record) {
-        final ConsumerContextImpl consumerContextImpl = new ConsumerContextImpl(record);
+    public ConsumerContextImpl context(final Producer producer, final CRecord record) {
+        final ConsumerContextImpl consumerContextImpl = new ConsumerContextImpl(producer, record);
         return consumerContextImpl;
     }
 
@@ -93,12 +93,12 @@ final ExampleConsumer exampleConsumer = new ExampleConsumer(1, topics, callbackF
 ```
 
 ### Produce
-There are two types of producer in the library: DefaultProducer and CachedProducer. To improv the performance of the system is recommmend use directly the CachedProducer. In this case, you only need create a producer with the general config and it create/reuse for you the producer in all add/remove operations. For example:
+There is a producer default implementation DefaultProducer. In this case, you only need create a producer with the general config and it create/reuse for you the producer in all send operations. For example:
 ```java
-CachedProducer producer = new CachedProducer(appConfig);
+Producer producer = new DefaultProducer(appConfig);
 // 1. Add new record in the event store
-final Future future = producer.add(new PRecord<>("topic", "key", "value", new RecordHeaders()), producerCallback);
+final Future future = producer.send(new PRecord<>("topic", "key", "value", new RecordHeaders()), producerCallback);
 // 2. Remove the record in the event store
-final Future future = producer.remove(new PRecord<>("topic", "key", "value", new RecordHeaders()), String.class, producerCallback);
+final Future future = producer.send(new PRecord<>("topic", "key", null, new RecordHeaders()), producerCallback);
 ```
-In the two case, add and remove, the method return a future that is resolved with the ack is received.
+The send method return a future that is resolved with the ack is received.

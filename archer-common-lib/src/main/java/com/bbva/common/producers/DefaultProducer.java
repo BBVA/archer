@@ -46,9 +46,7 @@ public class DefaultProducer implements com.bbva.common.producers.Producer {
     /**
      * Constructor
      *
-     * @param appConfig       general configuration
-     * @param keySerializer   serializer for the key
-     * @param valueSerializer serializer for the value
+     * @param appConfig general configuration
      */
     public DefaultProducer(final AppConfig appConfig) {
         final CachedSchemaRegistryClient schemaRegistry;
@@ -61,14 +59,6 @@ public class DefaultProducer implements com.bbva.common.producers.Producer {
         producer = new KafkaProducer<>(appConfig.producer(), keySerializer, valueSerializer);
     }
 
-
-    /**
-     * Save the record
-     *
-     * @param record   record to save
-     * @param callback callback to manag response
-     * @return future with production result
-     */
     @Override
     public Future<RecordMetadata> send(final PRecord record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());

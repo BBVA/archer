@@ -47,6 +47,11 @@ public class TopicManager {
         configTypes = Collections.unmodifiableMap(configMap);
     }
 
+    private TopicManager() {
+        throw new UnsupportedOperationException();
+    }
+
+
     /**
      * Create topics
      * For example:

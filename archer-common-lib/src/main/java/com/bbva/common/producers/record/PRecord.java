@@ -6,9 +6,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 /**
  * Producer record
- *
- * @param <K> Type of Record schema
- * @param <V> Type of Record
  */
 public class PRecord extends ProducerRecord<String, SpecificRecordBase> {
 

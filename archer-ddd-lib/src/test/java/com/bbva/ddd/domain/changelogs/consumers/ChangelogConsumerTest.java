@@ -3,7 +3,6 @@ package com.bbva.ddd.domain.changelogs.consumers;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
@@ -16,13 +15,11 @@ import org.junit.gen5.api.Test;
 import org.junit.gen5.api.extension.ExtendWith;
 import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -30,12 +27,7 @@ public class ChangelogConsumerTest {
 
     @DisplayName("Create changelog consumer and message ok")
     @Test
-    public void createChangelogConsumer() throws Exception {
-
-        final CachedProducer producer = PowerMockito.mock(CachedProducer.class);
-        PowerMockito.whenNew(CachedProducer.class).withAnyArguments().thenReturn(producer);
-        PowerMockito.when(producer, "add", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
-
+    public void createChangelogConsumer() {
 
         final AppConfig configuration = ConfigBuilder.create();
         final List<String> topics = new ArrayList<>();

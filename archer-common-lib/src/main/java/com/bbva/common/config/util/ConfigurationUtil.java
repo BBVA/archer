@@ -18,6 +18,10 @@ public final class ConfigurationUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationUtil.class);
 
+    private ConfigurationUtil() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Get all config properties of a yaml file
      *

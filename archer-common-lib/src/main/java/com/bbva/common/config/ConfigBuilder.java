@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Utility class to populate system configurations
+ * Utility/builder  class to populate system configurations
  */
 public class ConfigBuilder {
 
@@ -136,7 +136,6 @@ public class ConfigBuilder {
 
     private static String removeLastPackage(final String mainPackage) {
         final int index = mainPackage.lastIndexOf(".");
-        final String basePackage = mainPackage.substring(0, index);
-        return basePackage;
+        return mainPackage.substring(0, index);
     }
 }

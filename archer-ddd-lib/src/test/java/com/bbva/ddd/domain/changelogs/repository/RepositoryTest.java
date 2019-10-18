@@ -1,6 +1,5 @@
 package com.bbva.ddd.domain.changelogs.repository;
 
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.util.PowermockExtension;
 import org.junit.gen5.api.extension.ExtendWith;
 import org.junit.gen5.junit4.runner.JUnit5;
@@ -9,7 +8,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({CachedProducer.class, Repository.class})
+@PrepareForTest({Repository.class})
 public class RepositoryTest {
 
    /* @DisplayName("Create repository ok")

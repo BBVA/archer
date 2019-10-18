@@ -1,7 +1,6 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
@@ -25,7 +24,7 @@ import java.util.concurrent.Executors;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, DomainBuilder.class, CachedProducer.class, Repository.class})
+@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, DomainBuilder.class, Repository.class})
 public class DomainBuilderTest {
 
     @DisplayName("Create domain ok")

@@ -1,7 +1,6 @@
 package com.bbva.ddd.domain.commands.producers;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
@@ -32,7 +31,7 @@ import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({CachedProducer.class, Command.class})
+@PrepareForTest({Command.class})
 public class CommandTest {
 
 

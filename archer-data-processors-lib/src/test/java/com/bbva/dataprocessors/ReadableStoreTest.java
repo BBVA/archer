@@ -1,6 +1,5 @@
 package com.bbva.dataprocessors;
 
-import com.bbva.common.producers.CachedProducer;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import org.apache.kafka.streams.KafkaStreams;
@@ -19,7 +18,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({DefaultProducer.class, CachedProducer.class})
+@PrepareForTest({DefaultProducer.class})
 public class ReadableStoreTest {
 
     @DisplayName("Create readable store ok")
