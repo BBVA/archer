@@ -12,16 +12,13 @@ public class HandlerContextImpl implements HandlerContext {
     protected CRecord consumedRecord;
     protected Repository repository;
     protected final Producer producer;
+    protected Boolean isReplay;
 
-    public HandlerContextImpl(final Producer producer, final CRecord consumedRecord) {
+    public HandlerContextImpl(final CRecord consumedRecord, final Producer producer, final Boolean isReplay) {
         this.consumedRecord = consumedRecord;
         this.producer = producer;
-        if (producer != null) {
-            repository = new RepositoryImpl<>(consumedRecord, producer);
-        } else {
-            repository = new RepositoryImpl<>(consumedRecord);
-        }
-
+        this.isReplay = isReplay;
+        repository = new RepositoryImpl<>(consumedRecord, producer, isReplay);
     }
 
     @Override
@@ -37,16 +34,16 @@ public class HandlerContextImpl implements HandlerContext {
 
     @Override
     public Command.Builder command(final String action) {
-        return new Command.Builder(producer, consumedRecord).action(action);
+        return new Command.Builder(producer, consumedRecord, isReplay).action(action);
     }
 
     @Override
     public Command.Builder command(final Command.Action action) {
-        return new Command.Builder(producer, consumedRecord).action(action.name());
+        return new Command.Builder(producer, consumedRecord, isReplay).action(action.name());
     }
 
     @Override
     public Event.Builder event(final String name) {
-        return new Event.Builder(producer, consumedRecord).name(name);
+        return new Event.Builder(producer, consumedRecord, isReplay).name(name);
     }
 }

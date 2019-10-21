@@ -6,8 +6,8 @@ import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 
 public class EventHandlerContext extends HandlerContextImpl {
 
-    public EventHandlerContext(final Producer producer, final CRecord consumedRecord) {
-        super(producer, new EventRecord(consumedRecord));
+    public EventHandlerContext(final CRecord consumedRecord, final Producer producer, final Boolean isReplay) {
+        super(new EventRecord(consumedRecord), producer, isReplay);
     }
 
     @Override

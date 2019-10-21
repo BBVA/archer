@@ -4,7 +4,6 @@ import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.dataprocessors.States;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
-import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;
@@ -14,7 +13,7 @@ import org.apache.kafka.streams.errors.InvalidStateStoreException;
  */
 public class StoreUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(HelperDomain.class);
+    private static final Logger logger = LoggerFactory.getLogger(StoreUtil.class);
 
     /**
      * Get store by name in the states

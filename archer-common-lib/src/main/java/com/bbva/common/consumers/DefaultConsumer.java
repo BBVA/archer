@@ -3,6 +3,7 @@ package com.bbva.common.consumers;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.producers.Producer;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
@@ -68,7 +69,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
      * @param consumedRecord record message
      * @return context
      */
-    public abstract T context(Producer producer, CRecord consumedRecord);
+    public abstract T context(CRecord consumedRecord, Producer producer, Boolean isReplay);
 
     /**
      * Replay a list of topics
@@ -117,9 +118,9 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                             for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
                                 currentOffset = record.offset();
                                 if (currentOffset <= lastOffset - 1) {
-                                    callback.accept(context(null, new CRecord(record.topic(), record.partition(), record.offset(),
+                                    callback.accept(context(new CRecord(record.topic(), record.partition(), record.offset(),
                                             record.timestamp(), record.timestampType(), record.key(), record.value(),
-                                            new RecordHeaders(record.headers()))));
+                                            new RecordHeaders(record.headers())), new DefaultProducer(appConfig), true));
 
                                     currentOffsets.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
                                     consumer.commitAsync(currentOffsets, (offsets, e) -> {
@@ -159,17 +160,28 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
             while (!closed.get()) {
                 final ConsumerRecords<String, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
                 for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
-                    callback.accept(context(null, new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
-                            record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers()))));
+                    final Producer producer = new DefaultProducer(appConfig);
+
+                    //Init the transaction
+                    producer.init();
+
+                    callback.accept(context(new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
+                            record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers())), producer, false));
 
                     currentOffsets.put(
                             new TopicPartition(record.topic(), record.partition()),
                             new OffsetAndMetadata(record.offset() + 1));
-                    consumer.commitAsync(currentOffsets, (offsets, e) -> {
-                        if (e != null) {
-                            logger.error("Commit failed for offsets " + offsets, e);
-                        }
-                    });
+
+                    if (!(Boolean) appConfig.consumer(AppConfig.ConsumerProperties.ENABLE_AUTO_COMMIT)) {
+                        consumer.commitAsync(currentOffsets, (offsets, e) -> {
+                            if (e != null) {
+                                logger.error("Commit failed for offsets " + offsets, e);
+                            }
+                        });
+                    }
+
+                    //End the transaction
+                    producer.end();
                 }
             }
         } catch (final WakeupException e) {

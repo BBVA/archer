@@ -1,12 +1,10 @@
 package com.bbva.ddd.domain.events.producers;
 
-import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
-import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 import com.bbva.ddd.domain.exceptions.ProduceException;
@@ -35,9 +33,7 @@ public class EventTest {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        HelperDomain.create(new AppConfig());
-
-        final Event event = new Event.Builder(producer, null)
+        final Event event = new Event.Builder(producer, null, false)
                 .to("topicBaseName").producerName("producerName").value(new PersonalData())
                 .build();
         final EventRecordMetadata metadata = event.send(null);
@@ -55,9 +51,7 @@ public class EventTest {
         PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new AppConfig());
-
-            final Event event = new Event.Builder(producer, null)
+            final Event event = new Event.Builder(producer, null, false)
                     .to("topicBaseName").producerName("producerName")
                     .build();
             event.send(null);
@@ -71,8 +65,7 @@ public class EventTest {
         PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new AppConfig());
-            final Event event = new Event.Builder(producer, null)
+            final Event event = new Event.Builder(producer, null, false)
                     .to("topicBaseName").producerName("producerName").key("key")
                     .build();
             event.send(null);
@@ -86,8 +79,7 @@ public class EventTest {
         PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new AppConfig());
-            final Event event = new Event.Builder(producer, null)
+            final Event event = new Event.Builder(producer, null, false)
                     .to("topicBaseName").producerName("producerName").name("name")
                     .build();
             event.send(null);
@@ -101,17 +93,14 @@ public class EventTest {
         PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
 
         Assertions.assertThrows(ProduceException.class, () -> {
-            HelperDomain.create(new AppConfig());
             final RecordHeaders headers = new RecordHeaders();
             headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
 
             final Event event = new Event.Builder(producer, new CommandRecord("topic", 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers))
+                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers), true)
                     .to("topicBaseName").producerName("producerName").name("name")
-                    .replay()
                     .build();
             event.send(null);
         });
     }
-
 }

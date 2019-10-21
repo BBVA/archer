@@ -182,12 +182,14 @@ public abstract class GatewayService<T>
      * @param <O>            Output type
      */
     protected static <O extends SpecificRecordBase> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
-        final Event.Builder eventBuilder = new Event.Builder(producer, originalRecord)
+        Boolean replay = false;
+        if (originalRecord != null && isReplay(originalRecord)) {
+            replay = true;
+        }
+        final Event.Builder eventBuilder = new Event.Builder(producer, originalRecord, replay)
                 .to(eventBaseName).producerName("gateway").value(outputEvent);
 
-        if (originalRecord != null && isReplay(originalRecord)) {
-            eventBuilder.replay();
-        }
+
         eventBuilder.build().send(GatewayService::handleOutPutted);
     }
 

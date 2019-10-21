@@ -1,8 +1,6 @@
 package com.bbva.gateway;
 
-import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.ddd.domain.Domain;
-import com.bbva.ddd.domain.DomainBuilder;
 import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
 import com.bbva.gateway.builders.dataflows.states.HeaderAsKeyStateBuilder;
 import com.bbva.gateway.config.ConfigBuilder;
@@ -28,8 +26,9 @@ import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
  * }</pre>
  */
 public class Gateway {
+
     protected static GatewayConfig config;
-    protected static Domain domain;
+    protected static Domain.Builder domainBuilder;
 
     /**
      * Initialize the domain of the gateway
@@ -39,9 +38,8 @@ public class Gateway {
     public void init() throws RepositoryException {
         configure();
 
-        domain = DomainBuilder.create(
-                new GatewayHandler(config.getServicesPackage(), config),
-                config);
+        domainBuilder = new Domain.Builder(config)
+                .handler(new GatewayHandler(config.getServicesPackage(), config));
     }
 
     /**
@@ -64,9 +62,7 @@ public class Gateway {
      * Start domain and processors
      */
     protected void start() {
-        DataProcessor.get()
-                .add(INTERNAL_SUFFIX + KEY_SUFFIX, new HeaderAsKeyStateBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
-
-        domain.start();
+        domainBuilder.addDataProcessorBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, new HeaderAsKeyStateBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
+        domainBuilder.build().start();
     }
 }

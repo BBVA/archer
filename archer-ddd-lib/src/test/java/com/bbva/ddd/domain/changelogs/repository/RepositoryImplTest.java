@@ -38,7 +38,7 @@ public class RepositoryImplTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         ConfigBuilder.create();
-        final Repository repository = new RepositoryImpl<>(null);
+        final Repository repository = new RepositoryImpl<>(null, false);
 
         Assertions.assertNotNull(repository);
     }
@@ -49,7 +49,7 @@ public class RepositoryImplTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         ConfigBuilder.create();
-        final Repository repository = new RepositoryImpl<>(null);
+        final Repository repository = new RepositoryImpl<>(null, false);
         repository.load(PersonalDataAggregate.class, "key");
         Assertions.assertNotNull(repository);
     }
@@ -75,7 +75,33 @@ public class RepositoryImplTest {
 
         final CommandRecord referenceRecord = new CommandRecord("topic", 1, 1, new Date().getTime(),
                 TimestampType.CREATE_TIME, "key", null, recordHeaders);
-        final Repository repository = new RepositoryImpl<>(referenceRecord);
+        final Repository repository = new RepositoryImpl<>(referenceRecord, false);
+        repository.create(PersonalDataAggregate.class, new SpecificRecordBaseImpl(), null);
+        Assertions.assertNotNull(repository);
+    }
+
+    @DisplayName("Create repository ok")
+    @Test
+    public void createRepositoryreplayData() throws Exception {
+
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
+
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(producer);
+
+
+        ConfigBuilder.create();
+
+        final RecordHeaders recordHeaders = new RecordHeaders();
+        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+        recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
+        recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
+        recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("key"));
+        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
+
+        final CommandRecord referenceRecord = new CommandRecord("topic", 1, 1, new Date().getTime(),
+                TimestampType.CREATE_TIME, "key", null, recordHeaders);
+        final Repository repository = new RepositoryImpl<>(referenceRecord, true);
         repository.create(PersonalDataAggregate.class, new SpecificRecordBaseImpl(), null);
         Assertions.assertNotNull(repository);
     }
@@ -101,7 +127,7 @@ public class RepositoryImplTest {
 
         final CommandRecord referenceRecord = new CommandRecord("topic", 1, 1, new Date().getTime(),
                 TimestampType.CREATE_TIME, "key", new SpecificRecordBaseImpl(), recordHeaders);
-        final Repository repository = new RepositoryImpl<>(referenceRecord);
+        final Repository repository = new RepositoryImpl<>(referenceRecord, false);
         repository.create(PersonalDataAggregate.class, "key", new SpecificRecordBaseImpl(), null);
         repository.create(PersonalDataAggregate.class, "key", new SpecificRecordBaseImpl(), null);
 
@@ -129,7 +155,7 @@ public class RepositoryImplTest {
 
         final CommandRecord referenceRecord = new CommandRecord("topic", 1, 1, new Date().getTime(),
                 TimestampType.CREATE_TIME, "key", null, recordHeaders);
-        final Repository repository = new RepositoryImpl<>(referenceRecord);
+        final Repository repository = new RepositoryImpl<>(referenceRecord, false);
 
         Assertions.assertThrows(ApplicationException.class, () ->
                 repository.create(PersonalAggregate.class, new SpecificRecordBaseImpl(), null)
@@ -142,7 +168,7 @@ public class RepositoryImplTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         ConfigBuilder.create();
-        final Repository repository = new RepositoryImpl<>(null);
+        final Repository repository = new RepositoryImpl<>(null, false);
 
         Assertions.assertThrows(ApplicationException.class, () ->
                 repository.load(PersonalAggregate.class, "key")

@@ -1,6 +1,7 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
@@ -24,7 +25,7 @@ import java.util.concurrent.Executors;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, DomainBuilder.class, Repository.class})
+@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class})
 public class DomainBuilderTest {
 
     @DisplayName("Create domain ok")
@@ -32,30 +33,32 @@ public class DomainBuilderTest {
     public void createDomain() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-
-        final Domain domain = DomainBuilder.create(new AppConfig());
-        final Domain domainCached = DomainBuilder.get();
+        PowerMockito.whenNew(CommandConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(CommandConsumer.class));
+        PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
+        PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
+        PowerMockito.mockStatic(TopicManager.class);
+        
+        final Domain domain = new Domain.Builder(new AppConfig()).build();
         Assertions.assertAll("DomainBuilder",
-                () -> Assertions.assertEquals(domain, domainCached)
+                () -> Assertions.assertNotNull(domain)
         );
     }
 
-    @DisplayName("Create domain with get method ok")
+    @DisplayName("Create domain ok")
     @Test
-    public void getCreateDomain() throws Exception {
+    public void createDomainWithoutConfig() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(CommandConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(CommandConsumer.class));
+        PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
+        PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
+        PowerMockito.mockStatic(TopicManager.class);
 
-        Assertions.assertNotNull(DomainBuilder.get());
-    }
-
-    @DisplayName("Create domain ko")
-    @Test
-    public void getCreateDomainWithoutConfig() throws Exception {
-        PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-
-        Assertions.assertNotNull(DomainBuilder.get());
+        ConfigBuilder.create();
+        final Domain domain = new Domain.Builder().build();
+        Assertions.assertAll("DomainBuilder",
+                () -> Assertions.assertNotNull(domain)
+        );
     }
 
     @DisplayName("Add processors to domain ok")
@@ -64,13 +67,17 @@ public class DomainBuilderTest {
 
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(CommandConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(CommandConsumer.class));
+        PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
+        PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
+        PowerMockito.mockStatic(TopicManager.class);
 
-        Domain domain = DomainBuilder.create(new AppConfig());
+        Domain.Builder domain = new Domain.Builder(new AppConfig());
         domain = domain.addDataProcessorBuilder(new CreateStreamQueryBuilder("query-builder"));
         domain = domain.addDataProcessorBuilder("dataflow", PowerMockito.mock(DataflowBuilder.class));
         domain = domain.addEntityStateProcessor("entity", String.class);
 
-        Assertions.assertNotNull(domain);
+        Assertions.assertNotNull(domain.build());
 
     }
 
@@ -80,14 +87,20 @@ public class DomainBuilderTest {
 
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(CommandConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(CommandConsumer.class));
+        PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
+        PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
+        PowerMockito.mockStatic(TopicManager.class);
 
-        Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new AppConfig());
+        Domain.Builder domain = new Domain.Builder(new AppConfig())
+                .handler(new AutoConfiguredHandler());
+
         domain = domain.indexFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
                 String.class, String.class);
         domain = domain.groupByFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
                 null, null);
 
-        Assertions.assertNotNull(domain);
+        Assertions.assertNotNull(domain.build());
 
     }
 
@@ -102,10 +115,14 @@ public class DomainBuilderTest {
 
         PowerMockito.mockStatic(TopicManager.class);
 
-        final Domain domain = DomainBuilder.create(new AutoConfiguredHandler(), new AppConfig());
-        final HelperDomain helperDomain = domain.start();
+        final Domain domain = new Domain.Builder(new AppConfig())
+                .handler(new AutoConfiguredHandler())
+                .build();
+
+        domain.start();
+
         Assertions.assertAll("DomainBuilder",
-                () -> Assertions.assertNotNull(helperDomain)
+                () -> Assertions.assertNotNull(domain)
         );
     }
 }

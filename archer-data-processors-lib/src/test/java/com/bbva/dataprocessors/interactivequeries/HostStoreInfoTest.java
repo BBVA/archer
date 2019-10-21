@@ -24,7 +24,7 @@ public class HostStoreInfoTest {
         hostStoreInfo.setStoreNames(new HashSet<>());
         final HostStoreInfo hostStoreInfoCopy = new HostStoreInfo("host", 1234, new HashSet<>());
         final HostStoreInfo hostStoreInfoOtheCopy = new HostStoreInfo("host2", 1234, new HashSet<>());
-        Set storeNames = new HashSet<>();
+        final Set storeNames = new HashSet<>();
         storeNames.add("store");
         final HostStoreInfo hostStoreInfoOtheCopy2 = new HostStoreInfo("host", 1234, storeNames);
 
@@ -37,7 +37,7 @@ public class HostStoreInfoTest {
                 () -> Assertions.assertFalse(hostStoreInfo.equals(hostStoreInfoOtheCopy2)),
                 () -> Assertions.assertTrue(hostStoreInfo.equals(hostStoreInfo)),
                 () -> Assertions.assertFalse(hostStoreInfo.equals(null)),
-                () -> Assertions.assertFalse(hostStoreInfo.equals("")),
+                () -> Assertions.assertFalse("".equals(hostStoreInfo)),
                 () -> Assertions.assertNotNull(hostStoreInfo.hashCode()),
                 () -> Assertions.assertEquals(hostStoreInfo.getHost(), hostStoreInfoCopy.getHost()),
                 () -> Assertions.assertEquals(hostStoreInfo.getPort(), hostStoreInfoCopy.getPort())

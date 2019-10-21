@@ -29,8 +29,7 @@ public class ChangelogConsumer extends RunnableConsumer<ChangelogHandlerContext>
     }
 
     @Override
-    public ChangelogHandlerContext context(final Producer producer, final CRecord record) {
-        final ChangelogHandlerContext changelogHandlerContext = new ChangelogHandlerContext(producer, record);
-        return changelogHandlerContext;
+    public ChangelogHandlerContext context(final CRecord record, final Producer producer, final Boolean isReplay) {
+        return new ChangelogHandlerContext(record, producer, isReplay);
     }
 }

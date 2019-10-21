@@ -42,8 +42,8 @@ public class EventConsumerTest {
         recordHeaders.add(EventHeaderType.NAME_KEY, new ByteArrayValue("create"));
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue("producerName"));
 
-        final EventHandlerContext eventHandlerContext = eventConsumer.context(null, new CRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", null, recordHeaders));
+        final EventHandlerContext eventHandlerContext = eventConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+                TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false);
 
         Assertions.assertAll("EventConsumer",
                 () -> Assertions.assertNotNull(eventConsumer),

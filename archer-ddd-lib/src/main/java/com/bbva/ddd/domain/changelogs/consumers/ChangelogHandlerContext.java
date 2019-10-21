@@ -6,8 +6,8 @@ import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 
 public class ChangelogHandlerContext extends HandlerContextImpl {
 
-    public ChangelogHandlerContext(final Producer producer, final CRecord consumedRecord) {
-        super(producer, new ChangelogRecord(consumedRecord));
+    public ChangelogHandlerContext(final CRecord consumedRecord, final Producer producer, final Boolean isReplay) {
+        super(new ChangelogRecord(consumedRecord), producer, isReplay);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.bbva.gateway;
 
 import com.bbva.common.util.PowermockExtension;
-import com.bbva.ddd.domain.DomainBuilder;
+import com.bbva.dataprocessors.DataProcessor;
+import com.bbva.ddd.domain.Domain;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import org.junit.gen5.api.Assertions;
@@ -16,13 +17,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 @RunWith(JUnit5.class)
 @Config(file = "gateway.yml")
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({DomainBuilder.class})
+@PrepareForTest({Domain.class, DataProcessor.class})
 public class GatewayTest {
 
     @DisplayName("Create gateway")
     @Test
     public void createGatewayOk() throws Exception {
-        PowerMockito.whenNew(DomainBuilder.class).withAnyArguments().thenReturn(PowerMockito.mock(DomainBuilder.class));
+        PowerMockito.whenNew(Domain.class).withAnyArguments().thenReturn(PowerMockito.mock(Domain.class));
+        PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
 
         final Gateway gateway = new Gateway();
         gateway.configure();
@@ -36,7 +38,8 @@ public class GatewayTest {
     @DisplayName("Configure gateway with specific class")
     @Test
     public void configureGatewayOk() throws Exception {
-        PowerMockito.whenNew(DomainBuilder.class).withAnyArguments().thenReturn(PowerMockito.mock(DomainBuilder.class));
+        PowerMockito.whenNew(Domain.class).withAnyArguments().thenReturn(PowerMockito.mock(Domain.class));
+        PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
 
         final Gateway gateway = new Gateway();
         gateway.configure(GatewayTest.class);

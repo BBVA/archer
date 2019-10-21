@@ -16,6 +16,10 @@ public final class ObjectUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ObjectUtils.class);
 
+    private ObjectUtils() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Merge two object properties in one new object
      *

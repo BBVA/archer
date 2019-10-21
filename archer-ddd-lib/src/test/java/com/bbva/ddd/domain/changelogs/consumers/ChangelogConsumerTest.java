@@ -39,8 +39,8 @@ public class ChangelogConsumerTest {
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, new ByteArrayValue("aggName"));
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, new ByteArrayValue("aggMethod"));
 
-        final ChangelogHandlerContext changelogHandlerContext = changelogConsumer.context(PowerMockito.mock(DefaultProducer.class), new CRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", null, recordHeaders));
+        final ChangelogHandlerContext changelogHandlerContext = changelogConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+                TimestampType.CREATE_TIME, "key", null, recordHeaders), PowerMockito.mock(DefaultProducer.class), false);
 
         Assertions.assertAll("ChangelogConsumer",
                 () -> Assertions.assertNotNull(changelogConsumer),

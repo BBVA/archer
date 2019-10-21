@@ -72,11 +72,14 @@ public class DefaultProducer implements com.bbva.common.producers.Producer {
             callback.onCompletion(record.key(), e);
         });
 
-        producer.flush();
-
-        logger.debug("End of production");
 
         return result;
     }
 
+    @Override
+    public void end() {
+        producer.flush();
+        producer.close();
+        logger.debug("End of production");
+    }
 }

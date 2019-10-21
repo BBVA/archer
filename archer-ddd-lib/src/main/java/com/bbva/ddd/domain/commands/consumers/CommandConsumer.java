@@ -28,9 +28,8 @@ public class CommandConsumer extends RunnableConsumer<CommandHandlerContext> {
     }
 
     @Override
-    public CommandHandlerContext context(final Producer producer, final CRecord record) {
-        final CommandHandlerContext commandHandlerContext = new CommandHandlerContext(producer, record);
-        return commandHandlerContext;
+    public CommandHandlerContext context(final CRecord record, final Producer producer, final Boolean isReplay) {
+        return new CommandHandlerContext(record, producer, isReplay);
     }
 
 }

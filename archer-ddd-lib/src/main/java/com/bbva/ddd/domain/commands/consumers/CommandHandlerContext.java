@@ -6,8 +6,8 @@ import com.bbva.ddd.domain.handlers.HandlerContextImpl;
 
 public class CommandHandlerContext extends HandlerContextImpl {
 
-    public CommandHandlerContext(final Producer producer, final CRecord consumedRecord) {
-        super(producer, new CommandRecord(consumedRecord));
+    public CommandHandlerContext(final CRecord consumedRecord, final Producer producer, final Boolean isReplay) {
+        super(new CommandRecord(consumedRecord), producer, isReplay);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.bbva.ddd.domain.consumers;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.DefaultConsumer;
 import com.bbva.common.consumers.contexts.ConsumerContext;
-import com.bbva.ddd.domain.HelperDomain;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,11 +48,7 @@ public abstract class RunnableConsumer<T extends ConsumerContext> extends Defaul
     @Override
     public void run() {
         if (replayTopics.length > 0) {
-            final HelperDomain helperDomain = HelperDomain.get();
-
-            helperDomain.setReplayMode(true);
             replay(Arrays.asList(replayTopics));
-            helperDomain.setReplayMode(false);
         }
 
         play();

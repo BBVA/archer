@@ -82,7 +82,6 @@ public class MetadataServiceTest {
 
         final MetadataService metadataService = new MetadataService(stream);
 
-        final ApplicationException ex = null;
         Assertions.assertThrows(ApplicationException.class, () ->
                 metadataService.streamsMetadataForStoreAndKey("test_store", "key", null)
         );

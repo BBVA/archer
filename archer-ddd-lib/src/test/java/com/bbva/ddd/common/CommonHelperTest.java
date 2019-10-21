@@ -5,7 +5,7 @@ import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
-import com.bbva.ddd.domain.HelperDomain;
+import com.bbva.ddd.application.HelperApplication;
 import com.bbva.ddd.domain.commands.producers.Command;
 import com.bbva.ddd.domain.events.producers.Event;
 import org.junit.gen5.api.Assertions;
@@ -44,7 +44,7 @@ public class CommonHelperTest {
         ConfigBuilder.create();
 
         final CommonHelper helper = new CommonHelper(new AppConfig());
-        final HelperDomain helperDomain = HelperDomain.create(new AppConfig());
+        HelperApplication.create(new AppConfig());
         final Command command = helper.sendCommandTo("command");
         final Command commandWrite = helper.persistsCommandTo("command");
 

@@ -3,10 +3,10 @@ package com.bbva.ddd.domain.changelogs.aggregate;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.producers.records.SpecificRecordBaseImpl;
 import com.bbva.ddd.domain.callback.DefaultAggregateCallback;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.SpecificAggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.CommonAggregate;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 
-public class PersonalAggregate extends SpecificAggregate<String, PersonalData> {
+public class PersonalAggregate extends CommonAggregate<String, PersonalData> {
 
     public PersonalAggregate(final String id, final SpecificRecordBaseImpl record) {
         super(id, (PersonalData) record.get(0));

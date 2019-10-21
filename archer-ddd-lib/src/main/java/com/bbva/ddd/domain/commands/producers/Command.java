@@ -11,7 +11,6 @@ import com.bbva.common.utils.headers.OptionalRecordHeaders;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
-import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -54,7 +53,7 @@ public class Command {
     public CommandRecordMetadata send(final ProducerCallback callback) {
         logger.debug("Sending command of type {}", action);
 
-        final Future<RecordMetadata> result = producer.send(new PRecord(topic, key, null, headers), callback);
+        final Future<RecordMetadata> result = producer.send(new PRecord(topic, key, value, headers), callback);
 
         final CommandRecordMetadata recordedMessageMetadata;
         try {
@@ -79,14 +78,17 @@ public class Command {
         private boolean persistent = false;
         private final CRecord referenceRecord;
         private final Producer producer;
+        private final Boolean isReplay;
 
-        public Builder(final Producer producer, final CRecord record) {
+        public Builder(final Producer producer, final CRecord record, final Boolean isReplay) {
             this.producer = producer;
             referenceRecord = record;
+            this.isReplay = isReplay;
         }
 
         public Builder(final CRecord record) {
             producer = new DefaultProducer(ConfigBuilder.get());
+            isReplay = false;
             referenceRecord = record;
         }
 
@@ -135,8 +137,7 @@ public class Command {
             recordHeaders.add(CommonHeaderType.TYPE_KEY, CommandHeaderType.TYPE_VALUE);
             recordHeaders.add(CommandHeaderType.UUID_KEY, key);
             recordHeaders.add(CommandHeaderType.NAME_KEY, name);
-            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY,
-                    new ByteArrayValue(HelperDomain.get().isReplayMode() && !persistent));
+            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(isReplay && !persistent));
             if (entityUuid != null) {
                 recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid);
             }

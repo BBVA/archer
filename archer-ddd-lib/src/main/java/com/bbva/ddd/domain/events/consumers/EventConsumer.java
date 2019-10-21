@@ -27,9 +27,8 @@ public class EventConsumer extends RunnableConsumer<EventHandlerContext> {
     }
 
     @Override
-    public EventHandlerContext context(final Producer producer, final CRecord record) {
-        final EventHandlerContext eventHandlerContext = new EventHandlerContext(producer, record);
-        return eventHandlerContext;
+    public EventHandlerContext context(final CRecord record, final Producer producer, final Boolean isReplay) {
+        return new EventHandlerContext(record, producer, isReplay);
     }
 
 }

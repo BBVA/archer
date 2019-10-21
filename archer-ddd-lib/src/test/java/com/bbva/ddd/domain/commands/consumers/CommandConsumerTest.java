@@ -43,8 +43,8 @@ public class CommandConsumerTest {
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
 
-        final CommandHandlerContext commandHandlerContext = commandConsumer.context(null, new CRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", null, recordHeaders));
+        final CommandHandlerContext commandHandlerContext = commandConsumer.context(new CRecord("topic", 1, 1, new Date().getTime(),
+                TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false);
 
         Assertions.assertAll("EventConsumer",
                 () -> Assertions.assertNotNull(commandConsumer),

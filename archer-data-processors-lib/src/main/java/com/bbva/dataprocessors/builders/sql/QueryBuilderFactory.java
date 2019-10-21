@@ -8,7 +8,11 @@ import java.util.List;
 /**
  * Factory class to create query builders
  */
-public class QueryBuilderFactory {
+public final class QueryBuilderFactory {
+
+    private QueryBuilderFactory() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Builder to drop streams

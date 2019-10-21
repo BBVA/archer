@@ -1,7 +1,7 @@
 package com.bbva.gateway.aggregates;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.SpecificAggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.CommonAggregate;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
 import com.bbva.gateway.constants.Constants;
 
@@ -9,7 +9,7 @@ import com.bbva.gateway.constants.Constants;
  * Internala aggregate for manage gateway with ddd
  */
 @Aggregate(baseName = Constants.INTERNAL_SUFFIX)
-public class GatewayAggregate extends SpecificAggregate<String, TransactionChangelog> {
+public class GatewayAggregate extends CommonAggregate<String, TransactionChangelog> {
 
     /**
      * Constructor

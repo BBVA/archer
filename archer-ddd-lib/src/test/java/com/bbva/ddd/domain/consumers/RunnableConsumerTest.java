@@ -7,7 +7,6 @@ import com.bbva.common.consumers.contexts.ConsumerContext;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.Producer;
 import com.bbva.common.util.PowermockExtension;
-import com.bbva.ddd.domain.HelperDomain;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -38,7 +37,7 @@ public class RunnableConsumerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public ConsumerContext context(final Producer producer, final CRecord c) {
+            public ConsumerContext context(final CRecord c, final Producer producer, final Boolean isReplay) {
                 return null;
             }
         };
@@ -61,11 +60,11 @@ public class RunnableConsumerTest {
         final AppConfig configuration = ConfigBuilder.create();
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public ConsumerContext context(final Producer producer, final CRecord c) {
+            public ConsumerContext context(final CRecord c, final Producer producer, final Boolean isReplay) {
                 return null;
             }
         };
-        HelperDomain.create(configuration);
+
         new Thread(() -> consumer.run()).start();
         Thread.sleep(500);
         consumer.shutdown();
@@ -89,11 +88,11 @@ public class RunnableConsumerTest {
         configuration.put(AppConfig.REPLAY_TOPICS, "topic1,topic2");
         final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
             @Override
-            public ConsumerContext context(final Producer producer, final CRecord c) {
+            public ConsumerContext context(final CRecord c, final Producer producer, final Boolean isReplay) {
                 return null;
             }
         };
-        HelperDomain.create(configuration);
+
         new Thread(() -> consumer.run()).start();
         Thread.sleep(500);
         consumer.shutdown();

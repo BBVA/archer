@@ -12,9 +12,8 @@ import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
-import com.bbva.ddd.domain.HelperDomain;
 import com.bbva.ddd.domain.changelogs.producers.ChangelogRecordMetadata;
-import com.bbva.ddd.domain.changelogs.repository.aggregates.AbstractAggregateBase;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.AbstractAggregate;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.AggregateParent;
@@ -50,16 +49,18 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
     private Class<? extends SpecificRecordBase> parentValueClass;
 
     private final CRecord referenceRecord;
+    private final Boolean isReplay;
 
-    public RepositoryImpl(final CRecord referenceRecord) {
-        this(referenceRecord, new DefaultProducer(ConfigBuilder.get()));
+    public RepositoryImpl(final CRecord referenceRecord, final Boolean isReplay) {
+        this(referenceRecord, new DefaultProducer(ConfigBuilder.get()), isReplay);
     }
 
-    public RepositoryImpl(final CRecord referenceRecord, final Producer producer) {
+    public RepositoryImpl(final CRecord referenceRecord, final Producer producer, final Boolean isReplay) {
         aggregateUUID = UUID.randomUUID().toString();
         this.producer = producer;
         repositoryCache = new RepositoryCache<>();
         this.referenceRecord = referenceRecord;
+        this.isReplay = isReplay;
     }
 
     private void setDependencies(final Class<? extends AggregateBase> aggregateClass) {
@@ -68,7 +69,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
 
             final Class<? extends SpecificRecordBase> childValueClass = getValueClass(aggregateClass);
 
-            final Class<? extends AbstractAggregateBase> parentClass = aggregateClass
+            final Class<? extends AbstractAggregate> parentClass = aggregateClass
                     .getAnnotation(AggregateParent.class).value();
             parentValueClass = getValueClass(parentClass);
 
@@ -175,8 +176,8 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
                 (method, newValue, referenceRecord, callback) ->
                         save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, referenceRecord, method, callback));
 
-        if (aggregateBaseInstance instanceof AbstractAggregateBase) {
-            ((AbstractAggregateBase) aggregateBaseInstance).setDeleteRecordCallback(
+        if (aggregateBaseInstance instanceof AbstractAggregate) {
+            ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
                     (method, referenceRecord, callback) ->
                             delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
         }
@@ -200,7 +201,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         }
 
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY,
-                (referenceRecord != null && referenceRecord.isReplayMode()) || HelperDomain.get().isReplayMode());
+                (referenceRecord != null && referenceRecord.isReplayMode()) || isReplay);
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_UUID_KEY, aggregateUUID);
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, aggregateClass.getName());
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, aggregateMethod);
@@ -272,8 +273,8 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
                 (method, newValue, referenceRecord, callback) ->
                         save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, referenceRecord, method, callback));
 
-        if (aggregateBaseInstance instanceof AbstractAggregateBase) {
-            ((AbstractAggregateBase) aggregateBaseInstance).setDeleteRecordCallback(
+        if (aggregateBaseInstance instanceof AbstractAggregate) {
+            ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
                     (method, referenceRecord, callback) ->
                             delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
         }

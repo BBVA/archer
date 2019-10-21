@@ -12,9 +12,9 @@ import org.apache.avro.specific.SpecificRecordBase;
  * @param <K> Key class
  * @param <V> Value specific record class
  */
-public class SpecificAggregate<K, V extends SpecificRecordBase> extends AbstractAggregateBase<K, V> {
+public class CommonAggregate<K, V extends SpecificRecordBase> extends AbstractAggregate<K, V> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SpecificAggregate.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommonAggregate.class);
 
     /**
      * Constructor
@@ -22,7 +22,7 @@ public class SpecificAggregate<K, V extends SpecificRecordBase> extends Abstract
      * @param id   id of the aggregate
      * @param data value
      */
-    public SpecificAggregate(final K id, final V data) {
+    public CommonAggregate(final K id, final V data) {
         super(id, data);
     }
 

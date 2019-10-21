@@ -34,7 +34,7 @@ public class Event {
     private final String producerName;
     private final SpecificRecordBase value;
     private final RecordHeaders headers;
-    final CRecord referenceRecord;
+    private final CRecord referenceRecord;
 
     private Event(final Producer producer, final String topic, final String key, final String producerName, final SpecificRecordBase value, final CRecord referenceRecord, final RecordHeaders headers) {
         this.producer = producer;
@@ -46,6 +46,12 @@ public class Event {
         this.headers = headers;
     }
 
+    /**
+     * Send event to the bus
+     *
+     * @param callback to manage response
+     * @return metadata of the call
+     */
     public EventRecordMetadata send(final ProducerCallback callback) {
         logger.debug("Generating event by {}", producerName);
 
@@ -63,6 +69,9 @@ public class Event {
         return recordedMessageMetadata;
     }
 
+    /**
+     * Manage the creation of events
+     */
     public static class Builder {
 
         private final Producer producer;
@@ -72,17 +81,18 @@ public class Event {
         private String key;
         private SpecificRecordBase value;
         private final CRecord referenceRecord;
-        private boolean replay = false;
-
+        Boolean isReplay;
 
         public Builder(final CRecord record) {
             producer = new DefaultProducer(ConfigBuilder.get());
+            isReplay = false;
             referenceRecord = record;
         }
 
-        public Builder(final Producer producer, final CRecord record) {
+        public Builder(final Producer producer, final CRecord record, final Boolean isReplay) {
             this.producer = producer;
             referenceRecord = record;
+            this.isReplay = isReplay;
         }
 
         public Event.Builder producerName(final String producerName) {
@@ -110,24 +120,19 @@ public class Event {
             return this;
         }
 
-        public Event.Builder replay() {
-            replay = true;
-            return this;
-        }
-
         public Event build() {
             final String key = this.key != null ? this.key : UUID.randomUUID().toString();
 
             return new Event(producer, to, key, producerName, value, referenceRecord,
-                    headers(producerName, replay, referenceRecord, name));
+                    headers(producerName, referenceRecord, name));
         }
 
-        private RecordHeaders headers(final String producerName, final boolean replay, final CRecord referenceRecord, final String name) {
+        private RecordHeaders headers(final String producerName, final CRecord referenceRecord, final String name) {
 
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, EventHeaderType.TYPE_VALUE);
             recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, producerName);
-            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, replay);
+            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, isReplay);
 
             if (referenceRecord != null) {
                 final ByteArrayValue entityUuid = referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY);

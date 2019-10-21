@@ -78,8 +78,8 @@ public class GatewayHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
-            handler.processCommand(new CommandHandlerContext(null, new CommandRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
+            handler.processCommand(new CommandHandlerContext(new CommandRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false));
         } catch (final Exception e) {
             ex = e;
         }
@@ -98,8 +98,8 @@ public class GatewayHandlerTest {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
             recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
-            handler.processEvent(new EventHandlerContext(null, new EventRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
-                    TimestampType.CREATE_TIME, "key", null, recordHeaders)));
+            handler.processEvent(new EventHandlerContext(new EventRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false));
         } catch (final Exception e) {
             ex = e;
         }

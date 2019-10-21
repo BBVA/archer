@@ -13,7 +13,7 @@ import org.apache.avro.specific.SpecificRecordBase;
  * @param <K> Key class
  * @param <V> Value class
  */
-public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> implements AggregateBase<K, V> {
+public abstract class AbstractAggregate<K, V extends SpecificRecordBase> implements AggregateBase<K, V> {
 
     private final V data;
     private final K id;
@@ -26,7 +26,7 @@ public abstract class AbstractAggregateBase<K, V extends SpecificRecordBase> imp
      * @param id   id of aggregate
      * @param data data of aggregate
      */
-    AbstractAggregateBase(final K id, final V data) {
+    AbstractAggregate(final K id, final V data) {
         this.id = id;
         this.data = data;
     }
