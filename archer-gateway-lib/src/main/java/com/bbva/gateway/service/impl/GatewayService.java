@@ -186,7 +186,7 @@ public abstract class GatewayService<T>
         if (originalRecord != null && isReplay(originalRecord)) {
             replay = true;
         }
-        final Event.Builder eventBuilder = new Event.Builder(producer, originalRecord, replay)
+        final Event.Builder eventBuilder = new Event.Builder(originalRecord, producer, replay)
                 .to(eventBaseName).producerName("gateway").value(outputEvent);
 
 

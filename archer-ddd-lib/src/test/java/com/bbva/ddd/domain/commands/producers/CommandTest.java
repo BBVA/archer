@@ -52,7 +52,7 @@ public class CommandTest {
             }
         });
         final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
-        final CommandRecordMetadata metadata = new Command.Builder(producer, null, false)
+        final CommandRecordMetadata metadata = new Command.Builder(null, producer, false)
                 .action(Command.CREATE_ACTION).to("topicBaseName")
                 .value(new PersonalData()).headers(headers).build()
                 .send(new DefaultProducerCallback());
@@ -82,7 +82,7 @@ public class CommandTest {
             }
         });
         final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
-        final CommandRecordMetadata metadata = new Command.Builder(producer, null, true)
+        final CommandRecordMetadata metadata = new Command.Builder(null, producer, true)
                 .action(Command.CREATE_ACTION).to("topicBaseName")
                 .value(new PersonalData()).headers(headers).build()
                 .send(new DefaultProducerCallback());
@@ -99,7 +99,7 @@ public class CommandTest {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final CommandRecordMetadata metadata = new Command.Builder(producer, null, false)
+        final CommandRecordMetadata metadata = new Command.Builder(null, producer, false)
                 .action(Command.CREATE_ACTION).to("topicBaseName")
                 .value(new PersonalData()).persistent().build()
                 .send(new DefaultProducerCallback());
@@ -116,7 +116,7 @@ public class CommandTest {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final Command command = new Command.Builder(producer, null, false)
+        final Command command = new Command.Builder(null, producer, false)
                 .action("action").to("topicBaseName")
                 .uuid("entityId").value(new PersonalData())
                 .build();
@@ -135,7 +135,7 @@ public class CommandTest {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final Command command = new Command.Builder(producer, null, false)
+        final Command command = new Command.Builder(null, producer, false)
                 .action(Command.DELETE_ACTION).to("topicBaseName")
                 .uuid("entityId")
                 .build();
@@ -154,7 +154,7 @@ public class CommandTest {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 
-        final Command command = new Command.Builder(producer, null, false)
+        final Command command = new Command.Builder(null, producer, false)
                 .action(Command.DELETE_ACTION).to("topicBaseName")
                 .build();
 
@@ -177,7 +177,7 @@ public class CommandTest {
             final RecordHeaders headers = new RecordHeaders();
             headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
 
-            final Command command = new Command.Builder(producer, new CommandRecord("topic", 1, 1, new Date().getTime(), TimestampType.CREATE_TIME, "key", new PersonalData(), headers), false)
+            final Command command = new Command.Builder(new CommandRecord("topic", 1, 1, new Date().getTime(), TimestampType.CREATE_TIME, "key", new PersonalData(), headers), producer, false)
                     .to("topicBaseName").value(new PersonalData()).action(Command.CREATE_ACTION)
                     .build();
             command.send(new DefaultProducerCallback());

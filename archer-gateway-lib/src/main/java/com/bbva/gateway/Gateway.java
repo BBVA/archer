@@ -38,7 +38,7 @@ public class Gateway {
     public void init() throws RepositoryException {
         configure();
 
-        domainBuilder = new Domain.Builder(config)
+        domainBuilder = Domain.Builder.create(config)
                 .handler(new GatewayHandler(config.getServicesPackage(), config));
     }
 

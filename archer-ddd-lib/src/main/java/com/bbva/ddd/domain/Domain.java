@@ -88,14 +88,23 @@ public class Domain {
     public static class Builder {
         private Handler handler;
         private AppConfig config;
+        private Domain domain;
+        private static Builder instance;
 
-        public Builder() {
-            this(ConfigBuilder.get());
-        }
-
-        public Builder(final AppConfig config) {
+        private Builder(final AppConfig config) {
+            domain = null;
             this.config = config;
             DataProcessor.create(config);
+        }
+
+        public static Builder create() {
+            instance = new Builder(ConfigBuilder.get());
+            return instance;
+        }
+
+        public static Builder create(final AppConfig configs) {
+            instance = new Builder(configs);
+            return instance;
         }
 
         public Domain.Builder handler(final Handler handler) {
@@ -332,7 +341,9 @@ public class Domain {
             }
             final List<RunnableConsumer> consumers = configureHandlers(config);
 
-            return new Domain(consumers, config);
+            domain = new Domain(consumers, config);
+
+            return domain;
         }
 
         private List<RunnableConsumer> configureHandlers(final AppConfig config) {

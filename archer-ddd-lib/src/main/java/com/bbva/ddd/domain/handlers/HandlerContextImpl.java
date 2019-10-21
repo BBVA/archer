@@ -34,16 +34,16 @@ public class HandlerContextImpl implements HandlerContext {
 
     @Override
     public Command.Builder command(final String action) {
-        return new Command.Builder(producer, consumedRecord, isReplay).action(action);
+        return new Command.Builder(consumedRecord, producer, isReplay).action(action);
     }
 
     @Override
     public Command.Builder command(final Command.Action action) {
-        return new Command.Builder(producer, consumedRecord, isReplay).action(action.name());
+        return new Command.Builder(consumedRecord, producer, isReplay).action(action.name());
     }
 
     @Override
     public Event.Builder event(final String name) {
-        return new Event.Builder(producer, consumedRecord, isReplay).name(name);
+        return new Event.Builder(consumedRecord, producer, isReplay).name(name);
     }
 }

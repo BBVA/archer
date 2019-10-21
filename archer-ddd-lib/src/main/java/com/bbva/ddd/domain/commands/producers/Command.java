@@ -80,7 +80,7 @@ public class Command {
         private final Producer producer;
         private final Boolean isReplay;
 
-        public Builder(final Producer producer, final CRecord record, final Boolean isReplay) {
+        public Builder(final CRecord record, final Producer producer, final Boolean isReplay) {
             this.producer = producer;
             referenceRecord = record;
             this.isReplay = isReplay;

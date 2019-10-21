@@ -37,8 +37,8 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(EventConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(EventConsumer.class));
         PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
         PowerMockito.mockStatic(TopicManager.class);
-        
-        final Domain domain = new Domain.Builder(new AppConfig()).build();
+
+        final Domain domain = Domain.Builder.create(new AppConfig()).build();
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertNotNull(domain)
         );
@@ -55,7 +55,7 @@ public class DomainBuilderTest {
         PowerMockito.mockStatic(TopicManager.class);
 
         ConfigBuilder.create();
-        final Domain domain = new Domain.Builder().build();
+        final Domain domain = Domain.Builder.create().build();
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertNotNull(domain)
         );
@@ -72,7 +72,7 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        Domain.Builder domain = new Domain.Builder(new AppConfig());
+        Domain.Builder domain = Domain.Builder.create(new AppConfig());
         domain = domain.addDataProcessorBuilder(new CreateStreamQueryBuilder("query-builder"));
         domain = domain.addDataProcessorBuilder("dataflow", PowerMockito.mock(DataflowBuilder.class));
         domain = domain.addEntityStateProcessor("entity", String.class);
@@ -92,7 +92,7 @@ public class DomainBuilderTest {
         PowerMockito.whenNew(ChangelogConsumer.class).withAnyArguments().thenReturn(PowerMockito.mock(ChangelogConsumer.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        Domain.Builder domain = new Domain.Builder(new AppConfig())
+        Domain.Builder domain = Domain.Builder.create(new AppConfig())
                 .handler(new AutoConfiguredHandler());
 
         domain = domain.indexFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
@@ -115,7 +115,7 @@ public class DomainBuilderTest {
 
         PowerMockito.mockStatic(TopicManager.class);
 
-        final Domain domain = new Domain.Builder(new AppConfig())
+        final Domain domain = Domain.Builder.create(new AppConfig())
                 .handler(new AutoConfiguredHandler())
                 .build();
 
