@@ -92,7 +92,7 @@ public class HostStoreInfo {
     /**
      * Set unique store names
      *
-     * @param storeNames
+     * @param storeNames store names
      */
     public void setStoreNames(final Set<String> storeNames) {
         this.storeNames = storeNames;

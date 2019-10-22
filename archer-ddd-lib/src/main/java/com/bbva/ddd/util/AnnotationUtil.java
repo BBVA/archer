@@ -96,8 +96,7 @@ public final class AnnotationUtil {
                         ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
 
-        final List<Class> handlers = new ArrayList<>(ref.getTypesAnnotatedWith(annotation));
-        return handlers;
+        return new ArrayList<>(ref.getTypesAnnotatedWith(annotation));
     }
 
 }

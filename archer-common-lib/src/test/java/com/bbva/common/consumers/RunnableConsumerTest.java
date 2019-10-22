@@ -64,7 +64,7 @@ public class RunnableConsumerTest {
             }
         };
 
-        new Thread(() -> consumer.run()).start();
+        new Thread(consumer::run).start();
         Thread.sleep(500);
         consumer.shutdown();
 
@@ -92,7 +92,7 @@ public class RunnableConsumerTest {
             }
         };
 
-        new Thread(() -> consumer.run()).start();
+        new Thread(consumer::run).start();
         Thread.sleep(500);
         consumer.shutdown();
 

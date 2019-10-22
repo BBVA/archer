@@ -21,7 +21,7 @@ public class PowermockState {
 
     public String[] getClassesToPrepareAsString() {
         final String[] result = new String[classesToPrepare.size()];
-        final Class[] classes = classesToPrepare.toArray(new Class[classesToPrepare.size()]);
+        final Class[] classes = classesToPrepare.toArray(new Class[0]);
         for (int i = 0; i < result.length; i++) {
             result[i] = classes[i].getName();
         }
@@ -29,7 +29,7 @@ public class PowermockState {
     }
 
     public String[] getPackagesToIgnoreAsArray() {
-        return packagesToIgnore.toArray(new String[packagesToIgnore.size()]);
+        return packagesToIgnore.toArray(new String[0]);
     }
 
 }

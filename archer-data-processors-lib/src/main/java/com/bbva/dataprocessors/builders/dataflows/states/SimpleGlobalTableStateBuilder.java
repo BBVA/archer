@@ -16,9 +16,6 @@ import java.util.Map;
 
 /**
  * Builder to manage state as global tables
- *
- * @param <K> Key class type
- * @param <V> Class type of record definition
  */
 public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
     private final String sourceTopicName;

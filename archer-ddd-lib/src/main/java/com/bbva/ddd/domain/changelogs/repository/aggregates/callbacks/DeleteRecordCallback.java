@@ -12,7 +12,6 @@ public interface DeleteRecordCallback {
      * Method to apply the deletion
      *
      * @param method          Method Invoked
-     * @param valueClass      Class type of the value
      * @param referenceRecord Reference record that triggers the event
      * @param callback        To manage apply response
      */

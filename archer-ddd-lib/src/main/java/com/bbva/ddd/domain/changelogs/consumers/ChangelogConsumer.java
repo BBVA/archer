@@ -10,8 +10,6 @@ import java.util.function.Consumer;
 
 /**
  * Specific consumer for changelog records
- *
- * @param <V> Specific changelog record class
  */
 public class ChangelogConsumer extends RunnableConsumer<ChangelogHandlerContext> {
 

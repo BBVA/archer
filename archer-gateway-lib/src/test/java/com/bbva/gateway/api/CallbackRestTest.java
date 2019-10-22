@@ -80,7 +80,7 @@ public class CallbackRestTest {
 
     @DisplayName("Create CallBack Ok")
     @Test
-    public void createCallBackCustomProperties() throws Exception {
+    public void createCallBackCustomProperties() {
         PowerMockito.mockStatic(ConfigBuilder.class);
 
         PowerMockito.when(ConfigBuilder.findConfigAnnotation()).thenReturn(GatewayTest.class.getAnnotation(Config.class));
@@ -95,7 +95,7 @@ public class CallbackRestTest {
         final LinkedHashMap config = new LinkedHashMap();
         config.put("commandAction", "action");
         PowerMockito.when(ConfigBuilder.getServiceConfig(Mockito.anyString())).thenReturn(config);
-        
+
         final CallbackRest callbackRest = new CallbackRest();
         CallbackRest.init();
         Assertions.assertNotNull(callbackRest);

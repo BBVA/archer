@@ -36,7 +36,7 @@ public interface HandlerContext extends ConsumerContext {
     /**
      * Get event generator to send
      *
-     * @param action name of the event
+     * @param name name of the event
      * @return event builder
      */
     Event.Builder event(String name);

@@ -39,7 +39,7 @@ public class MetadataService {
      * Get the list of host store info from a store
      *
      * @param store store name
-     * @returnlist
+     * @return list
      */
     public List<HostStoreInfo> streamsMetadataForStore(final String store) {
         final Collection<StreamsMetadata> metadata = streams.allMetadataForStore(store);

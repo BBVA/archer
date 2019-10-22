@@ -66,7 +66,7 @@ public final class ApplicationHelper {
     /**
      * Get event generator to send
      *
-     * @param action name of the event
+     * @param name name of the event
      * @return event builder
      */
     public Event.Builder event(final String name) {

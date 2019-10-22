@@ -7,9 +7,6 @@ import com.bbva.gateway.transformers.HeaderAsKeyStateTransformer;
 
 /**
  * Builder to manage entity of changelog
- *
- * @param <K> Key type
- * @param <V> Value type
  */
 public class HeaderAsKeyStateBuilder extends ChangelogBuilder {
 
