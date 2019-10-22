@@ -87,7 +87,7 @@ public class Domain {
 
     public static class Builder {
         private Handler handler;
-        private AppConfig config;
+        private final AppConfig config;
         private Domain domain;
         private static Builder instance;
 
@@ -333,9 +333,6 @@ public class Domain {
         }
 
         public Domain build() {
-            if (config == null) {
-                config = ConfigBuilder.get();
-            }
             if (handler == null) {
                 handler = new AutoConfiguredHandler();
             }

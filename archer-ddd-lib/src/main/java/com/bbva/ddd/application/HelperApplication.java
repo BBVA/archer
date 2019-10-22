@@ -1,14 +1,18 @@
 package com.bbva.ddd.application;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.ddd.common.CommonHelper;
+import com.bbva.common.producers.DefaultProducer;
+import com.bbva.common.producers.Producer;
+import com.bbva.ddd.domain.commands.producers.Command;
+import com.bbva.ddd.domain.events.producers.Event;
 
 /**
- * Helper to manage configurations and send events/commands from application layer
+ * Helper to manage application layer and send events/commands.
  */
-public final class HelperApplication extends CommonHelper {
+public final class HelperApplication {
 
     private static HelperApplication instance;
+    private final Producer producer;
 
     /**
      * Constructor
@@ -16,7 +20,7 @@ public final class HelperApplication extends CommonHelper {
      * @param appConfig general configuration
      */
     private HelperApplication(final AppConfig appConfig) {
-        super(appConfig);
+        producer = new DefaultProducer(appConfig);
     }
 
     /**
@@ -40,11 +44,32 @@ public final class HelperApplication extends CommonHelper {
     }
 
     /**
-     * Check if helper is created
+     * Get command generator to send
      *
-     * @return true/false
+     * @param action action to perform
+     * @return command builder
      */
-    public static boolean isInstantiated() {
-        return instance != null;
+    public Command.Builder command(final String action) {
+        return new Command.Builder(null, producer, false).action(action);
+    }
+
+    /**
+     * Get command generator to send
+     *
+     * @param action action to perform
+     * @return command builder
+     */
+    public Command.Builder command(final Command.Action action) {
+        return new Command.Builder(null, producer, false).action(action.name());
+    }
+
+    /**
+     * Get event generator to send
+     *
+     * @param action name of the event
+     * @return event builder
+     */
+    public Event.Builder event(final String name) {
+        return new Event.Builder(null, producer, false).name(name);
     }
 }

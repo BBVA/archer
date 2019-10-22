@@ -82,7 +82,7 @@ public class RepositoryImplTest {
 
     @DisplayName("Create repository ok")
     @Test
-    public void createRepositoryreplayData() throws Exception {
+    public void createRepositoryReplayData() throws Exception {
 
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
