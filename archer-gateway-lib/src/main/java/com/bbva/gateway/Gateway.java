@@ -20,7 +20,7 @@ import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
  *          configure(ExampleGateway.class);
  *          domain = new Domain(new ExampleHandler(servicesPackage, config), config.getAppConfig());
  *          start();
- *          new HelperApplication(config.getAppConfig());
+ *          new ApplicationHelper(config.getAppConfig());
  *      }
  *  }
  * }</pre>

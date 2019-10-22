@@ -34,15 +34,13 @@ public class Event {
     private final String producerName;
     private final SpecificRecordBase value;
     private final RecordHeaders headers;
-    private final CRecord referenceRecord;
 
-    private Event(final Producer producer, final String topic, final String key, final String producerName, final SpecificRecordBase value, final CRecord referenceRecord, final RecordHeaders headers) {
+    private Event(final Producer producer, final String topic, final String key, final String producerName, final SpecificRecordBase value, final RecordHeaders headers) {
         this.producer = producer;
         this.topic = topic;
         this.key = key;
         this.producerName = producerName;
         this.value = value;
-        this.referenceRecord = referenceRecord;
         this.headers = headers;
     }
 
@@ -123,7 +121,7 @@ public class Event {
         public Event build() {
             final String key = this.key != null ? this.key : UUID.randomUUID().toString();
 
-            return new Event(producer, to, key, producerName, value, referenceRecord,
+            return new Event(producer, to, key, producerName, value,
                     headers(producerName, referenceRecord, name));
         }
 

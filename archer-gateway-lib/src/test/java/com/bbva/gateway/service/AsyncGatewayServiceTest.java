@@ -10,7 +10,7 @@ import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.ReadableStore;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;

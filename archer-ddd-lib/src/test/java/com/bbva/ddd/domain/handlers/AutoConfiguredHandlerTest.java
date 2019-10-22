@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain;
+package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;

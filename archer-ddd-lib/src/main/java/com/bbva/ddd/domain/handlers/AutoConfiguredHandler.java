@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain;
+package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.exceptions.ApplicationException;
@@ -9,7 +9,7 @@ import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.ddd.util.AnnotationUtil;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -41,7 +41,7 @@ import java.util.*;
  *
  *  &#64;Event(baseName = "bar")
  *  public static void processBar(final EventRecord eventRecord) {
- *      HelperApplication
+ *      ApplicationHelper
  *          .get()
  *          .sendEventTo("baz")
  *          .send("bar-producer", eventRecord.value, (id, e) -&#62; {
@@ -55,7 +55,7 @@ import java.util.*;
  *
  *  &#64;Changelog(baseName = "foo")
  *  public static void processFooChangelog(final ChangelogRecord changelogRecord) {
- *      HelperApplication
+ *      ApplicationHelper
  *          .get()
  *          .sendEventTo("bax")
  *          .send("foo-changelog-producer", changelogRecord.value, (id, e) -&#62; {

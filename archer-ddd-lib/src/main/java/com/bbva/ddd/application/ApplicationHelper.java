@@ -9,9 +9,9 @@ import com.bbva.ddd.domain.events.producers.Event;
 /**
  * Helper to manage application layer and send events/commands.
  */
-public final class HelperApplication {
+public final class ApplicationHelper {
 
-    private static HelperApplication instance;
+    private static ApplicationHelper instance;
     private final Producer producer;
 
     /**
@@ -19,7 +19,7 @@ public final class HelperApplication {
      *
      * @param appConfig general configuration
      */
-    private HelperApplication(final AppConfig appConfig) {
+    private ApplicationHelper(final AppConfig appConfig) {
         producer = new DefaultProducer(appConfig);
     }
 
@@ -29,8 +29,8 @@ public final class HelperApplication {
      * @param configs configuration
      * @return instance
      */
-    public static HelperApplication create(final AppConfig configs) {
-        instance = new HelperApplication(configs);
+    public static ApplicationHelper create(final AppConfig configs) {
+        instance = new ApplicationHelper(configs);
         return instance;
     }
 
@@ -39,7 +39,7 @@ public final class HelperApplication {
      *
      * @return instance
      */
-    public static HelperApplication get() {
+    public static ApplicationHelper get() {
         return instance;
     }
 

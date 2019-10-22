@@ -3,7 +3,7 @@ package com.bbva.gateway.service.impl;
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.service.IAsyncGatewayService;
 

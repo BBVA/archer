@@ -5,7 +5,7 @@ import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.ddd.domain.events.producers.Event;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.config.GatewayConfig;

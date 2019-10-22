@@ -1,8 +1,8 @@
 package com.bbva.ddd.util;
 
-import com.bbva.ddd.domain.Handler;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
+import com.bbva.ddd.domain.handlers.Handler;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;

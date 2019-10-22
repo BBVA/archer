@@ -1,7 +1,7 @@
 package com.bbva.gateway.service;
 
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.config.GatewayConfig;
 
 /**

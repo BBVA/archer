@@ -2,6 +2,7 @@ package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.consumers.RunnableConsumer;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
@@ -9,11 +10,12 @@ import com.bbva.dataprocessors.builders.dataflows.states.EntityStateBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.GroupByFieldStateBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.UniqueFieldStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
-import com.bbva.ddd.application.HelperApplication;
+import com.bbva.ddd.application.ApplicationHelper;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogConsumer;
 import com.bbva.ddd.domain.commands.consumers.CommandConsumer;
-import com.bbva.ddd.domain.consumers.RunnableConsumer;
 import com.bbva.ddd.domain.events.consumers.EventConsumer;
+import com.bbva.ddd.domain.handlers.AutoConfiguredHandler;
+import com.bbva.ddd.domain.handlers.Handler;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -82,7 +84,7 @@ public class Domain {
             }
         }));
 
-        HelperApplication.create(config);
+        ApplicationHelper.create(config);
     }
 
     public static class Builder {

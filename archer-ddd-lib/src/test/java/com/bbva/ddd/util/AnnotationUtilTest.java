@@ -1,7 +1,7 @@
 package com.bbva.ddd.util;
 
-import com.bbva.ddd.domain.AutoConfiguredHandler;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
+import com.bbva.ddd.domain.handlers.AutoConfiguredHandler;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;

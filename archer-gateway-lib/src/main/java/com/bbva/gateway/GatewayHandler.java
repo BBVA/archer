@@ -1,9 +1,9 @@
 package com.bbva.gateway;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.ddd.domain.Handler;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
+import com.bbva.ddd.domain.handlers.Handler;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.ServiceConfig;

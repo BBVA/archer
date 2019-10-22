@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain;
+package com.bbva.ddd.domain.handlers;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
@@ -29,7 +29,7 @@ import java.util.List;
  *
  *      &#64;Event(baseName = "bar")
  *      public static void processBar(final EventRecord eventRecord) {
- *          HelperApplication
+ *          ApplicationHelper
  *              .get()
  *              .sendEventTo("baz")
  *              .send("bar-producer", eventRecord.value, (id, e) -&#62; {
@@ -43,7 +43,7 @@ import java.util.List;
  *
  *      &#64;Changelog(baseName = "foo")
  *      public static void processFooChangelog(final ChangelogRecord changelogRecord) {
- *          HelperApplication
+ *          ApplicationHelper
  *              .get()
  *              .sendEventTo("bax")
  *              .send("foo-changelog-producer", changelogRecord.value, (id, e) -&#62; {

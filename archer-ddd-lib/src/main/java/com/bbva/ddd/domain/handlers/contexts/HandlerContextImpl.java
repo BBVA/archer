@@ -1,4 +1,4 @@
-package com.bbva.ddd.domain.handlers;
+package com.bbva.ddd.domain.handlers.contexts;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.Producer;

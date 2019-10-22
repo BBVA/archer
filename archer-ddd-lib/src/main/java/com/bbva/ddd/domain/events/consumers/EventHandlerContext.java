@@ -2,7 +2,7 @@ package com.bbva.ddd.domain.events.consumers;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.Producer;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 
 public class EventHandlerContext extends HandlerContextImpl {
 

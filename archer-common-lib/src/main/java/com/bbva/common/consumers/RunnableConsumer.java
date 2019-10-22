@@ -1,7 +1,6 @@
-package com.bbva.ddd.domain.consumers;
+package com.bbva.common.consumers;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.consumers.DefaultConsumer;
 import com.bbva.common.consumers.contexts.ConsumerContext;
 
 import java.util.Arrays;

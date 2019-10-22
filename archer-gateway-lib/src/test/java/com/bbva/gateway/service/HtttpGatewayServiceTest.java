@@ -9,7 +9,7 @@ import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
-import com.bbva.ddd.domain.handlers.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.bean.HttpBean;
 import com.bbva.gateway.config.ConfigBuilder;

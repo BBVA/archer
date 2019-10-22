@@ -15,8 +15,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest(HelperApplication.class)
-public class HelperApplicationTest {
+@PrepareForTest(ApplicationHelper.class)
+public class ApplicationHelperTest {
 
     @DisplayName("Create application helper ok")
     @Test
@@ -24,11 +24,11 @@ public class HelperApplicationTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         final AppConfig appConfig = new AppConfig();
-        final HelperApplication helper = HelperApplication.create(appConfig);
+        final ApplicationHelper helper = ApplicationHelper.create(appConfig);
 
-        Assertions.assertAll("HelperApplication",
+        Assertions.assertAll("ApplicationHelper",
                 () -> Assertions.assertNotNull(helper),
-                () -> Assertions.assertEquals(helper, HelperApplication.get())
+                () -> Assertions.assertEquals(helper, ApplicationHelper.get())
         );
     }
 
@@ -39,9 +39,9 @@ public class HelperApplicationTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         final AppConfig appConfig = new AppConfig();
-        final HelperApplication helper = HelperApplication.create(appConfig);
+        final ApplicationHelper helper = ApplicationHelper.create(appConfig);
 
-        Assertions.assertAll("HelperApplication",
+        Assertions.assertAll("ApplicationHelper",
                 () -> Assertions.assertNotNull(helper),
                 () -> Assertions.assertNotNull(helper.command(Command.Action.CREATE_ACTION)),
                 () -> Assertions.assertNotNull(helper.command("another_action"))
@@ -54,9 +54,9 @@ public class HelperApplicationTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
 
         final AppConfig appConfig = new AppConfig();
-        final HelperApplication helper = HelperApplication.create(appConfig);
+        final ApplicationHelper helper = ApplicationHelper.create(appConfig);
 
-        Assertions.assertAll("HelperApplication",
+        Assertions.assertAll("ApplicationHelper",
                 () -> Assertions.assertNotNull(helper),
                 () -> Assertions.assertNotNull(helper.event("event_name"))
         );

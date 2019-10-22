@@ -8,11 +8,12 @@ import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.sql.queries.CreateStreamQueryBuilder;
-import com.bbva.ddd.application.HelperApplication;
+import com.bbva.ddd.application.ApplicationHelper;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogConsumer;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
 import com.bbva.ddd.domain.commands.consumers.CommandConsumer;
 import com.bbva.ddd.domain.events.consumers.EventConsumer;
+import com.bbva.ddd.domain.handlers.AutoConfiguredHandler;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -26,7 +27,7 @@ import java.util.concurrent.Executors;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class, HelperApplication.class})
+@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class, ApplicationHelper.class})
 public class DomainBuilderTest {
 
     @DisplayName("Create domain ok")
