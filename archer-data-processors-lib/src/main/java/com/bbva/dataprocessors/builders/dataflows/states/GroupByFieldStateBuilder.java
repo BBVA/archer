@@ -40,7 +40,7 @@ public class GroupByFieldStateBuilder<K, V extends SpecificRecord> implements St
     /**
      * Constructor
      *
-     * @param sourceChangelogTopicName soruce base name
+     * @param sourceChangelogTopicName source base name
      * @param keyClass                 class type of key
      * @param valueClass               class type of value record
      * @param foreignKeyFieldName      foreign field

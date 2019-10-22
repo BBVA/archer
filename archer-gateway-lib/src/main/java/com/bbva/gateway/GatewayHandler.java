@@ -25,9 +25,9 @@ public class GatewayHandler implements Handler {
     private static String baseName;
     private static final Map<String, IGatewayService> commandServices = new HashMap<>();
     private static final Map<String, IGatewayService> eventServices = new HashMap<>();
-    List<String> commandsSubscribed = new ArrayList<>();
-    List<String> eventsSubscribed = new ArrayList<>();
-    protected static GatewayConfig config;
+    private final List<String> commandsSubscribed = new ArrayList<>();
+    private final List<String> eventsSubscribed = new ArrayList<>();
+    private static GatewayConfig config;
 
     /**
      * Constructor
@@ -97,7 +97,7 @@ public class GatewayHandler implements Handler {
         }
     }
 
-    private static void initActionService(final Class serviceClass, final LinkedHashMap<String, Object> gatewayConfig, final String commandAction, final String event) {
+    private static void initActionService(final Class serviceClass, final Map<String, Object> gatewayConfig, final String commandAction, final String event) {
         //TODO clone en only one line
         GatewayConfig newConfig = new GatewayConfig();
         try {

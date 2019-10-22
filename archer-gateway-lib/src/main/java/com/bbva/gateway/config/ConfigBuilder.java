@@ -47,7 +47,18 @@ public class ConfigBuilder {
      * @return configuration
      */
     public static GatewayConfig create(final Config extraConfig) {
+        instance = new ConfigBuilder();
         return init(extraConfig);
+    }
+
+
+    /**
+     * Get instance of AppConfiguration
+     *
+     * @return appConfiguration instance
+     */
+    public static AppConfig get() {
+        return instance.gatewayConfig;
     }
 
     /**
@@ -74,6 +85,7 @@ public class ConfigBuilder {
         gatewayConfig.custom().putAll((LinkedHashMap<String, Object>) config.get(GatewayConfig.GATEWAY_CUSTOM_PROPERTIES));
         gatewayConfig.gateway().putAll((LinkedHashMap<String, Object>) config.get(GatewayConfig.GATEWAY_GATEWAY_PROPERTIES));
 
+        instance.gatewayConfig = gatewayConfig;
         return gatewayConfig;
     }
 

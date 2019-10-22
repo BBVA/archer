@@ -27,7 +27,7 @@ public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
     /**
      * Constructor
      *
-     * @param sourceTopicName soruce base name
+     * @param sourceTopicName source base name
      */
     public SimpleGlobalTableStateBuilder(final String sourceTopicName) {
         this.sourceTopicName = sourceTopicName;

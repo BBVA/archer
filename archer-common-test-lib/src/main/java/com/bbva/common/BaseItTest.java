@@ -17,7 +17,7 @@ public class BaseItTest {
     private static final int DEFAULT_SCHEMA_REGISTRY_PORT = 8081;
 
     /**
-     * Manag the kafka cluster and another components in memory
+     * Manage the kafka cluster and another components in memory
      */
     @ClassRule
     public static final KafkaTestResource kafkaTestResource = new KafkaTestResource();

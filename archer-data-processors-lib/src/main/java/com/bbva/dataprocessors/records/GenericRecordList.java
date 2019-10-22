@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * List of generci record
+ * List of generic record
  *
  * @param <V> specific record type
  */

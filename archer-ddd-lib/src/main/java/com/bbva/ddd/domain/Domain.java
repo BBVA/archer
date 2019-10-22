@@ -58,33 +58,34 @@ public class Domain {
     /**
      * Start the Domain (Handlers, Repositories and Processors)
      */
-    public synchronized void start() {
+    public void start() {
+        synchronized (this) {
+            DataProcessor.get().start();
+            logger.info("States have been started");
 
-        DataProcessor.get().start();
-        logger.info("States have been started");
-
-        final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
-
-        for (final RunnableConsumer consumer : consumers) {
-            executor.submit(consumer);
-        }
-
-        logger.info("Consumers have been started");
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
 
             for (final RunnableConsumer consumer : consumers) {
-                consumer.shutdown();
+                executor.submit(consumer);
             }
-            executor.shutdown();
-            try {
-                executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-            } catch (final InterruptedException e) { //NOSONAR
-                logger.warn("InterruptedException starting the application", e);
-            }
-        }));
 
-        ApplicationHelper.create(config);
+            logger.info("Consumers have been started");
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+
+                for (final RunnableConsumer consumer : consumers) {
+                    consumer.shutdown();
+                }
+                executor.shutdown();
+                try {
+                    executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
+                } catch (final InterruptedException e) { //NOSONAR
+                    logger.warn("InterruptedException starting the application", e);
+                }
+            }));
+
+            ApplicationHelper.create(config);
+        }
     }
 
     public static class Builder {

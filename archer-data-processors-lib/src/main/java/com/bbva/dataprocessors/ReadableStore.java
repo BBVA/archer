@@ -16,7 +16,7 @@ public class ReadableStore<K, V> {
     protected ReadOnlyKeyValueStore<K, V> store;
 
     /**
-     * COnstructor
+     * Constructor
      *
      * @param storeName name
      * @param streams   kafka streams instance
@@ -63,16 +63,16 @@ public class ReadableStore<K, V> {
     /**
      * Get a range of records
      *
-     * @param from infex from
+     * @param from index from
      * @param to   index to
-     * @return renage iterator
+     * @return range iterator
      */
     public KeyValueIterator<K, V> range(final K from, final K to) {
         return store.range(from, to);
     }
 
     /**
-     * get the actual aproximate number of entries in the store
+     * get the actual approximate number of entries in the store
      *
      * @return count
      */

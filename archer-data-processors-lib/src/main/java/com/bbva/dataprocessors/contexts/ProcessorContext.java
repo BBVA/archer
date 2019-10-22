@@ -9,7 +9,7 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 public interface ProcessorContext {
 
     /**
-     * Get shema registry client
+     * Get schema registry client
      *
      * @return client
      */

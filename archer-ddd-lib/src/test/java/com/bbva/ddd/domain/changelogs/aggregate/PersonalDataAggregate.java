@@ -9,7 +9,7 @@ import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregat
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 
 @Aggregate(baseName = "aggregateBaseName")
-@AggregateParent(value = PersonalDataParentAggregate.class)
+@AggregateParent(PersonalDataParentAggregate.class)
 public class PersonalDataAggregate extends CommonAggregate<String, PersonalData> {
 
     public PersonalDataAggregate(final String id, final SpecificRecordBaseImpl record) {

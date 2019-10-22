@@ -89,8 +89,8 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         }
     }
 
-    private static Class getValueClass(final Class anotatedClass) {
-        return (Class) ((ParameterizedType) anotatedClass.getGenericSuperclass()).getActualTypeArguments()[1];
+    private static Class getValueClass(final Class annotatedClass) {
+        return (Class) ((ParameterizedType) annotatedClass.getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
     private ChangelogRecordMetadata save(final String baseName, final Class<? extends AggregateBase> aggregateClass, final String key, final V value, final CRecord referenceRecord, final String method,
@@ -160,7 +160,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         return changelogRecordMetadata;
     }
 
-    private <T extends AggregateBase> AggregateBase getAggregateIntance(final String baseName, final Class<T> aggregateClass, final String key, final SpecificRecordBase value) {
+    private <T extends AggregateBase> AggregateBase getAggregateInstance(final String baseName, final Class<T> aggregateClass, final String key, final SpecificRecordBase value) {
         final AggregateBase aggregateBaseInstance;
         try {
             aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
@@ -229,7 +229,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
             logger.warn("Schema has not field uuid");
         }
 
-        final AggregateBase aggregateBaseInstance = getAggregateIntance(aggregate.baseName(), aggregateClass, aggregateKey, value);
+        final AggregateBase aggregateBaseInstance = getAggregateInstance(aggregate.baseName(), aggregateClass, aggregateKey, value);
 
         logger.debug("Creating PRecord of type {}", value.getClass().getName());
 
@@ -252,12 +252,12 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
 
         if (value != null) {
             logger.debug("Value found for id {}", key);
-            return loadAggregateIntance(aggregate.baseName(), key, value, aggregateClass);
+            return loadAggregateInstance(aggregate.baseName(), key, value, aggregateClass);
         }
         return null;
     }
 
-    private <T extends AggregateBase> T loadAggregateIntance(final String baseName, final String key, final V value, final Class<? extends AggregateBase> aggregateClass) {
+    private <T extends AggregateBase> T loadAggregateInstance(final String baseName, final String key, final V value, final Class<? extends AggregateBase> aggregateClass) {
         final AggregateBase aggregateBaseInstance;
         try {
             aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())

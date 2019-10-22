@@ -76,7 +76,7 @@ public class AppConfig implements Cloneable {
     }
 
     /**
-     * get intetger valuie of the key
+     * get integer value of the key
      *
      * @param key key
      * @return value

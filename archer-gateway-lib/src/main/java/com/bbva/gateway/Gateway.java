@@ -27,8 +27,8 @@ import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
  */
 public class Gateway {
 
-    protected static GatewayConfig config;
-    protected static Domain.Builder domainBuilder;
+    private static GatewayConfig config;
+    private static Domain.Builder domainBuilder;
 
     /**
      * Initialize the domain of the gateway

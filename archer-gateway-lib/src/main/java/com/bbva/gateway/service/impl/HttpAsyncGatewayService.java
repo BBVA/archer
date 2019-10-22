@@ -37,7 +37,7 @@ public abstract class HttpAsyncGatewayService<T>
      */
     @Override
     public T call(final CRecord record) {
-        final HttpRequest httpObject = traslateRecordToHttp(record);
+        final HttpRequest httpObject = translateRecordToHttp(record);
         return (T) RetrofitClient.call(retrofit, httpObject, queryParams);
     }
 
@@ -47,7 +47,7 @@ public abstract class HttpAsyncGatewayService<T>
      * @param record record
      * @return http object
      */
-    protected HttpRequest traslateRecordToHttp(final CRecord record) {
+    protected HttpRequest translateRecordToHttp(final CRecord record) {
         final Properties gatewayConfig = config.gateway();
         final HttpRequest request = new HttpRequest();
         request.setHeaders((Map<String, String>) gatewayConfig.get(GatewayConfig.GatewayProperties.GATEWAY_HTTP_HEADERS));

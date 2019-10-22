@@ -6,7 +6,7 @@ package com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks;
 public interface AggregateCallback {
 
     /**
-     * Method to handle aggregate repsonse
+     * Method to handle aggregate response
      */
     void onComplete();
 

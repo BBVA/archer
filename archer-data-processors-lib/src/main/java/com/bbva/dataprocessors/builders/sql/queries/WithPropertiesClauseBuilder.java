@@ -94,7 +94,7 @@ public class WithPropertiesClauseBuilder {
     }
 
     /**
-     * Set tiemstamp property
+     * Set timestamp property
      *
      * @param timestamp timestamp
      * @return builder

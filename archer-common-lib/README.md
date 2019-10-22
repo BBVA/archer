@@ -80,8 +80,7 @@ public class ExampleConsumer extends DefaultConsumer<ConsumerContextImpl> {
 
     @Override
     public ConsumerContextImpl context(final Producer producer, final CRecord record) {
-        final ConsumerContextImpl consumerContextImpl = new ConsumerContextImpl(producer, record);
-        return consumerContextImpl;
+        return new ConsumerContextImpl(producer, record);
     }
 
 }

@@ -151,7 +151,7 @@ public abstract class GatewayService<T>
      * Parse response to string
      *
      * @param response response
-     * @return json sring
+     * @return json string
      */
     public String parseChangelogToString(final T response) {
         try {
@@ -163,7 +163,7 @@ public abstract class GatewayService<T>
     }
 
     /**
-     * Send evet with the original record and response
+     * Send event with the original record and response
      *
      * @param originalRecord original record
      * @param outputEvent    response
@@ -182,7 +182,7 @@ public abstract class GatewayService<T>
      * @param <O>            Output type
      */
     protected static <O extends SpecificRecordBase> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
-        Boolean replay = false;
+        boolean replay = false;
         if (originalRecord != null && isReplay(originalRecord)) {
             replay = true;
         }
@@ -214,7 +214,7 @@ public abstract class GatewayService<T>
     }
 
     /**
-     * Check if the recprd is in replay
+     * Check if the record is in replay
      *
      * @param record record
      * @return true/false

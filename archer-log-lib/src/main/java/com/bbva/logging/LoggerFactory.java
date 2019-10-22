@@ -43,13 +43,13 @@ public final class LoggerFactory {
         final InputStream inputStream =
                 getClass().getClassLoader().getResourceAsStream(filePath);
 
-        final Properties logPorperties = new Properties();
+        final Properties logProperties = new Properties();
 
         if (inputStream != null) {
-            logPorperties.load(inputStream);
+            logProperties.load(inputStream);
         }
 
-        return logPorperties;
+        return logProperties;
     }
 
     /**

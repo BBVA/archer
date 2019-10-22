@@ -27,7 +27,7 @@ import java.util.List;
 public class CallbackRest {
 
     private static final Logger logger = LoggerFactory.getLogger(CallbackRest.class);
-    protected static GatewayConfig config;
+    private static GatewayConfig config;
 
     /**
      * Post constructor actions

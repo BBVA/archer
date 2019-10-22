@@ -96,8 +96,7 @@ public class TopicManager {
             final AppConfig config,
             final String topicName,
             final Map<String, String> topicConfig) {
-        final NewTopic newTopic;
-        newTopic =
+        final NewTopic newTopic =
                 new NewTopic(
                         topicName,
                         getProperty(config, AppConfig.PARTITIONS, DEFAULT_PARTITIONS),

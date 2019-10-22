@@ -63,7 +63,7 @@ public class DefaultProducer implements com.bbva.common.producers.Producer {
     public Future<RecordMetadata> send(final PRecord record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
 
-        final Future<RecordMetadata> result = producer.send(record, (metadata, e) -> {
+        return producer.send(record, (metadata, e) -> {
             if (e != null) {
                 logger.error("Error producing key " + record.key(), e);
             } else {
@@ -72,8 +72,6 @@ public class DefaultProducer implements com.bbva.common.producers.Producer {
             callback.onCompletion(record.key(), e);
         });
 
-
-        return result;
     }
 
     @Override

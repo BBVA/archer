@@ -6,7 +6,7 @@ import org.apache.kafka.common.header.Header;
 import java.util.List;
 
 /**
- * Optional record headerds
+ * Optional record headers
  */
 public class OptionalRecordHeaders extends RecordHeaders {
 

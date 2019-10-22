@@ -79,7 +79,7 @@ public class Event {
         private String key;
         private SpecificRecordBase value;
         private final CRecord referenceRecord;
-        Boolean isReplay;
+        private final Boolean isReplay;
 
         public Builder(final CRecord record) {
             producer = new DefaultProducer(ConfigBuilder.get());

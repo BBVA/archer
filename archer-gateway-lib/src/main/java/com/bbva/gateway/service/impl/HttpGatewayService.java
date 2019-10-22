@@ -42,17 +42,17 @@ public abstract class HttpGatewayService
      */
     @Override
     public Response call(final CRecord record) {
-        final HttpRequest httpObject = traslateRecordToHttp(record);
+        final HttpRequest httpObject = translateRecordToHttp(record);
         return RetrofitClient.call(retrofit, httpObject, queryParams);
     }
 
     /**
      * Translate record to http object
      *
-     * @param record recor
+     * @param record record
      * @return http object
      */
-    protected HttpRequest traslateRecordToHttp(final CRecord record) {
+    protected HttpRequest translateRecordToHttp(final CRecord record) {
         final HttpRequest request = new HttpRequest();
         request.setHeaders((Map<String, String>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_HTTP_HEADERS));
         request.setMethod((String) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_HTTP_METHOD));

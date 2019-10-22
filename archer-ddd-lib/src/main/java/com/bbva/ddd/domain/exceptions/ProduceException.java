@@ -1,7 +1,7 @@
 package com.bbva.ddd.domain.exceptions;
 
 /**
- * Custoim producer exception to manage errors in production
+ * Custom producer exception to manage errors in production
  */
 public class ProduceException extends RuntimeException {
 

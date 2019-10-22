@@ -53,7 +53,7 @@ public class ConfigBuilder {
     /**
      * Get instance of AppConfiguration
      *
-     * @return appConfiguration instace
+     * @return appConfiguration instance
      */
     public static AppConfig get() {
         return instance.appConfig;

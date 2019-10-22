@@ -38,7 +38,7 @@ public class UniqueFieldStateBuilder<K, V extends SpecificRecordBase, K1> implem
     /**
      * Constructor
      *
-     * @param sourceTopicName soruce base name
+     * @param sourceTopicName source base name
      * @param fieldPath       field path
      * @param keyClass        class type of the key
      * @param key1Class       class ype of second key

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Transformer for grpoup by a field in a entity state
+ * Transformer for group by a field in a entity state
  *
  * @param <K> Key class
  * @param <V> Value class

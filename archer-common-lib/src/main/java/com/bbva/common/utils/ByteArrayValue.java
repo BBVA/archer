@@ -181,7 +181,7 @@ public class ByteArrayValue {
         }
 
         /**
-         * Get class typoe of the value
+         * Get class type of the value
          *
          * @return class type
          */

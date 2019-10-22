@@ -41,9 +41,9 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
     /**
      * Constructor
      *
-     * @param id        consuer id
+     * @param id        consumer id
      * @param topics    list of topics
-     * @param callback  callback to manag responses
+     * @param callback  callback to manage responses
      * @param appConfig configuration
      */
     public DefaultConsumer(final int id, final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {

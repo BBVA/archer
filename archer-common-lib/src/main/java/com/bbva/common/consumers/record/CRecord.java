@@ -11,13 +11,13 @@ import org.apache.kafka.common.record.TimestampType;
  */
 public class CRecord {
 
-    protected final String topic;
-    protected final int partition;
-    protected final long offset;
-    protected final long timestamp;
-    protected final TimestampType timestampType;
-    protected final String key;
-    protected final SpecificRecord value;
+    private final String topic;
+    private final int partition;
+    private final long offset;
+    private final long timestamp;
+    private final TimestampType timestampType;
+    private final String key;
+    private final SpecificRecord value;
     protected final RecordHeaders headers;
 
     /**

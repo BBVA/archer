@@ -91,13 +91,12 @@ public final class AnnotationUtil {
     }
 
     private static <C extends Annotation> List<Class> findClassesInPackage(final String packageToFind, final Class<C> annotation) {
-        final List<Class> handlers = new ArrayList<>();
         final Reflections ref = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(packageToFind, ClasspathHelper.contextClassLoader(),
                         ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
 
-        handlers.addAll(ref.getTypesAnnotatedWith(annotation));
+        final List<Class> handlers = new ArrayList<>(ref.getTypesAnnotatedWith(annotation));
         return handlers;
     }
 

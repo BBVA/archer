@@ -25,9 +25,9 @@ public class RetrofitClient {
     private static final Logger logger = LoggerFactory.getLogger(RetrofitClient.class);
 
     /**
-     * Buidl a client with gsonc onverter
+     * Build a client with gson converter
      *
-     * @param url client urlclient
+     * @param url client url
      * @return retrofit instance
      */
     public static Retrofit build(final String url) {
