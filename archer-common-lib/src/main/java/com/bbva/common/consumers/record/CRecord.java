@@ -7,7 +7,7 @@ import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.common.record.TimestampType;
 
 /**
- * It's a common record and contains data and metadata.
+ * It's a common consumer record and contains data and metadata.
  */
 public class CRecord {
 

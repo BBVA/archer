@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Utility/builder  class to populate system configurations
+ * Utility/builder class to populate system configurations
  */
 public class ConfigBuilder {
 

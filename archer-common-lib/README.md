@@ -5,7 +5,7 @@ Common lib
 
 This is the common library to interact directly with the event bus. 
 
-Provide classes for produce and consume of events, too  simplify the infrastructure connectivity/usage and the utilities to serialize/deserialize the data from/to the bus.
+Provide classes for produce and consume events, too  simplify the infrastructure connectivity/usage and the utilities to serialize/deserialize the data from/to the bus.
 
 ## Requirements
 

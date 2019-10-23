@@ -7,22 +7,29 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import java.util.concurrent.Future;
 
 /**
- * Producers interface.
- * <pre>
- *  {@code
- *      final Producer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
- *      final Future result = producer.save(new PRecord("test", "key", "value", new RecordHeaders()), producerCallback);
- *  }
- * </pre>
+ * Producers interface to manage the production in the bus.
  */
 public interface Producer {
 
+    /**
+     * Method to initialize the production start. For example, init transaction
+     */
     default void init() {
 
     }
 
+    /**
+     * Produce record in the event store
+     *
+     * @param record   message to produce
+     * @param callback to manage asynchronous response of bus
+     * @return production metadata
+     */
     Future<RecordMetadata> send(final PRecord record, final ProducerCallback callback);
 
+    /**
+     * Method to to do actions after production. For example, commit transactions
+     */
     default void end() {
 
     }

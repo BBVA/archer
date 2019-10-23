@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
  * <pre>
  *  {@code
  *      final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
- *      final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
+ *      final Future result = producer.send(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
  *  }
  * </pre>
  */

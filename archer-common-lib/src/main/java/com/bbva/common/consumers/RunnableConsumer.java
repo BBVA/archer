@@ -42,7 +42,7 @@ public abstract class RunnableConsumer<T extends ConsumerContext> extends Defaul
     }
 
     /**
-     * Start the consumer
+     * Start the consumption, first replaying the specify topics
      */
     @Override
     public void run() {

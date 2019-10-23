@@ -16,7 +16,7 @@ public class ByteArrayValue {
      * Constructor
      *
      * @param data       data to store
-     * @param serialized is data serialized?
+     * @param serialized is data already serialized?
      */
     public ByteArrayValue(final byte[] data, final boolean serialized) {
         this.data = serialized ? data : Serde.serialize(data);
@@ -126,6 +126,10 @@ public class ByteArrayValue {
      * Serde Serialization/Deserialization
      */
     public static class Serde {
+
+        private Serde() {
+            throw new UnsupportedOperationException();
+        }
 
         /**
          * Deserialize byte[] to Object

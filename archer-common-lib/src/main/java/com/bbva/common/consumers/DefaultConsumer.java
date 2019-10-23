@@ -87,7 +87,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
 
         try {
 
-            consumer.subscribe(topics/*, new HandleRebalanceListener()*/);
+            consumer.subscribe(topics);
             logger.debug("Topics subscribed: {}", topics.toString());
 
             consumer.poll(Duration.ofMillis(1000));
@@ -123,12 +123,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                                             new RecordHeaders(record.headers())), new DefaultProducer(appConfig), true));
 
                                     currentOffsets.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
-                                    consumer.commitAsync(currentOffsets, (offsets, e) -> {
-                                        if (e != null) {
-                                            logger.error("Commit failed for offsets " + offsets, e);
-                                        }
-                                    });
-
+                                    commitOffsets();
                                 } else {
                                     stop = true;
                                     logger.debug("End replay on topic {} partition {}", topicPartition.topic(), topicPartition.partition());
@@ -172,13 +167,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                             new TopicPartition(record.topic(), record.partition()),
                             new OffsetAndMetadata(record.offset() + 1));
 
-                    if (!(Boolean) appConfig.consumer(AppConfig.ConsumerProperties.ENABLE_AUTO_COMMIT)) {
-                        consumer.commitAsync(currentOffsets, (offsets, e) -> {
-                            if (e != null) {
-                                logger.error("Commit failed for offsets " + offsets, e);
-                            }
-                        });
-                    }
+                    commitOffsets();
 
                     //End the transaction
                     producer.end();
@@ -198,6 +187,16 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                 consumer.close();
                 logger.info("Closed consumer and we are done");
             }
+        }
+    }
+
+    private void commitOffsets() {
+        if (!(Boolean) appConfig.consumer(AppConfig.ConsumerProperties.ENABLE_AUTO_COMMIT)) {
+            consumer.commitAsync(currentOffsets, (offsets, e) -> {
+                if (e != null) {
+                    logger.error("Commit failed for offsets " + offsets, e);
+                }
+            });
         }
     }
 
