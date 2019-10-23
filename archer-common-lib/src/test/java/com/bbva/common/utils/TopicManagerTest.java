@@ -45,7 +45,7 @@ public class TopicManagerTest {
 
     @DisplayName("Creation event topic ok")
     @Test
-    public void createEventopicOk() throws Exception {
+    public void createEventTopicOk() throws Exception {
         PowerMockito.spy(TopicManager.class);
         final Method m = Whitebox.getMethod(TopicManager.class, Collection.class, AppConfig.class);
         PowerMockito.doNothing().when(TopicManager.class, m).withArguments(Matchers.any(Collection.class), Matchers.any(AppConfig.class));
@@ -68,10 +68,7 @@ public class TopicManagerTest {
         PowerMockito.spy(TopicManager.class);
         final Method m = Whitebox.getMethod(TopicManager.class, Collection.class, AppConfig.class);
         PowerMockito.doNothing().when(TopicManager.class, m).withArguments(Matchers.any(Collection.class), Matchers.any(AppConfig.class));
-
-        final Map<String, String> commandTopic = new HashMap<>();
-        commandTopic.put("topic" + AppConfig.EVENTS_RECORD_NAME_SUFFIX, AppConfig.EVENTS_RECORD_TYPE);
-
+        
         Exception ex = null;
         final Map<String, Map<String, String>> topicName = new HashMap<>();
         topicName.put("topicName", TopicManager.configTypes.get(AppConfig.CHANGELOG_RECORD_TYPE));

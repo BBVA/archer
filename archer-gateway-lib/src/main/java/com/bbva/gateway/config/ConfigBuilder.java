@@ -2,7 +2,7 @@ package com.bbva.gateway.config;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.util.ConfigurationUtil;
-import com.bbva.gateway.Gateway;
+import com.bbva.gateway.GatewayDomain;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import org.reflections.Reflections;
@@ -18,6 +18,7 @@ public class ConfigBuilder {
 
     private GatewayConfig gatewayConfig;
     private static ConfigBuilder instance;
+    private static final Yaml yaml = new Yaml();
 
     /**
      * Create and init application configuration
@@ -101,8 +102,8 @@ public class ConfigBuilder {
     }
 
     private static Map<String, Object> getConfig(final Config extraConfig) {
-        final Yaml yaml = new Yaml();
-        final ClassLoader classLoader = Gateway.class.getClassLoader();
+
+        final ClassLoader classLoader = GatewayDomain.class.getClassLoader();
         Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, GatewayConfig.COMMON_CONFIG);
         if (extraConfig != null) {
             properties = ConfigurationUtil.mergeProperties(properties, ConfigurationUtil.getConfigFromFile(yaml, classLoader, extraConfig.file()));
@@ -114,12 +115,12 @@ public class ConfigBuilder {
 
 
     /**
-     * Find gateway configuration annotation in all scafolding
+     * Find gateway configuration annotation in all scaffolding
      *
      * @return config annotation
      */
     public static Config findConfigAnnotation() {
-        final Reflections ref = new Reflections(Gateway.class.getPackage().getName().split("\\.")[0]);
+        final Reflections ref = new Reflections(GatewayDomain.class.getPackage().getName().split("\\.")[0]);
         Config configAnnotation = null;
         for (final Class<?> mainClass : ref.getTypesAnnotatedWith(Config.class)) {
             configAnnotation = mainClass.getAnnotation(Config.class);
@@ -135,7 +136,7 @@ public class ConfigBuilder {
      * @return list of service classes
      */
     public static List<Class> getServiceClasses(final String servicesPackage) {
-        final Reflections ref = new Reflections(!"".equals(servicesPackage) ? servicesPackage : Gateway.class.getPackage().getName().split("\\.")[0]);
+        final Reflections ref = new Reflections(servicesPackage != null && !"".equals(servicesPackage) ? servicesPackage : GatewayDomain.class.getPackage().getName().split("\\.")[0]);
 
         return new ArrayList<>(ref.getTypesAnnotatedWith(ServiceConfig.class));
     }
@@ -147,8 +148,7 @@ public class ConfigBuilder {
      * @return map of config
      */
     public static LinkedHashMap<String, Object> getServiceConfig(final String file) {
-        final Yaml yaml = new Yaml();
-        final ClassLoader classLoader = Gateway.class.getClassLoader();
+        final ClassLoader classLoader = GatewayDomain.class.getClassLoader();
         Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, file);
 
         properties = ConfigurationUtil.replaceEnvVariables(properties);

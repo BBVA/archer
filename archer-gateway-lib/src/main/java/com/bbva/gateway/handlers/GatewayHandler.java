@@ -1,4 +1,4 @@
-package com.bbva.gateway;
+package com.bbva.gateway.handlers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;

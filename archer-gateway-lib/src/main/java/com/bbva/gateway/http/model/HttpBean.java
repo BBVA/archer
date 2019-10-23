@@ -1,4 +1,4 @@
-package com.bbva.gateway.bean;
+package com.bbva.gateway.http.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

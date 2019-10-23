@@ -93,7 +93,7 @@ public class CommandTest {
         );
     }
 
-    @DisplayName("Create command without headersok")
+    @DisplayName("Create command without headers ok")
     @Test
     public void createCommandWithoutHeadersOk() throws Exception {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
@@ -112,7 +112,7 @@ public class CommandTest {
 
     @DisplayName("Process command action ok")
     @Test
-    public void processsActionOk() throws Exception {
+    public void processActionOk() throws Exception {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
 

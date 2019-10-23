@@ -17,6 +17,7 @@ public class ConfigBuilder {
 
     private AppConfig appConfig;
     private static ConfigBuilder instance;
+    private static final Yaml yaml = new Yaml();
 
     /**
      * Create and init application configuration
@@ -122,7 +123,6 @@ public class ConfigBuilder {
     }
 
     private static Map<String, Object> getConfig(final String commonFile, final String extraFile) {
-        final Yaml yaml = new Yaml();
         final ClassLoader classLoader = ConfigBuilder.class.getClassLoader();
         Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, commonFile);
         if (extraFile != null && !extraFile.isEmpty()) {

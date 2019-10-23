@@ -33,7 +33,7 @@ public class LoggerFactoryTest {
 
     @DisplayName("Create logger with bad appender format ok")
     @Test
-    public void createLoggerApopenderWithoutFormat() {
+    public void createLoggerAppenderWithoutFormat() {
 
         PowerMockito.mockStatic(System.class);
         PowerMockito.when(System.getenv("LOG_APPENDER_CONFIG")).thenReturn("com.bbva.logging, archerAppender");

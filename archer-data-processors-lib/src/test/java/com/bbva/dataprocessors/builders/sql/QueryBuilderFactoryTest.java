@@ -17,7 +17,7 @@ public class QueryBuilderFactoryTest {
 
     @DisplayName("Create query builder factory")
     @Test
-    public void createueryBuilderFactoty() {
+    public void createQueryBuilderFactory() {
 
         final LinkedList<CreateTableQueryBuilder> tableBuilders = new LinkedList<>();
         tableBuilders.add(new CreateTableQueryBuilder("table"));

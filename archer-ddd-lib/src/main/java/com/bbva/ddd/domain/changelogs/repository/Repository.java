@@ -14,7 +14,7 @@ public interface Repository {
      *
      * @param aggregateClass class of aggregate
      * @param value          value data
-     * @param callback       callabak to manage the response
+     * @param callback       callback to manage the response
      * @param <T>            aggregate class type
      * @return aggregate instance
      */
@@ -26,7 +26,7 @@ public interface Repository {
      * @param aggregateClass class of aggregate
      * @param key            key of aggregate
      * @param value          value data
-     * @param callback       callabak to manage the response
+     * @param callback       callback to manage the response
      * @param <T>            aggregate class type
      * @return aggregate instance
      */

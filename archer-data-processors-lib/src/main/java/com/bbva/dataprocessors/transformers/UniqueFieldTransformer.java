@@ -43,7 +43,7 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
      *
      * @param key   record key
      * @param value value
-     * @return new keyvalue pair
+     * @return new KeyValue pair
      */
     @Override
     public KeyValue<K1, K> transform(final K key, final V value) {

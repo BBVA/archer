@@ -45,18 +45,19 @@ This library use a extended [common-lib](../archer-common-lib/README.md) configu
 For create a own gateway you need to extends Gateway.
 ```java
 @Config(file = "example.yml", servicesPackage = "com.example")
-class ExampleGateway extends Gateway {
-    ExampleGateway() {
-        configure(ExampleGateway.class);
-        domain = new Domain(new ExampleHandler(servicesPackage, config), config.getApplicationConfig());
-        start();
-        new HelperApplication(config.getApplicationConfig());
+class MainClass {
+    public static void main(final String[] args) { 
+        GatewayDomain.Builder.create(ExampleGateway.class)
+            .servicesPackage("package.with.services")
+            .build()
+            .start();
     }
-
 }
 ```
+And implement the services with the ServiceConfig annotation and the required implementation methods.
 
-And implement the services with the ServiceConfig annotation.
+For simplify the develop of gateway services, you have 2 types og services interfaces: IGatewayService that is the normal service and IAsyncGatewayService for services that call to external interface but not have immediate response.
+In the package com.bbva.gateway.service.impl you have a implementations of this two interfaces for services without predefined connection and services that communicate via http.
 ```java
 @ServiceConfig(file = "services/service_example.yml")
 public class ExampleService extends GatewayService<DataBean> {

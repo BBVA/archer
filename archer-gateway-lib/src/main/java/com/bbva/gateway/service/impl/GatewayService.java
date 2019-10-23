@@ -231,7 +231,9 @@ public abstract class GatewayService<T>
      */
     protected static void handleOutPutted(final Object o, final Exception e) {
         if (e != null) {
-            // TODO retry?
+            logger.error("Error sending event", e);
+        } else {
+            logger.error("Event sent {}", o);
         }
     }
 }

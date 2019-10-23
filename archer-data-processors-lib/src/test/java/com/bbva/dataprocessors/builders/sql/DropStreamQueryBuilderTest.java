@@ -36,7 +36,7 @@ public class DropStreamQueryBuilderTest {
 
     @DisplayName("Create table build with no delete")
     @Test
-    public void createTableQueryBuildernoDelete() throws Exception {
+    public void createTableQueryBuilderNoDelete() throws Exception {
         final DropStreamQueryBuilder dropStreamQueryBuilder = new DropStreamQueryBuilder("stream", false);
         final QueryProcessorBuilder queryProcessorBuilder = new QueryProcessorBuilder(dropStreamQueryBuilder);
 

@@ -136,9 +136,9 @@ public class RepositoryImplTest {
         Assertions.assertNotNull(aggregateBase);
     }
 
-    @DisplayName("Create repository without annotationok")
+    @DisplayName("Create repository without annotation ok")
     @Test
-    public void createRepositoryko() throws Exception {
+    public void createRepositoryKo() throws Exception {
 
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));

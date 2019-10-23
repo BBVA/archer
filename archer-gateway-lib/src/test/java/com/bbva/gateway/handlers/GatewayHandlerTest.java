@@ -1,4 +1,4 @@
-package com.bbva.gateway;
+package com.bbva.gateway.handlers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.producers.DefaultProducer;
@@ -12,9 +12,9 @@ import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventRecord;
+import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
-import com.bbva.gateway.util.CommandService;
 import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -25,9 +25,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -36,7 +34,7 @@ public class GatewayHandlerTest {
 
     @DisplayName("Create auto configured handler ok")
     @Test
-    public void createhandler() {
+    public void createHandler() {
 
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
@@ -66,9 +64,6 @@ public class GatewayHandlerTest {
     @Test
     public void processCommand() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-
-        final List<Class> lstClasses = new ArrayList<>();
-        lstClasses.add(CommandService.class);
 
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
         final GatewayHandler handler = new GatewayHandler("com.bbva", ConfigBuilder.create(configAnnotation));

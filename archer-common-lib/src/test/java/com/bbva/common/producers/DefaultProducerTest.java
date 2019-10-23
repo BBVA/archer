@@ -34,7 +34,7 @@ public class DefaultProducerTest {
 
     @DisplayName("Create producer")
     @Test
-    public void createCahedProducerOk() throws Exception {
+    public void createCachedProducerOk() throws Exception {
 
         final KafkaProducer kafkaProducer = Mockito.mock(KafkaProducer.class);
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);

@@ -1,4 +1,4 @@
-package com.bbva.gateway.http;
+package com.bbva.gateway.http.model;
 
 import java.util.Map;
 

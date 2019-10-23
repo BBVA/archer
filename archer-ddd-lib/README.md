@@ -3,7 +3,7 @@ Domain Driven Design
 
 ## Overview
 
-ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintenables.
+ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintainable.
 
 ## Requirements
 

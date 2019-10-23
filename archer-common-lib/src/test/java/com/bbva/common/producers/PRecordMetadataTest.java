@@ -16,7 +16,7 @@ public class PRecordMetadataTest {
 
     @DisplayName("Create record metadata")
     @Test
-    public void createCahedProducerOk() {
+    public void createCachedProducerOk() {
 
         final long timestamp = new Date().getTime();
         final RecordMetadata recordMetadata = new RecordMetadata(

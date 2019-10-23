@@ -52,7 +52,7 @@ public class RestUtilTest {
         );
     }
 
-    @DisplayName("Start RestUtil with configok")
+    @DisplayName("Start RestUtil with config ok")
     @Test
     public void startRestWithConfigOk() {
         Exception ex = null;

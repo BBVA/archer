@@ -11,10 +11,10 @@ import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
 import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.GatewayTest;
-import com.bbva.gateway.bean.HttpBean;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.http.RetrofitClient;
+import com.bbva.gateway.http.model.HttpBean;
 import com.bbva.gateway.service.impl.GatewayService;
 import com.bbva.gateway.service.impl.HttpGatewayServiceImpl;
 import com.bbva.gateway.service.records.PersonalData;
@@ -43,7 +43,7 @@ import java.util.HashMap;
 @ExtendWith(PowermockExtension.class)
 @PowerMockIgnore("javax.net.ssl.*")
 @PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayService.class, RetrofitClient.class, Response.class})
-public class HtttpGatewayServiceTest {
+public class HttpGatewayServiceTest {
 
     @DisplayName("Create service ok")
     @Test

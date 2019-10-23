@@ -18,7 +18,7 @@ public class OptionalRecordHeadersTest {
         recordHeaders.addAck("all");
         recordHeaders.addOrigin("localhost");
 
-        Assertions.assertAll("headertypes",
+        Assertions.assertAll("header-types",
                 () -> Assertions.assertEquals("all", recordHeaders.getAck()),
                 () -> Assertions.assertEquals("localhost", recordHeaders.getOrigin()),
                 () -> Assertions.assertNull(recordHeaders.getHeader("not-exists"))

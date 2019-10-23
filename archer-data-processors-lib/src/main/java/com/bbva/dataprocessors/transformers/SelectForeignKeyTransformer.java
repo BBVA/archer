@@ -38,7 +38,7 @@ public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends En
      *
      * @param key   record key
      * @param value record value
-     * @return new keyvalue pair
+     * @return new KeyValue pair
      */
     @Override
     public KeyValue<K, V> transform(final K key, final V value) {
@@ -62,5 +62,5 @@ public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends En
 
         return resultKeyValue;
     }
-    
+
 }

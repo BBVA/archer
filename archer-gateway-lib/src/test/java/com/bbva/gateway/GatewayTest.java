@@ -1,9 +1,9 @@
 package com.bbva.gateway;
 
 import com.bbva.common.util.PowermockExtension;
+import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.ddd.domain.Domain;
-import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -17,7 +17,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 @RunWith(JUnit5.class)
 @Config(file = "gateway.yml")
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({Domain.class, DataProcessor.class})
+@PrepareForTest({Domain.class, TopicManager.class, DataProcessor.class})
 public class GatewayTest {
 
     @DisplayName("Create gateway")
@@ -26,13 +26,11 @@ public class GatewayTest {
         PowerMockito.whenNew(Domain.class).withAnyArguments().thenReturn(PowerMockito.mock(Domain.class));
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
 
-        final Gateway gateway = new Gateway();
-        gateway.configure();
-        gateway.init();
+        PowerMockito.mockStatic(TopicManager.class);
 
-        ConfigBuilder.create();
+        final GatewayDomain domain = GatewayDomain.Builder.create().build();
 
-        Assertions.assertNotNull(gateway);
+        Assertions.assertNotNull(domain);
     }
 
     @DisplayName("Configure gateway with specific class")
@@ -41,11 +39,11 @@ public class GatewayTest {
         PowerMockito.whenNew(Domain.class).withAnyArguments().thenReturn(PowerMockito.mock(Domain.class));
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
 
-        final Gateway gateway = new Gateway();
-        gateway.configure(GatewayTest.class);
-        gateway.init();
+        PowerMockito.mockStatic(TopicManager.class);
+        
+        final GatewayDomain domain = GatewayDomain.Builder.create(GatewayTest.class).build();
 
-        Assertions.assertNotNull(gateway);
+        Assertions.assertNotNull(domain);
     }
 
 }

@@ -1,10 +1,11 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.gateway.bean.HttpBean;
 import com.bbva.gateway.config.GatewayConfig;
-import com.bbva.gateway.http.HttpRequest;
 import com.bbva.gateway.http.RetrofitClient;
+import com.bbva.gateway.http.model.HttpBean;
+import com.bbva.gateway.http.model.HttpRequest;
+import com.bbva.gateway.http.util.Util;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -42,24 +43,10 @@ public abstract class HttpGatewayService
      */
     @Override
     public Response call(final CRecord record) {
-        final HttpRequest httpObject = translateRecordToHttp(record);
+        final HttpRequest httpObject = Util.translateRecordToHttp(record, config);
         return RetrofitClient.call(retrofit, httpObject, queryParams);
     }
 
-    /**
-     * Translate record to http object
-     *
-     * @param record record
-     * @return http object
-     */
-    protected HttpRequest translateRecordToHttp(final CRecord record) {
-        final HttpRequest request = new HttpRequest();
-        request.setHeaders((Map<String, String>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_HTTP_HEADERS));
-        request.setMethod((String) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_HTTP_METHOD));
-        request.setBody(record.value().toString());
-
-        return request;
-    }
 
     /**
      * {@inheritDoc}

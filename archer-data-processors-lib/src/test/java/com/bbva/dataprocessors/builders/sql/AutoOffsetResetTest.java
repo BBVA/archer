@@ -16,7 +16,7 @@ import org.powermock.api.mockito.PowerMockito;
 @ExtendWith(PowermockExtension.class)
 public class AutoOffsetResetTest {
 
-    @DisplayName("Create SQLProcessor with autooffsetreset build")
+    @DisplayName("Create SQLProcessor with auto offset reset build")
     @Test
     public void createDataProcessorAndGetOk() throws Exception {
         final AutoOffsetResetQueryBuilder autoOffsetResetQueryBuilder = new AutoOffsetResetQueryBuilder();

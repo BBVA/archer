@@ -1,5 +1,6 @@
 package com.bbva.gateway.http;
 
+import com.bbva.gateway.http.model.HttpRequest;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import com.google.gson.Gson;

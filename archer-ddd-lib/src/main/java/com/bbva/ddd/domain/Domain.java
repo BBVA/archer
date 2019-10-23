@@ -52,7 +52,7 @@ public class Domain {
     private final List<RunnableConsumer> consumers;
     private final AppConfig config;
 
-    private Domain(final List<RunnableConsumer> consumers, final AppConfig config) {
+    protected Domain(final List<RunnableConsumer> consumers, final AppConfig config) {
         this.consumers = consumers;
         this.config = config;
     }
@@ -96,7 +96,7 @@ public class Domain {
         private Domain domain;
         private static Builder instance;
 
-        private Builder(final AppConfig config) {
+        protected Builder(final AppConfig config) {
             domain = null;
             this.config = config;
             DataProcessor.create(config);

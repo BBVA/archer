@@ -68,7 +68,7 @@ public class ReadableStoreTest {
         Assertions.assertFalse(store.exists("key"));
     }
 
-    @DisplayName("Find all, tange and check num entries")
+    @DisplayName("Find all, range and check num entries")
     @Test
     public void findAllAndRangeOk() throws Exception {
         final ReadOnlyKeyValueStore keyValueStore = PowerMockito.mock(ReadOnlyKeyValueStore.class);

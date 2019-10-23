@@ -43,7 +43,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("Create auto configured handler ok")
     @Test
-    public void createhandler() {
+    public void createHandler() {
         final AutoConfiguredHandler handler = new AutoConfiguredHandler();
 
         Assertions.assertAll("AutoConfiguredHandler",

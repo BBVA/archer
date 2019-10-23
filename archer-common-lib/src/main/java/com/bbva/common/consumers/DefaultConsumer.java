@@ -96,7 +96,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
             logger.debug("Partitions assigned {}", topicPartitionSet.toString());
 
             if (topicPartitionSet.isEmpty()) {
-                logger.error("Replay failed. Not assigment detected");
+                logger.error("Replay failed. Not assignment detected");
 
             } else {
                 for (final TopicPartition topicPartition : topicPartitionSet) {

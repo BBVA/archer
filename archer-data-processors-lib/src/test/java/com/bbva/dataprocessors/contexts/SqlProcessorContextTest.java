@@ -22,7 +22,7 @@ public class SqlProcessorContextTest {
 
     @DisplayName("Create SQL context ok")
     @Test
-    public void initPorcessorOk() throws Exception {
+    public void initProcessorOk() throws Exception {
         PowerMockito.whenNew(CachedSchemaRegistryClient.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedSchemaRegistryClient.class));
         PowerMockito.mockStatic(KsqlContext.class);
 

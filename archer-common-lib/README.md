@@ -62,7 +62,7 @@ export ARCHER_APPLICATION_SERVER=localhost:8080
 export ARCHER_APPLICATION_NAME=archer-app
 ```
 
-### Topic managment
+### Topic management
 
 You can create and manage topics with the utility class TopicManager. For example:
 ```java
@@ -86,7 +86,7 @@ public class ExampleConsumer extends DefaultConsumer<ConsumerContextImpl> {
 }
 
 ```
-- When you create the consumer class you need to specify a callback function to manage the events readed.
+- When you create the consumer class you need to specify a callback function to manage the events read.
 ```java
 final ExampleConsumer exampleConsumer = new ExampleConsumer(1, topics, callbackFunction, configuration);
 ```
