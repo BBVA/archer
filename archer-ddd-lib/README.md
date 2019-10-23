@@ -55,17 +55,17 @@ In the case that you not specify a handler implementation it is created with a A
 @Handler
 public class MyHandler { 
     
-    @Command(commandAction = "action", baseName = "base")
+    @Command(commandAction = "action", source = "base")
     public void processCommand(CommandRecord command) {
         //Manage new command    
     }
     
-    @Event(baseName = "base")
+    @Event("base")
     public void processEvent(EventRecord event) {
         //manage new event
     }
     
-    @Changelog(baseName = "base")
+    @Changelog("base")
     public void processDataChangelog(ChangelogRecord changelog) {
         //Manage new changelog
     }

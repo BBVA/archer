@@ -86,7 +86,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("process not handle command ok")
     @Test
-    @Command(commandAction = "action", baseName = "base")
+    @Command(commandAction = "action", source = "base")
     public void processCommand() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         ConfigBuilder.create();
@@ -115,7 +115,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("process not handle event ok")
     @Test
-    @Event(baseName = "base")
+    @Event("base")
     public void processEvent() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         ConfigBuilder.create();
@@ -136,7 +136,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("process not handle data changelog ok")
     @Test
-    @Changelog(baseName = "base")
+    @Changelog("base")
     public void processDataChangelog() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         ConfigBuilder.create();

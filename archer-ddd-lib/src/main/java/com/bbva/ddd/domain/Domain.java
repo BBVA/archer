@@ -36,12 +36,14 @@ import java.util.stream.Stream;
  * For example if have class with autoconfigure annotations we could do:
  * <pre>
  * {@code
- * Domain domain = new Domain.Builder(appConfig)
+ *  Domain domain = new Domain.Builder(appConfig)
  *      .handler(new AnnotatedHandler(servicesPackage, config))
  *      .add("processor-name", new ChangelogKeyBuilder("processor-name", "internal-store"))
  *      .build();
  *
- * domain.start()
+ *  domain.start()
+ * }
+ * </pre>
  */
 public class Domain {
 
@@ -119,12 +121,14 @@ public class Domain {
          * With this method we can add new data processor builders to the Domain which run when application start.
          * Imagine that you want a readable state from any stream:
          * <pre>
+         * {@code
          *  DomainBuilder
          *      .create(config)
          *      <b>.addDataProcessorBuilder("tableName", new SimpleGlobalTableStateBuilder("streamName"))</b>
          *      .start();
          *
          *  States.get().getStore("tableName");
+         * }
          * </pre>
          *
          * @param name    The name of the DataProcessor. This name will be accessible from the DataflowProcessorContext context

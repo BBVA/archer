@@ -8,7 +8,7 @@ import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 
 /**
- * Common implementation of aggregates
+ * Abstract base implementation of aggregates
  *
  * @param <K> Key class
  * @param <V> Value class

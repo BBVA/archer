@@ -7,7 +7,7 @@ import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
 
 /**
- * Specific Aggregate common implementation
+ * Aggregate common implementation
  *
  * @param <K> Key class
  * @param <V> Value specific record class

@@ -1,7 +1,6 @@
 package com.bbva.gateway;
 
 import com.bbva.ddd.domain.Domain;
-import com.bbva.ddd.domain.changelogs.exceptions.RepositoryException;
 import com.bbva.gateway.builders.dataflows.states.HeaderAsKeyStateBuilder;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
@@ -32,10 +31,8 @@ public class Gateway {
 
     /**
      * Initialize the domain of the gateway
-     *
-     * @throws RepositoryException exception
      */
-    public void init() throws RepositoryException {
+    public void init() {
         configure();
 
         domainBuilder = Domain.Builder.create(config)

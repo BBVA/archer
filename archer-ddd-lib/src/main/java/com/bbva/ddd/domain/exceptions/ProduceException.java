@@ -18,27 +18,10 @@ public class ProduceException extends RuntimeException {
      * Constructor
      *
      * @param message error message
-     */
-    public ProduceException(final String message) {
-        super(message);
-    }
-
-    /**
-     * Constructor
-     *
-     * @param message error message
      * @param cause   exception cause
      */
     public ProduceException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    /**
-     * Constructor
-     *
-     * @param cause exception cause
-     */
-    public ProduceException(final Throwable cause) {
-        super(cause);
-    }
 }

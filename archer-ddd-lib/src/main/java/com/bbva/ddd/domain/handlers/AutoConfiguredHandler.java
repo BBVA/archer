@@ -23,7 +23,7 @@ import java.util.*;
  * The class with annotations need be annotated with Handler annotation.
  * If DomainBuilder is initialize only with configuration, by default it create a AutoConfiguredHandler
  * Example of methods annotation:
- * <pre>
+ * <pre>{@code
  *  &#64;Handler
  *  public class MainHandler {
  *
@@ -67,7 +67,7 @@ import java.util.*;
  *          });
  *      }
  *  }
- *  </pre>
+ * }</pre>
  */
 public class AutoConfiguredHandler implements Handler {
 
@@ -124,32 +124,32 @@ public class AutoConfiguredHandler implements Handler {
     /**
      * Handle command produced
      *
-     * @param commandHandlerContext command record
+     * @param context command consumed context
      */
     @Override
-    public void processCommand(final CommandHandlerContext commandHandlerContext) {
-        final String actionToExecute = commandHandlerContext.consumedRecord().topic().replace(AppConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(commandHandlerContext.consumedRecord());
-        executeMethod(commandHandlerContext, commandMethods.get(actionToExecute));
+    public void processCommand(final CommandHandlerContext context) {
+        final String actionToExecute = context.consumedRecord().topic().replace(AppConfig.COMMANDS_RECORD_NAME_SUFFIX, "") + "::" + getCommandAction(context.consumedRecord());
+        executeMethod(context, commandMethods.get(actionToExecute));
     }
 
     /**
      * Handle event produced
      *
-     * @param eventHandlerContext event record
+     * @param context event consumed context
      */
     @Override
-    public void processEvent(final EventHandlerContext eventHandlerContext) {
-        executeMethod(eventHandlerContext, eventMethods.get(eventHandlerContext.consumedRecord().topic().replace(AppConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
+    public void processEvent(final EventHandlerContext context) {
+        executeMethod(context, eventMethods.get(context.consumedRecord().topic().replace(AppConfig.EVENTS_RECORD_NAME_SUFFIX, "")));
     }
 
     /**
      * Handle changelog produced
      *
-     * @param changelogHandlerContext changelog record
+     * @param context changelog consumed context
      */
     @Override
-    public void processDataChangelog(final ChangelogHandlerContext changelogHandlerContext) {
-        executeMethod(changelogHandlerContext, changelogMethods.get(changelogHandlerContext.consumedRecord().topic().replace(AppConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
+    public void processDataChangelog(final ChangelogHandlerContext context) {
+        executeMethod(context, changelogMethods.get(context.consumedRecord().topic().replace(AppConfig.CHANGELOG_RECORD_NAME_SUFFIX, "")));
     }
 
     private static List<String> cleanList(final List<String> list) {
@@ -183,16 +183,17 @@ public class AutoConfiguredHandler implements Handler {
             for (final Method method : allMethods) {
                 if (method.isAnnotationPresent(Command.class)) {
                     final Command annotatedAction = method.getAnnotation(Command.class);
-                    commandMethods.put(annotatedAction.baseName() + "::" + annotatedAction.commandAction(), method);
-                    commandsSubscribed.add(annotatedAction.baseName() + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
+                    commandMethods.put(annotatedAction.source() + "::" + annotatedAction.commandAction(), method);
+                    commandsSubscribed.add(annotatedAction.source() + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Event.class)) {
                     final Event annotatedEvent = method.getAnnotation(Event.class);
-                    eventMethods.put(annotatedEvent.baseName(), method);
-                    eventsSubscribed.add(annotatedEvent.baseName() + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
+                    eventMethods.put(annotatedEvent.value(), method);
+                    eventsSubscribed.add(annotatedEvent.value() + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Changelog.class)) {
                     final Changelog annotatedChangelog = method.getAnnotation(Changelog.class);
-                    changelogMethods.put(annotatedChangelog.baseName(), method);
-                    dataChangelogsSubscribed.add(annotatedChangelog.baseName() + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX);
+                    final String baseName = annotatedChangelog.value();
+                    changelogMethods.put(baseName, method);
+                    dataChangelogsSubscribed.add(baseName + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX);
                 }
             }
             type = type.getSuperclass();

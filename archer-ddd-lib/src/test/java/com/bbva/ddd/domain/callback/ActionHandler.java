@@ -7,17 +7,17 @@ import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 
 public class ActionHandler {
 
-    @Event(baseName = "eventName")
+    @Event("eventName")
     public void processEvent() {
         //Do nothing
     }
 
-    @Command(baseName = "commandName", commandAction = "create")
+    @Command(source = "commandName", commandAction = "create")
     public static void processCommand(final CommandHandlerContext commandRecord) {
         //Do nothing
     }
 
-    @Changelog(baseName = "eventName")
+    @Changelog("eventName")
     public void processChangelog() {
         //Do nothing
     }

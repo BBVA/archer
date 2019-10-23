@@ -11,11 +11,11 @@ import java.util.List;
 /**
  * It can implements this interface and its methods to get events from the event store or annotate the handler class with
  * Handler annotation and methods with one of Command, Changelog or Event annotations. Example:
- * <pre>
+ * <pre>{@code
  *  &#64;Handler
  *  public class MainHandler {
  *
- *     &#64;Command(baseName = "foo", commandAction = "create")
+ *     &#64;Command(source = "foo", commandAction = "create")
  *      public static void createFoo(final CommandRecord commandRecord) {
  *          AggregateFactory
  *              .create(FooAggregate.class, commandRecord.value(), commandRecord, (id, e) -&#62; {
@@ -27,7 +27,7 @@ import java.util.List;
  *              });
  *      }
  *
- *      &#64;Event(baseName = "bar")
+ *      &#64;Event("bar")
  *      public static void processBar(final EventRecord eventRecord) {
  *          ApplicationHelper
  *              .get()
@@ -41,7 +41,7 @@ import java.util.List;
  *              });
  *      }
  *
- *      &#64;Changelog(baseName = "foo")
+ *      &#64;Changelog("foo")
  *      public static void processFooChangelog(final ChangelogRecord changelogRecord) {
  *          ApplicationHelper
  *              .get()
@@ -55,7 +55,7 @@ import java.util.List;
  *              });
  *      }
  *  }
- * </pre>
+ * }</pre>
  */
 public interface Handler {
 

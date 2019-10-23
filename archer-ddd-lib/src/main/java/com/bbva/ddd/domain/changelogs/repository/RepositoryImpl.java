@@ -34,7 +34,7 @@ import java.util.concurrent.Future;
 /**
  * Class  to interact with the aggregates
  *
- * @param <V> Value class
+ * @param <V> Value class type
  */
 public final class RepositoryImpl<V extends SpecificRecordBase> implements Repository {
 
@@ -51,16 +51,101 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
     private final CRecord referenceRecord;
     private final Boolean isReplay;
 
+    /**
+     * Repository implementation constructor
+     *
+     * @param referenceRecord record consumed
+     * @param isReplay        flag of replay
+     */
     public RepositoryImpl(final CRecord referenceRecord, final Boolean isReplay) {
         this(referenceRecord, new DefaultProducer(ConfigBuilder.get()), isReplay);
     }
 
+    /**
+     * Repository implementation constructor
+     *
+     * @param referenceRecord record consumed
+     * @param producer        producer instance
+     * @param isReplay        flag of replay
+     */
     public RepositoryImpl(final CRecord referenceRecord, final Producer producer, final Boolean isReplay) {
         aggregateUUID = UUID.randomUUID().toString();
         this.producer = producer;
         repositoryCache = new RepositoryCache<>();
         this.referenceRecord = referenceRecord;
         this.isReplay = isReplay;
+    }
+
+    @Override
+    public <T extends AggregateBase> T create(final Class<T> aggregateClass, final SpecificRecordBase value, final ProducerCallback callback) {
+        return create(aggregateClass, ((CommandRecord) referenceRecord).entityUuid(), value, callback);
+    }
+
+    @Override
+    public <T extends AggregateBase> T create(final Class<T> aggregateClass, final String aggregateKey, final SpecificRecordBase value, final ProducerCallback callback) {
+        final Aggregate aggregate = aggregateClass.getAnnotation(Aggregate.class);
+        if (aggregate == null) {
+            throw new ApplicationException("Aggregate class not have specific annotation");
+        }
+        setDependencies(aggregateClass);
+        try {
+            value.put("uuid", aggregateKey);
+        } catch (final NullPointerException e) {
+            logger.warn("Schema has not field uuid");
+        }
+
+        final AggregateBase aggregateBaseInstance = getAggregateInstance(aggregate.baseName(), aggregateClass, aggregateKey, value);
+
+        logger.debug("Creating PRecord of type {}", value.getClass().getName());
+
+        save(aggregate.baseName(), aggregateClass, (String) aggregateBaseInstance.getId(), (V) aggregateBaseInstance.getData(), referenceRecord, "constructor",
+                callback);
+
+        return (T) aggregateBaseInstance;
+    }
+
+    @Override
+    public <T extends AggregateBase> T load(final Class<T> aggregateClass, final String key) {
+        final Aggregate aggregate = aggregateClass.getAnnotation(Aggregate.class);
+        if (aggregate == null) {
+            throw new ApplicationException("Aggregate class not have specific annotation");
+        }
+        setDependencies(aggregateClass);
+        logger.debug("Loading from store {}", aggregate.baseName());
+
+        final V value = repositoryCache.getCurrentState(aggregate.baseName(), key);
+
+        if (value != null) {
+            logger.debug("Value found for id {}", key);
+            return loadAggregateInstance(aggregate.baseName(), key, value, aggregateClass);
+        }
+        return null;
+    }
+
+    private <T extends AggregateBase> T loadAggregateInstance(final String baseName, final String key, final V value, final Class<? extends AggregateBase> aggregateClass) {
+        final AggregateBase aggregateBaseInstance;
+        try {
+            aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
+                    .newInstance(key, value);
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            logger.error("Not constructor found for aggregate class", e);
+            throw new ApplicationException("Not constructor found for aggregate class", e);
+        }
+
+        logger.info("Aggregate loaded");
+
+        aggregateBaseInstance.setApplyRecordCallback(
+                (method, newValue, referenceRecord, callback) ->
+                        save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, referenceRecord, method, callback));
+
+        if (aggregateBaseInstance instanceof AbstractAggregate) {
+            ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
+                    (method, referenceRecord, callback) ->
+                            delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
+        }
+
+        logger.debug("Returning Aggregate instance");
+        return (T) aggregateBaseInstance;
     }
 
     private void setDependencies(final Class<? extends AggregateBase> aggregateClass) {
@@ -211,75 +296,4 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         return recordHeaders;
     }
 
-    @Override
-    public <T extends AggregateBase> T create(final Class<T> aggregateClass, final SpecificRecordBase value, final ProducerCallback callback) {
-        return create(aggregateClass, ((CommandRecord) referenceRecord).entityUuid(), value, callback);
-    }
-
-    @Override
-    public <T extends AggregateBase> T create(final Class<T> aggregateClass, final String aggregateKey, final SpecificRecordBase value, final ProducerCallback callback) {
-        final Aggregate aggregate = aggregateClass.getAnnotation(Aggregate.class);
-        if (aggregate == null) {
-            throw new ApplicationException("Aggregate class not have specific annotation");
-        }
-        setDependencies(aggregateClass);
-        try {
-            value.put("uuid", aggregateKey);
-        } catch (final NullPointerException e) {
-            logger.warn("Schema has not field uuid");
-        }
-
-        final AggregateBase aggregateBaseInstance = getAggregateInstance(aggregate.baseName(), aggregateClass, aggregateKey, value);
-
-        logger.debug("Creating PRecord of type {}", value.getClass().getName());
-
-        save(aggregate.baseName(), aggregateClass, (String) aggregateBaseInstance.getId(), (V) aggregateBaseInstance.getData(), referenceRecord, "constructor",
-                callback);
-
-        return (T) aggregateBaseInstance;
-    }
-
-    @Override
-    public <T extends AggregateBase> T load(final Class<T> aggregateClass, final String key) {
-        final Aggregate aggregate = aggregateClass.getAnnotation(Aggregate.class);
-        if (aggregate == null) {
-            throw new ApplicationException("Aggregate class not have specific annotation");
-        }
-        setDependencies(aggregateClass);
-        logger.debug("Loading from store {}", aggregate.baseName());
-
-        final V value = repositoryCache.getCurrentState(aggregate.baseName(), key);
-
-        if (value != null) {
-            logger.debug("Value found for id {}", key);
-            return loadAggregateInstance(aggregate.baseName(), key, value, aggregateClass);
-        }
-        return null;
-    }
-
-    private <T extends AggregateBase> T loadAggregateInstance(final String baseName, final String key, final V value, final Class<? extends AggregateBase> aggregateClass) {
-        final AggregateBase aggregateBaseInstance;
-        try {
-            aggregateBaseInstance = aggregateClass.getConstructor(key.getClass(), value.getClass())
-                    .newInstance(key, value);
-        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.error("Not constructor found for aggregate class", e);
-            throw new ApplicationException("Not constructor found for aggregate class", e);
-        }
-
-        logger.info("Aggregate loaded");
-
-        aggregateBaseInstance.setApplyRecordCallback(
-                (method, newValue, referenceRecord, callback) ->
-                        save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, referenceRecord, method, callback));
-
-        if (aggregateBaseInstance instanceof AbstractAggregate) {
-            ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
-                    (method, referenceRecord, callback) ->
-                            delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
-        }
-
-        logger.debug("Returning Aggregate instance");
-        return (T) aggregateBaseInstance;
-    }
 }
