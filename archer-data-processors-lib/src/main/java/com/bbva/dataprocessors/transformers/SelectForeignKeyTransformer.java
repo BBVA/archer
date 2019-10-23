@@ -62,6 +62,5 @@ public class SelectForeignKeyTransformer<K, V extends SpecificRecord> extends En
 
         return resultKeyValue;
     }
-
-
+    
 }

@@ -1,4 +1,4 @@
-package com.bbva.dataprocessors;
+package com.bbva.dataprocessors.states;
 
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.state.KeyValueIterator;
@@ -8,12 +8,12 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 /**
  * Readable KeyValue store
  *
- * @param <K>
- * @param <V>
+ * @param <K> Key class type
+ * @param <V> Value class type
  */
 public class ReadableStore<K, V> {
 
-    protected ReadOnlyKeyValueStore<K, V> store;
+    private ReadOnlyKeyValueStore<K, V> store;
 
     /**
      * Constructor

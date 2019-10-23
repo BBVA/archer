@@ -1,4 +1,4 @@
-package com.bbva.dataprocessors;
+package com.bbva.dataprocessors.states;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.dataprocessors.builders.ProcessorBuilder;

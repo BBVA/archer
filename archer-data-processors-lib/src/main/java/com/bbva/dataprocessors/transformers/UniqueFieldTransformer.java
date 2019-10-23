@@ -8,7 +8,7 @@ import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 
 /**
- * Transform to accommodate finds by a unique field
+ * Transform to accommodate searches by a unique field
  *
  * @param <K>  Key class
  * @param <V>  Value class
@@ -39,7 +39,7 @@ public class UniqueFieldTransformer<K, V extends SpecificRecordBase, K1> impleme
     }
 
     /**
-     * Index the keyvalue by the unique field
+     * Index the KeyValue by the unique field
      *
      * @param key   record key
      * @param value value

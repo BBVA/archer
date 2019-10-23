@@ -10,6 +10,7 @@ import com.bbva.dataprocessors.builders.sql.QueryProcessorBuilder;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContextSupplier;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContext;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContextSupplier;
+import com.bbva.dataprocessors.states.States;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,13 +20,15 @@ import java.util.UUID;
 /**
  * Manage dataflow and processor
  * For example, you can create a specific entity processor
- * <pre>{@code
- *      *  DataProcessor
- *      *      .get()
- *      *      .add(basename, new EntityStateBuilder<K, V>(snapshotTopicName, keyClass));
- *      *
- *      *  DataProcessor.get().start();
- *      * }</pre>
+ * <pre>
+ * {@code
+ *  DataProcessor
+ *      .get()
+ *      .add(basename, new EntityStateBuilder<K, V>(snapshotTopicName, keyClass));
+ *
+ *  DataProcessor.get().start();
+ * }
+ * </pre>
  */
 public final class DataProcessor {
 

@@ -1,8 +1,8 @@
 package com.bbva.ddd.util;
 
 import com.bbva.common.util.PowermockExtension;
-import com.bbva.dataprocessors.ReadableStore;
-import com.bbva.dataprocessors.States;
+import com.bbva.dataprocessors.states.ReadableStore;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;

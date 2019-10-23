@@ -1,9 +1,9 @@
 package com.bbva.ddd.util;
 
 import com.bbva.common.exceptions.ApplicationException;
-import com.bbva.dataprocessors.ReadableStore;
-import com.bbva.dataprocessors.States;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
+import com.bbva.dataprocessors.states.ReadableStore;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.kafka.streams.errors.InvalidStateStoreException;

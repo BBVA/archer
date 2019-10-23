@@ -1,4 +1,4 @@
-package com.bbva.dataprocessors;
+package com.bbva.dataprocessors.states;
 
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;

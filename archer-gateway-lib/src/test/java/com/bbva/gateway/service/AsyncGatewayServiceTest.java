@@ -8,7 +8,7 @@ import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
-import com.bbva.dataprocessors.ReadableStore;
+import com.bbva.dataprocessors.states.ReadableStore;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.ddd.util.StoreUtil;
