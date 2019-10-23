@@ -4,9 +4,9 @@ import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.ddd.domain.events.producers.Event;
 import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
-import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.aggregates.GatewayAggregate;
 import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.service.IGatewayService;
@@ -84,7 +84,7 @@ public abstract class GatewayService<T>
      * @return changelog
      */
     protected static TransactionChangelog findChangelogByReference(final CRecord record) {
-        return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY.getName()).asString());
+        return (TransactionChangelog) States.get().getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY.getName()).asString());
     }
 
     private void saveChangelogAndProcessOutput(final HandlerContextImpl context, final T response, final boolean replay) {

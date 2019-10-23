@@ -2,6 +2,8 @@ package com.bbva.ddd.domain.handlers.contexts;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.Producer;
+import com.bbva.dataprocessors.states.ReadableStore;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.commands.producers.Command;
@@ -45,5 +47,10 @@ public class HandlerContextImpl implements HandlerContext {
     @Override
     public Event.Builder event(final String name) {
         return new Event.Builder(consumedRecord, producer, isReplay).name(name);
+    }
+
+    @Override
+    public <K, V> ReadableStore<K, V> loadStore(final String name) {
+        return States.get().getStore(name);
     }
 }

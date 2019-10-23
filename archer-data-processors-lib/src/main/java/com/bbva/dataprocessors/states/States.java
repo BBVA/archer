@@ -1,9 +1,13 @@
 package com.bbva.dataprocessors.states;
 
 import com.bbva.common.config.AppConfig;
+import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.dataprocessors.builders.ProcessorBuilder;
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.errors.InvalidStateStoreException;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -13,6 +17,8 @@ import java.util.Map;
  * States, stores and processors
  */
 public final class States {
+
+    private static final Logger logger = LoggerFactory.getLogger(States.class);
 
     private final Map<String, ProcessorBuilder> states = new LinkedHashMap<>();
     private final Map<String, ReadableStore> readableStores = new HashMap<>();
@@ -53,19 +59,30 @@ public final class States {
      */
     public <K, V> ReadableStore<K, V> getStore(final String name) throws StoreNotFoundException {
         final String storeName = name + AppConfig.STORE_NAME_SUFFIX;
-        final ReadableStore<K, V> store;
+        ReadableStore<K, V> store;
 
-        if (readableStores.containsKey(storeName)) {
-            store = readableStores.get(storeName);
-        } else if (states.containsKey(name)) {
-            final KafkaStreams streams = states.get(name).streams();
-            store = new ReadableStore<>(storeName, streams);
-            readableStores.put(storeName, store);
-        } else {
-            throw new StoreNotFoundException("State not found :" + name);
+        while (true) {
+            try {
+                if (readableStores.containsKey(storeName)) {
+                    store = readableStores.get(storeName);
+                } else if (states.containsKey(name)) {
+                    final KafkaStreams streams = states.get(name).streams();
+                    store = new ReadableStore<>(storeName, streams);
+                    readableStores.put(storeName, store);
+                } else {
+                    throw new StoreNotFoundException("State not found :" + name);
+                }
+
+                return store;
+            } catch (final InvalidStateStoreException ignored) {
+                try {
+                    Thread.sleep(500);
+                } catch (final InterruptedException e) { //NOSONAR
+                    logger.error("Problems sleeping the execution", e);
+                    throw new ApplicationException("Problems sleeping the execution", e);
+                }
+            }
         }
-
-        return store;
     }
 
     /**

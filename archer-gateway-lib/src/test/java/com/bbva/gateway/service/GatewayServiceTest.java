@@ -9,10 +9,10 @@ import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.states.ReadableStore;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.events.producers.Event;
 import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
-import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
@@ -39,7 +39,7 @@ import java.util.Map;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayServiceImpl.class, GatewayService.class, StoreUtil.class, ReadableStore.class})
+@PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayServiceImpl.class, GatewayService.class, States.class, ReadableStore.class})
 public class GatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -128,13 +128,14 @@ public class GatewayServiceTest {
     @Test
     public void processReplyOk() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.mockStatic(StoreUtil.class);
+        PowerMockito.mockStatic(States.class);
 
         PowerMockito.whenNew(Event.class).withAnyArguments().thenReturn(PowerMockito.mock(Event.class));
 
         final ReadableStore store = PowerMockito.mock(ReadableStore.class);
-
-        PowerMockito.when(StoreUtil.getStore(Mockito.any())).thenReturn(store);
+        final States states = PowerMockito.mock(States.class);
+        PowerMockito.when(States.get()).thenReturn(states);
+        PowerMockito.when(states.getStore(Mockito.any())).thenReturn(store);
 
         final ObjectMapper mapper = new ObjectMapper();
         final TransactionChangelog transactionChangelog = new TransactionChangelog();
@@ -163,11 +164,13 @@ public class GatewayServiceTest {
     @Test
     public void processReplyWithoutChangelogOk() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.mockStatic(StoreUtil.class);
+        PowerMockito.mockStatic(States.class);
 
         final ReadableStore store = PowerMockito.mock(ReadableStore.class);
 
-        PowerMockito.when(StoreUtil.getStore(Mockito.any())).thenReturn(store);
+        final States states = PowerMockito.mock(States.class);
+        PowerMockito.when(States.get()).thenReturn(states);
+        PowerMockito.when(states.getStore(Mockito.any())).thenReturn(store);
 
         final ObjectMapper mapper = new ObjectMapper();
         final TransactionChangelog transactionChangelog = new TransactionChangelog();

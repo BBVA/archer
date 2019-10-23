@@ -124,7 +124,7 @@ public class Domain {
          *      <b>.addDataProcessorBuilder("tableName", new SimpleGlobalTableStateBuilder("streamName"))</b>
          *      .start();
          *
-         *  StoreUtil.getStore("tableName");
+         *  States.get().getStore("tableName");
          * </pre>
          *
          * @param name    The name of the DataProcessor. This name will be accessible from the DataflowProcessorContext context
@@ -254,7 +254,7 @@ public class Domain {
          *      .<String, Foobar, String>indexFieldStateProcessor("indexedFoobarByBar", "sourceStreamName", "foo->bar", String.class, String.class)
          *      .start();
          *
-         *  final ReadableStore<String, Foobar> store = StoreUtil.getStore("indexedFoobarByBar");
+         *  final ReadableStore<String, Foobar> store = States.get().getStore("indexedFoobarByBar");
          *  final Foobar foobar = store.findById("barValue");
          * }</pre>
          *
@@ -310,7 +310,7 @@ public class Domain {
          *      .<String, Foobar, String>groupByFieldStateProcessor("groupedFoobarByBar", "sourceStreamName", "foo", String.class, Foobar.class)
          *      .start();
          *
-         *  final ReadableStore<String, GenericRecord> store = StoreUtil.getStore("groupedFoobarByBar");
+         *  final ReadableStore<String, GenericRecord> store = States.get().getStore("groupedFoobarByBar");
          *  final GenericRecord foobarRecord = store.findById("fooValue");
          *  final GenericRecordList foobarRecordList = new GenericRecordList<>(Foobar.class);
          *  final List<Foobar> foobarList = foobarRecordList.getList(foobarRecord);

@@ -9,9 +9,9 @@ import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.dataprocessors.states.ReadableStore;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
 import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
-import com.bbva.ddd.util.StoreUtil;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
@@ -36,7 +36,7 @@ import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, RepositoryImpl.class, StoreUtil.class, ReadableStore.class})
+@PrepareForTest({GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, RepositoryImpl.class, States.class, ReadableStore.class})
 public class AsyncGatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -97,13 +97,14 @@ public class AsyncGatewayServiceTest {
     public void processReplyRecordOk() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
-
+        PowerMockito.mockStatic(States.class);
+        
         final ObjectMapper om = new ObjectMapper();
 
-        PowerMockito.mockStatic(StoreUtil.class);
-
         final ReadableStore store = PowerMockito.mock(ReadableStore.class);
-        PowerMockito.when(StoreUtil.getStore(Mockito.any())).thenReturn(store);
+        final States states = PowerMockito.mock(States.class);
+        PowerMockito.when(States.get()).thenReturn(states);
+        PowerMockito.when(states.getStore(Mockito.any())).thenReturn(store);
 
         final TransactionChangelog transactionChangelog = new TransactionChangelog();
         transactionChangelog.setOutput(om.writeValueAsString(new Person("name")));

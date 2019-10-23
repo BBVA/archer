@@ -1,9 +1,9 @@
 package com.bbva.ddd.domain.changelogs.repository;
 
 import com.bbva.dataprocessors.exceptions.StoreNotFoundException;
+import com.bbva.dataprocessors.states.States;
 import com.bbva.dataprocessors.util.ObjectUtils;
 import com.bbva.ddd.domain.changelogs.producers.ChangelogRecordMetadata;
-import com.bbva.ddd.util.StoreUtil;
 import org.apache.avro.specific.SpecificRecordBase;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class RepositoryCache<V extends SpecificRecordBase> {
             value = currentStates.get(key);
         } else {
             try {
-                value = StoreUtil.<String, V>getStore(baseName).findById(key);
+                value = States.get().<String, V>getStore(baseName).findById(key);
             } catch (final StoreNotFoundException e) {
                 value = null;
             }
