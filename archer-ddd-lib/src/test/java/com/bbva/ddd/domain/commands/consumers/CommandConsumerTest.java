@@ -39,7 +39,7 @@ public class CommandConsumerTest {
         final CommandConsumer commandConsumer = new CommandConsumer(1, topics, null, configuration);
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+        recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("create"));
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
 
@@ -49,7 +49,7 @@ public class CommandConsumerTest {
         Assertions.assertAll("EventConsumer",
                 () -> Assertions.assertNotNull(commandConsumer),
                 () -> Assertions.assertNotNull(commandHandlerContext),
-                () -> Assertions.assertEquals("create", commandHandlerContext.consumedRecord().name()),
+                () -> Assertions.assertEquals("create", commandHandlerContext.consumedRecord().action()),
                 () -> Assertions.assertEquals("euid", commandHandlerContext.consumedRecord().entityUuid()),
                 () -> Assertions.assertEquals("key", commandHandlerContext.consumedRecord().uuid())
         );

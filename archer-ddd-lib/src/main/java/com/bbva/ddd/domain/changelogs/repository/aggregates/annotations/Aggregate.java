@@ -5,8 +5,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
+/**
+ * Aggregate entity class annotation. For example:
+ * <pre>
+ *  {@code
+ *   &#64;Aggregate("base_name")
+ *   public class MyAggregate extends CommonAggregate {
+ *      //manage new event
+ *   }
+ *  }
+ * </pre>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Aggregate {
-    String baseName();
+
+    /**
+     * Base name of event
+     *
+     * @return the base name
+     */
+    String value();
+
 }

@@ -136,7 +136,7 @@ public class Command {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, CommandHeaderType.TYPE_VALUE);
             recordHeaders.add(CommandHeaderType.UUID_KEY, key);
-            recordHeaders.add(CommandHeaderType.NAME_KEY, name);
+            recordHeaders.add(CommandHeaderType.ACTION_KEY, name);
             recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(isReplay && !persistent));
             if (entityUuid != null) {
                 recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid);

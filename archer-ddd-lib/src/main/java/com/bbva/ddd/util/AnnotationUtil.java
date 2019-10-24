@@ -57,7 +57,7 @@ public final class AnnotationUtil {
 
         for (final Class<?> aggregateClass : classes) {
             final Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
-            final String baseName = aggregateAnnotation.baseName();
+            final String baseName = aggregateAnnotation.value();
             aggregatesMap.put(baseName, aggregateClass.asSubclass(AggregateBase.class));
         }
 

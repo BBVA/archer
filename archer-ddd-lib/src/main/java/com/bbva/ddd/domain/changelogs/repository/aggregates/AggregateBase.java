@@ -2,7 +2,6 @@ package com.bbva.ddd.domain.changelogs.repository.aggregates;
 
 import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks.ApplyRecordCallback;
-import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 
@@ -31,12 +30,11 @@ public interface AggregateBase<K, V extends SpecificRecordBase> {
     /**
      * Apply new data in changelog
      *
-     * @param method        Name of the method which apply new data
-     * @param value         New value to apply
-     * @param commandRecord Command record which has triggered the domain logic
-     * @param callback      Callback executed when message is stored in changelog
+     * @param method   Name of the method which apply new data
+     * @param value    New value to apply
+     * @param callback Callback executed when message is stored in changelog
      */
-    void apply(String method, V value, CommandRecord commandRecord, ProducerCallback callback);
+    void apply(String method, V value, ProducerCallback callback);
 
     /**
      * Internal method. Not for users

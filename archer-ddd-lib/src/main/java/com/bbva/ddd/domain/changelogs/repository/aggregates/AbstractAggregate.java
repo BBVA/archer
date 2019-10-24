@@ -1,10 +1,8 @@
 package com.bbva.ddd.domain.changelogs.repository.aggregates;
 
-import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks.ApplyRecordCallback;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks.DeleteRecordCallback;
-import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 
 /**
@@ -54,15 +52,13 @@ public abstract class AbstractAggregate<K, V extends SpecificRecordBase> impleme
     /**
      * Apply new data in changelog
      *
-     * @param method          Name of the method which apply new data
-     * @param value           New value to apply
-     * @param referenceRecord Command record which has triggered the domain logic
-     * @param callback        Callback executed when message is stored in changelog
+     * @param method   Name of the method which apply new data
+     * @param value    New value to apply
+     * @param callback Callback executed when message is stored in changelog
      */
     @Override
-    public void apply(final String method, final V value, final CommandRecord referenceRecord,
-                      final ProducerCallback callback) {
-        applyRecordCallback.apply(method, value, referenceRecord, callback);
+    public void apply(final String method, final V value, final ProducerCallback callback) {
+        applyRecordCallback.apply(method, value, callback);
     }
 
     /**
@@ -72,8 +68,8 @@ public abstract class AbstractAggregate<K, V extends SpecificRecordBase> impleme
      * @param referenceRecord New value to apply
      * @param callback        Callback executed when message is stored in changelog
      */
-    public void apply(final String method, final CRecord referenceRecord, final ProducerCallback callback) {
-        deleteRecordCallback.apply(method, referenceRecord, callback);
+    public void apply(final String method, final ProducerCallback callback) {
+        deleteRecordCallback.apply(method, callback);
     }
 
     /**

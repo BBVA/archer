@@ -12,7 +12,7 @@ public class ActionHandler {
         //Do nothing
     }
 
-    @Command(source = "commandName", commandAction = "create")
+    @Command(source = "commandName", action = "create")
     public static void processCommand(final CommandHandlerContext commandRecord) {
         //Do nothing
     }

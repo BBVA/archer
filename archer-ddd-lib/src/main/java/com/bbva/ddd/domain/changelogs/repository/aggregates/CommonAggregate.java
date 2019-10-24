@@ -1,7 +1,6 @@
 package com.bbva.ddd.domain.changelogs.repository.aggregates;
 
 import com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks.AggregateCallback;
-import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -33,9 +32,8 @@ public class CommonAggregate<K, V extends SpecificRecordBase> extends AbstractAg
      * @param command  command that produce the update
      * @param callback callback for the apply
      */
-    public void update(final V newValue, final CommandRecord command, final AggregateCallback callback) {
+    public void update(final V newValue, final AggregateCallback callback) {
         apply("update", newValue,
-                transformUpdateRecord(command),
                 (id, e) -> onComplete(callback, e, "Update ..."));
     }
 
@@ -45,13 +43,9 @@ public class CommonAggregate<K, V extends SpecificRecordBase> extends AbstractAg
      * @param command  command that produce the deletion
      * @param callback callback for the apply
      */
-    public void delete(final CommandRecord command, final AggregateCallback callback) {
-        apply("delete", command,
+    public void delete(final AggregateCallback callback) {
+        apply("delete",
                 (id, e) -> onComplete(callback, e, "Delete ..."));
-    }
-
-    protected static CommandRecord transformUpdateRecord(final CommandRecord command) {
-        return command;
     }
 
     protected static void onComplete(final AggregateCallback callback, final Exception e, final String message) {

@@ -1,6 +1,5 @@
 package com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks;
 
-import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.callback.ProducerCallback;
 
 /**
@@ -15,5 +14,5 @@ public interface DeleteRecordCallback {
      * @param referenceRecord Reference record that triggers the event
      * @param callback        To manage apply response
      */
-    void apply(String method, CRecord referenceRecord, ProducerCallback callback);
+    void apply(String method, ProducerCallback callback);
 }

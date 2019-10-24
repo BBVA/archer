@@ -174,7 +174,7 @@ public class AutoConfiguredHandler implements Handler {
     }
 
     private static String getCommandAction(final CommandRecord commandRecord) {
-        return commandRecord.name();
+        return commandRecord.action();
     }
 
     private void setAnnotatedActions(Class<?> type) {
@@ -183,7 +183,7 @@ public class AutoConfiguredHandler implements Handler {
             for (final Method method : allMethods) {
                 if (method.isAnnotationPresent(Command.class)) {
                     final Command annotatedAction = method.getAnnotation(Command.class);
-                    commandMethods.put(annotatedAction.source() + "::" + annotatedAction.commandAction(), method);
+                    commandMethods.put(annotatedAction.source() + "::" + annotatedAction.action(), method);
                     commandsSubscribed.add(annotatedAction.source() + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
                 } else if (method.isAnnotationPresent(Event.class)) {
                     final Event annotatedEvent = method.getAnnotation(Event.class);

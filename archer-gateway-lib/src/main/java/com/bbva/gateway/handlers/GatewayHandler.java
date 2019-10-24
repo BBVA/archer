@@ -79,7 +79,7 @@ public class GatewayHandler implements Handler {
      */
     @Override
     public void processCommand(final CommandHandlerContext context) {
-        final String action = context.consumedRecord().name();
+        final String action = context.consumedRecord().action();
         if (commandServices.containsKey(action)) {
             new Thread(() -> commandServices.get(action).processRecord(context)).start();
         }

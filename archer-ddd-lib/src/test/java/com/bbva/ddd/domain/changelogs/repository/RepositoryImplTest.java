@@ -67,7 +67,7 @@ public class RepositoryImplTest {
         ConfigBuilder.create();
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+        recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("create"));
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
         recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("key"));
@@ -93,7 +93,7 @@ public class RepositoryImplTest {
         ConfigBuilder.create();
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+        recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("create"));
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
         recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("key"));
@@ -119,7 +119,7 @@ public class RepositoryImplTest {
         ConfigBuilder.create();
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+        recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("create"));
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
         recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("key"));
@@ -147,7 +147,7 @@ public class RepositoryImplTest {
 
         ConfigBuilder.create();
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+        recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("create"));
         recordHeaders.add(CommandHeaderType.UUID_KEY, new ByteArrayValue("key"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("euid"));
         recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("key"));

@@ -86,7 +86,7 @@ public class AutoConfiguredHandlerTest {
 
     @DisplayName("process not handle command ok")
     @Test
-    @Command(commandAction = "action", source = "base")
+    @Command(source = "base", action = "action")
     public void processCommand() throws Exception {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         ConfigBuilder.create();
@@ -104,7 +104,7 @@ public class AutoConfiguredHandlerTest {
         try {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
-            recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("create"));
+            recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("create"));
             handler.processCommand(new CommandHandlerContext(new CRecord("commandName" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false));
         } catch (final Exception e) {
@@ -125,7 +125,7 @@ public class AutoConfiguredHandlerTest {
         try {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
-            recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
+            recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("action"));
             handler.processEvent(new EventHandlerContext(new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false));
         } catch (final Exception e) {
@@ -145,7 +145,7 @@ public class AutoConfiguredHandlerTest {
         try {
             final RecordHeaders recordHeaders = new RecordHeaders();
             recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue(CommandHeaderType.TYPE_VALUE));
-            recordHeaders.add(CommandHeaderType.NAME_KEY, new ByteArrayValue("action"));
+            recordHeaders.add(CommandHeaderType.ACTION_KEY, new ByteArrayValue("action"));
             handler.processDataChangelog(new ChangelogHandlerContext(new CRecord("topic" + AppConfig.COMMANDS_RECORD_NAME_SUFFIX, 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", null, recordHeaders), null, false));
         } catch (final Exception e) {

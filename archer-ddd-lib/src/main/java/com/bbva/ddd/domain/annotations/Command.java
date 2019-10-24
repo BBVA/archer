@@ -32,5 +32,5 @@ public @interface Command {
      *
      * @return the action
      */
-    String commandAction();
+    String action();
 }

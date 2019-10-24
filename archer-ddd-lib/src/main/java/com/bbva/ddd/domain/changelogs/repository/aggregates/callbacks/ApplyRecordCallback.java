@@ -1,6 +1,5 @@
 package com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks;
 
-import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.callback.ProducerCallback;
 import org.apache.avro.specific.SpecificRecordBase;
 
@@ -12,10 +11,9 @@ public interface ApplyRecordCallback {
     /**
      * Method to apply the record
      *
-     * @param method          of the action
-     * @param value           record specification
-     * @param referenceRecord reference record that triggers the event
-     * @param callback        to manage apply response
+     * @param method   of the action
+     * @param value    record specification
+     * @param callback to manage apply response
      */
-    void apply(String method, SpecificRecordBase value, CRecord referenceRecord, ProducerCallback callback);
+    void apply(String method, SpecificRecordBase value, ProducerCallback callback);
 }

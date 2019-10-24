@@ -94,11 +94,11 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
             logger.warn("Schema has not field uuid");
         }
 
-        final AggregateBase aggregateBaseInstance = getAggregateInstance(aggregate.baseName(), aggregateClass, aggregateKey, value);
+        final AggregateBase aggregateBaseInstance = getAggregateInstance(aggregate.value(), aggregateClass, aggregateKey, value);
 
         logger.debug("Creating PRecord of type {}", value.getClass().getName());
 
-        save(aggregate.baseName(), aggregateClass, (String) aggregateBaseInstance.getId(), (V) aggregateBaseInstance.getData(), referenceRecord, "constructor",
+        save(aggregate.value(), aggregateClass, (String) aggregateBaseInstance.getId(), (V) aggregateBaseInstance.getData(), "constructor",
                 callback);
 
         return (T) aggregateBaseInstance;
@@ -111,13 +111,13 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
             throw new ApplicationException("Aggregate class not have specific annotation");
         }
         setDependencies(aggregateClass);
-        logger.debug("Loading from store {}", aggregate.baseName());
+        logger.debug("Loading from store {}", aggregate.value());
 
-        final V value = repositoryCache.getCurrentState(aggregate.baseName(), key);
+        final V value = repositoryCache.getCurrentState(aggregate.value(), key);
 
         if (value != null) {
             logger.debug("Value found for id {}", key);
-            return loadAggregateInstance(aggregate.baseName(), key, value, aggregateClass);
+            return loadAggregateInstance(aggregate.value(), key, value, aggregateClass);
         }
         return null;
     }
@@ -135,12 +135,12 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         logger.info("Aggregate loaded");
 
         aggregateBaseInstance.setApplyRecordCallback(
-                (method, newValue, referenceRecord, callback) ->
-                        save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, referenceRecord, method, callback));
+                (method, newValue, callback) ->
+                        save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, method, callback));
 
         if (aggregateBaseInstance instanceof AbstractAggregate) {
             ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
-                    (method, referenceRecord, callback) ->
+                    (method, callback) ->
                             delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
         }
 
@@ -162,7 +162,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
             for (final Field parentField : parentFields) {
                 if (Modifier.isPublic(parentField.getModifiers())
                         && childValueClass.isAssignableFrom(parentField.getType())) {
-                    parentChangelogName = parentClass.getAnnotation(Aggregate.class).baseName()
+                    parentChangelogName = parentClass.getAnnotation(Aggregate.class).value()
                             + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
                     expectedParentField = parentField;
                     break;
@@ -178,7 +178,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         return (Class) ((ParameterizedType) annotatedClass.getGenericSuperclass()).getActualTypeArguments()[1];
     }
 
-    private ChangelogRecordMetadata save(final String baseName, final Class<? extends AggregateBase> aggregateClass, final String key, final V value, final CRecord referenceRecord, final String method,
+    private ChangelogRecordMetadata save(final String baseName, final Class<? extends AggregateBase> aggregateClass, final String key, final V value, final String method,
                                          final ProducerCallback callback) {
         ChangelogRecordMetadata changelogRecordMetadata = null;
         final String changelogName = baseName + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
@@ -258,12 +258,12 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         logger.info("Aggregate loaded");
 
         aggregateBaseInstance.setApplyRecordCallback(
-                (method, newValue, referenceRecord, callback) ->
-                        save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, referenceRecord, method, callback));
+                (method, newValue, callback) ->
+                        save(baseName, aggregateClass, (String) aggregateBaseInstance.getId(), (V) newValue, method, callback));
 
         if (aggregateBaseInstance instanceof AbstractAggregate) {
             ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
-                    (method, referenceRecord, callback) ->
+                    (method, callback) ->
                             delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
         }
 

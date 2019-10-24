@@ -1,13 +1,10 @@
 package com.bbva.ddd.domain.changelogs.repository.aggregates;
 
-import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.ddd.domain.callback.DefaultProducerCallback;
 import com.bbva.ddd.domain.changelogs.aggregate.PersonalDataAggregate;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
-import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
-import org.apache.kafka.common.record.TimestampType;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -15,8 +12,6 @@ import org.junit.gen5.api.extension.ExtendWith;
 import org.junit.gen5.junit4.runner.JUnit5;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-
-import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -39,11 +34,10 @@ public class SpecificAggregateTest {
     @Test
     public void applyAggregate() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-        personalData.setDeleteRecordCallback((method, record, callback) -> {
+        personalData.setDeleteRecordCallback((method, callback) -> {
             //Do nothing
         });
-        personalData.apply("method", new CRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", new PersonalData(), null), new DefaultProducerCallback());
+        personalData.apply("method", new DefaultProducerCallback());
 
         Assertions.assertAll("PersonalDataAggregate",
                 () -> Assertions.assertNotNull(personalData.getData()),
@@ -55,11 +49,10 @@ public class SpecificAggregateTest {
     @Test
     public void applyCommandAggregate() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-        personalData.setApplyRecordCallback((method, recordClass, record, callback) -> {
+        personalData.setApplyRecordCallback((method, recordClass, callback) -> {
             //Do nothing
         });
-        personalData.apply("method", new PersonalData(), new CommandRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", new PersonalData(), null), new DefaultProducerCallback());
+        personalData.apply("method", new PersonalData(), new DefaultProducerCallback());
 
         Assertions.assertAll("PersonalDataAggregate",
                 () -> Assertions.assertNotNull(personalData.getData()),
@@ -71,11 +64,10 @@ public class SpecificAggregateTest {
     @Test
     public void updateOK() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-        personalData.setApplyRecordCallback((method, recordClass, record, callback) -> {
+        personalData.setApplyRecordCallback((method, recordClass, callback) -> {
             //Do nothing
         });
-        personalData.update(new PersonalData(), new CommandRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", new PersonalData(), null), () -> {
+        personalData.update(new PersonalData(), () -> {
 
         });
 
@@ -89,11 +81,10 @@ public class SpecificAggregateTest {
     @Test
     public void deleteOK() {
         final PersonalDataAggregate personalData = new PersonalDataAggregate("id", new PersonalData());
-        personalData.setDeleteRecordCallback((method, record, callback) -> {
+        personalData.setDeleteRecordCallback((method, callback) -> {
             //Do nothing
         });
-        personalData.delete(new CommandRecord("topic", 1, 1, new Date().getTime(),
-                TimestampType.CREATE_TIME, "key", new PersonalData(), null), () -> {
+        personalData.delete(() -> {
 
         });
 

@@ -8,7 +8,7 @@ import com.bbva.gateway.constants.Constants;
 /**
  * Internal aggregate for manage gateway with ddd
  */
-@Aggregate(baseName = Constants.INTERNAL_SUFFIX)
+@Aggregate(Constants.INTERNAL_SUFFIX)
 public class GatewayAggregate extends CommonAggregate<String, TransactionChangelog> {
 
     /**

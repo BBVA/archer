@@ -23,7 +23,7 @@ public class CommandRecord extends CRecord {
     /**
      * Get the uuid of the command record
      *
-     * @return uuid of the command record
+     * @return uuid of the command uuid
      */
     public String uuid() {
         return headers.find(CommandHeaderType.UUID_KEY).asString();
@@ -32,10 +32,10 @@ public class CommandRecord extends CRecord {
     /**
      * Get the name of the command record
      *
-     * @return name of the command record
+     * @return name of the action
      */
-    public String name() {
-        return headers.find(CommandHeaderType.NAME_KEY).asString();
+    public String action() {
+        return headers.find(CommandHeaderType.ACTION_KEY).asString();
     }
 
     /**

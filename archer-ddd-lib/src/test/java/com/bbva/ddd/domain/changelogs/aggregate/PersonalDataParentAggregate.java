@@ -4,7 +4,7 @@ import com.bbva.ddd.domain.changelogs.repository.aggregates.CommonAggregate;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
 
-@Aggregate(baseName = "aggregateBaseNameParent")
+@Aggregate("aggregateBaseNameParent")
 public class PersonalDataParentAggregate extends CommonAggregate<String, PersonalData> {
     public PersonalData personalData;
 
