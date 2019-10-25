@@ -1,5 +1,6 @@
 package com.bbva.ddd.domain.commands.consumers;
 
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
@@ -47,4 +48,12 @@ public class CommandRecord extends CRecord {
         return headers.find(CommandHeaderType.ENTITY_UUID_KEY).asString();
     }
 
+    /**
+     * Get the source of the command
+     *
+     * @return command source
+     */
+    public String source() {
+        return topic().replace(AppConfig.COMMANDS_RECORD_NAME_SUFFIX, "");
+    }
 }

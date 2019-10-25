@@ -64,9 +64,8 @@ public abstract class AbstractAggregate<K, V extends SpecificRecordBase> impleme
     /**
      * Apply new data in changelog
      *
-     * @param method          Name of the method which apply new data
-     * @param referenceRecord New value to apply
-     * @param callback        Callback executed when message is stored in changelog
+     * @param method   Name of the method which apply new data
+     * @param callback Callback executed when message is stored in changelog
      */
     public void apply(final String method, final ProducerCallback callback) {
         deleteRecordCallback.apply(method, callback);

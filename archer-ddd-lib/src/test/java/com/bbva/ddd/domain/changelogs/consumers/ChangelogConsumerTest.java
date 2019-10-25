@@ -48,7 +48,8 @@ public class ChangelogConsumerTest {
                 () -> Assertions.assertEquals("key", changelogHandlerContext.consumedRecord().uuid()),
                 () -> Assertions.assertEquals("euuid", changelogHandlerContext.consumedRecord().aggregateUuid()),
                 () -> Assertions.assertEquals("aggName", changelogHandlerContext.consumedRecord().aggregateName()),
-                () -> Assertions.assertEquals("aggMethod", changelogHandlerContext.consumedRecord().aggregateMethod())
+                () -> Assertions.assertEquals("aggMethod", changelogHandlerContext.consumedRecord().aggregateMethod()),
+                () -> Assertions.assertEquals("topic", changelogHandlerContext.consumedRecord().source())
         );
     }
 

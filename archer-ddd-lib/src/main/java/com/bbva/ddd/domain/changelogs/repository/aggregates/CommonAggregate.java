@@ -29,7 +29,6 @@ public class CommonAggregate<K, V extends SpecificRecordBase> extends AbstractAg
      * Update data in the aggregate
      *
      * @param newValue new data to update
-     * @param command  command that produce the update
      * @param callback callback for the apply
      */
     public void update(final V newValue, final AggregateCallback callback) {
@@ -40,7 +39,6 @@ public class CommonAggregate<K, V extends SpecificRecordBase> extends AbstractAg
     /**
      * Delete record
      *
-     * @param command  command that produce the deletion
      * @param callback callback for the apply
      */
     public void delete(final AggregateCallback callback) {

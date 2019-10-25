@@ -1,5 +1,6 @@
 package com.bbva.ddd.domain.events.consumers;
 
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.EventHeaderType;
@@ -50,4 +51,12 @@ public class EventRecord extends CRecord {
         return headers.find(EventHeaderType.NAME_KEY.getName()).asString();
     }
 
+    /**
+     * Get the source of the event
+     *
+     * @return command event
+     */
+    public String source() {
+        return topic().replace(AppConfig.EVENTS_RECORD_NAME_SUFFIX, "");
+    }
 }

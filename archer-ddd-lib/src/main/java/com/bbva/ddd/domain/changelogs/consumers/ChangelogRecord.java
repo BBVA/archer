@@ -1,5 +1,6 @@
 package com.bbva.ddd.domain.changelogs.consumers;
 
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
@@ -68,4 +69,12 @@ public class ChangelogRecord extends CRecord {
         return headers.find(ChangelogHeaderType.AGGREGATE_METHOD_KEY.getName()).asString();
     }
 
+    /**
+     * Get the source of the changelog
+     *
+     * @return command changelog
+     */
+    public String source() {
+        return topic().replace(AppConfig.CHANGELOG_RECORD_NAME_SUFFIX, "");
+    }
 }

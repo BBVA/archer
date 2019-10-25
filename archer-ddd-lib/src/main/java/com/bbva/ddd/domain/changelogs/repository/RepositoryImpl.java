@@ -141,7 +141,7 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         if (aggregateBaseInstance instanceof AbstractAggregate) {
             ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
                     (method, callback) ->
-                            delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
+                            delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method), callback));
         }
 
         logger.debug("Returning Aggregate instance");
@@ -186,20 +186,20 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
             try {
                 final SpecificRecordBase parentValue = parentValueClass.getConstructor().newInstance();
                 expectedParentField.set(parentValue, value);
-                changelogRecordMetadata = propagate(parentChangelogName, key, parentValue, headers(aggregateClass, method, referenceRecord),
+                changelogRecordMetadata = propagate(parentChangelogName, key, parentValue, headers(aggregateClass, method),
                         (id, e) -> {
                             if (e != null) {
                                 logger.error("Error saving the object", e);
                             } else {
                                 logger.info("Parent updated");
-                                propagate(changelogName, key, value, headers(aggregateClass, method, referenceRecord), callback);
+                                propagate(changelogName, key, value, headers(aggregateClass, method), callback);
                             }
                         });
             } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 logger.error("Problems saving the object", e);
             }
         } else {
-            changelogRecordMetadata = propagate(changelogName, key, value, headers(aggregateClass, method, referenceRecord), callback);
+            changelogRecordMetadata = propagate(changelogName, key, value, headers(aggregateClass, method), callback);
         }
 
         repositoryCache.updateState(key, value, changelogRecordMetadata);
@@ -264,14 +264,14 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
         if (aggregateBaseInstance instanceof AbstractAggregate) {
             ((AbstractAggregate) aggregateBaseInstance).setDeleteRecordCallback(
                     (method, callback) ->
-                            delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method, referenceRecord), callback));
+                            delete(baseName, (String) aggregateBaseInstance.getId(), headers(aggregateClass, method), callback));
         }
 
         logger.debug("Returning Aggregate instance");
         return aggregateBaseInstance;
     }
 
-    private RecordHeaders headers(final Class aggregateClass, final String aggregateMethod, final CRecord referenceRecord) {
+    private RecordHeaders headers(final Class aggregateClass, final String aggregateMethod) {
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.TYPE_KEY, ChangelogHeaderType.TYPE_VALUE);

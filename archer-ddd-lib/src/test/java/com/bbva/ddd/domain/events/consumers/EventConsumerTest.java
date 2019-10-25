@@ -49,7 +49,8 @@ public class EventConsumerTest {
                 () -> Assertions.assertNotNull(eventConsumer),
                 () -> Assertions.assertNotNull(eventHandlerContext),
                 () -> Assertions.assertEquals("create", eventHandlerContext.consumedRecord().name()),
-                () -> Assertions.assertEquals("producerName", eventHandlerContext.consumedRecord().producerName())
+                () -> Assertions.assertEquals("producerName", eventHandlerContext.consumedRecord().producerName()),
+                () -> Assertions.assertEquals("topic", eventHandlerContext.consumedRecord().source())
         );
     }
 

@@ -51,7 +51,8 @@ public class CommandConsumerTest {
                 () -> Assertions.assertNotNull(commandHandlerContext),
                 () -> Assertions.assertEquals("create", commandHandlerContext.consumedRecord().action()),
                 () -> Assertions.assertEquals("euid", commandHandlerContext.consumedRecord().entityUuid()),
-                () -> Assertions.assertEquals("key", commandHandlerContext.consumedRecord().uuid())
+                () -> Assertions.assertEquals("key", commandHandlerContext.consumedRecord().uuid()),
+                () -> Assertions.assertEquals("topic", commandHandlerContext.consumedRecord().source())
         );
     }
 

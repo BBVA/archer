@@ -10,9 +10,8 @@ public interface DeleteRecordCallback {
     /**
      * Method to apply the deletion
      *
-     * @param method          Method Invoked
-     * @param referenceRecord Reference record that triggers the event
-     * @param callback        To manage apply response
+     * @param method   Method Invoked
+     * @param callback To manage apply response
      */
     void apply(String method, ProducerCallback callback);
 }
