@@ -15,7 +15,7 @@ allprojects {
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" }
         maven {
-            url "s3://microservices-java-repository/maven/release"
+            url internalRepositoryURL
             authentication {
                 awsIm(AwsImAuthentication)
 
