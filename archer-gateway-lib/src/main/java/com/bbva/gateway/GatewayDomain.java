@@ -20,7 +20,6 @@ public class GatewayDomain extends Domain {
 
     public static class Builder extends Domain.Builder {
         private final GatewayConfig gatewayConfig;
-        private GatewayDomain gatewayDomain;
         private static Builder instance;
         private String servicesPackage;
 
@@ -50,7 +49,7 @@ public class GatewayDomain extends Domain {
 
             addDataProcessorBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, new HeaderAsKeyStateBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
 
-            gatewayDomain = new GatewayDomain(super.build());
+            final GatewayDomain gatewayDomain = new GatewayDomain(super.build());
             return gatewayDomain;
         }
     }

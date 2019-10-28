@@ -17,7 +17,7 @@ public class GatewayServiceImpl extends GatewayService<Person> {
     }
 
     @Override
-    protected Boolean isSuccess(final Person response) {
+    protected boolean isSuccess(final Person response) {
         return true;
     }
 

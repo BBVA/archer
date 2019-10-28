@@ -32,7 +32,7 @@ import java.util.UUID;
  */
 public final class DataProcessor {
 
-    private final static String KSQL_STATE_NAME = "ksql_processor";
+    private static final String KSQL_STATE_NAME = "ksql_processor";
 
     private final Map<String, ProcessorBuilder> processors = new LinkedHashMap<>();
     private final SQLProcessorContext sqlProcessorContext;

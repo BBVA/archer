@@ -94,7 +94,7 @@ public class ConfigBuilder {
 
         if (configAnnotation != null) {
             return configAnnotation;
-        } else if (packageName.indexOf(".") > 0) {
+        } else if (packageName.indexOf('.') > 0) {
             return findConfigAnnotation(annotationClass, removeLastPackage(packageName));
         }
         return null;
@@ -135,7 +135,7 @@ public class ConfigBuilder {
 
 
     private static String removeLastPackage(final String mainPackage) {
-        final int index = mainPackage.lastIndexOf(".");
+        final int index = mainPackage.lastIndexOf('.');
         return mainPackage.substring(0, index);
     }
 }

@@ -88,12 +88,12 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
         try {
 
             consumer.subscribe(topics);
-            logger.debug("Topics subscribed: {}", topics.toString());
+            logger.debug("Topics subscribed: {}", topics);
 
             consumer.poll(Duration.ofMillis(1000));
             final Set<TopicPartition> topicPartitionSet = consumer.assignment();
 
-            logger.debug("Partitions assigned {}", topicPartitionSet.toString());
+            logger.debug("Partitions assigned {}", topicPartitionSet);
 
             if (topicPartitionSet.isEmpty()) {
                 logger.error("Replay failed. Not assignment detected");
@@ -191,7 +191,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
     }
 
     private void commitOffsets() {
-        if (!(Boolean) appConfig.consumer(AppConfig.ConsumerProperties.ENABLE_AUTO_COMMIT)) {
+        if (!(boolean) appConfig.consumer(AppConfig.ConsumerProperties.ENABLE_AUTO_COMMIT)) {
             consumer.commitAsync(currentOffsets, (offsets, e) -> {
                 if (e != null) {
                     logger.error("Commit failed for offsets " + offsets, e);

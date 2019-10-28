@@ -119,9 +119,9 @@ public class Event {
         }
 
         public Event build() {
-            final String key = this.key != null ? this.key : UUID.randomUUID().toString();
+            final String eventKey = key != null ? key : UUID.randomUUID().toString();
 
-            return new Event(producer, to, key, producerName, value,
+            return new Event(producer, to, eventKey, producerName, value,
                     headers(producerName, referenceRecord, name));
         }
 

@@ -20,7 +20,7 @@ import java.util.List;
 public class GenericRecordList<V extends SpecificRecord> {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericRecordList.class);
-    private static final String listField = "list";
+    private static final String LIST_FIELD = "list";
     private final Schema listSchema;
 
     /**
@@ -45,7 +45,7 @@ public class GenericRecordList<V extends SpecificRecord> {
         final Schema aggregatedList = Schema.createRecord("AggregatedList", "", "com.bbva.archer.avro.generics", false);
         aggregatedList.setFields(Collections.singletonList(
                 new Schema.Field(
-                        listField,
+                        LIST_FIELD,
                         Schema.createArray(itemSchema),
                         "List of objects",
                         null)
@@ -60,7 +60,7 @@ public class GenericRecordList<V extends SpecificRecord> {
      * @return list
      */
     public List<V> getList(final GenericRecord record) {
-        return (List<V>) SpecificData.get().deepCopy(((GenericData.Array) record.get(listField)).getSchema(), record.get(listField));
+        return (List<V>) SpecificData.get().deepCopy(((GenericData.Array) record.get(LIST_FIELD)).getSchema(), record.get(LIST_FIELD));
     }
 
     /**
@@ -71,7 +71,7 @@ public class GenericRecordList<V extends SpecificRecord> {
      */
     public GenericRecord getRecord(final List<V> list) {
         final GenericRecordBuilder aggregateBuilder = new GenericRecordBuilder(listSchema);
-        aggregateBuilder.set(listField, list);
+        aggregateBuilder.set(LIST_FIELD, list);
 
         return aggregateBuilder.build();
     }

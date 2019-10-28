@@ -14,8 +14,8 @@ public class CommandService extends GatewayService implements IAsyncGatewayServi
     }
 
     @Override
-    protected Boolean isSuccess(final Object response) {
-        return null;
+    protected boolean isSuccess(final Object response) {
+        return true;
     }
 
     @Override

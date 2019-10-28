@@ -147,11 +147,11 @@ public class ConfigBuilder {
      * @param file file with config
      * @return map of config
      */
-    public static LinkedHashMap<String, Object> getServiceConfig(final String file) {
+    public static Map<String, Object> getServiceConfig(final String file) {
         final ClassLoader classLoader = GatewayDomain.class.getClassLoader();
         Map<String, Object> properties = ConfigurationUtil.getConfigFromFile(yaml, classLoader, file);
 
         properties = ConfigurationUtil.replaceEnvVariables(properties);
-        return (LinkedHashMap<String, Object>) properties;
+        return properties;
     }
 }

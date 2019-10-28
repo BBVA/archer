@@ -19,6 +19,10 @@ import java.util.Map;
  */
 public final class AnnotationUtil {
 
+    private AnnotationUtil() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Find all annotated classes in the parent of handler package
      *

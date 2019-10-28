@@ -187,7 +187,7 @@ public class AppConfig implements Cloneable {
     /**
      * Producer properties
      */
-    final public class ProducerProperties extends PropertiesClass {
+    public final class ProducerProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
         public static final String PRODUCER_ACKS = ProducerConfig.ACKS_CONFIG;
@@ -202,7 +202,7 @@ public class AppConfig implements Cloneable {
     /**
      * Consumer properties
      */
-    final public class ConsumerProperties extends PropertiesClass {
+    public final class ConsumerProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
         public static final String CONSUMER_GROUP_ID = ConsumerConfig.GROUP_ID_CONFIG;
@@ -219,7 +219,7 @@ public class AppConfig implements Cloneable {
     /**
      * Stream properties
      */
-    final public class StreamsProperties extends PropertiesClass {
+    public final class StreamsProperties extends PropertiesClass {
 
         public static final String BOOTSTRAP_SERVERS = CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
         public static final String GROUP_ID = ConsumerConfig.GROUP_ID_CONFIG;
@@ -245,7 +245,7 @@ public class AppConfig implements Cloneable {
     /**
      * Ksql properties
      */
-    final public class KsqlProperties extends PropertiesClass {
+    public final class KsqlProperties extends PropertiesClass {
 
         public static final String KSQL_PREFIX = "ksql_";
         public static final String KSQL_SUFFIX = "_ksql";
@@ -257,7 +257,7 @@ public class AppConfig implements Cloneable {
     /**
      * Dataflow properties
      */
-    final public class DataflowProperties extends PropertiesClass {
+    public final class DataflowProperties extends PropertiesClass {
 
     }
 

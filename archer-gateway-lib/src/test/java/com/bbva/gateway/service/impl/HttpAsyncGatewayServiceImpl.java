@@ -12,7 +12,7 @@ public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {
     }
 
     @Override
-    protected Boolean isSuccess(final Object response) {
+    protected boolean isSuccess(final Object response) {
         return true;
     }
 

@@ -70,7 +70,7 @@ public class GatewayConfig extends AppConfig {
     /**
      * Custom properties
      */
-    final public class GatewayProperties extends PropertiesClass {
+    public final class GatewayProperties extends PropertiesClass {
         public static final String GATEWAY_URI = "uri";
         public static final String GATEWAY_HTTP_HEADERS = "headers";
         public static final String GATEWAY_HTTP_METHOD = "method";
@@ -90,7 +90,7 @@ public class GatewayConfig extends AppConfig {
     /**
      * Custom properties
      */
-    final public class CustomProperties extends PropertiesClass {
+    public final class CustomProperties extends PropertiesClass {
         public static final String GATEWAY_TOPIC = "baseName";
 
     }

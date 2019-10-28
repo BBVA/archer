@@ -52,7 +52,7 @@ public abstract class HttpGatewayService
      * {@inheritDoc}
      */
     @Override
-    protected Boolean isSuccess(final Response response) {
+    protected boolean isSuccess(final Response response) {
         return response.isSuccessful();
     }
 

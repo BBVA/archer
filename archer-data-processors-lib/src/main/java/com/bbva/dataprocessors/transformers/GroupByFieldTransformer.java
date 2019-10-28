@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Transformer<K, V, KeyValue<K, GenericRecord>> {
 
     private static final Logger logger = LoggerFactory.getLogger(GroupByFieldTransformer.class);
-    private static final String uuidFieldName = "uuid";
+    private static final String UUID_FIELD_NAME = "uuid";
 
     protected ProcessorContext context;
     private KeyValueStore<K, GenericRecord> stateStore;
@@ -86,7 +86,7 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
                         final Method resultValueListItemIdMethod = resultValueList
                                 .get(0)
                                 .getClass()
-                                .getMethod(ObjectUtils.getFieldNameMethod(uuidFieldName, true));
+                                .getMethod(ObjectUtils.getFieldNameMethod(UUID_FIELD_NAME, true));
                         String uuid;
                         int i = 0;
                         while (i < resultValueList.size() && !found.get()) {
@@ -117,10 +117,10 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
                     final AtomicBoolean found = new AtomicBoolean(false);
 
                     if (!resultList.isEmpty()) {
-                        final Method resultListItemIdMethod = ((V) resultList
+                        final Method resultListItemIdMethod = (resultList
                                 .get(0))
                                 .getClass()
-                                .getMethod(ObjectUtils.getFieldNameMethod(uuidFieldName, true));
+                                .getMethod(ObjectUtils.getFieldNameMethod(UUID_FIELD_NAME, true));
                         final String newUuid = (String) resultListItemIdMethod.invoke(newValue);
                         String storedUuid;
                         int i = 0;

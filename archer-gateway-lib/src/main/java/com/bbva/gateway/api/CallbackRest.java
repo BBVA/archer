@@ -15,8 +15,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class to initialize the callback in async gateways
@@ -27,7 +27,6 @@ import java.util.List;
 public class CallbackRest {
 
     private static final Logger logger = LoggerFactory.getLogger(CallbackRest.class);
-    private static GatewayConfig config;
 
     /**
      * Post constructor actions
@@ -36,11 +35,11 @@ public class CallbackRest {
     public static void init() {
         final Config annotationConfig = ConfigBuilder.findConfigAnnotation();
         final List<Class> serviceClasses = ConfigBuilder.getServiceClasses(annotationConfig.servicesPackage());
-        config = ConfigBuilder.create(annotationConfig);
+        final GatewayConfig config = ConfigBuilder.create(annotationConfig);
         for (final Class serviceClass : serviceClasses) {
             final ServiceConfig serviceConfig = (ServiceConfig) serviceClass.getAnnotation(ServiceConfig.class);
 
-            final LinkedHashMap<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
+            final Map<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
             final String commandAction = (String) gatewayConfig.get("commandAction");
             final String baseName = (String) config.custom(GatewayConfig.CustomProperties.GATEWAY_TOPIC);
             config.gateway().putAll(gatewayConfig);
@@ -51,8 +50,10 @@ public class CallbackRest {
                 } catch (final InstantiationException | IllegalAccessException e) {
                     logger.error("Error instancing the service", e);
                 }
-                service.init(config, baseName);
-                service.postInitActions();
+                if (service != null) {
+                    service.init(config, baseName);
+                    service.postInitActions();
+                }
                 return;
             }
         }

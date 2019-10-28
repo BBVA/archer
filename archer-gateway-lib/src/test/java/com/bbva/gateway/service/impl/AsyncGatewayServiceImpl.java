@@ -13,7 +13,7 @@ public class AsyncGatewayServiceImpl extends AsyncGatewayService<Person> {
     }
 
     @Override
-    protected Boolean isSuccess(final Person response) {
+    protected boolean isSuccess(final Person response) {
         return true;
     }
 

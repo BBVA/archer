@@ -34,7 +34,7 @@ public abstract class GatewayService<T>
 
     protected GatewayConfig config;
     protected static ObjectMapper om = new ObjectMapper();
-    private Boolean retryEnabled = false;
+    private boolean retryEnabled = false;
     private int seconds;
     private int attemps;
     protected static String baseName;
@@ -48,7 +48,7 @@ public abstract class GatewayService<T>
         config = configuration;
 
         final LinkedHashMap<String, Object> retryPolicy = config.gateway(GatewayConfig.GatewayProperties.GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_RETRY) : null;
-        retryEnabled = retryPolicy != null && (Boolean) retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_RETRY_ENABLED);
+        retryEnabled = retryPolicy != null && (boolean) retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_RETRY_ENABLED);
         if (retryEnabled) {
             seconds = Integer.parseInt(retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_ATTEMP_SECONDS).toString());
             attemps = Integer.valueOf(retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_ATTEMPS).toString());
@@ -129,7 +129,7 @@ public abstract class GatewayService<T>
      * @param response call response
      * @return true/false
      */
-    protected abstract Boolean isSuccess(T response);
+    protected abstract boolean isSuccess(T response);
 
     /**
      * Parse output string to response

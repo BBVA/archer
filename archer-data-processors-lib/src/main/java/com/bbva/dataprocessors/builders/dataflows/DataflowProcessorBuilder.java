@@ -60,10 +60,10 @@ public class DataflowProcessorBuilder implements ProcessorBuilder {
         logger.info("Subtopologies: {}", topologyDescription.subtopologies());
         logger.info("********************************");
 
-        streams.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
-            // here you should examine the exception and perform an appropriate action!
-            logger.error("Error starting DataflowProcessorBuilder", e);
-        });
+        streams.setUncaughtExceptionHandler((Thread t, Throwable e) ->
+                // here you should examine the exception and perform an appropriate action!
+                logger.error("Error starting DataflowProcessorBuilder", e)
+        );
 
         streams.start();
     }

@@ -14,7 +14,10 @@ import com.bbva.logging.LoggerFactory;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Main handler of gateway
@@ -43,7 +46,7 @@ public class GatewayHandler implements Handler {
         for (final Class serviceClass : serviceClasses) {
             final ServiceConfig serviceConfig = (ServiceConfig) serviceClass.getAnnotation(ServiceConfig.class);
 
-            final LinkedHashMap<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
+            final Map<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
             final String commandAction = (String) gatewayConfig.get(GatewayConfig.GATEWAY_COMMAND_ACTION);
             final String event = (String) gatewayConfig.get(GatewayConfig.GATEWAY_EVENT_NAME);
             if (commandAction != null) {
@@ -98,7 +101,6 @@ public class GatewayHandler implements Handler {
     }
 
     private static void initActionService(final Class serviceClass, final Map<String, Object> gatewayConfig, final String commandAction, final String event) {
-        //TODO clone en only one line
         GatewayConfig newConfig = new GatewayConfig();
         try {
             newConfig = (GatewayConfig) BeanUtils.cloneBean(config);
