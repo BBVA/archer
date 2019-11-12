@@ -14,7 +14,7 @@ public class GatewayDomain extends Domain {
     private final Domain domain;
 
     private GatewayDomain(final Domain domain) {
-        super(null, null);
+        super(null);
         this.domain = domain;
     }
 

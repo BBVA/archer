@@ -52,7 +52,10 @@ public class RepositoryCacheTest {
         final RepositoryCache.Record data = repositoryCache.getRecord("key");
 
         Assertions.assertAll("RepositoryCache",
-                () -> Assertions.assertNotNull(data)
+                () -> Assertions.assertNotNull(data),
+                () -> Assertions.assertNotNull(data.key()),
+                () -> Assertions.assertNotNull(data.value()),
+                () -> Assertions.assertNull(data.metadata())
         );
     }
 
