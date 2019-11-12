@@ -32,7 +32,6 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
     protected final AtomicBoolean closed = new AtomicBoolean(false);
     protected KafkaConsumer<String, SpecificRecordBase> consumer;
     protected final Collection<String> topics;
-    protected final int id;
     protected Consumer<T> callback;
     private final AppConfig appConfig;
     private final SpecificAvroSerde<SpecificRecordBase> specificSerde;
@@ -41,13 +40,11 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
     /**
      * Constructor
      *
-     * @param id        consumer id
      * @param topics    list of topics
      * @param callback  callback to manage responses
      * @param appConfig configuration
      */
-    public DefaultConsumer(final int id, final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {
-        this.id = id;
+    public DefaultConsumer(final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {
         this.topics = topics;
         this.callback = callback;
         this.appConfig = appConfig;

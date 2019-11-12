@@ -11,10 +11,10 @@ public class ConsumerAdapterFactory {
         Kafka
     }
 
-    public static ConsumerAdapter create(final EventStores eventStore, final int id, final List<String> sources, final ConsumerCallback callback, final AppConfig appConfig) {
+    public static ConsumerAdapter create(final EventStores eventStore, final List<String> sources, final ConsumerCallback callback, final AppConfig appConfig) {
         switch (eventStore) {
             case Kafka:
-                return new KafkaConsumerAdapter(id, sources, callback, appConfig);
+                return new KafkaConsumerAdapter(sources, callback, appConfig);
         }
         return null;
 

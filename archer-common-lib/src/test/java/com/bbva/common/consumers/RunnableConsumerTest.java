@@ -34,7 +34,7 @@ public class RunnableConsumerTest {
     @Test
     public void createConsumerOk() {
         final AppConfig configuration = ConfigBuilder.create();
-        final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
+        final RunnableConsumer consumer = new RunnableConsumer(new ArrayList<>(), null, configuration) {
             @Override
             public ConsumerContext context(final CRecord c, final Producer producer, final Boolean isReplay) {
                 return null;
@@ -57,7 +57,7 @@ public class RunnableConsumerTest {
         PowerMockito.when(kafkaConsumer, "poll", Mockito.any()).thenReturn(new ConsumerRecords<>(records));
 
         final AppConfig configuration = ConfigBuilder.create();
-        final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
+        final RunnableConsumer consumer = new RunnableConsumer(new ArrayList<>(), null, configuration) {
             @Override
             public ConsumerContext context(final CRecord c, final Producer producer, final Boolean isReplay) {
                 return null;
@@ -85,7 +85,7 @@ public class RunnableConsumerTest {
 
         final AppConfig configuration = ConfigBuilder.create();
         configuration.put(AppConfig.REPLAY_TOPICS, "topic1,topic2");
-        final RunnableConsumer consumer = new RunnableConsumer(0, new ArrayList<>(), null, configuration) {
+        final RunnableConsumer consumer = new RunnableConsumer(new ArrayList<>(), null, configuration) {
             @Override
             public ConsumerContext context(final CRecord c, final Producer producer, final Boolean isReplay) {
                 return null;

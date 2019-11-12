@@ -30,13 +30,12 @@ public abstract class RunnableConsumer<T extends ConsumerContext> extends Defaul
     /**
      * Constructor
      *
-     * @param id        consumer id
      * @param topics    list of topics to subscribe
      * @param callback  callback to manage new events
      * @param appConfig configuration
      */
-    public RunnableConsumer(final int id, final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {
-        super(id, topics, callback, appConfig);
+    public RunnableConsumer(final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {
+        super(topics, callback, appConfig);
         replayTopics = (appConfig.get(AppConfig.REPLAY_TOPICS) != null)
                 ? appConfig.get(AppConfig.REPLAY_TOPICS).toString().split(",") : new String[]{};
     }

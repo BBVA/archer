@@ -29,8 +29,6 @@ import java.util.stream.Stream;
  */
 public final class Binder {
 
-    public static final int NUM_CONSUMERS = 1;
-
     private static final Logger logger = LoggerFactory.getLogger(Binder.class);
 
     private static AppConfig appConfig;
@@ -114,27 +112,22 @@ public final class Binder {
         logger.info("Necessary consumer topics created");
 
         if (!commandsSubscribed.isEmpty()) {
-            for (int i = 0; i < NUM_CONSUMERS; i++) {
-                consumers.add(
-                        new RunnableConsumerAdapter(ConsumerAdapterFactory.EventStores.Kafka, i, handler.commandsSubscribed(),
-                                (cRecord, producer, isReplay) -> processCommand(cRecord, producer, isReplay), appConfig));
-            }
+            consumers.add(
+                    new RunnableConsumerAdapter(ConsumerAdapterFactory.create(ConsumerAdapterFactory.EventStores.Kafka, handler.commandsSubscribed(),
+                            this::processCommand, appConfig), appConfig));
         }
 
         if (!eventsSubscribed.isEmpty()) {
-            for (int i = 0; i < NUM_CONSUMERS; i++) {
-                consumers.add(
-                        new RunnableConsumerAdapter(ConsumerAdapterFactory.EventStores.Kafka, i, handler.eventsSubscribed(),
-                                (cRecord, producer, isReplay) -> processEvent(cRecord, producer, isReplay), appConfig));
-            }
+            consumers.add(
+                    new RunnableConsumerAdapter(ConsumerAdapterFactory.create(ConsumerAdapterFactory.EventStores.Kafka, handler.eventsSubscribed(),
+                            this::processEvent, appConfig), appConfig));
         }
 
         if (!dataChangelogsSubscribed.isEmpty()) {
-            for (int i = 0; i < NUM_CONSUMERS; i++) {
-                consumers.add(
-                        new RunnableConsumerAdapter(ConsumerAdapterFactory.EventStores.Kafka, i, handler.dataChangelogsSubscribed(),
-                                (cRecord, producer, isReplay) -> processChangelog(cRecord, producer, isReplay), appConfig));
-            }
+            consumers.add(
+                    new RunnableConsumerAdapter(ConsumerAdapterFactory.create(ConsumerAdapterFactory.EventStores.Kafka, handler.dataChangelogsSubscribed(),
+                            this::processChangelog, appConfig), appConfig));
+
         }
         logger.info("Handlers initialized");
 

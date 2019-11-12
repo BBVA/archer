@@ -1,7 +1,6 @@
 package com.bbva.common.consumers.adapters;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.consumers.DefaultConsumer;
 import com.bbva.common.consumers.callback.ConsumerCallback;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.DefaultProducer;
@@ -23,10 +22,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KafkaConsumerAdapter implements ConsumerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerAdapter.class);
 
     private final Collection<String> sources;
-    private final int id;
     private final ConsumerCallback callback;
     private final AppConfig appConfig;
 
@@ -38,13 +36,11 @@ public class KafkaConsumerAdapter implements ConsumerAdapter {
     /**
      * Constructor
      *
-     * @param id        consumer id
-     * @param topics    list of topics
+     * @param sources   list of topics
      * @param callback  callback to manage responses
      * @param appConfig configuration
      */
-    public KafkaConsumerAdapter(final int id, final List<String> sources, final ConsumerCallback callback, final AppConfig appConfig) {
-        this.id = id;
+    public KafkaConsumerAdapter(final List<String> sources, final ConsumerCallback callback, final AppConfig appConfig) {
         this.sources = sources;
         this.callback = callback;
         this.appConfig = appConfig;
@@ -58,6 +54,7 @@ public class KafkaConsumerAdapter implements ConsumerAdapter {
 
         specificSerde = new SpecificAvroSerde<>(schemaRegistry, serdeProps);
         specificSerde.configure(serdeProps, false);
+
     }
 
 
