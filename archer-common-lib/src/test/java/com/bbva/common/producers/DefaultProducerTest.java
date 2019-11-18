@@ -108,4 +108,19 @@ public class DefaultProducerTest {
                 () -> Assertions.assertNull(result)
         );
     }
+
+    @DisplayName("End producer ok")
+    @Test
+    public void endProducerOk() throws Exception {
+
+        final KafkaProducer kafkaProducer = Mockito.mock(KafkaProducer.class);
+        PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
+
+        final AppConfig configuration = ConfigBuilder.create();
+        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+        producer.end();
+        Assertions.assertAll("producer",
+                () -> Assertions.assertNotNull(producer)
+        );
+    }
 }

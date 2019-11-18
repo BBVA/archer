@@ -1,8 +1,8 @@
-package com.bbva.common.consumers.adapters;
+package com.bbva.common.managers;
 
 import java.util.List;
 
-public interface ConsumerAdapter {
+public interface Manager {
 
     /**
      * Replay a list of topics

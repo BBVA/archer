@@ -1,10 +1,9 @@
 package com.bbva.ddd.domain;
 
-import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
-import com.bbva.common.consumers.adapters.ConsumerAdapterFactory;
-import com.bbva.common.consumers.adapters.KafkaConsumerAdapter;
-import com.bbva.common.consumers.adapters.RunnableConsumerAdapter;
+import com.bbva.common.managers.ManagerFactory;
+import com.bbva.common.managers.RunnableManager;
+import com.bbva.common.managers.kafka.KafkaAtLeastOnceManager;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
@@ -27,7 +26,7 @@ import java.util.concurrent.Executors;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class, Binder.class, ConsumerAdapterFactory.class, ApplicationHelper.class})
+@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class, Binder.class, ManagerFactory.class, ApplicationHelper.class})
 public class DomainBuilderTest {
 
     @DisplayName("Create domain ok")
@@ -35,10 +34,10 @@ public class DomainBuilderTest {
     public void createDomain() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(KafkaConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaConsumerAdapter.class));
+        PowerMockito.whenNew(KafkaAtLeastOnceManager.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaAtLeastOnceManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        final Domain domain = Domain.Builder.create(new AppConfig()).build();
+        final Domain domain = Domain.Builder.create(ConfigBuilder.create()).build();
         Assertions.assertAll("DomainBuilder",
                 () -> Assertions.assertNotNull(domain)
         );
@@ -49,7 +48,7 @@ public class DomainBuilderTest {
     public void createDomainWithoutConfig() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(RunnableConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(RunnableConsumerAdapter.class));
+        PowerMockito.whenNew(RunnableManager.class).withAnyArguments().thenReturn(PowerMockito.mock(RunnableManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
         ConfigBuilder.create();
@@ -65,10 +64,10 @@ public class DomainBuilderTest {
 
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(KafkaConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaConsumerAdapter.class));
+        PowerMockito.whenNew(KafkaAtLeastOnceManager.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaAtLeastOnceManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        Domain.Builder domain = Domain.Builder.create(new AppConfig());
+        Domain.Builder domain = Domain.Builder.create(ConfigBuilder.create());
         domain = domain.addDataProcessorBuilder(new CreateStreamQueryBuilder("query-builder"));
         domain = domain.addDataProcessorBuilder("dataflow", PowerMockito.mock(DataflowBuilder.class));
         domain = domain.addEntityStateProcessor("entity", String.class);
@@ -83,10 +82,10 @@ public class DomainBuilderTest {
 
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(KafkaConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaConsumerAdapter.class));
+        PowerMockito.whenNew(KafkaAtLeastOnceManager.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaAtLeastOnceManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        Domain.Builder domain = Domain.Builder.create(new AppConfig())
+        Domain.Builder domain = Domain.Builder.create(ConfigBuilder.create())
                 .handler(new AutoConfiguredHandler());
 
         domain = domain.indexFieldStateProcessor("storeName", "sourceStreamName", "fieldPath",
@@ -103,10 +102,10 @@ public class DomainBuilderTest {
     public void startDomian() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(KafkaConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaConsumerAdapter.class));
+        PowerMockito.whenNew(KafkaAtLeastOnceManager.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaAtLeastOnceManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        final Domain domain = Domain.Builder.create(new AppConfig())
+        final Domain domain = Domain.Builder.create(ConfigBuilder.create())
                 .handler(new AutoConfiguredHandler())
                 .build();
 

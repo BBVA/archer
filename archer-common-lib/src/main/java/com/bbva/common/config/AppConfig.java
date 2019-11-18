@@ -13,6 +13,8 @@ import java.util.Properties;
 public class AppConfig implements Cloneable {
 
     public static final String SCHEMA_REGISTRY_URL = "schema.registry.url";
+    public static final String EVENT_STORE = "event.store";
+    public static final String DELIVERY_TYPE = "delivery.type";
     public static final String REPLAY_TOPICS = "replay.topics";
     public static final String REPLICATION_FACTOR = "replication.factor";
     public static final String PARTITIONS = "partitions";

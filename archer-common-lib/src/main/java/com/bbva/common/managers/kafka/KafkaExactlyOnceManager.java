@@ -1,15 +1,16 @@
-package com.bbva.common.consumers;
+package com.bbva.common.managers.kafka;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.consumers.contexts.ConsumerContext;
+import com.bbva.common.consumers.callback.ConsumerCallback;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.producers.Producer;
 import com.bbva.common.utils.headers.RecordHeaders;
-import com.bbva.common.utils.serdes.SpecificAvroSerde;
-import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.Serdes;
@@ -17,62 +18,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
-/**
- * Default consumer implementation
- *
- * @param <T> Consumer context type to manage new messages
- */
-public abstract class DefaultConsumer<T extends ConsumerContext> {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultConsumer.class);
+public class KafkaExactlyOnceManager extends KafkaBaseManager {
 
-    protected final AtomicBoolean closed = new AtomicBoolean(false);
-    protected KafkaConsumer<String, SpecificRecordBase> consumer;
-    protected final Collection<String> topics;
-    protected Consumer<T> callback;
-    private final AppConfig appConfig;
-    private final SpecificAvroSerde<SpecificRecordBase> specificSerde;
-    private final Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(KafkaExactlyOnceManager.class);
 
     /**
      * Constructor
      *
-     * @param topics    list of topics
+     * @param sources   list of topics
      * @param callback  callback to manage responses
      * @param appConfig configuration
      */
-    public DefaultConsumer(final List<String> topics, final Consumer<T> callback, final AppConfig appConfig) {
-        this.topics = topics;
-        this.callback = callback;
-        this.appConfig = appConfig;
-        final String schemaRegistryUrl = appConfig.get(AppConfig.SCHEMA_REGISTRY_URL).toString();
-
-        final CachedSchemaRegistryClient schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 100);
-
-        final Map<String, String> serdeProps = Collections.singletonMap(AppConfig.SCHEMA_REGISTRY_URL,
-                schemaRegistryUrl);
-
-        specificSerde = new SpecificAvroSerde<>(schemaRegistry, serdeProps);
-        specificSerde.configure(serdeProps, false);
+    public KafkaExactlyOnceManager(final List<String> sources, final ConsumerCallback callback, final AppConfig appConfig) {
+        super(sources, callback, appConfig);
     }
 
-    /**
-     * Create context to manage new message
-     *
-     * @param producer       producer
-     * @param consumedRecord record message
-     * @return context
-     */
-    public abstract T context(CRecord consumedRecord, Producer producer, Boolean isReplay);
 
     /**
      * Replay a list of topics
      *
      * @param topics list of topics
      */
+    @Override
     public void replay(final List<String> topics) {
         logger.info("Consumer started in replay mode");
 
@@ -102,6 +74,7 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                     final long lastOffset = consumer.position(topicPartition);
 
                     if (lastOffset > 0) {
+                        final Producer producer = new DefaultProducer(appConfig);
 
                         consumer.seekToBeginning(Collections.singletonList(topicPartition));
 
@@ -115,9 +88,9 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                             for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
                                 currentOffset = record.offset();
                                 if (currentOffset <= lastOffset - 1) {
-                                    callback.accept(context(new CRecord(record.topic(), record.partition(), record.offset(),
+                                    callback.apply(new CRecord(record.topic(), record.partition(), record.offset(),
                                             record.timestamp(), record.timestampType(), record.key(), record.value(),
-                                            new RecordHeaders(record.headers())), new DefaultProducer(appConfig), true));
+                                            new RecordHeaders(record.headers())), producer, true);
 
                                     currentOffsets.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
                                     commitOffsets();
@@ -141,13 +114,14 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
     /**
      * Start to consume records
      */
+    @Override
     public void play() {
         logger.info("Consumer started in normal mode");
         try {
 
             consumer = new KafkaConsumer<>(appConfig.consumer(), Serdes.String().deserializer(),
                     specificSerde.deserializer());
-            consumer.subscribe(topics, new HandleRebalanceListener());
+            consumer.subscribe(sources, new HandleRebalanceListener());
 
             while (!closed.get()) {
                 final ConsumerRecords<String, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
@@ -157,8 +131,8 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                     //Init the transaction
                     producer.init();
 
-                    callback.accept(context(new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
-                            record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers())), producer, false));
+                    callback.apply(new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
+                            record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers())), producer, false);
 
                     currentOffsets.put(
                             new TopicPartition(record.topic(), record.partition()),
@@ -194,19 +168,6 @@ public abstract class DefaultConsumer<T extends ConsumerContext> {
                     logger.error("Commit failed for offsets " + offsets, e);
                 }
             });
-        }
-    }
-
-    private class HandleRebalanceListener implements ConsumerRebalanceListener {
-
-        @Override
-        public void onPartitionsRevoked(final Collection<TopicPartition> partitions) {
-            logger.debug("Lost partitions in rebalance. Committing current offset: {}", currentOffsets);
-            consumer.commitSync(currentOffsets);
-        }
-
-        @Override
-        public void onPartitionsAssigned(final Collection<TopicPartition> partitions) {
         }
     }
 

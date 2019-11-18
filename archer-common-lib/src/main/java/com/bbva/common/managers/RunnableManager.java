@@ -1,25 +1,25 @@
-package com.bbva.common.consumers.adapters;
+package com.bbva.common.managers;
 
 import com.bbva.common.config.AppConfig;
 
 import java.util.Arrays;
 
-public class RunnableConsumerAdapter implements Runnable {
+public class RunnableManager implements Runnable {
 
     private final String[] replayTopics;
-    private final ConsumerAdapter consumerAdapter;
+    private final Manager manager;
 
     /**
      * Constructor
      *
-     * @param consumerAdapter consumer Adapter
-     * @param appConfig       configuration
+     * @param manager   consumer Adapter
+     * @param appConfig configuration
      */
-    public RunnableConsumerAdapter(final ConsumerAdapter consumerAdapter, final AppConfig appConfig) {
+    public RunnableManager(final Manager manager, final AppConfig appConfig) {
         replayTopics = (appConfig.get(AppConfig.REPLAY_TOPICS) != null)
                 ? appConfig.get(AppConfig.REPLAY_TOPICS).toString().split(",") : new String[]{};
 
-        this.consumerAdapter = consumerAdapter;
+        this.manager = manager;
     }
 
     /**
@@ -28,16 +28,16 @@ public class RunnableConsumerAdapter implements Runnable {
     @Override
     public void run() {
         if (replayTopics.length > 0) {
-            consumerAdapter.replay(Arrays.asList(replayTopics));
+            manager.replay(Arrays.asList(replayTopics));
         }
 
-        consumerAdapter.play();
+        manager.play();
     }
 
     /**
      * Close the consumer
      */
     public void shutdown() {
-        consumerAdapter.shutdown();
+        manager.shutdown();
     }
 }

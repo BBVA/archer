@@ -1,10 +1,11 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.consumers.adapters.ConsumerAdapterFactory;
-import com.bbva.common.consumers.adapters.KafkaConsumerAdapter;
-import com.bbva.common.consumers.adapters.RunnableConsumerAdapter;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.managers.ManagerFactory;
+import com.bbva.common.managers.RunnableManager;
+import com.bbva.common.managers.kafka.KafkaAtLeastOnceManager;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.producers.Producer;
 import com.bbva.common.util.PowermockExtension;
@@ -27,7 +28,7 @@ import java.util.concurrent.Executors;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class, Binder.class, ConsumerAdapterFactory.class, ApplicationHelper.class})
+@PrepareForTest({TopicManager.class, DataProcessor.class, Executors.class, Repository.class, Domain.class, Binder.class, ManagerFactory.class, ApplicationHelper.class})
 public class BinderTest {
 
     @DisplayName("Create binder ok")
@@ -42,7 +43,7 @@ public class BinderTest {
     @DisplayName("Create binder ok")
     @Test
     public void createBinderWithoutConfig() throws Exception {
-        PowerMockito.whenNew(RunnableConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(RunnableConsumerAdapter.class));
+        PowerMockito.whenNew(RunnableManager.class).withAnyArguments().thenReturn(PowerMockito.mock(RunnableManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
 
@@ -58,10 +59,10 @@ public class BinderTest {
     public void startBinder() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(KafkaConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaConsumerAdapter.class));
+        PowerMockito.whenNew(KafkaAtLeastOnceManager.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaAtLeastOnceManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
-        final Binder binder = Binder.create(new AppConfig())
+        final Binder binder = Binder.create(ConfigBuilder.create())
                 .build(new AutoConfiguredHandler());
 
         binder.start();
@@ -76,7 +77,7 @@ public class BinderTest {
     public void processEvents() throws Exception {
         PowerMockito.whenNew(DataProcessor.class).withAnyArguments().thenReturn(PowerMockito.mock(DataProcessor.class));
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
-        PowerMockito.whenNew(RunnableConsumerAdapter.class).withAnyArguments().thenReturn(PowerMockito.mock(RunnableConsumerAdapter.class));
+        PowerMockito.whenNew(RunnableManager.class).withAnyArguments().thenReturn(PowerMockito.mock(RunnableManager.class));
         PowerMockito.mockStatic(TopicManager.class);
 
         final Binder binder = Binder.create(new AppConfig())

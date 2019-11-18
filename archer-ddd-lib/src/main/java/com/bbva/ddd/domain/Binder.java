@@ -1,9 +1,9 @@
 package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
-import com.bbva.common.consumers.adapters.ConsumerAdapterFactory;
-import com.bbva.common.consumers.adapters.RunnableConsumerAdapter;
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.managers.ManagerFactory;
+import com.bbva.common.managers.RunnableManager;
 import com.bbva.common.producers.Producer;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
@@ -34,7 +34,7 @@ public final class Binder {
     private static AppConfig appConfig;
     private Handler handler;
     private static Binder instance;
-    private List<RunnableConsumerAdapter> consumers;
+    private List<RunnableManager> consumers;
 
     /**
      * Constructor
@@ -75,7 +75,7 @@ public final class Binder {
     public void start() {
         final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
 
-        for (final RunnableConsumerAdapter consumer : consumers) {
+        for (final RunnableManager consumer : consumers) {
             executor.submit(consumer);
         }
 
@@ -83,7 +83,7 @@ public final class Binder {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 
-            for (final RunnableConsumerAdapter consumer : consumers) {
+            for (final RunnableManager consumer : consumers) {
                 consumer.shutdown();
             }
             executor.shutdown();
@@ -95,7 +95,7 @@ public final class Binder {
         }));
     }
 
-    private List<RunnableConsumerAdapter> configureHandlers(final AppConfig config) {
+    private List<RunnableManager> configureHandlers(final AppConfig config) {
         consumers = new ArrayList<>();
 
         final List<String> commandsSubscribed = handler.commandsSubscribed();
@@ -111,21 +111,24 @@ public final class Binder {
 
         logger.info("Necessary consumer topics created");
 
+        final String eventStore = (String) appConfig.get(AppConfig.EVENT_STORE);
+        final String deliveryType = (String) appConfig.get(AppConfig.DELIVERY_TYPE);
+
         if (!commandsSubscribed.isEmpty()) {
             consumers.add(
-                    new RunnableConsumerAdapter(ConsumerAdapterFactory.create(ConsumerAdapterFactory.EventStores.Kafka, handler.commandsSubscribed(),
+                    new RunnableManager(ManagerFactory.create(eventStore, deliveryType, handler.commandsSubscribed(),
                             this::processCommand, appConfig), appConfig));
         }
 
         if (!eventsSubscribed.isEmpty()) {
             consumers.add(
-                    new RunnableConsumerAdapter(ConsumerAdapterFactory.create(ConsumerAdapterFactory.EventStores.Kafka, handler.eventsSubscribed(),
+                    new RunnableManager(ManagerFactory.create(eventStore, deliveryType, handler.eventsSubscribed(),
                             this::processEvent, appConfig), appConfig));
         }
 
         if (!dataChangelogsSubscribed.isEmpty()) {
             consumers.add(
-                    new RunnableConsumerAdapter(ConsumerAdapterFactory.create(ConsumerAdapterFactory.EventStores.Kafka, handler.dataChangelogsSubscribed(),
+                    new RunnableManager(ManagerFactory.create(eventStore, deliveryType, handler.dataChangelogsSubscribed(),
                             this::processChangelog, appConfig), appConfig));
 
         }
