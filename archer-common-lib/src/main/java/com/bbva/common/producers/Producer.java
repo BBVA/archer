@@ -12,13 +12,6 @@ import java.util.concurrent.Future;
 public interface Producer {
 
     /**
-     * Method to initialize the production start. For example, init transaction
-     */
-    default void init() {
-
-    }
-
-    /**
      * Produce record in the event store
      *
      * @param record   message to produce

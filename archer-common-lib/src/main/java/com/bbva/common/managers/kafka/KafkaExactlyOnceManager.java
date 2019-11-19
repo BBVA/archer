@@ -3,14 +3,12 @@ package com.bbva.common.managers.kafka;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.consumers.callback.ConsumerCallback;
 import com.bbva.common.consumers.record.CRecord;
-import com.bbva.common.producers.DefaultProducer;
-import com.bbva.common.producers.Producer;
+import com.bbva.common.producers.TransactionalProducer;
 import com.bbva.common.utils.headers.RecordHeaders;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.Serdes;
@@ -68,17 +66,17 @@ public class KafkaExactlyOnceManager extends KafkaBaseManager {
                 logger.error("Replay failed. Not assignment detected");
 
             } else {
+                final TransactionalProducer producer = new TransactionalProducer(appConfig);
+
                 for (final TopicPartition topicPartition : topicPartitionSet) {
                     logger.debug("Start replay on topic {} partition {}", topicPartition.topic(), topicPartition.partition());
 
                     final long lastOffset = consumer.position(topicPartition);
 
                     if (lastOffset > 0) {
-                        final Producer producer = new DefaultProducer(appConfig);
 
                         consumer.seekToBeginning(Collections.singletonList(topicPartition));
 
-                        long currentOffset;
                         boolean stop = false;
                         while (!stop) {
                             final ConsumerRecords<String, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(3000));
@@ -86,14 +84,8 @@ public class KafkaExactlyOnceManager extends KafkaBaseManager {
                                 stop = true;
                             }
                             for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
-                                currentOffset = record.offset();
-                                if (currentOffset <= lastOffset - 1) {
-                                    callback.apply(new CRecord(record.topic(), record.partition(), record.offset(),
-                                            record.timestamp(), record.timestampType(), record.key(), record.value(),
-                                            new RecordHeaders(record.headers())), producer, true);
-
-                                    currentOffsets.put(topicPartition, new OffsetAndMetadata(currentOffset + 1));
-                                    commitOffsets();
+                                if (record.offset() <= lastOffset - 1) {
+                                    processRecord(producer, record, true);
                                 } else {
                                     stop = true;
                                     logger.debug("End replay on topic {} partition {}", topicPartition.topic(), topicPartition.partition());
@@ -117,31 +109,19 @@ public class KafkaExactlyOnceManager extends KafkaBaseManager {
     @Override
     public void play() {
         logger.info("Consumer started in normal mode");
-        try {
 
+        TransactionalProducer producer = null;
+
+        try {
             consumer = new KafkaConsumer<>(appConfig.consumer(), Serdes.String().deserializer(),
                     specificSerde.deserializer());
             consumer.subscribe(sources, new HandleRebalanceListener());
 
             while (!closed.get()) {
+                producer = new TransactionalProducer(appConfig);
                 final ConsumerRecords<String, SpecificRecordBase> records = consumer.poll(Duration.ofMillis(Long.MAX_VALUE));
                 for (final ConsumerRecord<String, SpecificRecordBase> record : records) {
-                    final Producer producer = new DefaultProducer(appConfig);
-
-                    //Init the transaction
-                    producer.init();
-
-                    callback.apply(new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
-                            record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers())), producer, false);
-
-                    currentOffsets.put(
-                            new TopicPartition(record.topic(), record.partition()),
-                            new OffsetAndMetadata(record.offset() + 1));
-
-                    commitOffsets();
-
-                    //End the transaction
-                    producer.end();
+                    processRecord(producer, record, false);
                 }
             }
         } catch (final WakeupException e) {
@@ -153,22 +133,23 @@ public class KafkaExactlyOnceManager extends KafkaBaseManager {
             logger.error("Unexpected error", e);
         } finally {
             try {
-                consumer.commitSync(currentOffsets);
+                producer.abort();
             } finally {
-                consumer.close();
+                producer.end();
                 logger.info("Closed consumer and we are done");
             }
         }
     }
 
-    private void commitOffsets() {
-        if (!(boolean) appConfig.consumer(AppConfig.ConsumerProperties.ENABLE_AUTO_COMMIT)) {
-            consumer.commitAsync(currentOffsets, (offsets, e) -> {
-                if (e != null) {
-                    logger.error("Commit failed for offsets " + offsets, e);
-                }
-            });
-        }
+    private void processRecord(final TransactionalProducer producer, final ConsumerRecord<String, SpecificRecordBase> record, final boolean isReplay) {
+        final CRecord consumedRecord = new CRecord(record.topic(), record.partition(), record.offset(), record.timestamp(),
+                record.timestampType(), record.key(), record.value(), new RecordHeaders(record.headers()));
+
+        producer.init(Collections.singletonList(consumedRecord));
+
+        callback.apply(consumedRecord, producer, isReplay);
+
+        producer.commit();
     }
 
 }

@@ -3,7 +3,7 @@ package com.bbva.common.managers;
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.managers.kafka.KafkaExactlyOnceManager;
-import com.bbva.common.producers.DefaultProducer;
+import com.bbva.common.producers.TransactionalProducer;
 import com.bbva.common.producers.records.SpecificRecordBaseImpl;
 import com.bbva.common.util.PowermockExtension;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -45,7 +45,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         final Map<TopicPartition, List<ConsumerRecord<String, SpecificRecordBase>>> records = new HashMap<>();
@@ -80,7 +80,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerWakeupExceptionOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         final Map<TopicPartition, List<ConsumerRecord<String, SpecificRecordBase>>> records = new HashMap<>();
@@ -114,7 +114,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerWithReplayOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         final Map<TopicPartition, List<ConsumerRecord<String, SpecificRecordBase>>> records = new HashMap<>();
@@ -148,7 +148,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerWithReplayLastOffsetZeroOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         final Map<TopicPartition, List<ConsumerRecord<String, SpecificRecordBase>>> records = new HashMap<>();
@@ -182,7 +182,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerWithNoRecordsReplayOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         final Map<TopicPartition, List<ConsumerRecord<String, SpecificRecordBase>>> records = new HashMap<>();
@@ -215,7 +215,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerWithHighOffsetReplayOk() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         final Map<TopicPartition, List<ConsumerRecord<String, SpecificRecordBase>>> records = new HashMap<>();
@@ -249,7 +249,7 @@ public class KafkaExactlyOnceManagerTest {
     public void runKafkaExactlyOnceManagerWitReplayWithoutPartitions() throws Exception {
         final KafkaConsumer kafkaConsumer = Mockito.mock(KafkaConsumer.class);
         PowerMockito.whenNew(KafkaConsumer.class).withAnyArguments().thenReturn(kafkaConsumer);
-        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(TransactionalProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(TransactionalProducer.class));
 
         final Set<TopicPartition> topicPartitions = new HashSet<>();
         PowerMockito.when(kafkaConsumer, "assignment").thenReturn(topicPartitions);

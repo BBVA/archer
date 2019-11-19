@@ -130,6 +130,9 @@ public class KafkaAtLeastOnceManager extends KafkaBaseManager {
 
                 }
             }
+
+            producer.end();
+
         } catch (final WakeupException e) {
             // ignore for shutdown
             if (!closed.get()) {
