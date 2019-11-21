@@ -26,8 +26,14 @@ import java.util.concurrent.Future;
  * Transactional producer implementation.
  * <pre>
  *  {@code
- *      final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+ *      final TransactionalProducer producer = new TransactionalProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+ *      //Init transaction
+ *      producer.init();
  *      final Future result = producer.send(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
+ *      //End transaction
+ *      producer.commit();
+ *      //Close the production
+ *      producer.end();
  *  }
  * </pre>
  */
@@ -72,6 +78,16 @@ public class TransactionalProducer implements com.bbva.common.producers.Producer
         producer.initTransactions();
     }
 
+    /**
+     * Initialize the transaction with a collection of consumed records
+     *
+     * @param records consumed for transaction
+     */
+    public void init(final List<CRecord> records) {
+        producer.beginTransaction();
+        this.records = records;
+    }
+
     @Override
     public Future<RecordMetadata> send(final PRecord record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
@@ -87,14 +103,27 @@ public class TransactionalProducer implements com.bbva.common.producers.Producer
 
     }
 
-    public void init(final List<CRecord> records) {
-        producer.beginTransaction();
-        this.records = records;
-    }
-
+    /**
+     * Commit the open transactions with the consumed offsets
+     */
     public void commit() {
         producer.sendOffsetsToTransaction(getUncommittedOffsets(), groupId);
         producer.commitTransaction();
+        logger.debug("End of production");
+    }
+
+    /**
+     * Abort transaction when fail produced in the operation
+     */
+    public void abort() {
+        producer.abortTransaction();
+        logger.debug("Abort transaction");
+    }
+
+    @Override
+    public void end() {
+        producer.flush();
+        producer.close();
         logger.debug("End of production");
     }
 
@@ -107,17 +136,5 @@ public class TransactionalProducer implements com.bbva.common.producers.Producer
         }
 
         return uncommitedOffsets;
-    }
-
-    public void abort() {
-        producer.abortTransaction();
-        logger.debug("Abort transaction");
-    }
-
-    @Override
-    public void end() {
-        producer.flush();
-        producer.close();
-        logger.debug("End of production");
     }
 }

@@ -53,6 +53,12 @@ public final class Binder {
         return instance;
     }
 
+    /**
+     * Build the binder instance
+     *
+     * @param domainHandler domain handler
+     * @return binder instance
+     */
     public Binder build(final Handler domainHandler) {
         handler = domainHandler;
         configureHandlers(appConfig);
@@ -137,14 +143,35 @@ public final class Binder {
         return consumers;
     }
 
+    /**
+     * Process command callback
+     *
+     * @param cRecord  instance of CRecord
+     * @param producer producer interface
+     * @param isReplay flag of replay
+     */
     public void processCommand(final Object cRecord, final Object producer, final Object isReplay) {
         handler.processCommand(new CommandHandlerContext((CRecord) cRecord, (Producer) producer, (Boolean) isReplay));
     }
 
+    /**
+     * Process event callback
+     *
+     * @param cRecord  instance of CRecord
+     * @param producer producer interface
+     * @param isReplay flag of replay
+     */
     public void processEvent(final Object cRecord, final Object producer, final Object isReplay) {
         handler.processEvent(new EventHandlerContext((CRecord) cRecord, (Producer) producer, (Boolean) isReplay));
     }
 
+    /**
+     * Process changelog callback
+     *
+     * @param cRecord  instance of CRecord
+     * @param producer producer interface
+     * @param isReplay flag of replay
+     */
     public void processChangelog(final Object cRecord, final Object producer, final Object isReplay) {
         handler.processDataChangelog(new ChangelogHandlerContext((CRecord) cRecord, (Producer) producer, (Boolean) isReplay));
     }

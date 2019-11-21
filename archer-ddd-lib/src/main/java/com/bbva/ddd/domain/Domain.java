@@ -32,7 +32,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 public class Domain {
 
     private static final Logger logger = LoggerFactory.getLogger(Domain.class);
-    
+
     private final AppConfig config;
 
     protected Domain(final AppConfig config) {
@@ -54,6 +54,9 @@ public class Domain {
         }
     }
 
+    /**
+     * Builder class for domain
+     */
     public static class Builder {
         private Handler handler;
         private final AppConfig config;
@@ -66,16 +69,33 @@ public class Domain {
             DataProcessor.create(config);
         }
 
+        /**
+         * Create builder
+         *
+         * @return builder
+         */
         public static Builder create() {
             instance = new Builder(ConfigBuilder.get());
             return instance;
         }
 
+        /**
+         * Create builder with config
+         *
+         * @param configs application configuration
+         * @return builder
+         */
         public static Builder create(final AppConfig configs) {
             instance = new Builder(configs);
             return instance;
         }
 
+        /**
+         * Set domain handler
+         *
+         * @param handler the handler
+         * @return builder
+         */
         public Domain.Builder handler(final Handler handler) {
             this.handler = handler;
             return this;
@@ -303,6 +323,11 @@ public class Domain {
             return this;
         }
 
+        /**
+         * Build the domain
+         *
+         * @return domain instance
+         */
         public Domain build() {
             if (handler == null) {
                 handler = new AutoConfiguredHandler();

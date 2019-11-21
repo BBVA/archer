@@ -8,6 +8,12 @@ import java.util.concurrent.Future;
 
 /**
  * Producers interface to manage the production in the bus.
+ * <pre>
+ *  {@code
+ *      final Producer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
+ *      final Future result = producer.send(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
+ *  }
+ * </pre>
  */
 public interface Producer {
 

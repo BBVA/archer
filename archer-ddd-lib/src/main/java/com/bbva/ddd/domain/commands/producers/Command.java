@@ -50,6 +50,12 @@ public class Command {
         this.uuid = uuid;
     }
 
+    /**
+     * Send command to the event bus
+     *
+     * @param callback to manage the response of production
+     * @return metadata of production
+     */
     public CommandRecordMetadata send(final ProducerCallback callback) {
         logger.debug("Sending command of type {}", action);
 
@@ -69,6 +75,9 @@ public class Command {
         return recordedMessageMetadata;
     }
 
+    /**
+     * Manage the creation of commands
+     */
     public static class Builder {
         private String action;
         private SpecificRecordBase value;
@@ -80,48 +89,100 @@ public class Command {
         private final Producer producer;
         private final Boolean isReplay;
 
+        /**
+         * Constructor
+         *
+         * @param record   consumed record
+         * @param producer producer instance
+         * @param isReplay flag of replay
+         */
         public Builder(final CRecord record, final Producer producer, final Boolean isReplay) {
             this.producer = producer;
             referenceRecord = record;
             this.isReplay = isReplay;
         }
 
+        /**
+         * Constructor
+         *
+         * @param record consumed record
+         */
         public Builder(final CRecord record) {
             producer = new DefaultProducer(ConfigBuilder.get());
             isReplay = false;
             referenceRecord = record;
         }
 
+        /**
+         * Set command action
+         *
+         * @param action the action
+         * @return builder
+         */
         public Builder action(final String action) {
             this.action = action;
             return this;
         }
 
+        /**
+         * Set command value
+         *
+         * @param value data value
+         * @return builder
+         */
         public Builder value(final SpecificRecordBase value) {
             this.value = value;
             return this;
         }
 
+        /**
+         * Set command headers
+         *
+         * @param headers command headers
+         * @return builder
+         */
         public Builder headers(final OptionalRecordHeaders headers) {
             this.headers = headers;
             return this;
         }
 
+        /**
+         * Set the command uuid
+         *
+         * @param uuid the id
+         * @return builder
+         */
         public Builder uuid(final String uuid) {
             this.uuid = uuid;
             return this;
         }
 
+        /**
+         * Set flag of presistence to true
+         *
+         * @return builder
+         */
         public Builder persistent() {
             persistent = true;
             return this;
         }
 
+        /**
+         * Set the source of the command
+         *
+         * @param to the source
+         * @return builder
+         */
         public Builder to(final String to) {
             this.to = to;
             return this;
         }
 
+        /**
+         * Build the command
+         *
+         * @return command instance
+         */
         public Command build() {
             if (uuid == null && action.equalsIgnoreCase(Command.CREATE_ACTION)) {
                 uuid = UUID.randomUUID().toString();
