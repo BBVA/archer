@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.builders.dataflows.states;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.GenericAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
@@ -16,9 +16,6 @@ import java.util.Map;
 
 /**
  * Builder to manage state as global tables
- *
- * @param <K> Key class type
- * @param <V> Class type of record definition
  */
 public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
     private final String sourceTopicName;
@@ -27,7 +24,7 @@ public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
     /**
      * Constructor
      *
-     * @param sourceTopicName soruce base name
+     * @param sourceTopicName source base name
      */
     public SimpleGlobalTableStateBuilder(final String sourceTopicName) {
         this.sourceTopicName = sourceTopicName;
@@ -63,10 +60,10 @@ public class SimpleGlobalTableStateBuilder implements TableStateBuilder {
                 context.serdeProperties());
         newValueSerde.configure(context.serdeProperties(), false);
 
-        final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String applicationGlobalStoreName = context.name() + AppConfig.STORE_NAME_SUFFIX;
 
         final Map<String, String> topics = new HashMap<>();
-        topics.put(sourceTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
+        topics.put(sourceTopicName, AppConfig.SNAPSHOT_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
 
         final StreamsBuilder builder = context.streamsBuilder();

@@ -13,7 +13,7 @@ public class FromClauseBuilder {
     private String clause = "";
 
     /**
-     * Constrructor
+     * Constructor
      *
      * @param streamName stream name
      */

@@ -2,6 +2,7 @@ package com.bbva.gateway.api;
 
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.util.PowermockExtension;
+import com.bbva.gateway.config.GatewayConfig;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -18,9 +19,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_PORT;
-import static com.bbva.gateway.constants.ConfigConstants.GATEWAY_REST_RESOURCE;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
@@ -54,7 +52,7 @@ public class RestUtilTest {
         );
     }
 
-    @DisplayName("Start RestUtil with configok")
+    @DisplayName("Start RestUtil with config ok")
     @Test
     public void startRestWithConfigOk() {
         Exception ex = null;
@@ -70,8 +68,8 @@ public class RestUtilTest {
             PowerMockito.doNothing().when(server, "start");
 
             final Map configuration = new HashMap<>();
-            configuration.put(GATEWAY_REST_PORT, "80");
-            configuration.put(GATEWAY_REST_RESOURCE, "resource");
+            configuration.put(GatewayConfig.GatewayProperties.GATEWAY_REST_PORT, "80");
+            configuration.put(GatewayConfig.GatewayProperties.GATEWAY_REST_RESOURCE, "resource");
             RestUtil.startRestCallBack(configuration);
         } catch (final Exception e) {
             ex = e;

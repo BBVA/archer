@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.contexts;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContextSupplier;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContextSupplier;
@@ -26,7 +26,7 @@ public class DataflowProcessorContextTest {
     public void initPorcessorOk() throws Exception {
         PowerMockito.whenNew(CachedSchemaRegistryClient.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedSchemaRegistryClient.class));
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final DataflowProcessorContextSupplier dataflowProcessorContextSupplier =
                 new DataflowProcessorContextSupplier("processor-name", configuration);
 

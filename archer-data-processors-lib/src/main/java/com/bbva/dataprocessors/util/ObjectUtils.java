@@ -16,6 +16,10 @@ public final class ObjectUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ObjectUtils.class);
 
+    private ObjectUtils() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Merge two object properties in one new object
      *
@@ -66,7 +70,7 @@ public final class ObjectUtils {
     }
 
     /**
-     * Return the merged object or the intial if it not exists previously
+     * Return the merged object or the initial if it not exists previously
      *
      * @param oldValue old value
      * @param value    new value
@@ -87,7 +91,7 @@ public final class ObjectUtils {
      * Obtain the getter or setter of a property
      *
      * @param fieldName field name
-     * @param isGet     gettter/setter
+     * @param isGet     getter/setter
      * @return the method
      */
     public static String getFieldNameMethod(final String fieldName, final boolean isGet) {

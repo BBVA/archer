@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.builders.dataflows.states;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.common.utils.serdes.SpecificAvroSerde;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
@@ -19,7 +19,7 @@ import org.apache.kafka.streams.state.Stores;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.bbva.common.config.ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+import static com.bbva.common.config.AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
 
 /**
  * Builder to manage internal changelogs
@@ -84,7 +84,7 @@ public abstract class ChangelogBuilder<K, V extends SpecificRecordBase> implemen
 
         final StreamsBuilder builder = context.streamsBuilder();
         final StoreBuilder<KeyValueStore<K, V>> entityStore = Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(internalLocalStoreName), keySerde, valueSerde)
-                .withLoggingEnabled(TopicManager.configTypes.get(ApplicationConfig.SNAPSHOT_RECORD_TYPE));
+                .withLoggingEnabled(TopicManager.configTypes.get(AppConfig.SNAPSHOT_RECORD_TYPE));
 
         builder
                 .addStateStore(entityStore)
@@ -118,8 +118,8 @@ public abstract class ChangelogBuilder<K, V extends SpecificRecordBase> implemen
 
     private void createTopics(final String sourceChangelogTopicName) {
         final Map<String, String> topics = new HashMap<>();
-        topics.put(snapshotTopicName, ApplicationConfig.SNAPSHOT_RECORD_TYPE);
-        topics.put(sourceChangelogTopicName, ApplicationConfig.CHANGELOG_RECORD_TYPE);
+        topics.put(snapshotTopicName, AppConfig.SNAPSHOT_RECORD_TYPE);
+        topics.put(sourceChangelogTopicName, AppConfig.CHANGELOG_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
     }
 }

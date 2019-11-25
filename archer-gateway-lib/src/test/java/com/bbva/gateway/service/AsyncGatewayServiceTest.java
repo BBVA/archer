@@ -1,20 +1,19 @@
 package com.bbva.gateway.service;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
-import com.bbva.dataprocessors.ReadableStore;
-import com.bbva.ddd.domain.AggregateFactory;
-import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.events.write.Event;
-import com.bbva.ddd.util.StoreUtil;
+import com.bbva.dataprocessors.states.ReadableStore;
+import com.bbva.dataprocessors.states.States;
+import com.bbva.ddd.domain.changelogs.repository.RepositoryImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.GatewayTest;
-import com.bbva.gateway.aggregates.GatewayAggregate;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.service.impl.AsyncGatewayService;
 import com.bbva.gateway.service.impl.AsyncGatewayServiceImpl;
@@ -37,7 +36,7 @@ import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({AggregateFactory.class, HelperDomain.class, GatewayService.class, StoreUtil.class, ReadableStore.class})
+@PrepareForTest({GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, RepositoryImpl.class, States.class, ReadableStore.class})
 public class AsyncGatewayServiceTest {
 
     @DisplayName("Create service ok")
@@ -46,7 +45,7 @@ public class AsyncGatewayServiceTest {
         final IAsyncGatewayService service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
         Assertions.assertAll("AsyncGatewayService",
@@ -59,7 +58,7 @@ public class AsyncGatewayServiceTest {
     public void callOk() {
         final IGatewayService service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final Person callResult = ((AsyncGatewayServiceImpl) service).call(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
@@ -74,23 +73,19 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Process record ok")
     @Test
     public void processRecordOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
-        PowerMockito.mockStatic(HelperDomain.class);
-
-        final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
-        PowerMockito.when(HelperDomain.get()).thenReturn(helperDomain);
-        PowerMockito.when(helperDomain, "sendEventTo", Mockito.anyString()).thenReturn(PowerMockito.mock(Event.class));
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(false));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders), null, false));
 
         Assertions.assertAll("GatewayService",
                 () -> Assertions.assertNotNull(service)
@@ -100,18 +95,16 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Process reply record ok")
     @Test
     public void processReplyRecordOk() throws Exception {
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
+        PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
+        PowerMockito.mockStatic(States.class);
+        
         final ObjectMapper om = new ObjectMapper();
 
-        PowerMockito.mockStatic(AggregateFactory.class);
-        PowerMockito.mockStatic(HelperDomain.class);
-        PowerMockito.mockStatic(StoreUtil.class);
-
         final ReadableStore store = PowerMockito.mock(ReadableStore.class);
-
-        final HelperDomain helperDomain = PowerMockito.mock(HelperDomain.class);
-        PowerMockito.when(HelperDomain.get()).thenReturn(helperDomain);
-        PowerMockito.when(helperDomain, "sendEventTo", Mockito.anyString()).thenReturn(PowerMockito.mock(Event.class));
-        PowerMockito.when(StoreUtil.getStore(Mockito.any())).thenReturn(store);
+        final States states = PowerMockito.mock(States.class);
+        PowerMockito.when(States.get()).thenReturn(states);
+        PowerMockito.when(states.getStore(Mockito.any())).thenReturn(store);
 
         final TransactionChangelog transactionChangelog = new TransactionChangelog();
         transactionChangelog.setOutput(om.writeValueAsString(new Person("name")));
@@ -119,26 +112,22 @@ public class AsyncGatewayServiceTest {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
-        service.init(new Configuration().init(configAnnotation), "baseName");
+        service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
         final RecordHeaders recordHeaders = new RecordHeaders();
         recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(true));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("referenceKey"));
 
-        service.processRecord(new CRecord("topic", 1, 1,
+        service.processRecord(new HandlerContextImpl(new CRecord("topic", 1, 1,
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
-                new PersonalData(), recordHeaders));
+                new PersonalData(), recordHeaders), null, false));
 
         Assertions.assertNotNull(service);
     }
 
     @DisplayName("Save changelog ok")
     @Test
-    public void saveChangelogOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
-
-
-        PowerMockito.when(AggregateFactory.class, "load", Mockito.any(), Mockito.any()).thenReturn(new GatewayAggregate("iden", new TransactionChangelog()));
+    public void saveChangelogOk() {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         AsyncGatewayService.saveChangelog("iden", "body");
@@ -150,10 +139,7 @@ public class AsyncGatewayServiceTest {
 
     @DisplayName("Save null changelog ok")
     @Test
-    public void saveNullChangelogOk() throws Exception {
-        PowerMockito.mockStatic(AggregateFactory.class);
-
-        PowerMockito.when(AggregateFactory.class, "load", Mockito.any(), Mockito.any()).thenReturn(new GatewayAggregate("iden", null));
+    public void saveNullChangelogOk() {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
         AsyncGatewayService.saveChangelog("iden", "body");

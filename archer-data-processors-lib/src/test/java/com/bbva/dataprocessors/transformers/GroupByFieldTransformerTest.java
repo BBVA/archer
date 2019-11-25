@@ -32,7 +32,7 @@ public class GroupByFieldTransformerTest {
 
     @DisplayName("Create and init EntityTransformer ok")
     @Test
-    public void initPorcessorOk() {
+    public void initProcessorOk() {
         final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);
 
         final GroupByFieldTransformer groupByFieldTransformer = new GroupByFieldTransformer("transformer", SpecificRecordImpl.class);
@@ -71,7 +71,7 @@ public class GroupByFieldTransformerTest {
         );
     }
 
-    @DisplayName("Transform object without old value and no stored valueok")
+    @DisplayName("Transform object without old value and no stored value ok")
     @Test
     public void transformWithoutOldValueAndNoStoredOk() throws Exception {
         final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);

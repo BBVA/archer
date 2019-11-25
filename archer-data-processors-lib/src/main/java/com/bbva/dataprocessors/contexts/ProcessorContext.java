@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.contexts;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 
 /**
@@ -9,7 +9,7 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 public interface ProcessorContext {
 
     /**
-     * Get shema registry client
+     * Get schema registry client
      *
      * @return client
      */
@@ -20,7 +20,7 @@ public interface ProcessorContext {
      *
      * @return application config
      */
-    ApplicationConfig configs();
+    AppConfig configs();
 
     /**
      * Get application id

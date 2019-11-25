@@ -8,7 +8,7 @@ import com.bbva.common.utils.headers.HeaderType;
 public enum CommandHeaderType implements HeaderType {
     TYPE_VALUE("command"),
     UUID_KEY("uuid"),
-    NAME_KEY("name"),
+    ACTION_KEY("action"),
     ENTITY_UUID_KEY("entity.uuid");
 
     private final String name;

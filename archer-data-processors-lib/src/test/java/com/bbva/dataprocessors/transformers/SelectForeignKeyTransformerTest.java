@@ -20,10 +20,10 @@ public class SelectForeignKeyTransformerTest {
 
     @DisplayName("Create and init EntityTransformer ok")
     @Test
-    public void initPorcessorOk() {
+    public void initProcessorOk() {
         final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);
 
-        final SelectForeignKeyTransformer selectForeignKeyTransformer = new SelectForeignKeyTransformer("transformer", "foereignKey", String.class);
+        final SelectForeignKeyTransformer selectForeignKeyTransformer = new SelectForeignKeyTransformer("transformer", "foreignKey", String.class);
         selectForeignKeyTransformer.init(processorContext);
         selectForeignKeyTransformer.close();
 
@@ -69,7 +69,7 @@ public class SelectForeignKeyTransformerTest {
         );
     }
 
-    @DisplayName("Transform object withnot existing foreign keyok")
+    @DisplayName("Transform object without existing foreign key ok")
     @Test
     public void transformWithNotExistsFk() throws Exception {
         final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);

@@ -8,7 +8,7 @@ import org.apache.kafka.streams.KafkaStreams;
 public interface ProcessorBuilder {
 
     /**
-     * Build
+     * Build the processor
      */
     void build();
 
@@ -18,7 +18,7 @@ public interface ProcessorBuilder {
     void start();
 
     /**
-     * Get streams
+     * Get kafka streams
      *
      * @return streams instance
      */

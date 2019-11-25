@@ -1,7 +1,7 @@
 package com.bbva.dataprocessors.contexts;
 
-import com.bbva.common.config.AppConfiguration;
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.contexts.sql.SQLProcessorContextSupplier;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
@@ -22,11 +22,11 @@ public class SqlProcessorContextTest {
 
     @DisplayName("Create SQL context ok")
     @Test
-    public void initPorcessorOk() throws Exception {
+    public void initProcessorOk() throws Exception {
         PowerMockito.whenNew(CachedSchemaRegistryClient.class).withAnyArguments().thenReturn(PowerMockito.mock(CachedSchemaRegistryClient.class));
         PowerMockito.mockStatic(KsqlContext.class);
 
-        final ApplicationConfig configuration = new AppConfiguration().init();
+        final AppConfig configuration = ConfigBuilder.create();
         final SQLProcessorContextSupplier sQLProcessorContextSupplier =
                 new SQLProcessorContextSupplier("processor-name", configuration);
 

@@ -2,6 +2,8 @@ app:
     common:
         bootstrap.servers: PLAINTEXT://
     application:
+        event.store: kafka
+        delivery.type: ${ARCHER_DELIVERY_TYPE:at-least-once}
         schema.registry.url: ${ARCHER_SCHEMA_REGISTRY_URL_FAKE}
         replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
     consumer:

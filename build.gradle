@@ -15,7 +15,7 @@ allprojects {
         mavenCentral()
         maven { url "http://packages.confluent.io/maven/" }
         maven {
-            url internalRepositoryURL
+            url "s3://microservices-java-repository/maven/release"
             authentication {
                 awsIm(AwsImAuthentication)
 
@@ -62,94 +62,9 @@ subprojects {
         }
     }
 
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-            }
-        }
-        repositories {
-            maven {
-                url internalRepositoryURL
-                authentication {
-                    awsIm(AwsImAuthentication)
-                }
-            }
-        }
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                pom.project {
-                    name = 'Archer Event-Sourcing Framework'
-                    description = ''
-                    packaging = 'jar'
-                    url = 'https://github.com/BBVA/archer-es-framework'
-
-                    scm {
-                        connection = 'scm:git:ssh://git@github.com:BBVA/archer-es-framework.git'
-                        developerConnection = 'scm:git:ssh://git@github.com:BBVA/archer-es-framework.git'
-                        url = 'https://github.com/BBVA/archer-es-framework'
-                    }
-
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = 'archer-group'
-                            name = 'BBVA NDB - Archer Group'
-                            email = 'bbva-ndb-archer.group@bbva.com'
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    jar {
-        manifest {
-            attributes('Implementation-Title': project.name,
-                    'Implementation-Version': project.version)
-        }
-    }
-
-    signing {
-        sign configurations.archives
-//    sign publishing.publications.external
-    }
-
-    task javadocJar(type: Jar) {
-        from javadoc
-        classifier = 'javadoc'
-    }
-
-    task sourcesJar(type: Jar) {
-        from sourceSets.main.allSource
-        classifier = 'sources'
-    }
-
-    artifacts {
-        archives javadocJar, sourcesJar
-    }
 
 }
 
 subprojects {
-    version = '1.0.0-beta.1'
+    version = '1.0.0-beta.2'
 }

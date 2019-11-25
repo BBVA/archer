@@ -1,8 +1,8 @@
 package com.bbva.ddd.util;
 
-import com.bbva.ddd.domain.Handler;
-import com.bbva.ddd.domain.aggregates.AggregateBase;
-import com.bbva.ddd.domain.aggregates.annotations.Aggregate;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.annotations.Aggregate;
+import com.bbva.ddd.domain.handlers.Handler;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -18,6 +18,10 @@ import java.util.Map;
  * Utility class to manage annotations
  */
 public final class AnnotationUtil {
+
+    private AnnotationUtil() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Find all annotated classes in the parent of handler package
@@ -57,7 +61,7 @@ public final class AnnotationUtil {
 
         for (final Class<?> aggregateClass : classes) {
             final Aggregate aggregateAnnotation = aggregateClass.getAnnotation(Aggregate.class);
-            final String baseName = aggregateAnnotation.baseName();
+            final String baseName = aggregateAnnotation.value();
             aggregatesMap.put(baseName, aggregateClass.asSubclass(AggregateBase.class));
         }
 
@@ -91,14 +95,12 @@ public final class AnnotationUtil {
     }
 
     private static <C extends Annotation> List<Class> findClassesInPackage(final String packageToFind, final Class<C> annotation) {
-        final List<Class> handlers = new ArrayList<>();
         final Reflections ref = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(packageToFind, ClasspathHelper.contextClassLoader(),
                         ClasspathHelper.staticClassLoader()))
                 .filterInputsBy(new FilterBuilder().include(".+\\.class")));
 
-        handlers.addAll(ref.getTypesAnnotatedWith(annotation));
-        return handlers;
+        return new ArrayList<>(ref.getTypesAnnotatedWith(annotation));
     }
 
 }

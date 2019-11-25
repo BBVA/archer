@@ -32,8 +32,7 @@ public class EntityProcessor<K, V> implements Processor<K, V> {
      */
     @Override
     public void init(final ProcessorContext context) {
-        final ProcessorContext localContext = context;
-        stateStore = (KeyValueStore<K, V>) localContext.getStateStore(stateStoreName);
+        stateStore = (KeyValueStore<K, V>) context.getStateStore(stateStoreName);
     }
 
     /**

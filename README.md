@@ -29,7 +29,7 @@ Provide classes for produce and consume of events, too  simplify the infrastruct
 
 [You see more about common](archer-common-lib/README.md)
 
-### Data processorss
+### Data processors
 
 Processing data is simplify by this library with the implementation of dataflow and sql processors, provide multiple builders to create processors. 
 
@@ -39,7 +39,7 @@ Provide a interactive queries system and Readable stores to launch queries to th
 
 ### Domain driven design
 
-ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintenables.
+ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintainable.
 
 [You see more about ddd](archer-ddd-lib/README.md)
 

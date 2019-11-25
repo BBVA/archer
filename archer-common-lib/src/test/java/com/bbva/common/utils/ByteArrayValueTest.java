@@ -11,37 +11,45 @@ public class ByteArrayValueTest {
 
     @DisplayName("Check byte array value string")
     @Test
-    public void checkByterrayValueString() {
+    public void checkByteArrayValueString() {
         final ByteArrayValue value = new ByteArrayValue("string");
         Assertions.assertEquals("string", value.asString());
     }
 
     @DisplayName("Check byte array value boolean")
     @Test
-    public void checkByterrayValueBoolean() {
+    public void checkByteArrayValueBoolean() {
         final ByteArrayValue value = new ByteArrayValue(true);
         Assertions.assertEquals(true, value.asBoolean());
     }
 
     @DisplayName("Check byte array value float")
     @Test
-    public void checkByterrayValueFloat() {
+    public void checkByteArrayValueFloat() {
         final ByteArrayValue value = new ByteArrayValue(1F);
         Assertions.assertEquals(1F, value.asFloat());
     }
 
     @DisplayName("Check byte array value integer")
     @Test
-    public void checkByterrayValueInteger() {
+    public void checkByteArrayValueInteger() {
         final ByteArrayValue value = new ByteArrayValue(1);
         Assertions.assertEquals(1, value.asInteger());
     }
 
     @DisplayName("Check byte array value long")
     @Test
-    public void checkByterrayValueLong() {
+    public void checkByteArrayValueLong() {
         final ByteArrayValue value = new ByteArrayValue(1L);
         Assertions.assertEquals(1L, value.asLong());
+    }
+
+    @DisplayName("Check byte array value byte array")
+    @Test
+    public void checkByteArrayValueByteArray() {
+        final byte[] bytes = {1};
+        final ByteArrayValue value = new ByteArrayValue(bytes);
+        Assertions.assertNotNull(value.asByteArray());
     }
 
 }

@@ -94,7 +94,7 @@ public class WithPropertiesClauseBuilder {
     }
 
     /**
-     * Set tiemstamp property
+     * Set timestamp property
      *
      * @param timestamp timestamp
      * @return builder
@@ -167,7 +167,7 @@ public class WithPropertiesClauseBuilder {
     /**
      * Build the query
      *
-     * @return
+     * @return query built
      */
     String build() {
         String withClause = "";

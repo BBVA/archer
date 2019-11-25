@@ -6,6 +6,8 @@ app:
         sasl.kerberos.service.name: kafka
         sasl.mechanism: GSSAPI
     application:
+        event.store: kafka
+        delivery.type: ${ARCHER_DELIVERY_TYPE:at-least-once}
         schema.registry.url: ${ARCHER_SCHEMA_REGISTRY_URL}
         replication.factor: ${ARCHER_REPLICATION_FACTOR:1}
     consumer:

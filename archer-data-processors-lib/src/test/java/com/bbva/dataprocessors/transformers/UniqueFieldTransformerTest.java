@@ -22,7 +22,7 @@ public class UniqueFieldTransformerTest {
 
     @DisplayName("Create and init EntityTransformer ok")
     @Test
-    public void initPorcessorOk() {
+    public void initProcessorOk() {
         final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);
 
         final UniqueFieldTransformer uniqueFieldTransformer = new UniqueFieldTransformer("transformer", "field");
@@ -108,7 +108,7 @@ public class UniqueFieldTransformerTest {
         uniqueFieldTransformer.init(processorContext);
         final Person newPerson = new Person();
         newPerson.setPhone("123456789");
-        final KeyValue transformed = uniqueFieldTransformer.transform("nokey", null);
+        final KeyValue transformed = uniqueFieldTransformer.transform("no-key", null);
 
         Assertions.assertAll("transformed",
                 () -> Assertions.assertNull(transformed)

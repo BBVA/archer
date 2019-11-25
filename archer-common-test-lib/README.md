@@ -36,11 +36,6 @@ Maven
 
 ## Usage and examples
 To use the kafka stack in memory you only need to extends of BaseItTest.
-
-```java
-public class MyTest extends BaseItTest {
-
-```
 And automatically in this class we have a populated ApplicationConfig with all configurations. At this moment we can consume, produce and do streams in front of memory stack.
 ```java
 public class MyTest extends BaseItTest {

@@ -18,7 +18,7 @@ public class EntityProcessorTest {
 
     @DisplayName("Create and init EntityProcessor ok")
     @Test
-    public void initPorcessorOk() {
+    public void initProcessorOk() {
         final ProcessorContext processorContext = Mockito.mock(ProcessorContext.class);
 
         final EntityProcessor entityProcessor = new EntityProcessor("stateStoreName");

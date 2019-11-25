@@ -5,11 +5,32 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Command handler method annotation. For example:
+ * <pre>
+ *  {@code
+ *   &#64;Command(commandAction = "action", source = "base")
+ *   public void processCommand(CommandRecord command) {
+ *      //Manage new command
+ *   }
+ *  }
+ * </pre>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Command {
 
-    String baseName();
+    /**
+     * Base name of command
+     *
+     * @return the base name
+     */
+    String source();
 
-    String commandAction();
+    /**
+     * Command action
+     *
+     * @return the action
+     */
+    String action();
 }

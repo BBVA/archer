@@ -1,8 +1,8 @@
 package com.bbva.logging.appenders.producer;
 
 import com.bbva.avro.LogEvent;
-import com.bbva.common.producers.CachedProducer;
-import com.bbva.common.producers.PRecord;
+import com.bbva.common.producers.DefaultProducer;
+import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 
 /**
@@ -11,7 +11,7 @@ import com.bbva.common.utils.headers.RecordHeaders;
 public class RunnableProducer implements Runnable {
 
     private final LogEvent eventLog;
-    private final CachedProducer logsProducer;
+    private final DefaultProducer logsProducer;
     private final LogsAppenderCallback logsAppenderCallback = new LogsAppenderCallback();
     private final String sourceName;
 
@@ -22,7 +22,7 @@ public class RunnableProducer implements Runnable {
      * @param logEvent log event
      * @param producer producer
      */
-    public RunnableProducer(final String baseName, final LogEvent logEvent, final CachedProducer producer) {
+    public RunnableProducer(final String baseName, final LogEvent logEvent, final DefaultProducer producer) {
         eventLog = logEvent;
         logsProducer = producer;
         sourceName = baseName;
@@ -33,9 +33,9 @@ public class RunnableProducer implements Runnable {
      */
     @Override
     public void run() {
-        final PRecord<String, LogEvent> record = new PRecord<>(
+        final PRecord record = new PRecord(
                 sourceName, eventLog.getTime().toString(), eventLog, new RecordHeaders());
 
-        logsProducer.add(record, logsAppenderCallback);
+        logsProducer.send(record, logsAppenderCallback);
     }
 }

@@ -1,6 +1,6 @@
 package com.bbva.gateway.service;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 
 /**
  * Asynchronous gateway service

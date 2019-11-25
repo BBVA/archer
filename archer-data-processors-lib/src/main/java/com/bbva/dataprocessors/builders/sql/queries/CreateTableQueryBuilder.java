@@ -47,7 +47,7 @@ public class CreateTableQueryBuilder extends QueryBuilder implements CreateQuery
     }
 
     /**
-     * Set with cluse
+     * Set with clause
      *
      * @param withProperties with builder
      * @return builder

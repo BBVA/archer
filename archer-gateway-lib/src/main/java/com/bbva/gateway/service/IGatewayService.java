@@ -1,7 +1,8 @@
 package com.bbva.gateway.service;
 
-import com.bbva.common.consumers.CRecord;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
+import com.bbva.gateway.config.GatewayConfig;
 
 /**
  * Gateway service interface
@@ -16,7 +17,7 @@ public interface IGatewayService<T> {
      * @param configuration configuration
      * @param baseName      base name
      */
-    void init(Configuration configuration, String baseName);
+    void init(GatewayConfig configuration, String baseName);
 
     /**
      * Actions post initialization
@@ -28,7 +29,7 @@ public interface IGatewayService<T> {
      *
      * @param record record to process
      */
-    void processRecord(CRecord record);
+    void processRecord(HandlerContextImpl record);
 
     /**
      * Process call result

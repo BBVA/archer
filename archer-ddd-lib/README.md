@@ -3,7 +3,7 @@ Domain Driven Design
 
 ## Overview
 
-ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintenables.
+ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintainable.
 
 ## Requirements
 
@@ -55,18 +55,18 @@ In the case that you not specify a handler implementation it is created with a A
 @Handler
 public class MyHandler { 
     
-    @Command(commandAction = "action", baseName = "base")
-    public void processCommand(CommandRecord command) {
+    @Command(commandAction = "action", source = "base")
+    public void processCommand(final CommandHandlerContext commandRecord) {
         //Manage new command    
     }
     
-    @Event(baseName = "base")
-    public void processEvent(EventRecord event) {
+    @Event("base")
+    public void processEvent(final EventHandlerContext eventRecord) {
         //manage new event
     }
     
-    @Changelog(baseName = "base")
-    public void processDataChangelog(ChangelogRecord changelog) {
+    @Changelog("base")
+    public void processDataChangelog(final ChangelogHandlerContext changelogRecord) {
         //Manage new changelog
     }
 }
@@ -91,7 +91,6 @@ public class FooAggregate extends SpecificAggregate<String, Foo> {
         return FOO;
     }
 }
-
 ```
 
 #### Commands
@@ -100,12 +99,13 @@ The library provide a layer to manage reads and writes of command events.
 To read a command topic:
 ```java
 final ExecutorService executor = Executors.newFixedThreadPool(1);
-final CommandConsumer commandConsumer = new CommandConsumer(1, Collections.singletonList("topic"), yourCallback, configuration);
-executor.submit(commandConsumer);
+final RunnableManager runnableManager = new RunnableManager(ManagerFactory.create(eventStore, deliveryType, Collections.singletonList("command_topic"),
+    yourCallback, appConfig), appConfig));
+executor.submit(runnableManager);
 ```
 and for produce:
 ```java
-HelperApplication helperApplication = new HelperApplication(applicationConfig);
+HelperApplication helperApplication = new HelperApplication(appConfig);
 final CommandRecordMetadata recordMetadata =
     helperApplication.persistsCommandTo("entity_base_name")
         .create(entity, headers,
@@ -122,12 +122,13 @@ The library provide a layer to manage reads and writes of events.
 To read a event topic:
 ```java
 final ExecutorService executor = Executors.newFixedThreadPool(1);
-final EventConsumer eventConsumer = new EventConsumer(1, Collections.singletonList("event_topic"), yourCallback, configuration);
+final RunnableManager runnableManager = new RunnableManager(ManagerFactory.create(eventStore, deliveryType, Collections.singletonList("event_topic"),
+    yourCallback, appConfig), appConfig));
 executor.submit(eventConsumer);
 ```
 and for produce:
 ```java
-HelperDomain helperDomain = new HelperDomain(applicationConfig);
+HelperDomain helperDomain = new HelperDomain(appConfig);
 helperDomain.sendEventTo("event_base_name")
     .send("producer_id", eventEntity, yourCallback);
 ```

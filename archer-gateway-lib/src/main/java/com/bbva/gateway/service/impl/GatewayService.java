@@ -1,18 +1,18 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
-import com.bbva.ddd.domain.AggregateFactory;
-import com.bbva.ddd.domain.HelperDomain;
-import com.bbva.ddd.domain.commands.read.CommandRecord;
-import com.bbva.ddd.util.StoreUtil;
+import com.bbva.dataprocessors.states.States;
+import com.bbva.ddd.domain.events.producers.Event;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.aggregates.GatewayAggregate;
-import com.bbva.gateway.config.Configuration;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -20,7 +20,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-import static com.bbva.gateway.constants.ConfigConstants.*;
 import static com.bbva.gateway.constants.Constants.INTERNAL_SUFFIX;
 import static com.bbva.gateway.constants.Constants.KEY_SUFFIX;
 
@@ -33,25 +32,26 @@ public abstract class GatewayService<T>
         implements IGatewayService<T> {
     private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
 
-    protected Configuration config;
+    protected GatewayConfig config;
     protected static ObjectMapper om = new ObjectMapper();
-    private Boolean retryEnabled = false;
+    private boolean retryEnabled = false;
     private int seconds;
     private int attemps;
     protected static String baseName;
+    protected static DefaultProducer producer;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void init(final Configuration configuration, final String gatewayBaseName) {
+    public void init(final GatewayConfig configuration, final String gatewayBaseName) {
         config = configuration;
 
-        final LinkedHashMap<String, Object> retryPolicy = config.getGateway().get(GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.getGateway().get(GATEWAY_RETRY) : null;
-        retryEnabled = retryPolicy != null && (Boolean) retryPolicy.get(GATEWAY_RETRY_ENABLED);
+        final LinkedHashMap<String, Object> retryPolicy = config.gateway(GatewayConfig.GatewayProperties.GATEWAY_RETRY) != null ? (LinkedHashMap<String, Object>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_RETRY) : null;
+        retryEnabled = retryPolicy != null && (boolean) retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_RETRY_ENABLED);
         if (retryEnabled) {
-            seconds = Integer.parseInt(retryPolicy.get(GATEWAY_ATTEMP_SECONDS).toString());
-            attemps = Integer.valueOf(retryPolicy.get(GATEWAY_ATTEMPS).toString());
+            seconds = Integer.parseInt(retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_ATTEMP_SECONDS).toString());
+            attemps = Integer.valueOf(retryPolicy.get(GatewayConfig.GatewayProperties.GATEWAY_ATTEMPS).toString());
         }
 
         baseName = gatewayBaseName;
@@ -63,16 +63,17 @@ public abstract class GatewayService<T>
      * {@inheritDoc}
      */
     @Override
-    public void processRecord(final CRecord record) {
+    public void processRecord(final HandlerContextImpl context) {
+        final CRecord record = context.consumedRecord();
         if (isReplay(record)) {
             final TransactionChangelog transactionChangelog = findChangelogByReference(record);
             if (transactionChangelog != null) {
                 final T response = parseChangelogFromString(transactionChangelog.getOutput());
-                saveChangelogAndProcessOutput(record, response, true);
+                saveChangelogAndProcessOutput(context, response, true);
             }
         } else {
             final T response = attemp(record, 0);
-            saveChangelogAndProcessOutput(record, response, false);
+            saveChangelogAndProcessOutput(context, response, false);
         }
     }
 
@@ -83,14 +84,14 @@ public abstract class GatewayService<T>
      * @return changelog
      */
     protected static TransactionChangelog findChangelogByReference(final CRecord record) {
-        return (TransactionChangelog) StoreUtil.getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY.getName()).asString());
+        return (TransactionChangelog) States.get().getStore(INTERNAL_SUFFIX + KEY_SUFFIX).findById(record.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY.getName()).asString());
     }
 
-    private void saveChangelogAndProcessOutput(final CRecord record, final T response, final boolean replay) {
+    private void saveChangelogAndProcessOutput(final HandlerContextImpl context, final T response, final boolean replay) {
         if (!replay) {
-            saveChangelog(record, response, false);
+            saveChangelog(context, response);
         }
-        processResult(record, response);
+        processResult(context.consumedRecord(), response);
     }
 
     /**
@@ -128,7 +129,7 @@ public abstract class GatewayService<T>
      * @param response call response
      * @return true/false
      */
-    protected abstract Boolean isSuccess(T response);
+    protected abstract boolean isSuccess(T response);
 
     /**
      * Parse output string to response
@@ -150,7 +151,7 @@ public abstract class GatewayService<T>
      * Parse response to string
      *
      * @param response response
-     * @return json sring
+     * @return json string
      */
     public String parseChangelogToString(final T response) {
         try {
@@ -162,13 +163,13 @@ public abstract class GatewayService<T>
     }
 
     /**
-     * Send evet with the original record and response
+     * Send event with the original record and response
      *
      * @param originalRecord original record
      * @param outputEvent    response
      * @param <O>            Response type
      */
-    protected static <O extends SpecificRecord> void sendEvent(final CRecord originalRecord, final O outputEvent) {
+    protected static <O extends SpecificRecordBase> void sendEvent(final CRecord originalRecord, final O outputEvent) {
         sendEvent(baseName, originalRecord, outputEvent);
     }
 
@@ -180,14 +181,16 @@ public abstract class GatewayService<T>
      * @param outputEvent    output
      * @param <O>            Output type
      */
-    protected static <O extends SpecificRecord> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
-
-        if (originalRecord != null) {
-            HelperDomain.get().sendEventTo(eventBaseName).send("gateway", outputEvent, isReplay(originalRecord), originalRecord, GatewayService::handleOutPutted);
-        } else {
-            HelperDomain.get().sendEventTo(eventBaseName).send("gateway", outputEvent, GatewayService::handleOutPutted);
+    protected static <O extends SpecificRecordBase> void sendEvent(final String eventBaseName, final CRecord originalRecord, final O outputEvent) {
+        boolean replay = false;
+        if (originalRecord != null && isReplay(originalRecord)) {
+            replay = true;
         }
+        final Event.Builder eventBuilder = new Event.Builder(originalRecord, producer, replay)
+                .to(eventBaseName).producerName("gateway").value(outputEvent);
 
+
+        eventBuilder.build().send(GatewayService::handleOutPutted);
     }
 
     /**
@@ -199,22 +202,19 @@ public abstract class GatewayService<T>
     /**
      * Save a changelog with original record and response
      *
-     * @param originRecord original record
-     * @param response     response
-     * @param replayMode   true/false
+     * @param context  original context
+     * @param response response
      */
-    protected void saveChangelog(final CRecord originRecord, final T response, final boolean replayMode) {
+    protected void saveChangelog(final HandlerContextImpl context, final T response) {
+        final CRecord originalRecord = context.consumedRecord();
         final String id = UUID.randomUUID().toString();
-        final TransactionChangelog outputEvent = new TransactionChangelog(id, originRecord.value().toString(), parseChangelogToString(response));
+        final TransactionChangelog outputEvent = new TransactionChangelog(id, originalRecord.value().toString(), parseChangelogToString(response));
 
-        final CommandRecord record = new CommandRecord(originRecord.topic(), originRecord.partition(), originRecord.offset(), originRecord.timestamp(),
-                originRecord.timestampType(), originRecord.key(), originRecord.value(), originRecord.recordHeaders());
-
-        AggregateFactory.create(GatewayAggregate.class, id, outputEvent, record, GatewayService::handleOutPutted);
+        context.repository().create(GatewayAggregate.class, id, outputEvent, GatewayService::handleOutPutted);
     }
 
     /**
-     * Check if the recprd is in replay
+     * Check if the record is in replay
      *
      * @param record record
      * @return true/false
@@ -231,7 +231,9 @@ public abstract class GatewayService<T>
      */
     protected static void handleOutPutted(final Object o, final Exception e) {
         if (e != null) {
-            // TODO retry?
+            logger.error("Error sending event", e);
+        } else {
+            logger.error("Event sent {}", o);
         }
     }
 }
