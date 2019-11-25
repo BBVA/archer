@@ -4,6 +4,7 @@ import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
+import com.bbva.common.utils.headers.types.CommandHeaderType;
 import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.commands.consumers.CommandRecord;
 import com.bbva.ddd.domain.commands.producers.records.PersonalData;
@@ -95,6 +96,26 @@ public class EventTest {
         Assertions.assertThrows(ProduceException.class, () -> {
             final RecordHeaders headers = new RecordHeaders();
             headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
+
+            final Event event = new Event.Builder(new CommandRecord("topic", 1, 1, new Date().getTime(),
+                    TimestampType.CREATE_TIME, "key", new PersonalData(), headers), producer, true)
+                    .to("topicBaseName").producerName("producerName").name("name")
+                    .build();
+            event.send(null);
+        });
+    }
+
+    @DisplayName("Create event and send produce ProduceException ok")
+    @Test
+    public void createEvent4Ok() throws Exception {
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.doThrow(new ProduceException()).when(producer, "send", Mockito.any(), Mockito.any());
+
+        Assertions.assertThrows(ProduceException.class, () -> {
+            final RecordHeaders headers = new RecordHeaders();
+            headers.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
+            headers.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("key"));
+
 
             final Event event = new Event.Builder(new CommandRecord("topic", 1, 1, new Date().getTime(),
                     TimestampType.CREATE_TIME, "key", new PersonalData(), headers), producer, true)

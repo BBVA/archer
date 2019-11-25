@@ -1,5 +1,6 @@
 package com.bbva.ddd.domain.commands.producers;
 
+import com.bbva.common.config.ConfigBuilder;
 import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.ByteArrayValue;
@@ -65,6 +66,38 @@ public class CommandTest {
 
     @DisplayName("Create command ok")
     @Test
+    public void createCommandBuilderOk() throws Exception {
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(producer);
+        PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
+
+        final List<Header> lstHeaders = new ArrayList<>();
+        lstHeaders.add(new Header() {
+            @Override
+            public String key() {
+                return "key";
+            }
+
+            @Override
+            public byte[] value() {
+                return new ByteArrayValue("value").getBytes();
+            }
+        });
+        ConfigBuilder.create();
+        final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
+        final CommandRecordMetadata metadata = new Command.Builder(null)
+                .action(Command.CREATE_ACTION).to("topicBaseName")
+                .value(new PersonalData()).headers(headers).build()
+                .send(new DefaultProducerCallback());
+
+        Assertions.assertAll("Command",
+                () -> Assertions.assertNotNull(metadata),
+                () -> Assertions.assertNotNull(metadata.commandId())
+        );
+    }
+
+    @DisplayName("Create command ok")
+    @Test
     public void createReplayCommandOk() throws Exception {
         final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
         PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
@@ -84,6 +117,36 @@ public class CommandTest {
         final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
         final CommandRecordMetadata metadata = new Command.Builder(null, producer, true)
                 .action(Command.CREATE_ACTION).to("topicBaseName")
+                .value(new PersonalData()).headers(headers).build()
+                .send(new DefaultProducerCallback());
+
+        Assertions.assertAll("Command",
+                () -> Assertions.assertNotNull(metadata),
+                () -> Assertions.assertNotNull(metadata.commandId())
+        );
+    }
+
+    @DisplayName("Create command ok")
+    @Test
+    public void createReplayPersistsCommandOk() throws Exception {
+        final DefaultProducer producer = PowerMockito.mock(DefaultProducer.class);
+        PowerMockito.when(producer, "send", Mockito.any(), Mockito.any()).thenReturn(PowerMockito.mock(Future.class));
+
+        final List<Header> lstHeaders = new ArrayList<>();
+        lstHeaders.add(new Header() {
+            @Override
+            public String key() {
+                return "key";
+            }
+
+            @Override
+            public byte[] value() {
+                return new ByteArrayValue("value").getBytes();
+            }
+        });
+        final OptionalRecordHeaders headers = new OptionalRecordHeaders(lstHeaders);
+        final CommandRecordMetadata metadata = new Command.Builder(null, producer, true)
+                .action(Command.CREATE_ACTION).to("topicBaseName").persistent()
                 .value(new PersonalData()).headers(headers).build()
                 .send(new DefaultProducerCallback());
 

@@ -81,43 +81,90 @@ public class Event {
         private final CRecord referenceRecord;
         private final Boolean isReplay;
 
+        /**
+         * Builder constructor
+         *
+         * @param record consumed record
+         */
         public Builder(final CRecord record) {
             producer = new DefaultProducer(ConfigBuilder.get());
             isReplay = false;
             referenceRecord = record;
         }
 
+        /**
+         * Builder constructor
+         *
+         * @param record   consumed record
+         * @param producer producer instance
+         * @param isReplay flag of replay
+         */
         public Builder(final CRecord record, final Producer producer, final Boolean isReplay) {
             this.producer = producer;
             referenceRecord = record;
             this.isReplay = isReplay;
         }
 
+        /**
+         * Set producer name
+         *
+         * @param producerName the na,e
+         * @return builder
+         */
         public Event.Builder producerName(final String producerName) {
             this.producerName = producerName;
             return this;
         }
 
+        /**
+         * Set the source of the event
+         *
+         * @param to the name
+         * @return builder
+         */
         public Event.Builder to(final String to) {
             this.to = to;
             return this;
         }
 
+        /**
+         * Set the event name
+         *
+         * @param name the name
+         * @return builder
+         */
         public Event.Builder name(final String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Set event key
+         *
+         * @param key event key
+         * @return builder
+         */
         public Event.Builder key(final String key) {
             this.key = key;
             return this;
         }
 
+        /**
+         * Set the event value
+         *
+         * @param value data value
+         * @return builder
+         */
         public Event.Builder value(final SpecificRecordBase value) {
             this.value = value;
             return this;
         }
 
+        /**
+         * Build the event instance
+         *
+         * @return event
+         */
         public Event build() {
             final String eventKey = key != null ? key : UUID.randomUUID().toString();
 

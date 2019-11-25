@@ -2,8 +2,6 @@ package com.bbva.ddd.domain;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
-import com.bbva.common.consumers.RunnableConsumer;
-import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.DataProcessor;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.dataflows.states.EntityStateBuilder;
@@ -11,25 +9,11 @@ import com.bbva.dataprocessors.builders.dataflows.states.GroupByFieldStateBuilde
 import com.bbva.dataprocessors.builders.dataflows.states.UniqueFieldStateBuilder;
 import com.bbva.dataprocessors.builders.sql.QueryBuilder;
 import com.bbva.ddd.application.ApplicationHelper;
-import com.bbva.ddd.domain.changelogs.consumers.ChangelogConsumer;
-import com.bbva.ddd.domain.commands.consumers.CommandConsumer;
-import com.bbva.ddd.domain.events.consumers.EventConsumer;
 import com.bbva.ddd.domain.handlers.AutoConfiguredHandler;
 import com.bbva.ddd.domain.handlers.Handler;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.avro.specific.SpecificRecordBase;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Initialize the domain with their data processors, repositories and configured handler.
@@ -49,11 +33,10 @@ public class Domain {
 
     private static final Logger logger = LoggerFactory.getLogger(Domain.class);
 
-    private final List<RunnableConsumer> consumers;
     private final AppConfig config;
 
-    protected Domain(final List<RunnableConsumer> consumers, final AppConfig config) {
-        this.consumers = consumers;
+    protected Domain(final AppConfig config) {
+
         this.config = config;
     }
 
@@ -65,31 +48,15 @@ public class Domain {
             DataProcessor.get().start();
             logger.info("States have been started");
 
-            final ExecutorService executor = Executors.newFixedThreadPool(consumers.size());
-
-            for (final RunnableConsumer consumer : consumers) {
-                executor.submit(consumer);
-            }
-
-            logger.info("Consumers have been started");
-
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-
-                for (final RunnableConsumer consumer : consumers) {
-                    consumer.shutdown();
-                }
-                executor.shutdown();
-                try {
-                    executor.awaitTermination(5000, TimeUnit.MILLISECONDS);
-                } catch (final InterruptedException e) { //NOSONAR
-                    logger.warn("InterruptedException starting the application", e);
-                }
-            }));
+            Binder.get().start();
 
             ApplicationHelper.create(config);
         }
     }
 
+    /**
+     * Builder class for domain
+     */
     public static class Builder {
         private Handler handler;
         private final AppConfig config;
@@ -102,16 +69,33 @@ public class Domain {
             DataProcessor.create(config);
         }
 
+        /**
+         * Create builder
+         *
+         * @return builder
+         */
         public static Builder create() {
             instance = new Builder(ConfigBuilder.get());
             return instance;
         }
 
+        /**
+         * Create builder with config
+         *
+         * @param configs application configuration
+         * @return builder
+         */
         public static Builder create(final AppConfig configs) {
             instance = new Builder(configs);
             return instance;
         }
 
+        /**
+         * Set domain handler
+         *
+         * @param handler the handler
+         * @return builder
+         */
         public Domain.Builder handler(final Handler handler) {
             this.handler = handler;
             return this;
@@ -339,56 +323,19 @@ public class Domain {
             return this;
         }
 
+        /**
+         * Build the domain
+         *
+         * @return domain instance
+         */
         public Domain build() {
             if (handler == null) {
                 handler = new AutoConfiguredHandler();
             }
-            final List<RunnableConsumer> consumers = configureHandlers(config);
 
-            domain = new Domain(consumers, config);
-
+            Binder.create(config).build(handler);
+            domain = new Domain(config);
             return domain;
-        }
-
-        private List<RunnableConsumer> configureHandlers(final AppConfig config) {
-            final List<RunnableConsumer> consumers = new ArrayList<>();
-            final int numConsumers = 1;
-            final List<String> commandsSubscribed = handler.commandsSubscribed();
-            final List<String> eventsSubscribed = handler.eventsSubscribed();
-            final List<String> dataChangelogsSubscribed = handler.dataChangelogsSubscribed();
-
-            final Map<String, String> consumerTopics =
-                    Stream.of(commandsSubscribed, eventsSubscribed, dataChangelogsSubscribed).flatMap(Collection::stream)
-                            .collect(Collectors.toMap(Function.identity(), type -> AppConfig.COMMON_RECORD_TYPE,
-                                    (command1, command2) -> command1));
-
-            TopicManager.createTopics(consumerTopics, config);
-
-            logger.info("Necessary consumer topics created");
-
-            if (!commandsSubscribed.isEmpty()) {
-                for (int i = 0; i < numConsumers; i++) {
-                    consumers.add(new CommandConsumer(i, handler.commandsSubscribed(), handler::processCommand,
-                            config));
-                }
-            }
-
-            if (!eventsSubscribed.isEmpty()) {
-                for (int i = 0; i < numConsumers; i++) {
-                    consumers.add(
-                            new EventConsumer(i, handler.eventsSubscribed(), handler::processEvent, config));
-                }
-            }
-
-            if (!dataChangelogsSubscribed.isEmpty()) {
-                for (int i = 0; i < numConsumers; i++) {
-                    consumers.add(new ChangelogConsumer(i, handler.dataChangelogsSubscribed(),
-                            handler::processDataChangelog, config));
-                }
-            }
-            logger.info("Handlers initialized");
-
-            return consumers;
         }
 
     }

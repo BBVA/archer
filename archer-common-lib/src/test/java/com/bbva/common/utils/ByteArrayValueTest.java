@@ -44,4 +44,12 @@ public class ByteArrayValueTest {
         Assertions.assertEquals(1L, value.asLong());
     }
 
+    @DisplayName("Check byte array value byte array")
+    @Test
+    public void checkByteArrayValueByteArray() {
+        final byte[] bytes = {1};
+        final ByteArrayValue value = new ByteArrayValue(bytes);
+        Assertions.assertNotNull(value.asByteArray());
+    }
+
 }

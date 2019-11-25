@@ -2,6 +2,7 @@ package com.bbva.common.producers;
 
 import com.bbva.common.config.AppConfig;
 import com.bbva.common.config.ConfigBuilder;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.callback.DefaultProducerCallback;
 import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.producers.records.SpecificRecordBaseImpl;
@@ -12,6 +13,7 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.ProducerFencedException;
+import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.serialization.Serdes;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -24,13 +26,14 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import java.util.Collections;
 import java.util.concurrent.Future;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest(DefaultProducer.class)
+@PrepareForTest(TransactionalProducer.class)
 @PowerMockIgnore("javax.management.*")
-public class DefaultProducerTest {
+public class TransactionalProducerTest {
 
     @DisplayName("Create producer")
     @Test
@@ -40,9 +43,9 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final AppConfig configuration = ConfigBuilder.create();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+        final TransactionalProducer producer = new TransactionalProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
 
-        Assertions.assertAll("producer",
+        Assertions.assertAll("TransactionalProducer",
                 () -> Assertions.assertNotNull(producer)
         );
     }
@@ -55,7 +58,7 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final AppConfig configuration = ConfigBuilder.create();
-        final DefaultProducer producer = new DefaultProducer(configuration);
+        final TransactionalProducer producer = new TransactionalProducer(configuration);
 
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer)
@@ -70,7 +73,7 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final AppConfig configuration = ConfigBuilder.create();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+        final TransactionalProducer producer = new TransactionalProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
         final Future result = producer.send(new PRecord("test", "key", new SpecificRecordBaseImpl(), new RecordHeaders()), new DefaultProducerCallback());
         Assertions.assertAll("producer",
                 () -> Assertions.assertNull(result)
@@ -88,7 +91,7 @@ public class DefaultProducerTest {
             PowerMockito.when(kafkaProducer, "send", Mockito.any(ProducerRecord.class), Mockito.any(Callback.class)).thenThrow(new ProducerFencedException("ProducerFencedException"));
 
             final AppConfig configuration = ConfigBuilder.create();
-            final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+            final TransactionalProducer producer = new TransactionalProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
             producer.send(new PRecord("test", "key", new SpecificRecordBaseImpl(), new RecordHeaders()), new DefaultProducerCallback());
         });
     }
@@ -102,8 +105,12 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final AppConfig configuration = ConfigBuilder.create();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+        final TransactionalProducer producer = new TransactionalProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+        producer.init(Collections.singletonList(new CRecord("topic", 1, 1, 1L, TimestampType.CREATE_TIME, "key",
+                new SpecificRecordBaseImpl(), null)));
         final Future result = producer.send(new PRecord("test", "key", new SpecificRecordBaseImpl(), new RecordHeaders()), new DefaultProducerCallback());
+        producer.commit();
+        producer.abort();
         Assertions.assertAll("producer",
                 () -> Assertions.assertNull(result)
         );
@@ -117,7 +124,7 @@ public class DefaultProducerTest {
         PowerMockito.whenNew(KafkaProducer.class).withAnyArguments().thenReturn(kafkaProducer);
 
         final AppConfig configuration = ConfigBuilder.create();
-        final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
+        final TransactionalProducer producer = new TransactionalProducer(configuration, Serdes.String().serializer(), PowerMockito.mock(SpecificAvroSerializer.class));
         producer.end();
         Assertions.assertAll("producer",
                 () -> Assertions.assertNotNull(producer)
