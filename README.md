@@ -3,7 +3,7 @@ Archer, an event-sourcing framework
 
 ## Overview
 
-Archer is a research framework conceived within BBVA New Digital Businesses - R&D that provides convenient components to develop event sourcing systems. We provide simplicity, adaptability and efficiently to develop event-driven architectures.
+Archer is an innovative framework conceived within BBVA New Digital Businesses - R&D that provides convenient components to develop event sourcing systems. We provide simplicity, adaptability and efficiently to develop event-driven architectures.
 
 
 The main components are:
@@ -20,29 +20,6 @@ Getting Started
 ### Requirements
 
 * [Java](https://www.java.com) >= 1.8
-
-### Installation
-
-Gradle
-```text/plain
-# build.gradle
-dependencies {
-	compile('bbva.ndb:ddd-lib:1.0.0-beta.1')
-}
-```
-
-Maven
-```text/plain
-# pom.xml
-<dependencies>
-    <dependency>
-        <groupId>bbva.ndb</groupId>
-        <artifactId>ddd-lib</artifactId>
-        <version>1.0.0-beta.1</version>
-    </dependency>
-</dependencies>
-```
-
 
 ### Common
 

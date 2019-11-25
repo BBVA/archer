@@ -81,14 +81,14 @@ For example:
 @Aggregate(baseName = FooAggregate.FOO)
 public class FooAggregate extends SpecificAggregate<String, Foo> {
 
-    public static final String FOO = "foos";
+    public static final String FOO = "foo";
 
     public FooAggregate(final String id, final Foo record) {
         super(id, record);
     }
 
     public static String baseName() {
-        return FOOS;
+        return FOO;
     }
 }
 
