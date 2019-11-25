@@ -1,6 +1,6 @@
 package com.bbva.logging.appenders.producer;
 
-import com.bbva.common.producers.ProducerCallback;
+import com.bbva.common.producers.callback.ProducerCallback;
 import org.apache.log4j.helpers.LogLog;
 
 /**

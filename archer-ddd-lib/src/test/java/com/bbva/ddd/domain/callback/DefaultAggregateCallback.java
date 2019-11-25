@@ -1,6 +1,6 @@
 package com.bbva.ddd.domain.callback;
 
-import com.bbva.ddd.domain.aggregates.callbacks.AggregateCallback;
+import com.bbva.ddd.domain.changelogs.repository.aggregates.callbacks.AggregateCallback;
 
 public class DefaultAggregateCallback implements AggregateCallback {
 

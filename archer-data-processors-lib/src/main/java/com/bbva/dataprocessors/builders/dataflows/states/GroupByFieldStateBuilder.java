@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.builders.dataflows.states;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.utils.TopicManager;
 import com.bbva.dataprocessors.contexts.dataflow.DataflowProcessorContext;
 import com.bbva.dataprocessors.transformers.GroupByFieldTransformer;
@@ -40,7 +40,7 @@ public class GroupByFieldStateBuilder<K, V extends SpecificRecord> implements St
     /**
      * Constructor
      *
-     * @param sourceChangelogTopicName soruce base name
+     * @param sourceChangelogTopicName source base name
      * @param keyClass                 class type of key
      * @param valueClass               class type of value record
      * @param foreignKeyFieldName      foreign field
@@ -74,31 +74,31 @@ public class GroupByFieldStateBuilder<K, V extends SpecificRecord> implements St
         final GenericAvroSerde resultValueSerde = new GenericAvroSerde();
         resultValueSerde.configure(context.serdeProperties(), false);
 
-        final String internalListStoreName = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX;
-        final String internalEntityListStoreName = ApplicationConfig.INTERNAL_NAME_PREFIX + "entity_" + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX;
-        final String internalLocalSelectKeyChangelog = ApplicationConfig.INTERNAL_NAME_PREFIX + "selectkey_" + context.applicationId()
-                + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
-        final String internalLocalStoreNameChangelog = ApplicationConfig.INTERNAL_NAME_PREFIX + context.applicationId()
-                + ApplicationConfig.STORE_NAME_SUFFIX + ApplicationConfig.CHANGELOG_RECORD_NAME_SUFFIX;
-        final String applicationGlobalStoreName = context.name() + ApplicationConfig.STORE_NAME_SUFFIX;
+        final String internalListStoreName = AppConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX;
+        final String internalEntityListStoreName = AppConfig.INTERNAL_NAME_PREFIX + "entity_" + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX;
+        final String internalLocalSelectKeyChangelog = AppConfig.INTERNAL_NAME_PREFIX + "selectkey_" + context.applicationId()
+                + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+        final String internalLocalStoreNameChangelog = AppConfig.INTERNAL_NAME_PREFIX + context.applicationId()
+                + AppConfig.STORE_NAME_SUFFIX + AppConfig.CHANGELOG_RECORD_NAME_SUFFIX;
+        final String applicationGlobalStoreName = context.name() + AppConfig.STORE_NAME_SUFFIX;
 
         final Map<String, String> topics = new HashMap<>();
-        topics.put(internalLocalStoreNameChangelog, ApplicationConfig.CHANGELOG_RECORD_TYPE);
-        topics.put(internalLocalSelectKeyChangelog, ApplicationConfig.CHANGELOG_RECORD_TYPE);
-        topics.put(sourceChangelogTopicName, ApplicationConfig.CHANGELOG_RECORD_TYPE);
+        topics.put(internalLocalStoreNameChangelog, AppConfig.CHANGELOG_RECORD_TYPE);
+        topics.put(internalLocalSelectKeyChangelog, AppConfig.CHANGELOG_RECORD_TYPE);
+        topics.put(sourceChangelogTopicName, AppConfig.CHANGELOG_RECORD_TYPE);
         TopicManager.createTopics(topics, context.configs());
 
         final StreamsBuilder builder = context.streamsBuilder();
 
         final StoreBuilder<KeyValueStore<K, GenericRecord>> listStore = Stores
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalListStoreName), keySerde, resultValueSerde)
-                .withLoggingEnabled(TopicManager.configTypes.get(ApplicationConfig.SNAPSHOT_RECORD_TYPE));
+                .withLoggingEnabled(TopicManager.configTypes.get(AppConfig.SNAPSHOT_RECORD_TYPE));
 
         final StoreBuilder<KeyValueStore<K, V>> entityStore = Stores
                 .keyValueStoreBuilder(Stores.persistentKeyValueStore(internalEntityListStoreName), keySerde, valueSerde)
-                .withLoggingEnabled(TopicManager.configTypes.get(ApplicationConfig.SNAPSHOT_RECORD_TYPE));
+                .withLoggingEnabled(TopicManager.configTypes.get(AppConfig.SNAPSHOT_RECORD_TYPE));
 
         builder
                 .addStateStore(entityStore)

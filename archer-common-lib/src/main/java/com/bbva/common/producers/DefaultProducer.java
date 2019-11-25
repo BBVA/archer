@@ -1,9 +1,15 @@
 package com.bbva.common.producers;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
+import com.bbva.common.producers.callback.ProducerCallback;
+import com.bbva.common.producers.record.PRecord;
+import com.bbva.common.utils.serdes.SpecificAvroSerializer;
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,42 +21,49 @@ import java.util.concurrent.Future;
  * <pre>
  *  {@code
  *      final DefaultProducer producer = new DefaultProducer(configuration, Serdes.String().serializer(), Serdes.String().serializer(), true);
- *      final Future result = producer.save(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
+ *      final Future result = producer.send(new PRecord<>("test", "key", "value", new RecordHeaders()), producerCallback);
  *  }
  * </pre>
- *
- * @param <K> Type of Record schema
- * @param <V> Type of Record
  */
-public class DefaultProducer<K, V> {
+public class DefaultProducer implements com.bbva.common.producers.Producer {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultProducer.class);
-    private final Producer<K, V> producer;
+    private final Producer producer;
 
     /**
      * Constructor
      *
-     * @param applicationConfig general configuration
-     * @param keySerializer     serializer for the key
-     * @param valueSerializer   serializer for the value
+     * @param appConfig       general configuration
+     * @param keySerializer   serializer for the key
+     * @param valueSerializer serializer for the value
      */
-    public DefaultProducer(final ApplicationConfig applicationConfig, final Serializer<K> keySerializer,
-                           final Serializer<V> valueSerializer) {
+    public DefaultProducer(final AppConfig appConfig, final Serializer<String> keySerializer,
+                           final Serializer<SpecificRecordBase> valueSerializer) {
 
-        producer = new KafkaProducer<>(applicationConfig.producer().get(), keySerializer, valueSerializer);
+        producer = new KafkaProducer<>(appConfig.producer(), keySerializer, valueSerializer);
     }
 
     /**
-     * Save the record
+     * Constructor
      *
-     * @param record   record to save
-     * @param callback callback to manag response
-     * @return future with production result
+     * @param appConfig general configuration
      */
-    public Future<RecordMetadata> save(final PRecord<K, V> record, final ProducerCallback callback) {
+    public DefaultProducer(final AppConfig appConfig) {
+        final CachedSchemaRegistryClient schemaRegistry;
+        final String schemaRegistryUrl = appConfig.get(AppConfig.SCHEMA_REGISTRY_URL).toString();
+        schemaRegistry = new CachedSchemaRegistryClient(schemaRegistryUrl, 1000);
+
+        final Serializer keySerializer = Serdes.String().serializer();
+        final Serializer valueSerializer = new SpecificAvroSerializer<>(schemaRegistry);
+
+        producer = new KafkaProducer<>(appConfig.producer(), keySerializer, valueSerializer);
+    }
+
+    @Override
+    public Future<RecordMetadata> send(final PRecord record, final ProducerCallback callback) {
         logger.debug("Produce generic PRecord with key {}", record.key());
 
-        final Future<RecordMetadata> result = producer.send(record, (metadata, e) -> {
+        return producer.send(record, (metadata, e) -> {
             if (e != null) {
                 logger.error("Error producing key " + record.key(), e);
             } else {
@@ -59,11 +72,12 @@ public class DefaultProducer<K, V> {
             callback.onCompletion(record.key(), e);
         });
 
-        producer.flush();
-
-        logger.debug("End of production");
-
-        return result;
     }
 
+    @Override
+    public void end() {
+        producer.flush();
+        producer.close();
+        logger.debug("End of production");
+    }
 }

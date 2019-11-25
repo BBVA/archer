@@ -52,7 +52,7 @@ public class DataflowProcessorBuilder implements ProcessorBuilder {
     @Override
     public void start() {
         final Topology topology = context.streamsBuilder().build();
-        streams = new KafkaStreams(topology, context.configs().streams().get());
+        streams = new KafkaStreams(topology, context.configs().streams());
 
         final TopologyDescription topologyDescription = topology.describe();
         logger.info("******************************** Topology Description for: {}", context.name());
@@ -60,10 +60,10 @@ public class DataflowProcessorBuilder implements ProcessorBuilder {
         logger.info("Subtopologies: {}", topologyDescription.subtopologies());
         logger.info("********************************");
 
-        streams.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
-            // here you should examine the exception and perform an appropriate action!
-            logger.error("Error starting DataflowProcessorBuilder", e);
-        });
+        streams.setUncaughtExceptionHandler((Thread t, Throwable e) ->
+                // here you should examine the exception and perform an appropriate action!
+                logger.error("Error starting DataflowProcessorBuilder", e)
+        );
 
         streams.start();
     }

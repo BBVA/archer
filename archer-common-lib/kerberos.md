@@ -16,7 +16,7 @@ Specify the location of the truststore in the service launcher, for example:
 -Djavax.net.ssl.trustStore=__TRUSTSTORE_DIR__/kafka.consumer.keystore.jks
 ```
 
-Note: Is necesary configure kerberos in the clientes with any conf file similar to it:
+Note: Is necessary configure kerberos in the clients with any conf file similar to it:
 ```
 [logging]
  default = FILE:/var/log/kerberos/krb5libs.log

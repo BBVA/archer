@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors.builders.dataflows;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.exceptions.ApplicationException;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.common.utils.TopicManager;
@@ -63,7 +63,7 @@ public class SimpleGlobalTableStateBuilderTest {
 
         PowerMockito.when(context, "schemaRegistryClient").thenReturn(PowerMockito.mock(CachedSchemaRegistryClient.class));
         PowerMockito.when(context, "streamsBuilder").thenReturn(streamsBuilder);
-        PowerMockito.when(context, "configs").thenReturn(new ApplicationConfig());
+        PowerMockito.when(context, "configs").thenReturn(new AppConfig());
         PowerMockito.when(streamsBuilder, "build").thenReturn(new Topology());
 
         PowerMockito.whenNew(KafkaStreams.class).withAnyArguments().thenReturn(PowerMockito.mock(KafkaStreams.class));

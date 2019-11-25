@@ -30,7 +30,7 @@ public class RecordHeadersTest {
         moreHeaders.add(new RecordHeader(CommandHeaderType.ENTITY_UUID_KEY.getName(), "entity-uuid".getBytes()));
         moreHeaders.addAll(otherHeaders);
 
-        Assertions.assertAll("headertypes",
+        Assertions.assertAll("header-types",
                 () -> Assertions.assertEquals("value", recordHeaders.find("key").asString()),
                 () -> Assertions.assertEquals("[{key: key, value: value}]", recordHeaders.toString()),
                 () -> Assertions.assertNotEquals(recordHeaders, otherHeaders)
@@ -47,7 +47,7 @@ public class RecordHeadersTest {
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue("producer-name"));
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, EventHeaderType.TYPE_VALUE);
 
-        Assertions.assertAll("headertypes",
+        Assertions.assertAll("header-types",
                 () -> Assertions.assertEquals("changelog-uuid", recordHeaders.find(ChangelogHeaderType.UUID_KEY).asString()),
                 () -> Assertions.assertEquals("entity-uuid", recordHeaders.find(CommandHeaderType.ENTITY_UUID_KEY).asString()),
                 () -> Assertions.assertEquals("type-key", recordHeaders.find(CommonHeaderType.TYPE_KEY).asString()),

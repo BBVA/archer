@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Specifi avro serde
+ * Specific avro serde
  *
  * @param <T> type class of records
  */

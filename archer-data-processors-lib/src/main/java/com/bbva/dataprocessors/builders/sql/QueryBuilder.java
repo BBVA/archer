@@ -19,7 +19,7 @@ public abstract class QueryBuilder {
     /**
      * Build the query
      *
-     * @return
+     * @return query built
      */
     protected abstract String build();
 

@@ -1,6 +1,6 @@
 package com.bbva.gateway.service.impl;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 
 
 public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {
@@ -12,7 +12,7 @@ public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {
     }
 
     @Override
-    protected Boolean isSuccess(final Object response) {
+    protected boolean isSuccess(final Object response) {
         return true;
     }
 

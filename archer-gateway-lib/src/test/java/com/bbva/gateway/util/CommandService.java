@@ -1,6 +1,6 @@
 package com.bbva.gateway.util;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.gateway.config.annotations.ServiceConfig;
 import com.bbva.gateway.service.IAsyncGatewayService;
 import com.bbva.gateway.service.impl.GatewayService;
@@ -14,8 +14,8 @@ public class CommandService extends GatewayService implements IAsyncGatewayServi
     }
 
     @Override
-    protected Boolean isSuccess(final Object response) {
-        return null;
+    protected boolean isSuccess(final Object response) {
+        return true;
     }
 
     @Override

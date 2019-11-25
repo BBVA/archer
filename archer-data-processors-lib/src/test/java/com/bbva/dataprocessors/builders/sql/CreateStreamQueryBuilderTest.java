@@ -21,7 +21,7 @@ import java.util.Map;
 @ExtendWith(PowermockExtension.class)
 public class CreateStreamQueryBuilderTest {
 
-    @DisplayName("Create quey stream build")
+    @DisplayName("Create query stream build")
     @Test
     public void createQueryBuilder() throws Exception {
         final CreateStreamQueryBuilder createStreamQueryBuilder = new CreateStreamQueryBuilder("table");
@@ -32,8 +32,8 @@ public class CreateStreamQueryBuilderTest {
         createStreamQueryBuilder.columns(columns);
 
         final SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder();
-        selectQueryBuilder.from("stramName");
-        selectQueryBuilder.groupBy("grupBy");
+        selectQueryBuilder.from("streamName");
+        selectQueryBuilder.groupBy("groupBy");
         selectQueryBuilder.having("having");
         selectQueryBuilder.where("where");
         selectQueryBuilder.addQueryFields("column");
@@ -54,7 +54,7 @@ public class CreateStreamQueryBuilderTest {
         );
     }
 
-    @DisplayName("Create quey stream build ok")
+    @DisplayName("Create query stream build ok")
     @Test
     public void createQueryStreamBuilder() throws Exception {
         final CreateStreamQueryBuilder createStreamQueryBuilder = new CreateStreamQueryBuilder("table");
@@ -73,7 +73,7 @@ public class CreateStreamQueryBuilderTest {
         createStreamQueryBuilder.columns(columns);
 
         final SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder();
-        selectQueryBuilder.groupBy("grupBy");
+        selectQueryBuilder.groupBy("groupBy");
         selectQueryBuilder.having("having");
         selectQueryBuilder.where("where");
         selectQueryBuilder.addQueryFields(Arrays.asList("column,column2".split(",")));
@@ -95,7 +95,7 @@ public class CreateStreamQueryBuilderTest {
         );
     }
 
-    @DisplayName("Create quey stream build with properties")
+    @DisplayName("Create query stream build with properties")
     @Test
     public void createQueryStreamBuilderWithProperties() throws Exception {
         final CreateStreamQueryBuilder createStreamQueryBuilder = new CreateStreamQueryBuilder("table");
@@ -114,7 +114,7 @@ public class CreateStreamQueryBuilderTest {
         createStreamQueryBuilder.columns(columns);
 
         final SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder();
-        selectQueryBuilder.groupBy("grupBy");
+        selectQueryBuilder.groupBy("groupBy");
         selectQueryBuilder.having("having");
         selectQueryBuilder.where("where");
         selectQueryBuilder.addQueryFields(Arrays.asList("column,column2".split(",")));
@@ -149,7 +149,7 @@ public class CreateStreamQueryBuilderTest {
 
     }
 
-    @DisplayName("Create quey stream build with joins")
+    @DisplayName("Create query stream build with joins")
     @Test
     public void createQueryStreamBuilderWithJoins() throws Exception {
         final CreateStreamQueryBuilder createStreamQueryBuilder = new CreateStreamQueryBuilder("table");
@@ -168,7 +168,7 @@ public class CreateStreamQueryBuilderTest {
         createStreamQueryBuilder.columns(columns);
 
         final SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder();
-        selectQueryBuilder.groupBy("grupBy");
+        selectQueryBuilder.groupBy("groupBy");
         selectQueryBuilder.having("having");
         selectQueryBuilder.where("where");
         selectQueryBuilder.addQueryFields(Arrays.asList("column,column2".split(",")));

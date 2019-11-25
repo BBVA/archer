@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Record headers
+ * Consumer/Produce record headers
  */
 public class RecordHeaders {
 

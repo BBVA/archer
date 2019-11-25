@@ -1,9 +1,11 @@
 package com.bbva.gateway.service.impl;
 
-import com.bbva.common.consumers.CRecord;
-import com.bbva.gateway.bean.HttpBean;
-import com.bbva.gateway.http.HttpRequest;
+import com.bbva.common.consumers.record.CRecord;
+import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.http.RetrofitClient;
+import com.bbva.gateway.http.model.HttpBean;
+import com.bbva.gateway.http.model.HttpRequest;
+import com.bbva.gateway.http.util.Util;
 import com.bbva.gateway.service.IGatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -15,8 +17,6 @@ import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.util.Map;
-
-import static com.bbva.gateway.constants.ConfigConstants.*;
 
 /**
  * Http gateway service implementation
@@ -33,8 +33,8 @@ public abstract class HttpGatewayService
      */
     @Override
     public void postInitActions() {
-        retrofit = RetrofitClient.build((String) config.getGateway().get(GATEWAY_URI));
-        queryParams = (Map<String, String>) config.getGateway().get(GATEWAY_QUERY_PARAMS);
+        retrofit = RetrofitClient.build((String) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_URI));
+        queryParams = (Map<String, String>) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_QUERY_PARAMS);
         om.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     }
 
@@ -43,31 +43,16 @@ public abstract class HttpGatewayService
      */
     @Override
     public Response call(final CRecord record) {
-        final HttpRequest httpObject = traslateRecordToHttp(record);
+        final HttpRequest httpObject = Util.translateRecordToHttp(record, config);
         return RetrofitClient.call(retrofit, httpObject, queryParams);
     }
 
-    /**
-     * Translate record to http object
-     *
-     * @param record recor
-     * @return http object
-     */
-    protected HttpRequest traslateRecordToHttp(final CRecord record) {
-        final Map<String, Object> gatewayConfig = config.getGateway();
-        final HttpRequest request = new HttpRequest();
-        request.setHeaders((Map<String, String>) gatewayConfig.get(GATEWAY_HTTP_HEADERS));
-        request.setMethod((String) gatewayConfig.get(GATEWAY_HTTP_METHOD));
-        request.setBody(record.value().toString());
-
-        return request;
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Boolean isSuccess(final Response response) {
+    protected boolean isSuccess(final Response response) {
         return response.isSuccessful();
     }
 

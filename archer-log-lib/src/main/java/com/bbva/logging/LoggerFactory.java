@@ -23,7 +23,7 @@ public final class LoggerFactory {
         try {
             final Properties logProperties = getConfigByRuntime(LOG4J_PROPS_PATH);
 
-            if (System.getenv("LOG_APPENDER_CONFIG") != null && System.getenv("LOG_APPENDER_CONFIG").indexOf("=") > 0) {
+            if (System.getenv("LOG_APPENDER_CONFIG") != null && System.getenv("LOG_APPENDER_CONFIG").indexOf('=') > 0) {
                 final String[] appenderConfig = System.getenv("LOG_APPENDER_CONFIG").split("=");
                 logProperties.put(String.format("log4j.logger.%s", appenderConfig[0]), appenderConfig[1]);
                 logProperties.putAll(getConfigByRuntime(CUSTOM_LOG_PROPS_PATH));
@@ -43,13 +43,13 @@ public final class LoggerFactory {
         final InputStream inputStream =
                 getClass().getClassLoader().getResourceAsStream(filePath);
 
-        final Properties logPorperties = new Properties();
+        final Properties logProperties = new Properties();
 
         if (inputStream != null) {
-            logPorperties.load(inputStream);
+            logProperties.load(inputStream);
         }
 
-        return logPorperties;
+        return logProperties;
     }
 
     /**

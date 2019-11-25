@@ -1,6 +1,7 @@
 package com.bbva.gateway.http;
 
 import com.bbva.common.util.PowermockExtension;
+import com.bbva.gateway.http.model.HttpRequest;
 import okhttp3.ResponseBody;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
@@ -121,7 +122,7 @@ public class RetrofitClientTest {
 
     @DisplayName("Retrofit call to get ok")
     @Test
-    public void getWithParamasOk() throws Exception {
+    public void getWithParametersOk() throws Exception {
         final Client client = PowerMockito.mock(Client.class);
         final Call<ResponseBody> call = PowerMockito.mock(Call.class);
         final Response responseMock = PowerMockito.mock(Response.class);

@@ -3,7 +3,7 @@ Domain Driven Design
 
 ## Overview
 
-ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintenables.
+ddd is an accommodation to simplify development of services with the Domain-Driven-Design paradigm  doing the applications more legibles and maintainable.
 
 ## Requirements
 
@@ -55,17 +55,17 @@ In the case that you not specify a handler implementation it is created with a A
 @Handler
 public class MyHandler { 
     
-    @Command(commandAction = "action", baseName = "base")
+    @Command(commandAction = "action", source = "base")
     public void processCommand(CommandRecord command) {
         //Manage new command    
     }
     
-    @Event(baseName = "base")
+    @Event("base")
     public void processEvent(EventRecord event) {
         //manage new event
     }
     
-    @Changelog(baseName = "base")
+    @Changelog("base")
     public void processDataChangelog(ChangelogRecord changelog) {
         //Manage new changelog
     }
@@ -105,7 +105,7 @@ executor.submit(commandConsumer);
 ```
 and for produce:
 ```java
-HelperApplication helperApplication = new HelperApplication(applicationConfig);
+HelperApplication helperApplication = new HelperApplication(appConfig);
 final CommandRecordMetadata recordMetadata =
     helperApplication.persistsCommandTo("entity_base_name")
         .create(entity, headers,
@@ -127,7 +127,7 @@ executor.submit(eventConsumer);
 ```
 and for produce:
 ```java
-HelperDomain helperDomain = new HelperDomain(applicationConfig);
+HelperDomain helperDomain = new HelperDomain(appConfig);
 helperDomain.sendEventTo("event_base_name")
     .send("producer_id", eventEntity, yourCallback);
 ```

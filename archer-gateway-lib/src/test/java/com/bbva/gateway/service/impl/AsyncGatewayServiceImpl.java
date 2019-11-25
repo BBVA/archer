@@ -1,6 +1,6 @@
 package com.bbva.gateway.service.impl;
 
-import com.bbva.common.consumers.CRecord;
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.gateway.service.impl.beans.Person;
 
 
@@ -13,7 +13,7 @@ public class AsyncGatewayServiceImpl extends AsyncGatewayService<Person> {
     }
 
     @Override
-    protected Boolean isSuccess(final Person response) {
+    protected boolean isSuccess(final Person response) {
         return true;
     }
 

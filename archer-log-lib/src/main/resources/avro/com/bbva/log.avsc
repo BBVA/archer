@@ -33,7 +33,7 @@
     },
     {
       "name": "message",
-      "doc": "Formated message",
+      "doc": "Formatted message",
       "default": null,
       "type": [
         "null",

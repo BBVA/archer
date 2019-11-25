@@ -39,7 +39,7 @@ public class CreateTableQueryBuilderTest {
 
         final SelectQueryBuilder selectQueryBuilder = new SelectQueryBuilder();
         selectQueryBuilder.from("table");
-        selectQueryBuilder.groupBy("grupBy");
+        selectQueryBuilder.groupBy("groupBy");
         selectQueryBuilder.having("having");
         selectQueryBuilder.where("where");
         selectQueryBuilder.addQueryFields(Arrays.asList("column,column2".split(",")));

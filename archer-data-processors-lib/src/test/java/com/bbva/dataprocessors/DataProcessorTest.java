@@ -1,6 +1,6 @@
 package com.bbva.dataprocessors;
 
-import com.bbva.common.config.ApplicationConfig;
+import com.bbva.common.config.AppConfig;
 import com.bbva.common.util.PowermockExtension;
 import com.bbva.dataprocessors.builders.dataflows.DataflowBuilder;
 import com.bbva.dataprocessors.builders.dataflows.DataflowProcessorBuilder;
@@ -30,7 +30,7 @@ public class DataProcessorTest {
         final SQLProcessorContextSupplier sQLProcessorContextSupplier = Mockito.mock(SQLProcessorContextSupplier.class);
         PowerMockito.whenNew(SQLProcessorContextSupplier.class).withAnyArguments().thenReturn(sQLProcessorContextSupplier);
 
-        final DataProcessor dataProcessor = DataProcessor.create(new ApplicationConfig());
+        final DataProcessor dataProcessor = DataProcessor.create(new AppConfig());
         final DataProcessor dataProcessorGet = DataProcessor.get();
 
         Assertions.assertAll("dataProcessor",
@@ -52,7 +52,7 @@ public class DataProcessorTest {
 
         final LinkedList<QueryBuilder> listQueryBuilders = new LinkedList<>();
         listQueryBuilders.add(queryBuilder);
-        final DataProcessor dataProcessor = DataProcessor.create(new ApplicationConfig());
+        final DataProcessor dataProcessor = DataProcessor.create(new AppConfig());
         dataProcessor.add("dataflow", PowerMockito.mock(DataflowBuilder.class));
         dataProcessor.add(queryBuilder);
         dataProcessor.add(listQueryBuilders);
@@ -72,7 +72,7 @@ public class DataProcessorTest {
         PowerMockito.whenNew(DataflowProcessorBuilder.class).withAnyArguments().thenReturn(dataflowProcessorBuilder);
         PowerMockito.whenNew(DataflowProcessorContextSupplier.class).withAnyArguments().thenReturn(dataflowProcessorContextSupplier);
 
-        final DataProcessor dataProcessor = DataProcessor.create(new ApplicationConfig());
+        final DataProcessor dataProcessor = DataProcessor.create(new AppConfig());
         dataProcessor.add("dataflow", PowerMockito.mock(DataflowBuilder.class));
 
         Exception ex = null;
