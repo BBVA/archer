@@ -10,8 +10,6 @@ import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.ChangelogHeaderType;
-import com.bbva.common.utils.headers.types.CommandHeaderType;
-import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.changelogs.producers.ChangelogRecordMetadata;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.AbstractAggregate;
 import com.bbva.ddd.domain.changelogs.repository.aggregates.AggregateBase;
@@ -272,21 +270,10 @@ public final class RepositoryImpl<V extends SpecificRecordBase> implements Repos
     }
 
     private RecordHeaders headers(final Class aggregateClass, final String aggregateMethod) {
+        final boolean replayFlag = (referenceRecord != null && referenceRecord.isReplayMode()) || isReplay;
 
-        final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(CommonHeaderType.TYPE_KEY, ChangelogHeaderType.TYPE_VALUE);
+        final RecordHeaders recordHeaders = new RecordHeaders(ChangelogHeaderType.CHANGELOG_VALUE, replayFlag, referenceRecord);
 
-        if (referenceRecord != null) {
-            recordHeaders.add(ChangelogHeaderType.UUID_KEY, referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY).asString());
-            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
-            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
-                    referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
-            recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
-                    referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
-        }
-
-        recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY,
-                (referenceRecord != null && referenceRecord.isReplayMode()) || isReplay);
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_UUID_KEY, aggregateUUID);
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_NAME_KEY, aggregateClass.getName());
         recordHeaders.add(ChangelogHeaderType.AGGREGATE_METHOD_KEY, aggregateMethod);

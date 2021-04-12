@@ -45,12 +45,11 @@ public class GatewayDomain extends Domain {
 
         @Override
         public GatewayDomain build() {
-            handler(new GatewayHandler(servicesPackage, gatewayConfig));
+            this.handler(new GatewayHandler(servicesPackage, gatewayConfig));
 
-            addDataProcessorBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, new HeaderAsKeyStateBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
+            this.addDataProcessorBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, new HeaderAsKeyStateBuilder(INTERNAL_SUFFIX + KEY_SUFFIX, INTERNAL_SUFFIX));
 
-            final GatewayDomain gatewayDomain = new GatewayDomain(super.build());
-            return gatewayDomain;
+            return new GatewayDomain(super.build());
         }
     }
 }

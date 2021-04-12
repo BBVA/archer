@@ -1,3 +1,7 @@
+messageType: command
+command:
+  action: create
+
 commandAction: create
 type: command
 synchronous: false

@@ -105,7 +105,7 @@ public class GroupByFieldTransformerTest {
         PowerMockito.whenNew(GenericRecordList.class).withAnyArguments().thenReturn(genericRecordList);
 
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(ChangelogHeaderType.UUID_KEY, new ByteArrayValue("uuid"));
+        recordHeaders.add(ChangelogHeaderType.KEY_KEY, new ByteArrayValue("uuid"));
         PowerMockito.whenNew(RecordHeaders.class).withAnyArguments().thenReturn(recordHeaders);
 
         final Headers headers = PowerMockito.mock(Headers.class);

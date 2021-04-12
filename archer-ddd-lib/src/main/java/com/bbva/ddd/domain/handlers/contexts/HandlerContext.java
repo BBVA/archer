@@ -12,6 +12,13 @@ import com.bbva.ddd.domain.events.producers.Event;
 public interface HandlerContext extends ConsumerContext {
 
     /**
+     * Know if application or consumed record is in replay mode
+     *
+     * @return true in case of application or consumed record is in replay mode
+     */
+    Boolean isReplay();
+
+    /**
      * Get repository instance to manage it
      *
      * @return instance

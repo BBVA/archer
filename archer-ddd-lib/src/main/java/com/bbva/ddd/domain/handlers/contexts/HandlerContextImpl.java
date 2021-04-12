@@ -19,8 +19,13 @@ public class HandlerContextImpl implements HandlerContext {
     public HandlerContextImpl(final CRecord consumedRecord, final Producer producer, final Boolean isReplay) {
         this.consumedRecord = consumedRecord;
         this.producer = producer;
-        this.isReplay = isReplay;
+        this.isReplay = isReplay || consumedRecord.isReplayMode();
         repository = new RepositoryImpl<>(consumedRecord, producer, isReplay);
+    }
+
+    @Override
+    public Boolean isReplay() {
+        return isReplay;
     }
 
     @Override

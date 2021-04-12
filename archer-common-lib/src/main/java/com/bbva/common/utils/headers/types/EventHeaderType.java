@@ -6,7 +6,7 @@ import com.bbva.common.utils.headers.HeaderType;
  * Event header types
  */
 public enum EventHeaderType implements HeaderType {
-    TYPE_VALUE("event"),
+    EVENT_VALUE("event"),
     PRODUCER_NAME_KEY("producer.name"),
     NAME_KEY("name");
 

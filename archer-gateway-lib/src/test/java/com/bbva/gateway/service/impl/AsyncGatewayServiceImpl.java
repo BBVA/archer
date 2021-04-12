@@ -1,10 +1,11 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.gateway.service.base.AsyncGatewayBaseService;
 import com.bbva.gateway.service.impl.beans.Person;
 
 
-public class AsyncGatewayServiceImpl extends AsyncGatewayService<Person> {
+public class AsyncGatewayServiceImpl extends AsyncGatewayBaseService<Person> {
 
 
     @Override
@@ -18,12 +19,12 @@ public class AsyncGatewayServiceImpl extends AsyncGatewayService<Person> {
     }
 
     @Override
-    public void postInitActions() {
+    public void init() {
 
     }
 
     @Override
-    public String getId(final Person response) {
+    public String transactionId(final Person response) {
         return null;
     }
 

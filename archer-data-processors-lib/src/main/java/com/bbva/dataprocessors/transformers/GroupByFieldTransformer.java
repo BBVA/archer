@@ -72,7 +72,7 @@ public class GroupByFieldTransformer<K, V extends SpecificRecord> implements Tra
             if (newValue == null) {
                 final RecordHeaders headers = new RecordHeaders(context.headers());
                 logger.info("****** HEADERS: {}", headers);
-                final String headerUuid = headers.find(ChangelogHeaderType.UUID_KEY).asString();
+                final String headerUuid = headers.find(ChangelogHeaderType.KEY_KEY).asString();
 
                 final KeyValueIterator<K, GenericRecord> iterator = stateStore.all();
                 final AtomicBoolean found = new AtomicBoolean(false);

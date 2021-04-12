@@ -39,7 +39,7 @@ public class ChangelogRecord extends CRecord {
      * @return uuid of the changelog record
      */
     public String uuid() {
-        return headers.find(ChangelogHeaderType.UUID_KEY.getName()).asString();
+        return headers.find(ChangelogHeaderType.KEY_KEY.getName()).asString();
     }
 
     /**

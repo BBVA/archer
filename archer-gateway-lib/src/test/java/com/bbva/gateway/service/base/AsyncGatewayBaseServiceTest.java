@@ -1,4 +1,4 @@
-package com.bbva.gateway.service;
+package com.bbva.gateway.service.base;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
@@ -15,9 +15,9 @@ import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
 import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
-import com.bbva.gateway.service.impl.AsyncGatewayService;
-import com.bbva.gateway.service.impl.AsyncGatewayServiceImpl;
-import com.bbva.gateway.service.impl.GatewayService;
+import com.bbva.gateway.service.AsyncGatewayService;
+import com.bbva.gateway.service.GatewayService;
+import com.bbva.gateway.service.impl.*;
 import com.bbva.gateway.service.impl.beans.Person;
 import com.bbva.gateway.service.records.PersonalData;
 import org.apache.kafka.common.record.TimestampType;
@@ -36,19 +36,19 @@ import java.util.Date;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({GatewayService.class, HandlerContextImpl.class, RepositoryImpl.class, RepositoryImpl.class, States.class, ReadableStore.class})
-public class AsyncGatewayServiceTest {
+@PrepareForTest({GatewayBaseService.class, HandlerContextImpl.class, RepositoryImpl.class, RepositoryImpl.class, States.class, ReadableStore.class})
+public class AsyncGatewayBaseServiceTest {
 
     @DisplayName("Create service ok")
     @Test
     public void startRestOk() {
-        final IAsyncGatewayService service = new AsyncGatewayServiceImpl();
+        final AsyncGatewayService service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
-        Assertions.assertAll("AsyncGatewayService",
+        Assertions.assertAll("AsyncGatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }
@@ -56,7 +56,7 @@ public class AsyncGatewayServiceTest {
     @DisplayName("Service call ok")
     @Test
     public void callOk() {
-        final IGatewayService service = new AsyncGatewayServiceImpl();
+        final GatewayService service = new AsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
@@ -64,7 +64,7 @@ public class AsyncGatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 null, new RecordHeaders()));
 
-        Assertions.assertAll("AsyncGatewayService",
+        Assertions.assertAll("AsyncGatewayBaseService",
                 () -> Assertions.assertNotNull(service),
                 () -> Assertions.assertEquals("name", callResult.getName())
         );
@@ -87,7 +87,7 @@ public class AsyncGatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders), null, false));
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }
@@ -98,7 +98,7 @@ public class AsyncGatewayServiceTest {
         PowerMockito.whenNew(DefaultProducer.class).withAnyArguments().thenReturn(PowerMockito.mock(DefaultProducer.class));
         PowerMockito.whenNew(RepositoryImpl.class).withAnyArguments().thenReturn(PowerMockito.mock(RepositoryImpl.class));
         PowerMockito.mockStatic(States.class);
-        
+
         final ObjectMapper om = new ObjectMapper();
 
         final ReadableStore store = PowerMockito.mock(ReadableStore.class);
@@ -130,9 +130,9 @@ public class AsyncGatewayServiceTest {
     public void saveChangelogOk() {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
-        AsyncGatewayService.saveChangelog("iden", "body");
+        AsyncGatewayBaseService.saveChangelog("iden", "body");
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }
@@ -142,9 +142,9 @@ public class AsyncGatewayServiceTest {
     public void saveNullChangelogOk() {
 
         final AsyncGatewayServiceImpl service = new AsyncGatewayServiceImpl();
-        AsyncGatewayService.saveChangelog("iden", "body");
+        AsyncGatewayBaseService.saveChangelog("iden", "body");
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }

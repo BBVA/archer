@@ -6,8 +6,8 @@ import com.bbva.common.utils.headers.HeaderType;
  * Command header types
  */
 public enum CommandHeaderType implements HeaderType {
-    TYPE_VALUE("command"),
-    UUID_KEY("uuid"),
+    COMMAND_VALUE("command"),
+    KEY_KEY("key"),
     ACTION_KEY("action"),
     ENTITY_UUID_KEY("entity.uuid");
 

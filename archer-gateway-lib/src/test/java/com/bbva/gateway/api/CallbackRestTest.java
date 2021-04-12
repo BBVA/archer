@@ -5,7 +5,7 @@ import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.Config;
-import com.bbva.gateway.util.CommandService;
+import com.bbva.gateway.util.CommandBaseService;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.DisplayName;
 import org.junit.gen5.api.Test;
@@ -62,7 +62,7 @@ public class CallbackRestTest {
 
         PowerMockito.when(ConfigBuilder.findConfigAnnotation()).thenReturn(GatewayTest.class.getAnnotation(Config.class));
         final List<Class> services = new ArrayList<>();
-        services.add(CommandService.class);
+        services.add(CommandBaseService.class);
         PowerMockito.when(ConfigBuilder.getServiceClasses(Mockito.anyString())).thenReturn(services);
 
         final LinkedHashMap config = new LinkedHashMap();
@@ -85,7 +85,7 @@ public class CallbackRestTest {
 
         PowerMockito.when(ConfigBuilder.findConfigAnnotation()).thenReturn(GatewayTest.class.getAnnotation(Config.class));
         final List<Class> services = new ArrayList<>();
-        services.add(CommandService.class);
+        services.add(CommandBaseService.class);
         PowerMockito.when(ConfigBuilder.getServiceClasses(Mockito.anyString())).thenReturn(services);
 
         final GatewayConfig gatewayConfig = new GatewayConfig();

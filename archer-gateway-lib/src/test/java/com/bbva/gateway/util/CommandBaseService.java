@@ -2,11 +2,11 @@ package com.bbva.gateway.util;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.gateway.config.annotations.ServiceConfig;
-import com.bbva.gateway.service.IGatewayService;
-import com.bbva.gateway.service.impl.GatewayService;
+import com.bbva.gateway.service.AsyncGatewayService;
+import com.bbva.gateway.service.base.GatewayBaseService;
 
-@ServiceConfig(file = "event-service.yml")
-public class EventService extends GatewayService implements IGatewayService {
+@ServiceConfig(file = "command-service.yml")
+public class CommandBaseService extends GatewayBaseService implements AsyncGatewayService {
 
     @Override
     public Object call(final CRecord record) {
@@ -25,6 +25,11 @@ public class EventService extends GatewayService implements IGatewayService {
 
     @Override
     public void processResult(final CRecord originRecord, final Object result) {
+
+    }
+
+    @Override
+    public void createListener(final CRecord output, final Object response) {
 
     }
 }

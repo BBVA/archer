@@ -127,6 +127,24 @@ public class CRecord {
     }
 
     /**
+     * Get uuid of the record
+     *
+     * @return uuid of the record
+     */
+    public String uuid() {
+        return headers.find(CommonHeaderType.UUID_KEY.getName()).asString();
+    }
+
+    /**
+     * Get type of the record
+     *
+     * @return if the record is in replay mode
+     */
+    public String type() {
+        return headers.find(CommonHeaderType.TYPE_KEY.getName()).asString();
+    }
+
+    /**
      * Get if the record are persisted in replay mode
      *
      * @return if the record is in replay mode
@@ -136,7 +154,7 @@ public class CRecord {
     }
 
     /**
-     * Get the record type that triggered it
+     * Get the type of the record which triggered this event
      *
      * @return record type which triggered this event
      */

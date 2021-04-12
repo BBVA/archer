@@ -22,16 +22,31 @@ public class GatewayConfig extends AppConfig {
     public static final String GATEWAY_KSQL_PROPERTIES = "ksql";
     public static final String GATEWAY_DATAFLOW_PROPERTIES = "dataflow";
 
-
     public static final String GATEWAY_COMMAND_ACTION = "commandAction";
     public static final String GATEWAY_EVENT_NAME = "event";
+
+    public enum SourceTypes {
+        COMMAND("command"),
+        EVENT("event"),
+        CHANGELOG("changelog");
+
+        private final String name;
+
+        SourceTypes(final String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
 
     private final GatewayProperties gatewayProperties = new GatewayProperties();
     private final CustomProperties customProperties = new CustomProperties();
     private String servicesPackage;
 
     /**
-     * Return stream properties
+     * Return gateway properties
      *
      * @return property value
      */
@@ -40,7 +55,7 @@ public class GatewayConfig extends AppConfig {
     }
 
     /**
-     * Return specific stream property
+     * Return specific gateway property
      *
      * @return properties
      */
@@ -49,7 +64,7 @@ public class GatewayConfig extends AppConfig {
     }
 
     /**
-     * Return stream properties
+     * Return custom properties
      *
      * @return property value
      */
@@ -58,7 +73,7 @@ public class GatewayConfig extends AppConfig {
     }
 
     /**
-     * Return specific stream property
+     * Return specific custom property
      *
      * @return properties
      */
@@ -68,23 +83,25 @@ public class GatewayConfig extends AppConfig {
 
 
     /**
-     * Custom properties
+     * Gateway properties
      */
     public final class GatewayProperties extends PropertiesClass {
+        public static final String GATEWAY_PROTOCOL = "protocol";
         public static final String GATEWAY_URI = "uri";
-        public static final String GATEWAY_HTTP_HEADERS = "headers";
         public static final String GATEWAY_HTTP_METHOD = "method";
-        public static final String GATEWAY_QUERY_PARAMS = "queryParams";
 
-        public static final String GATEWAY_ATTEMPS = "attemps";
-        public static final String GATEWAY_ATTEMP_SECONDS = "seconds";
         public static final String GATEWAY_RETRY = "retry";
-        public static final String GATEWAY_RETRY_ENABLED = "enabled";
+        public static final String GATEWAY_RETRY_ENABLED = "retry.enabled";
+        public static final String GATEWAY_RETRY_ATTEMPTS = "retry.attempts";
+        public static final String GATEWAY_RETRY_ATTEMPT_SECONDS = "retry.seconds";
 
-        public static final String GATEWAY_SYNC = "synchronous";
-        public static final String GATEWAY_CALLBACK = "callback";
-        public static final String GATEWAY_REST_PORT = "port";
-        public static final String GATEWAY_REST_RESOURCE = "resource";
+        public static final String GATEWAY_SOURCE = "source";
+        public static final String GATEWAY_SOURCE_NAME = "source.name";
+        public static final String GATEWAY_SOURCE_TYPE = "source.type";
+        public static final String GATEWAY_SOURCE_ACTION = "source.action";
+
+        public static final String GATEWAY_ASYNC_CALLBACK = "async.callback";
+        public static final String GATEWAY_ASYNC_METHOD = "async.method";
     }
 
     /**

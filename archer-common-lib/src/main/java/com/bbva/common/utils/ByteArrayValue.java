@@ -26,7 +26,7 @@ public class ByteArrayValue {
      * Constructor
      *
      * @param data data toi serialize
-     * @param <V>  Class type pof data
+     * @param <V>  Class type of data
      */
     public <V> ByteArrayValue(final V data) {
         this.data = Serde.serialize(data);

@@ -1,12 +1,15 @@
 package com.bbva.common.utils.headers;
 
+import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.utils.ByteArrayValue;
+import com.bbva.common.utils.headers.types.CommonHeaderType;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.Headers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Consumer/Produce record headers
@@ -19,6 +22,20 @@ public class RecordHeaders {
      * Constructor
      */
     public RecordHeaders() {
+    }
+
+    public RecordHeaders(final HeaderType recordType, final boolean isReplay, final CRecord referenceRecord) {
+        this.add(CommonHeaderType.TYPE_KEY, recordType);
+        this.add(CommonHeaderType.FLAG_REPLAY_KEY, isReplay);
+        this.add(CommonHeaderType.UUID_KEY, UUID.randomUUID().toString());
+
+        if (referenceRecord != null) {
+            this.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
+            this.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
+                    referenceRecord.type());
+            this.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
+                    referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
+        }
     }
 
     /**

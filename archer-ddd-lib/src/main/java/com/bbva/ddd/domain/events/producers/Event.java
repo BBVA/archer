@@ -9,7 +9,6 @@ import com.bbva.common.producers.record.PRecord;
 import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
-import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.common.utils.headers.types.EventHeaderType;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import com.bbva.logging.Logger;
@@ -108,7 +107,7 @@ public class Event {
         /**
          * Set producer name
          *
-         * @param producerName the na,e
+         * @param producerName the name
          * @return builder
          */
         public Event.Builder producerName(final String producerName) {
@@ -174,21 +173,16 @@ public class Event {
 
         private RecordHeaders headers(final String producerName, final CRecord referenceRecord, final String name) {
 
-            final RecordHeaders recordHeaders = new RecordHeaders();
-            recordHeaders.add(CommonHeaderType.TYPE_KEY, EventHeaderType.TYPE_VALUE);
+            final RecordHeaders recordHeaders = new RecordHeaders(EventHeaderType.EVENT_VALUE, isReplay, referenceRecord);
             recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, producerName);
-            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, isReplay);
 
             if (referenceRecord != null) {
                 final ByteArrayValue entityUuid = referenceRecord.recordHeaders().find(CommandHeaderType.ENTITY_UUID_KEY);
                 if (entityUuid != null) {
                     recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid.asString());
                 }
-                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
-                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
-                        referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
-                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
-                        referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
+            } else {
+                recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, UUID.randomUUID().toString());
             }
 
             if (name != null) {

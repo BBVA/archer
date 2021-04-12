@@ -4,7 +4,7 @@ import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.config.annotations.ServiceConfig;
-import com.bbva.gateway.service.IAsyncGatewayService;
+import com.bbva.gateway.service.AsyncGatewayService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 
@@ -44,9 +44,9 @@ public class CallbackRest {
             final String baseName = (String) config.custom(GatewayConfig.CustomProperties.GATEWAY_TOPIC);
             config.gateway().putAll(gatewayConfig);
             if (commandAction != null && config.gateway(GatewayConfig.GatewayProperties.GATEWAY_SYNC) != null && !(Boolean) config.gateway(GatewayConfig.GatewayProperties.GATEWAY_SYNC) && config.gateway(GatewayConfig.GatewayProperties.GATEWAY_CALLBACK) != null) {
-                IAsyncGatewayService service = null;
+                AsyncGatewayService service = null;
                 try {
-                    service = (IAsyncGatewayService) serviceClass.newInstance();
+                    service = (AsyncGatewayService) serviceClass.newInstance();
                 } catch (final InstantiationException | IllegalAccessException e) {
                     logger.error("Error instancing the service", e);
                 }

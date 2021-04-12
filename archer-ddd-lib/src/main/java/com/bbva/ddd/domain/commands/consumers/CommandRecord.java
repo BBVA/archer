@@ -21,14 +21,14 @@ public class CommandRecord extends CRecord {
         super(record.topic(), record.partition(), record.offset(), record.timestamp(), record.timestampType(), record.key(), record.value(), record.recordHeaders());
     }
 
-    /**
-     * Get the uuid of the command record
-     *
-     * @return uuid of the command uuid
-     */
-    public String uuid() {
-        return headers.find(CommandHeaderType.UUID_KEY).asString();
-    }
+//    /**
+//     * Get the uuid of the command record
+//     *
+//     * @return uuid of the command uuid
+//     */
+//    public String uuid() {
+//        return headers.find(CommandHeaderType.KEY_KEY).asString();
+//    }
 
     /**
      * Get the name of the command record

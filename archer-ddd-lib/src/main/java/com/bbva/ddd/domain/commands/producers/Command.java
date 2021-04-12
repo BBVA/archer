@@ -6,11 +6,9 @@ import com.bbva.common.producers.DefaultProducer;
 import com.bbva.common.producers.Producer;
 import com.bbva.common.producers.callback.ProducerCallback;
 import com.bbva.common.producers.record.PRecord;
-import com.bbva.common.utils.ByteArrayValue;
 import com.bbva.common.utils.headers.OptionalRecordHeaders;
 import com.bbva.common.utils.headers.RecordHeaders;
 import com.bbva.common.utils.headers.types.CommandHeaderType;
-import com.bbva.common.utils.headers.types.CommonHeaderType;
 import com.bbva.ddd.domain.exceptions.ProduceException;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
@@ -37,17 +35,17 @@ public class Command {
     private final String action;
     private final SpecificRecordBase value;
     private final RecordHeaders headers;
-    private final String uuid;
+    private final String entityUuid;
     private final String key;
 
-    private Command(final Producer producer, final String topic, final String action, final String key, final SpecificRecordBase value, final RecordHeaders headers, final String uuid) {
+    private Command(final Producer producer, final String topic, final String action, final String key, final SpecificRecordBase value, final RecordHeaders headers, final String entityUuid) {
         this.producer = producer;
         this.topic = topic;
         this.action = action;
         this.key = key;
         this.value = value;
         this.headers = headers;
-        this.uuid = uuid;
+        this.entityUuid = entityUuid;
     }
 
     /**
@@ -63,9 +61,9 @@ public class Command {
 
         final CommandRecordMetadata recordedMessageMetadata;
         try {
-            final String commandUUID = headers.find(CommandHeaderType.UUID_KEY).asString();
-            recordedMessageMetadata = new CommandRecordMetadata(result.get(), commandUUID, uuid);
-            logger.info("CommandRecord created: {}", commandUUID);
+//            final String commandUUID = headers.find(CommandHeaderType.KEY_KEY).asString();
+            recordedMessageMetadata = new CommandRecordMetadata(result.get(), key, entityUuid);
+            logger.info("CommandRecord created: {}", key);
         } catch (final InterruptedException | ExecutionException e) {
             logger.error("Cannot resolve the promise", e);
             throw new ProduceException("Cannot resolve the promise", e);
@@ -82,7 +80,7 @@ public class Command {
         private String action;
         private SpecificRecordBase value;
         private OptionalRecordHeaders headers;
-        private String uuid;
+        private String entityUuid;
         private String to;
         private boolean persistent = false;
         private final CRecord referenceRecord;
@@ -147,13 +145,13 @@ public class Command {
         }
 
         /**
-         * Set the command uuid
+         * Set the entity uuid
          *
          * @param uuid the id
          * @return builder
          */
-        public Builder uuid(final String uuid) {
-            this.uuid = uuid;
+        public Builder entityUuid(final String uuid) {
+            this.entityUuid = uuid;
             return this;
         }
 
@@ -184,31 +182,21 @@ public class Command {
          * @return command instance
          */
         public Command build() {
-            if (uuid == null && action.equalsIgnoreCase(Command.CREATE_ACTION)) {
-                uuid = UUID.randomUUID().toString();
+            if (entityUuid == null && action.equalsIgnoreCase(Command.CREATE_ACTION)) {
+                entityUuid = UUID.randomUUID().toString();
             }
             final String key = UUID.randomUUID().toString();
-            return new Command(producer, to, action, key, value, headers(action, key, uuid, referenceRecord, headers), uuid);
+            return new Command(producer, to, action, key, value, headers(action, key, entityUuid, referenceRecord, headers), entityUuid);
         }
 
         private RecordHeaders headers(final String name, final String key, final String entityUuid,
                                       final CRecord referenceRecord, final OptionalRecordHeaders optionalHeaders) {
 
-            final RecordHeaders recordHeaders = new RecordHeaders();
-            recordHeaders.add(CommonHeaderType.TYPE_KEY, CommandHeaderType.TYPE_VALUE);
-            recordHeaders.add(CommandHeaderType.UUID_KEY, key);
+            final RecordHeaders recordHeaders = new RecordHeaders(CommandHeaderType.COMMAND_VALUE, isReplay && !persistent, referenceRecord);
+            recordHeaders.add(CommandHeaderType.KEY_KEY, key);
             recordHeaders.add(CommandHeaderType.ACTION_KEY, name);
-            recordHeaders.add(CommonHeaderType.FLAG_REPLAY_KEY, new ByteArrayValue(isReplay && !persistent));
             if (entityUuid != null) {
                 recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, entityUuid);
-            }
-
-            if (referenceRecord != null) {
-                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_KEY_KEY, referenceRecord.key());
-                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_TYPE_KEY,
-                        referenceRecord.recordHeaders().find(CommonHeaderType.TYPE_KEY).asString());
-                recordHeaders.add(CommonHeaderType.REFERENCE_RECORD_POSITION_KEY,
-                        referenceRecord.topic() + "-" + referenceRecord.partition() + "-" + referenceRecord.offset());
             }
 
             if (optionalHeaders != null && optionalHeaders.getList().size() > 0) {

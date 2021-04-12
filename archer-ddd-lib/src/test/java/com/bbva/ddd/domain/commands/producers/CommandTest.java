@@ -181,7 +181,7 @@ public class CommandTest {
 
         final Command command = new Command.Builder(null, producer, false)
                 .action("action").to("topicBaseName")
-                .uuid("entityId").value(new PersonalData())
+                .entityUuid("entityId").value(new PersonalData())
                 .build();
         final CommandRecordMetadata metadata = command.send(new DefaultProducerCallback());
 
@@ -200,7 +200,7 @@ public class CommandTest {
 
         final Command command = new Command.Builder(null, producer, false)
                 .action(Command.DELETE_ACTION).to("topicBaseName")
-                .uuid("entityId")
+                .entityUuid("entityId")
                 .build();
         final CommandRecordMetadata metadata = command.send(new DefaultProducerCallback());
 

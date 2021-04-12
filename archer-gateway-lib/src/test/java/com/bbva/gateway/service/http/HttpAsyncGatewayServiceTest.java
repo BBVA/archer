@@ -1,4 +1,4 @@
-package com.bbva.gateway.service;
+package com.bbva.gateway.service.http;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.util.PowermockExtension;
@@ -7,7 +7,9 @@ import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.http.RetrofitClient;
-import com.bbva.gateway.service.impl.GatewayService;
+import com.bbva.gateway.service.AsyncGatewayService;
+import com.bbva.gateway.service.GatewayService;
+import com.bbva.gateway.service.base.GatewayBaseService;
 import com.bbva.gateway.service.impl.HttpAsyncGatewayServiceImpl;
 import com.bbva.gateway.service.records.PersonalData;
 import org.apache.kafka.common.record.TimestampType;
@@ -28,19 +30,19 @@ import java.util.Date;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest({GatewayService.class, Response.class, RetrofitClient.class})
+@PrepareForTest({GatewayBaseService.class, Response.class, RetrofitClient.class})
 public class HttpAsyncGatewayServiceTest {
 
     @DisplayName("Create service ok")
     @Test
     public void startRestOk() {
-        final IAsyncGatewayService service = new HttpAsyncGatewayServiceImpl();
+        final AsyncGatewayService service = new HttpAsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }
@@ -52,7 +54,7 @@ public class HttpAsyncGatewayServiceTest {
         final Response response = PowerMockito.mock(Response.class);
         PowerMockito.when(RetrofitClient.call(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
 
-        final IGatewayService service = new HttpAsyncGatewayServiceImpl();
+        final GatewayService service = new HttpAsyncGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
 
@@ -60,7 +62,7 @@ public class HttpAsyncGatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), new RecordHeaders()));
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service),
                 () -> Assertions.assertNotNull(callResult)
         );

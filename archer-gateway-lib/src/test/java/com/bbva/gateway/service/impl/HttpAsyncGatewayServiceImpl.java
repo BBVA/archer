@@ -1,6 +1,7 @@
 package com.bbva.gateway.service.impl;
 
 import com.bbva.common.consumers.record.CRecord;
+import com.bbva.gateway.service.http.HttpAsyncGatewayService;
 
 
 public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {
@@ -17,7 +18,7 @@ public class HttpAsyncGatewayServiceImpl extends HttpAsyncGatewayService {
     }
 
     @Override
-    public String getId(final Object response) {
+    public String transactionId(final Object response) {
         return null;
     }
 

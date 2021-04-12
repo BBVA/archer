@@ -7,7 +7,7 @@ import com.bbva.common.consumers.record.CRecord;
  *
  * @param <T> Result type
  */
-public interface IAsyncGatewayService<T> extends IGatewayService<T> {
+public interface AsyncGatewayService<T> extends GatewayService<T> {
 
     /**
      * Listener to manage callback

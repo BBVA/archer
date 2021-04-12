@@ -1,4 +1,4 @@
-package com.bbva.gateway.service;
+package com.bbva.gateway.service.base;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
@@ -17,7 +17,7 @@ import com.bbva.gateway.GatewayTest;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.Config;
-import com.bbva.gateway.service.impl.GatewayService;
+import com.bbva.gateway.service.GatewayService;
 import com.bbva.gateway.service.impl.GatewayServiceImpl;
 import com.bbva.gateway.service.impl.beans.Person;
 import com.bbva.gateway.service.records.PersonalData;
@@ -39,19 +39,19 @@ import java.util.Map;
 
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
-@PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayServiceImpl.class, GatewayService.class, States.class, ReadableStore.class})
-public class GatewayServiceTest {
+@PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayServiceImpl.class, GatewayBaseService.class, States.class, ReadableStore.class})
+public class GatewayBaseServiceTest {
 
     @DisplayName("Create service ok")
     @Test
     public void startRestOk() {
-        final IGatewayService service = new GatewayServiceImpl();
+        final GatewayService service = new GatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
         service.postInitActions();
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }
@@ -59,7 +59,7 @@ public class GatewayServiceTest {
     @DisplayName("Service call ok")
     @Test
     public void callOk() {
-        final IGatewayService service = new GatewayServiceImpl();
+        final GatewayService service = new GatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
         final GatewayConfig configuration = ConfigBuilder.create(configAnnotation);
@@ -70,7 +70,7 @@ public class GatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 null, new RecordHeaders()));
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service),
                 () -> Assertions.assertEquals("result", callResult.getName())
         );
@@ -79,7 +79,7 @@ public class GatewayServiceTest {
     @DisplayName("Service call ok")
     @Test
     public void callWithoutRetryOk() {
-        final IGatewayService service = new GatewayServiceImpl();
+        final GatewayService service = new GatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
         final GatewayConfig configuration = ConfigBuilder.create(configAnnotation);
@@ -92,7 +92,7 @@ public class GatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 null, new RecordHeaders()));
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service),
                 () -> Assertions.assertEquals("result", callResult.getName())
         );
@@ -119,7 +119,7 @@ public class GatewayServiceTest {
                 new Date().getTime(), TimestampType.CREATE_TIME, "key",
                 new PersonalData(), recordHeaders), null, false));
 
-        Assertions.assertAll("GatewayService",
+        Assertions.assertAll("GatewayBaseService",
                 () -> Assertions.assertNotNull(service)
         );
     }

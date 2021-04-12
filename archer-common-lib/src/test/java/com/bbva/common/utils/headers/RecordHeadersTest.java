@@ -41,14 +41,14 @@ public class RecordHeadersTest {
     @Test
     public void checkAddHeaderTypes() {
         final RecordHeaders recordHeaders = new RecordHeaders();
-        recordHeaders.add(ChangelogHeaderType.UUID_KEY, new ByteArrayValue("changelog-uuid"));
+        recordHeaders.add(ChangelogHeaderType.KEY_KEY, new ByteArrayValue("changelog-uuid"));
         recordHeaders.add(CommandHeaderType.ENTITY_UUID_KEY, new ByteArrayValue("entity-uuid"));
         recordHeaders.add(CommonHeaderType.TYPE_KEY, new ByteArrayValue("type-key"));
         recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, new ByteArrayValue("producer-name"));
-        recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, EventHeaderType.TYPE_VALUE);
+        recordHeaders.add(EventHeaderType.PRODUCER_NAME_KEY, EventHeaderType.EVENT_VALUE);
 
         Assertions.assertAll("header-types",
-                () -> Assertions.assertEquals("changelog-uuid", recordHeaders.find(ChangelogHeaderType.UUID_KEY).asString()),
+                () -> Assertions.assertEquals("changelog-uuid", recordHeaders.find(ChangelogHeaderType.KEY_KEY).asString()),
                 () -> Assertions.assertEquals("entity-uuid", recordHeaders.find(CommandHeaderType.ENTITY_UUID_KEY).asString()),
                 () -> Assertions.assertEquals("type-key", recordHeaders.find(CommonHeaderType.TYPE_KEY).asString()),
                 () -> Assertions.assertEquals("producer-name", recordHeaders.find(EventHeaderType.PRODUCER_NAME_KEY).asString())

@@ -1,11 +1,13 @@
-package com.bbva.gateway.service.impl;
+package com.bbva.gateway.service.base;
 
 import com.bbva.archer.avro.gateway.TransactionChangelog;
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.ddd.domain.changelogs.repository.Repository;
-import com.bbva.ddd.domain.handlers.contexts.HandlerContextImpl;
+import com.bbva.ddd.domain.handlers.contexts.HandlerContext;
 import com.bbva.gateway.aggregates.GatewayAggregate;
-import com.bbva.gateway.service.IAsyncGatewayService;
+import com.bbva.gateway.service.AsyncGatewayService;
+import com.bbva.logging.Logger;
+import com.bbva.logging.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -15,29 +17,37 @@ import java.util.Map;
 /**
  * Asynchronous gateway service implementation
  *
- * @param <T> Result type
+ * @param <R> Result type
  */
-public abstract class AsyncGatewayService<T>
-        extends GatewayService<T>
-        implements IAsyncGatewayService<T> {
+public abstract class AsyncGatewayBaseService<R> extends GatewayBaseService<R> implements AsyncGatewayService<R> {
+
+    private static final Logger logger = LoggerFactory.getLogger(GatewayBaseService.class);
 
     private static final Map<String, Repository> respositoryCached = new HashMap<>();
+
+    /**
+     * Return the transaction identifier from the response.
+     *
+     * @param response response of the request
+     * @return transaction identifier
+     */
+    public abstract String transactionId(R response);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void processRecord(final HandlerContextImpl context) {
+    public void processRecord(final HandlerContext context) {
         final CRecord record = context.consumedRecord();
-        if (isReplay(record)) {
+        if (context.isReplay()) {
             final TransactionChangelog transactionChangelog = findChangelogByReference(record);
 
             if (transactionChangelog != null) {
-                final T response = parseChangelogFromString(transactionChangelog.getOutput());
-                saveChangelog(context, response);
+                final R response = parseChangelogFromString(transactionChangelog.getOutput());
+                processResponse(context, response);
             }
         } else {
-            final T response = attemp(record, 0);
+            final R response = makeExternalRequest(record, 0);
             saveChangelog(context, response);
         }
     }
@@ -49,41 +59,34 @@ public abstract class AsyncGatewayService<T>
      * @return response
      */
     @Override
-    public T parseChangelogFromString(final String output) {
+    public R parseChangelogFromString(final String output) {
         try {
-            final Class classType = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-            return (T) om.readValue(output, classType);
+            final Class classType = (Class<R>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            return (R) om.readValue(output, classType);
         } catch (final IOException | IllegalArgumentException e) {
             return null;
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void saveChangelog(final HandlerContextImpl context, final T response) {
+    protected void saveChangelog(final HandlerContext context, final R response) {
         final CRecord originalRecord = context.consumedRecord();
-        final String id = getId(response);
+        final String id = transactionId(response);
         respositoryCached.put(id, context.repository());
         final TransactionChangelog outputEvent = new TransactionChangelog(id, originalRecord.value().toString(), parseChangelogToString(response));
 
-        context.repository().create(GatewayAggregate.class, id, outputEvent, GatewayService::handleOutPutted);
+        context.repository().create(GatewayAggregate.class, id, outputEvent, (key, e) -> {
+
+        });
 
         createListener(originalRecord, response);
     }
 
-    /**
-     * Return the id from response
-     *
-     * @param response response
-     * @return id
-     */
-    public abstract String getId(T response);
-
     @Override
-    public void processResult(final CRecord originRecord, final T result) {
+    public void processResponse(final HandlerContext context, final R result) {
 
     }
 
@@ -100,7 +103,13 @@ public abstract class AsyncGatewayService<T>
             if (changelog != null) {
                 final TransactionChangelog outputEvent = new TransactionChangelog(iden, changelog.getOutput(), body);
 
-                callRepository.create(GatewayAggregate.class, iden, outputEvent, GatewayService::handleOutPutted);
+                callRepository.create(GatewayAggregate.class, iden, outputEvent, (key, e) -> {
+                    if (e != null) {
+                        logger.error("Error adding changelog", e);
+                    } else {
+                        logger.info("Response has been saved in event store as a transaction changelog with key {}", key);
+                    }
+                });
             }
             respositoryCached.remove(iden);
         }

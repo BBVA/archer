@@ -1,4 +1,4 @@
-package com.bbva.gateway.service;
+package com.bbva.gateway.service.http;
 
 import com.bbva.common.consumers.record.CRecord;
 import com.bbva.common.producers.DefaultProducer;
@@ -15,7 +15,8 @@ import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.annotations.Config;
 import com.bbva.gateway.http.RetrofitClient;
 import com.bbva.gateway.http.model.HttpBean;
-import com.bbva.gateway.service.impl.GatewayService;
+import com.bbva.gateway.service.GatewayService;
+import com.bbva.gateway.service.base.GatewayBaseService;
 import com.bbva.gateway.service.impl.HttpGatewayServiceImpl;
 import com.bbva.gateway.service.records.PersonalData;
 import okhttp3.Headers;
@@ -42,13 +43,13 @@ import java.util.HashMap;
 @RunWith(JUnit5.class)
 @ExtendWith(PowermockExtension.class)
 @PowerMockIgnore("javax.net.ssl.*")
-@PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayService.class, RetrofitClient.class, Response.class})
+@PrepareForTest({RepositoryImpl.class, Event.class, HandlerContextImpl.class, GatewayBaseService.class, RetrofitClient.class, Response.class})
 public class HttpGatewayServiceTest {
 
     @DisplayName("Create service ok")
     @Test
     public void startRestOk() {
-        final IGatewayService service = new HttpGatewayServiceImpl();
+        final GatewayService service = new HttpGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
 
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
@@ -66,7 +67,7 @@ public class HttpGatewayServiceTest {
         final Response response = PowerMockito.mock(Response.class);
         PowerMockito.when(RetrofitClient.call(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(response);
 
-        final IGatewayService service = new HttpGatewayServiceImpl();
+        final GatewayService service = new HttpGatewayServiceImpl();
         final Config configAnnotation = GatewayTest.class.getAnnotation(Config.class);
         service.init(ConfigBuilder.create(configAnnotation), "baseName");
 

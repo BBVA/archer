@@ -4,6 +4,7 @@ import com.bbva.common.utils.headers.HeaderType;
 
 public enum CommonHeaderType implements HeaderType {
     TYPE_KEY("type"),
+    UUID_KEY("uuid"),
     FLAG_REPLAY_KEY("flag.replay"),
     REFERENCE_RECORD_TYPE_KEY("reference.record.type"),
     REFERENCE_RECORD_KEY_KEY("reference.record.key"),

@@ -1,14 +1,14 @@
 package com.bbva.gateway.handlers;
 
-import com.bbva.common.config.AppConfig;
+import com.bbva.ddd.domain.changelogs.consumers.ChangelogHandlerContext;
 import com.bbva.ddd.domain.commands.consumers.CommandHandlerContext;
 import com.bbva.ddd.domain.events.consumers.EventHandlerContext;
 import com.bbva.ddd.domain.handlers.Handler;
 import com.bbva.gateway.config.ConfigBuilder;
 import com.bbva.gateway.config.GatewayConfig;
 import com.bbva.gateway.config.annotations.ServiceConfig;
-import com.bbva.gateway.service.IGatewayService;
-import com.bbva.gateway.service.impl.GatewayService;
+import com.bbva.gateway.service.GatewayService;
+import com.bbva.gateway.service.base.GatewayBaseService;
 import com.bbva.logging.Logger;
 import com.bbva.logging.LoggerFactory;
 import org.apache.commons.beanutils.BeanUtils;
@@ -23,14 +23,14 @@ import java.util.Map;
  * Main handler of gateway
  */
 public class GatewayHandler implements Handler {
-    private static final Logger logger = LoggerFactory.getLogger(GatewayService.class);
+    private static final Logger logger = LoggerFactory.getLogger(GatewayBaseService.class);
 
-    private static String baseName;
-    private static final Map<String, IGatewayService> commandServices = new HashMap<>();
-    private static final Map<String, IGatewayService> eventServices = new HashMap<>();
+    private static final Map<String, GatewayService> services = new HashMap<>();
+    private static final Map<String, GatewayService> eventServices = new HashMap<>();
     private final List<String> commandsSubscribed = new ArrayList<>();
     private final List<String> eventsSubscribed = new ArrayList<>();
-    private static GatewayConfig config;
+    private final List<String> changelogsSubscribed = new ArrayList<>();
+    private final GatewayConfig config;
 
     /**
      * Constructor
@@ -41,21 +41,27 @@ public class GatewayHandler implements Handler {
     public GatewayHandler(final String servicePackages, final GatewayConfig configuration) {
         final List<Class> serviceClasses = ConfigBuilder.getServiceClasses(servicePackages);
         config = configuration;
-        baseName = (String) config.custom(GatewayConfig.CustomProperties.GATEWAY_TOPIC);
 
         for (final Class serviceClass : serviceClasses) {
             final ServiceConfig serviceConfig = (ServiceConfig) serviceClass.getAnnotation(ServiceConfig.class);
 
             final Map<String, Object> gatewayConfig = ConfigBuilder.getServiceConfig(serviceConfig.file());
-            final String commandAction = (String) gatewayConfig.get(GatewayConfig.GATEWAY_COMMAND_ACTION);
-            final String event = (String) gatewayConfig.get(GatewayConfig.GATEWAY_EVENT_NAME);
-            if (commandAction != null) {
-                commandsSubscribed.add(baseName + AppConfig.COMMANDS_RECORD_NAME_SUFFIX);
-                initActionService(serviceClass, gatewayConfig, commandAction, null);
-            } else if (event != null) {
-                eventsSubscribed.add(event + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
-                initActionService(serviceClass, gatewayConfig, null, event + AppConfig.EVENTS_RECORD_NAME_SUFFIX);
+            final Map<String, Object> source = (HashMap<String, Object>) gatewayConfig.get(GatewayConfig.GatewayProperties.GATEWAY_SOURCE);
+            final String sourceName = (String) source.get(GatewayConfig.GatewayProperties.GATEWAY_SOURCE_NAME);
+            final String sourceType = (String) source.get(GatewayConfig.GatewayProperties.GATEWAY_SOURCE_TYPE);
+            final String serviceName;
+            if (sourceType.equals(GatewayConfig.SourceTypes.COMMAND.getName())) {
+                final String commandAction = (String) source.get(GatewayConfig.GatewayProperties.GATEWAY_SOURCE_ACTION);
+                commandsSubscribed.add(sourceName);
+                serviceName = sourceName + ":" + commandAction;
+            } else if (sourceType.equals(GatewayConfig.SourceTypes.EVENT.getName())) {
+                eventsSubscribed.add(sourceName);
+                serviceName = sourceName;
+            } else {
+                changelogsSubscribed.add(sourceName);
+                serviceName = sourceName;
             }
+            initActionService(serviceClass, gatewayConfig, serviceName);
         }
     }
 
@@ -76,31 +82,53 @@ public class GatewayHandler implements Handler {
     }
 
     /**
-     * Call to service action for command
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> dataChangelogsSubscribed() {
+        return changelogsSubscribed;
+    }
+
+    /**
+     * Call to service when a command:action happens
      *
      * @param context command received
      */
     @Override
     public void processCommand(final CommandHandlerContext context) {
-        final String action = context.consumedRecord().action();
-        if (commandServices.containsKey(action)) {
-            new Thread(() -> commandServices.get(action).processRecord(context)).start();
+        final String serviceName = context.consumedRecord().topic() + ":" + context.consumedRecord().action();
+        if (services.containsKey(serviceName)) {
+            new Thread(() -> services.get(serviceName).processRecord(context)).start();
         }
     }
 
     /**
-     * Call to service action for event
+     * Call to service when an event arrives
      *
      * @param context Event consumed from the event store
      */
     @Override
     public void processEvent(final EventHandlerContext context) {
-        if (eventServices.containsKey(context.consumedRecord().topic())) {
-            new Thread(() -> eventServices.get(context.consumedRecord().topic()).processRecord(context)).start();
+        final String topic = context.consumedRecord().topic();
+        if (services.containsKey(topic)) {
+            new Thread(() -> services.get(topic).processRecord(context)).start();
         }
     }
 
-    private static void initActionService(final Class serviceClass, final Map<String, Object> gatewayConfig, final String commandAction, final String event) {
+    /**
+     * Call to service when a changelog
+     *
+     * @param context Event consumed from the event store
+     */
+    @Override
+    public void processDataChangelog(final ChangelogHandlerContext context) {
+        final String topic = context.consumedRecord().topic();
+        if (services.containsKey(topic)) {
+            new Thread(() -> services.get(topic).processRecord(context)).start();
+        }
+    }
+
+    private void initActionService(final Class serviceClass, final Map<String, Object> gatewayConfig, final String serviceName) {
         GatewayConfig newConfig = new GatewayConfig();
         try {
             newConfig = (GatewayConfig) BeanUtils.cloneBean(config);
@@ -109,18 +137,13 @@ public class GatewayHandler implements Handler {
         }
         newConfig.gateway().putAll(gatewayConfig);
 
-        IGatewayService service = null;
         try {
-            service = (IGatewayService) serviceClass.newInstance();
+            final GatewayService service = (GatewayService) serviceClass.newInstance();
+            service.initialize(newConfig);
+            //        service.postInitActions();
+            services.put(serviceName, service);
         } catch (final IllegalAccessException | InstantiationException e) {
             logger.error("Error initializing service", e);
-        }
-        service.init(newConfig, baseName);
-        service.postInitActions();
-        if (commandAction != null) {
-            commandServices.put(commandAction, service);
-        } else {
-            eventServices.put(event, service);
         }
     }
 
@@ -129,16 +152,16 @@ public class GatewayHandler implements Handler {
      *
      * @return command services
      */
-    public Map<String, IGatewayService> getCommandServices() {
-        return commandServices;
-    }
+//    public Map<String, GatewayService> getCommandServices() {
+//        return services;
+//    }
 
     /**
      * Get the list of event services configured
      *
      * @return event services
      */
-    public Map<String, IGatewayService> getEventServices() {
-        return eventServices;
-    }
+//    public Map<String, GatewayService> getEventServices() {
+//        return eventServices;
+//    }
 }
